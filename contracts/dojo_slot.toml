@@ -18,10 +18,10 @@ default = "darkshuffle"
     "darkshuffle-season_systems",
     "darkshuffle-draft_systems",
     "darkshuffle-map_systems",
+    "darkshuffle-config_systems",
 ]
 
 [env]
 rpc_url = "https://api.cartridge.gg/x/darkshuffle-slot/katana"
 account_address = "0x6677fe62ee39c7b07401f754138502bab7fac99d2d3c5d37df7d1c6fab10819"
 private_key = "0x3e3979c1ed728490308054fe357a9f49cf67f80f9721f44cc57235129e090f4"
-world_address = "0x043dd69c43f42ed0a62a1216e9710aaa9508d04579fd1fbec2b4530c55710e48"
