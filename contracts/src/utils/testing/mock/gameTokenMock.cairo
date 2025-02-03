@@ -3,12 +3,14 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IGameTokenMock<TState> {
-    fn mint(ref self: TState, recipient: ContractAddress, token_id: u256);
+    fn mint(ref self: TState, recipient: ContractAddress, token_id: u256, settings_id: u32);
+    fn settings_id(self: @TState, token_id: u256) -> u32;
 }
 
 #[starknet::contract]
 pub mod GameTokenMock {
     use starknet::ContractAddress;
+    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map};
 
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721Component;
@@ -28,6 +30,7 @@ pub mod GameTokenMock {
         erc721: ERC721Component::Storage,
         #[substorage(v0)]
         src5: SRC5Component::Storage,
+        settings_id: Map<u256, u32>,
     }
 
     #[event]
@@ -48,8 +51,13 @@ pub mod GameTokenMock {
     
     #[abi(embed_v0)]
     impl GameTokenMockImpl of super::IGameTokenMock<ContractState> {
-        fn mint(ref self: ContractState, recipient: ContractAddress, token_id: u256) {
+        fn mint(ref self: ContractState, recipient: ContractAddress, token_id: u256, settings_id: u32) {
             self.erc721.mint(recipient, token_id);
+            self.settings_id.entry(token_id).write(settings_id);
+        }
+
+        fn settings_id(self: @ContractState, token_id: u256) -> u32 {
+            self.settings_id.entry(token_id).read()
         }
     }
 }

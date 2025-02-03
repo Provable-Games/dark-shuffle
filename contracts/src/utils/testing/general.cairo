@@ -5,6 +5,8 @@ use dojo::world::{WorldStorage, WorldStorageTrait};
 use darkshuffle::constants::{LAST_NODE_DEPTH, WORLD_CONFIG_ID};
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::models::config::{WorldConfig, GameSettings};
+use darkshuffle::models::draft::Draft;
+use darkshuffle::models::map::Map;
 
 use starknet::{get_caller_address, contract_address_const};
 
@@ -23,7 +25,7 @@ fn create_game(ref world: WorldStorage, game_id: u128, state: GameState) -> u128
     });
 
     let game_token = IGameTokenMockDispatcher { contract_address: game_token_address };
-    game_token.mint(contract_address_const::<'player1'>(), game_id.into());
+    game_token.mint(contract_address_const::<'player1'>(), game_id.into(), settings_id);
 
     world.write_model_test(@Game {
         game_id,
@@ -61,4 +63,20 @@ fn create_default_settings(ref world: WorldStorage) -> u32 {
     });
 
     settings_id
+}
+
+fn create_draft(ref world: WorldStorage, game_id: u128, options: Span<u8>, cards: Span<u8>) {
+    world.write_model_test(@Draft {
+        game_id,
+        options,
+        cards,
+    });
+}
+
+fn create_map(ref world: WorldStorage, game_id: u128, level: u8, seed: u128) {
+    world.write_model_test(@Map {
+        game_id,
+        level,
+        seed,
+    });
 }
