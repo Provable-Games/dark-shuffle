@@ -78,7 +78,7 @@ impl SummonUtilsImpl of SummonUtilsTrait {
 
         if card.card_id == 1 {
             if board_stats.magical_count == 0 {
-                BattleUtilsImpl::reduce_monster_attack(ref battle, 2);
+                BattleUtilsImpl::reduce_monster_attack(ref battle, 1);
             } else {
                 BoardUtilsImpl::update_creatures(ref board, CreatureType::Magical, 2, 0);
             }
@@ -130,7 +130,7 @@ impl SummonUtilsImpl of SummonUtilsTrait {
         else if card.card_id == 18 {
             if board_stats.magical_count > 0 {
                 BattleUtilsImpl::increase_hero_energy(ref battle, 1);
-                BattleUtilsImpl::heal_hero(ref battle, 1);
+                BattleUtilsImpl::heal_hero(ref battle, 2);
             }
         }
 

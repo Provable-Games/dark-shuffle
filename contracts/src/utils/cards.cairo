@@ -88,7 +88,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Hunter,
-                cost: 3,
+                cost: 4,
                 attack: 4,
                 health: 5,
             };
@@ -140,9 +140,9 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Brute,
-                cost: 1,
+                cost: 2,
                 attack: 3,
-                health: 5,
+                health: 3,
             };
         }
         
@@ -179,8 +179,8 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Brute,
-                cost: 2,
-                attack: 5,
+                cost: 1,
+                attack: 4,
                 health: 3,
             };
         }
@@ -192,9 +192,9 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Brute,
-                cost: 4,
+                cost: 2,
                 attack: 3,
-                health: 5,
+                health: 3,
             };
         }
 
@@ -231,7 +231,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Magical,
-                cost: 5,
+                cost: 4,
                 attack: 3,
                 health: 4,
             };
@@ -257,7 +257,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Magical,
-                cost: 1,
+                cost: 2,
                 attack: 2,
                 health: 3,
             };
@@ -426,8 +426,8 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T3,
                 creature_type: CreatureType::Magical,
-                cost: 5,
-                attack: 5,
+                cost: 4,
+                attack: 3,
                 health: 3,
             };
         }

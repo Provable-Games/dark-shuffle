@@ -16,7 +16,7 @@ impl DeathUtilsImpl of DeathUtilsTrait {
         let creature_type = CardUtilsImpl::get_card(creature.card_id).creature_type;
 
         if creature.card_id == 3 {
-            BattleUtilsImpl::reduce_monster_attack(ref battle, 2);
+            BattleUtilsImpl::reduce_monster_attack(ref battle, 1);
 
             if board_stats.monster_type == CreatureType::Brute {
                 BoardUtilsImpl::update_creatures(ref board, CreatureType::Magical, 2, 0);
@@ -87,7 +87,7 @@ impl DeathUtilsImpl of DeathUtilsTrait {
 
         else if creature.card_id == 33 {
             if board_stats.monster_type == CreatureType::Brute {
-                BattleUtilsImpl::heal_hero(ref battle, 1);
+                BattleUtilsImpl::heal_hero(ref battle, 2);
             }
 
             BoardUtilsImpl::update_creatures(ref board, CreatureType::Magical, 1, 0);
@@ -119,7 +119,7 @@ impl DeathUtilsImpl of DeathUtilsTrait {
 
         else if creature.card_id == 48 {
             if board_stats.magical_count > 1 {
-                BattleUtilsImpl::heal_hero(ref battle, 1);
+                BattleUtilsImpl::heal_hero(ref battle, 2);
             }
         }
 
@@ -137,7 +137,7 @@ impl DeathUtilsImpl of DeathUtilsTrait {
 
         else if creature.card_id == 60 {
             if board_stats.monster_type == CreatureType::Hunter {
-                BattleUtilsImpl::heal_hero(ref battle, 1);
+                BattleUtilsImpl::heal_hero(ref battle, 2);
             }
         }
 
@@ -149,7 +149,7 @@ impl DeathUtilsImpl of DeathUtilsTrait {
 
         else if creature.card_id == 64 {
             if board_stats.monster_type == CreatureType::Brute {
-                BattleUtilsImpl::heal_hero(ref battle, 1);
+                BattleUtilsImpl::heal_hero(ref battle, 2);
             }
         }
 

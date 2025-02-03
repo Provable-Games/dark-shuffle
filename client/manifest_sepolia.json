@@ -1253,7 +1253,7 @@
   "contracts": [
     {
       "address": "0x268e8c0c7959a5a696cd0849e047580af72e123bcb1b4e32dde04c13821b396",
-      "class_hash": "0x51e696702acc758bbf6acf4e1d72d52555d5ffd022414356ce8bc56292bcbd5",
+      "class_hash": "0x6923c58f3e8be29b6685f9eddd33faccdbd4be1545ac2f6d33044985166135e",
       "abi": [
         {
           "type": "impl",
@@ -1307,8 +1307,8 @@
         },
         {
           "type": "impl",
-          "name": "BattleContractImpl",
-          "interface_name": "darkshuffle::systems::battle::contracts::IBattleContract"
+          "name": "BattleSystemsImpl",
+          "interface_name": "darkshuffle::systems::battle::contracts::IBattleSystems"
         },
         {
           "type": "struct",
@@ -1332,7 +1332,7 @@
         },
         {
           "type": "interface",
-          "name": "darkshuffle::systems::battle::contracts::IBattleContract",
+          "name": "darkshuffle::systems::battle::contracts::IBattleSystems",
           "items": [
             {
               "type": "function",
@@ -1481,7 +1481,7 @@
     },
     {
       "address": "0x35a2f5da70a28125aadd7b294acf05221698f563c24d186c89c370f37762365",
-      "class_hash": "0x7d69beb359f401151f03a14873ec5d08e672fcaca56ed3ed76e713c3548b5aa",
+      "class_hash": "0x4bb40bacd497119e856828b26de618f4805c04e7a5718fe50e9668ec691ea80",
       "abi": [
         {
           "type": "impl",
@@ -1542,8 +1542,8 @@
         },
         {
           "type": "impl",
-          "name": "ConfigContractImpl",
-          "interface_name": "darkshuffle::systems::config::contracts::IConfigContract"
+          "name": "ConfigSystemsImpl",
+          "interface_name": "darkshuffle::systems::config::contracts::IConfigSystems"
         },
         {
           "type": "enum",
@@ -1561,7 +1561,7 @@
         },
         {
           "type": "interface",
-          "name": "darkshuffle::systems::config::contracts::IConfigContract",
+          "name": "darkshuffle::systems::config::contracts::IConfigSystems",
           "items": [
             {
               "type": "function",
@@ -1758,7 +1758,7 @@
     },
     {
       "address": "0x5c470be3a737dad9d5ebe13625006419f65b87f9d85f91a79115ebafa60207d",
-      "class_hash": "0x6f7b37a339d511c3737969f05546f80e79688a00b18c5a9755bb6636e896191",
+      "class_hash": "0x5ad73e550e4739d179b5cd115526af386a70d50d9dff4b396edaa4ebd388e4d",
       "abi": [
         {
           "type": "impl",
@@ -1812,12 +1812,12 @@
         },
         {
           "type": "impl",
-          "name": "DraftContractImpl",
-          "interface_name": "darkshuffle::systems::draft::contracts::IDraftContract"
+          "name": "DraftSystemsImpl",
+          "interface_name": "darkshuffle::systems::draft::contracts::IDraftSystems"
         },
         {
           "type": "interface",
-          "name": "darkshuffle::systems::draft::contracts::IDraftContract",
+          "name": "darkshuffle::systems::draft::contracts::IDraftSystems",
           "items": [
             {
               "type": "function",
@@ -1962,7 +1962,7 @@
     },
     {
       "address": "0x6f6fc8da71f29d0a016bb96ce48a83d7d102a2cfed38a549af653e31f5ec4ee",
-      "class_hash": "0x34339ae370c032e3e165fbc7fef5fa50aca5051f7ddeb979089d7b04f784ad",
+      "class_hash": "0x6362de40a53732916efe53b6f0b329b594da1e66c849a79121af8757040627a",
       "abi": [
         {
           "type": "impl",
@@ -2016,8 +2016,8 @@
         },
         {
           "type": "impl",
-          "name": "GameContractImpl",
-          "interface_name": "darkshuffle::systems::game::contracts::IGameContract"
+          "name": "GameSystemsImpl",
+          "interface_name": "darkshuffle::systems::game::contracts::IGameSystems"
         },
         {
           "type": "enum",
@@ -2183,7 +2183,7 @@
         },
         {
           "type": "interface",
-          "name": "darkshuffle::systems::game::contracts::IGameContract",
+          "name": "darkshuffle::systems::game::contracts::IGameSystems",
           "items": [
             {
               "type": "function",
@@ -2479,7 +2479,7 @@
     },
     {
       "address": "0x278abba3b85aa84b1915cd1e98da7f381abe2b41b6554800bf12860cd159974",
-      "class_hash": "0x5602a89c2f86fa3bb0e9492939838d7204f1eee46b2e2f1c5bcae4798b91ec9",
+      "class_hash": "0x1ba5d7afee28a270d708a17436cacc27af61e5d0ae68e6aaa12d355b162a49a",
       "abi": [
         {
           "type": "impl",
@@ -2533,12 +2533,12 @@
         },
         {
           "type": "impl",
-          "name": "MapContractImpl",
-          "interface_name": "darkshuffle::systems::map::contracts::IMapContract"
+          "name": "MapSystemsImpl",
+          "interface_name": "darkshuffle::systems::map::contracts::IMapSystems"
         },
         {
           "type": "interface",
-          "name": "darkshuffle::systems::map::contracts::IMapContract",
+          "name": "darkshuffle::systems::map::contracts::IMapSystems",
           "items": [
             {
               "type": "function",
@@ -2696,7 +2696,7 @@
     },
     {
       "address": "0x1b32867557c4eb289242f63b1e1e4a257c4d0350579498149e4e3bc0be5b3c6",
-      "class_hash": "0x64b83c7f87296c8e86eb3d6909c756b27c84adc27a9019a2903ef1a9336b9e8",
+      "class_hash": "0x51a44bdf5681f264f566e938204dc21018ea840b76f19f2c1cb272293388fbf",
       "abi": [
         {
           "type": "impl",
@@ -2750,8 +2750,8 @@
         },
         {
           "type": "impl",
-          "name": "SeasonContractImpl",
-          "interface_name": "darkshuffle::systems::season::contracts::ISeasonContract"
+          "name": "SeasonSystemsImpl",
+          "interface_name": "darkshuffle::systems::season::contracts::ISeasonSystems"
         },
         {
           "type": "struct",
@@ -2769,7 +2769,7 @@
         },
         {
           "type": "interface",
-          "name": "darkshuffle::systems::season::contracts::ISeasonContract",
+          "name": "darkshuffle::systems::season::contracts::ISeasonSystems",
           "items": [
             {
               "type": "function",

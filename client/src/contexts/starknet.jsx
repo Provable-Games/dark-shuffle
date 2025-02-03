@@ -74,7 +74,7 @@ const cartridge = new ControllerConnector({
     erc20: [dojoConfig.lordsAddress]
   },
   chains: [{ rpcUrl: dojoConfig.rpcUrl }],
-  defaultChainId: StarknetChainId.SN_SEPOLIA,
+  defaultChainId: dojoConfig.chain === "mainnet" ? StarknetChainId.SN_MAIN : StarknetChainId.SN_SEPOLIA,
 })
 
 export function StarknetProvider({ children }) {
