@@ -72,6 +72,10 @@ export const DraftProvider = ({ children }) => {
         game.setGameSettings(season.settings)
       } else {
         let settings = await fetchGameSettings(gameId)
+        if (!settings) {
+          return
+        }
+
         game.setGameSettings(settings)
       }
 

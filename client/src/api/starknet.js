@@ -79,20 +79,32 @@ export const fetchGameSettings = async (game_id) => {
         params: [
           {
             contract_address: getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address,
-            entry_point_selector: "0x13237784c922d0ad2a5c12f4c37d461e65eacc9e208fe81986b1fef6cb916a",
-            calldata: [game_id],
+            entry_point_selector: "0x200edeb3a2866ed609c06da9c90fad20a0d4f3d36ecf7928a003a58188758a0",
+            calldata: [`0x${game_id.toString(16)}`],
           },
           "pending",
         ],
-        id: 0,
+        id: 1,
       }),
     });
 
     const data = await settings_response.json();
 
-    console.log('data', data)
+    if (!data.result) {
+      return null
+    }
 
-    return data
+    return {
+      settings_id: parseInt(data.result[0], 16),
+      start_health: parseInt(data.result[1], 16),
+      start_energy: parseInt(data.result[2], 16),
+      start_hand_size: parseInt(data.result[3], 16),
+      draft_size: parseInt(data.result[4], 16),
+      max_health: parseInt(data.result[5], 16),
+      max_energy: parseInt(data.result[6], 16),
+      max_hand_size: parseInt(data.result[7], 16),
+      include_spells: parseInt(data.result[8], 16),
+    }
   } catch (error) {
     console.log(error);
   }

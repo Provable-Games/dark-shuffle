@@ -128,7 +128,7 @@ export const ReplayProvider = ({ children }) => {
     if (gameValues) {
       game.setGame({ ...gameValues, replay: true })
 
-      if (gameValues.mapDepth === LAST_NODE_LEVEL && GAME_STATES[gameValues.state] === 'Map') {
+      if (!spectatingGameId && gameValues.mapDepth === LAST_NODE_LEVEL && GAME_STATES[gameValues.state] === 'Map') {
         if (appliedStep < step) {
           setStep(prev => prev + 1)
         } else {
