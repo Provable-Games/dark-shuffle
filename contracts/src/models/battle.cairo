@@ -18,7 +18,6 @@ pub struct Battle {
  
     hand: Span<u8>,
     deck: Span<u8>,
-    deck_index: u8,
 
     battle_effects: BattleEffects
 }
@@ -39,28 +38,27 @@ pub struct Board {
     creature6: Creature,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Hero {
     health: u8,
-    max_health: u8, // doesn't change right now
     energy: u8,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Monster {
     monster_id: u8,
     attack: u8,
     health: u8,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Creature {
-    card_id: u8, // how many cards in the future?
+    card_id: u8,
     attack: u8,
     health: u8,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct BattleEffects {
     enemy_marks: u8,
     hero_dmg_reduction: u8,

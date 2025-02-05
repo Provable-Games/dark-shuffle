@@ -100,10 +100,9 @@ export const fetchGameSettings = async (game_id) => {
       start_energy: parseInt(data.result[2], 16),
       start_hand_size: parseInt(data.result[3], 16),
       draft_size: parseInt(data.result[4], 16),
-      max_health: parseInt(data.result[5], 16),
-      max_energy: parseInt(data.result[6], 16),
-      max_hand_size: parseInt(data.result[7], 16),
-      include_spells: parseInt(data.result[8], 16),
+      max_energy: parseInt(data.result[5], 16),
+      max_hand_size: parseInt(data.result[6], 16),
+      include_spells: parseInt(data.result[7], 16),
     }
   } catch (error) {
     console.log(error);

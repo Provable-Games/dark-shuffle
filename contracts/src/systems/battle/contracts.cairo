@@ -146,10 +146,7 @@ mod battle_systems {
                     battle.hero.energy = battle.round;
                 }
 
-                let shuffled_deck = random::shuffle_deck(seed, battle.deck, battle.deck_index);
-
-                HandUtilsImpl::draw_cards(ref battle, shuffled_deck, 1 + game_effects.card_draw, battle.deck_index, game_settings.max_hand_size);
-                battle.deck = shuffled_deck;
+                HandUtilsImpl::draw_cards(ref battle, 1 + game_effects.card_draw, game_settings.max_hand_size, seed);
 
                 world.write_model(@battle);
                 world.write_model(@board);

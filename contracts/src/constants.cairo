@@ -18,6 +18,7 @@ mod Messages {
     const SCORE_SUBMITTED: felt252 = 'Score already submitted';
 }
 
+const U8_MAX: u8 = 255;
 const U128_MAX: u128 = 340282366920938463463374607431768211455;
 const LCG_PRIME: u128 = 281474976710656;
 

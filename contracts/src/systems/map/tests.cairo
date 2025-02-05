@@ -11,7 +11,7 @@ use darkshuffle::models::map::{Map};
 
 use darkshuffle::utils::testing::{
     world::spawn_darkshuffle, systems::{deploy_system, deploy_map_systems},
-    general::{create_game, create_draft, create_map},
+    general::{create_default_settings, mint_game_token, create_game, create_draft, create_map},
 };
 use darkshuffle::systems::map::contracts::{map_systems, IMapSystemsDispatcher, IMapSystemsDispatcherTrait};
 
@@ -19,13 +19,17 @@ fn setup() -> (WorldStorage, u128, IMapSystemsDispatcher) {
     let mut world = spawn_darkshuffle();
     let map_systems_dispatcher = deploy_map_systems(ref world);
 
-    let game_id = create_game(ref world, 1, GameState::Map);
+    let game_id = 1;
+    let settings_id = create_default_settings(ref world);
+
+    mint_game_token(ref world, game_id, settings_id);
+    create_game(ref world, game_id, GameState::Map);
 
     (world, game_id, map_systems_dispatcher)
 }
 
 #[test]
-#[available_gas(3000000000000)]
+// 84660978 gas
 fn map_test_generate_tree() {
     let (mut world, game_id, map_systems_dispatcher) = setup();
 
@@ -38,7 +42,10 @@ fn map_test_generate_tree() {
 }
 
 #[test]
-#[available_gas(3000000000000)]
+// 124925103 - start
+// 123615417 - move player_name to GameFixedData (1% reduction)
+// 117094137 - introspect packed (5% reduction)
+// 113357521 - change shuffle method (3% reduction)
 fn map_test_select_node() {
     let (mut world, game_id, map_systems_dispatcher) = setup();
 
@@ -60,4 +67,6 @@ fn map_test_select_node() {
     assert(game.state == GameState::Battle, 'Game state not set to battle');
     assert(battle.hero.health > 0, 'Hero health is not set');
     assert(battle.monster.health > 0, 'Monster health is not set');
+    assert(battle.hand.len() == 5, 'Hand size is not 5');
+    assert(battle.deck.len() == 15, 'Deck size is not 15');
 }

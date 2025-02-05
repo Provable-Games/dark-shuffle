@@ -9,7 +9,7 @@ pub struct WorldConfig {
     game_count: u256,
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct GameSettings {
     #[key]
@@ -18,7 +18,6 @@ pub struct GameSettings {
     start_energy: u8,
     start_hand_size: u8,
     draft_size: u8,
-    max_health: u8,
     max_energy: u8,
     max_hand_size: u8,
     include_spells: bool,

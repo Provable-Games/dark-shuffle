@@ -24,10 +24,17 @@ pub struct Game {
 
     action_count: u16,
     state: GameState,
+}
+
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[dojo::model]
+pub struct GameFixedData {
+    #[key]
+    game_id: u128,
     player_name: felt252,
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct GameEffects {   
     #[key]

@@ -30,7 +30,7 @@ mod game_systems {
     use starknet::{get_caller_address, get_tx_info, ContractAddress};
 
     use darkshuffle::constants::{WORLD_CONFIG_ID, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, DEFAULT_NS, LAST_NODE_DEPTH};
-    use darkshuffle::models::game::{Game, GameState, GameOwnerTrait, GameActionEvent};
+    use darkshuffle::models::game::{Game, GameState, GameOwnerTrait, GameActionEvent, GameFixedData};
     use darkshuffle::models::battle::{Card};
     use darkshuffle::models::draft::{Draft};
     use darkshuffle::models::config::{WorldConfig, GameSettings, GameSettingsTrait};
@@ -113,10 +113,14 @@ mod game_systems {
             let season_id = game_token.season_pass(game_id.into());
             let action_count = 0;
 
+            world.write_model(@GameFixedData {
+                game_id,
+                player_name: name,
+            });
+
             world.write_model(@Game {
                 game_id,
                 season_id,
-                player_name: name,
                 state: GameState::Draft,    
 
                 hero_health: game_settings.start_health,
@@ -190,6 +194,7 @@ mod game_systems {
             let world: WorldStorage = self.world(DEFAULT_NS());
 
             let game: Game = world.read_model(token_id);
+            let game_fixed_data: GameFixedData = world.read_model(game.game_id);
             let draft: Draft = world.read_model(game.game_id);
             let mut cards = array![];
 
@@ -200,7 +205,7 @@ mod game_systems {
                 i += 1;
             };
             
-            (game.player_name, game.hero_health, game.hero_xp, game.season_id, game.state.into(), cards.span())
+            (game_fixed_data.player_name, game.hero_health, game.hero_xp, game.season_id, game.state.into(), cards.span())
         }
 
         fn get_player_games(self: @ContractState, player_address: ContractAddress, limit: u256, page: u256, active: bool) -> Span<Game> {

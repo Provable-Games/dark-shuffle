@@ -382,7 +382,7 @@ export const BattleProvider = ({ children }) => {
       return;
     }
 
-    setValues(prev => ({ ...prev, heroHealth: Math.min(gameSettings.max_health, prev.heroHealth + amount) }))
+    setValues(prev => ({ ...prev, heroHealth: Math.min(255, prev.heroHealth + amount) }))
   }
 
   const damageHero = (amount) => {
@@ -453,8 +453,6 @@ export const BattleProvider = ({ children }) => {
       monsterAttack: data.battle.monster.attack,
       monsterHealth: data.battle.monster.health,
       monsterType: GET_MONSTER(data.battle.monster.monster_id).monsterType,
-
-      deckIndex: data.battle.deck_index,
     })
 
     setBattleEffects({

@@ -8,7 +8,7 @@ use darkshuffle::models::{
     battle::{m_Battle, m_Board},
     config::{m_WorldConfig, m_GameSettings},
     draft::{m_Draft},
-    game::{m_Game, m_GameEffects},
+    game::{m_Game, m_GameEffects, m_GameFixedData},
     map::{m_Map},
 };
 use darkshuffle::systems::{
@@ -30,6 +30,7 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_GameSettings::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Draft::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Game::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_GameFixedData::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_GameEffects::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Map::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(darkshuffle::models::game::e_GameActionEvent::TEST_CLASS_HASH.try_into().unwrap()),

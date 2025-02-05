@@ -8,7 +8,6 @@ trait IConfigSystems<T> {
         start_energy: u8,
         start_hand_size: u8,
         draft_size: u8,
-        max_health: u8,
         max_energy: u8,
         max_hand_size: u8,
         include_spells: bool,
@@ -81,7 +80,6 @@ mod config_systems {
             start_energy: u8,
             start_hand_size: u8,
             draft_size: u8,
-            max_health: u8,
             max_energy: u8,
             max_hand_size: u8,
             include_spells: bool,
@@ -89,7 +87,6 @@ mod config_systems {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
             
             assert(start_health > 0, 'Invalid start health');
-            assert(max_health > 0, 'Invalid max health');
             assert(draft_size > 0, 'Invalid draft size');
             assert(max_energy > 0, 'Invalid max energy');
             assert(max_hand_size > 0, 'Invalid max hand size');
@@ -100,7 +97,6 @@ mod config_systems {
                 start_energy,
                 start_hand_size,
                 draft_size,
-                max_health,
                 max_energy,
                 max_hand_size,
                 include_spells,

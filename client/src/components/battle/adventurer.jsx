@@ -104,7 +104,6 @@ export default function Adventurer(props) {
 
               <Typography color="primary" variant='h6'>Health</Typography>
             </Box>
-            <Typography mt={0.5}>You can't have more than {gameSettings.max_health} health.</Typography>
             <Typography mt={0.5}>If your health reaches 0, the game ends.</Typography>
           </Box>
         }>

@@ -1,6 +1,7 @@
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::models::battle::{Battle, BoardStats, Creature, Card, CardType, CreatureType, RoundStats};
 use darkshuffle::utils::cards::CardUtilsImpl;
+use darkshuffle::constants::U8_MAX;
 
 #[generate_trait]
 impl BattleUtilsImpl of BattleUtilsTrait {
@@ -32,8 +33,8 @@ impl BattleUtilsImpl of BattleUtilsTrait {
     }
 
     fn heal_hero(ref battle: Battle, amount: u8) {
-        if battle.hero.health + amount >= battle.hero.max_health {
-            battle.hero.health = battle.hero.max_health;
+        if battle.hero.health + amount >= U8_MAX {
+            battle.hero.health = U8_MAX;
         } else {
             battle.hero.health += amount;
         }

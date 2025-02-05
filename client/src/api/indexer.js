@@ -36,7 +36,6 @@ export async function getSettings(settings_id) {
           start_energy,
           start_hand_size,
           draft_size,
-          max_health,
           max_energy,
           max_hand_size,
         }
@@ -161,7 +160,6 @@ export async function getBattleState(battle_id, game_id) {
 
           hero {
             health
-            max_health
             energy
           }
 
@@ -173,8 +171,7 @@ export async function getBattleState(battle_id, game_id) {
 
           hand
           deck
-          deck_index
-
+          
           battle_effects { 
             enemy_marks
             hero_dmg_reduction

@@ -117,18 +117,14 @@ impl MapUtilsImpl of MapUtilsTrait {
         let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game.game_id);
 
         game.state = GameState::Battle;
-
-        let shuffled_deck = random::shuffle_deck(seed, draft.cards, 0);
-        let hand = HandUtilsImpl::get_starting_hand(shuffled_deck, game_settings.start_hand_size);
             
-        world.write_model(@Battle {
+        let mut battle = Battle {
             battle_id: game.monsters_slain + 1,
             game_id: game.game_id,
 
             round: 1,
             hero: Hero {
                 health: game.hero_health,
-                max_health: game_settings.max_health,
                 energy: game_settings.start_energy + game_effects.start_bonus_energy,
             },
             
@@ -138,9 +134,8 @@ impl MapUtilsImpl of MapUtilsTrait {
                 health: monster.health,
             },
 
-            hand: hand,
-            deck: shuffled_deck,
-            deck_index: game_settings.start_hand_size,
+            hand: array![].span(),
+            deck: draft.cards,
 
             battle_effects: BattleEffects {
                 enemy_marks: 0,
@@ -150,6 +145,9 @@ impl MapUtilsImpl of MapUtilsTrait {
                 next_brute_attack_bonus: 0,
                 next_brute_health_bonus: 0,
             }
-        });
+        };
+
+        HandUtilsImpl::draw_cards(ref battle, game_settings.start_hand_size, game_settings.max_hand_size, seed);
+        world.write_model(@battle);
     }
 }
