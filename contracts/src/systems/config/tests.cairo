@@ -24,7 +24,7 @@ const START_HAND_SIZE: u8 = 1;
 const MAX_ENERGY: u8 = 15;
 const MAX_HAND_SIZE: u8 = 2;
 
-fn setup() -> (WorldStorage, u128) {
+fn setup() -> (WorldStorage, u64) {
     let mut world = spawn_darkshuffle();
 
     let draft_size = 5;

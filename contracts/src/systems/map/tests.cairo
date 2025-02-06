@@ -15,7 +15,7 @@ use darkshuffle::utils::testing::{
 };
 use darkshuffle::systems::map::contracts::{map_systems, IMapSystemsDispatcher, IMapSystemsDispatcherTrait};
 
-fn setup() -> (WorldStorage, u128, IMapSystemsDispatcher) {
+fn setup() -> (WorldStorage, u64, IMapSystemsDispatcher) {
     let mut world = spawn_darkshuffle();
     let map_systems_dispatcher = deploy_map_systems(ref world);
 

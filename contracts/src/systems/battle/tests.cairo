@@ -16,7 +16,7 @@ use darkshuffle::utils::testing::{
 use darkshuffle::utils::cards::CardUtilsImpl;
 use darkshuffle::systems::battle::contracts::{battle_systems, IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait};
 
-fn setup() -> (WorldStorage, u128, IBattleSystemsDispatcher) {
+fn setup() -> (WorldStorage, u64, IBattleSystemsDispatcher) {
     let mut world = spawn_darkshuffle();
     let battle_systems_dispatcher = deploy_battle_systems(ref world);
 
