@@ -10,7 +10,7 @@ pub struct Battle {
     #[key]
     battle_id: u16,
     #[key]
-    game_id: u128,
+    game_id: u64,
 
     round: u8,
     hero: Hero,
@@ -28,7 +28,7 @@ pub struct Board {
     #[key]
     battle_id: u16,
     #[key]
-    game_id: u128,
+    game_id: u64,
 
     creature1: Creature,
     creature2: Creature,
@@ -46,7 +46,7 @@ pub struct Hero {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Monster {
-    monster_id: u8,
+    monster_id: u8, // TODO: could be moved to fixed model
     attack: u8,
     health: u8,
 }

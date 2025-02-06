@@ -13,7 +13,7 @@ use starknet::{get_caller_address, contract_address_const};
 use darkshuffle::utils::testing::systems::{deploy_game_token_mock};
 use darkshuffle::utils::testing::mock::gameTokenMock::{IGameTokenMockDispatcher, IGameTokenMockDispatcherTrait};
 
-fn mint_game_token(ref world: WorldStorage, game_id: u128, settings_id: u32) {
+fn mint_game_token(ref world: WorldStorage, game_id: u64, settings_id: u32) {
     let game_token_address = deploy_game_token_mock(ref world);
 
     world.write_model_test(@WorldConfig {
@@ -26,7 +26,7 @@ fn mint_game_token(ref world: WorldStorage, game_id: u128, settings_id: u32) {
     game_token.mint(contract_address_const::<'player1'>(), game_id.into(), settings_id);
 }
 
-fn create_game(ref world: WorldStorage, game_id: u128, state: GameState) {
+fn create_game(ref world: WorldStorage, game_id: u64, state: GameState) {
     world.write_model_test(@Game {
         game_id,
         season_id: 1,
@@ -44,7 +44,7 @@ fn create_game(ref world: WorldStorage, game_id: u128, state: GameState) {
     });
 }
 
-fn create_draft(ref world: WorldStorage, game_id: u128, options: Span<u8>, cards: Span<u8>) {
+fn create_draft(ref world: WorldStorage, game_id: u64, options: Span<u8>, cards: Span<u8>) {
     world.write_model_test(@Draft {
         game_id,
         options,
@@ -52,7 +52,7 @@ fn create_draft(ref world: WorldStorage, game_id: u128, options: Span<u8>, cards
     });
 }
 
-fn create_map(ref world: WorldStorage, game_id: u128, level: u8, seed: u128) {
+fn create_map(ref world: WorldStorage, game_id: u64, level: u8, seed: u128) {
     world.write_model_test(@Map {
         game_id,
         level,
@@ -105,7 +105,7 @@ fn create_custom_settings(
 
 fn create_battle(
     ref world: WorldStorage,
-    game_id: u128,
+    game_id: u64,
     round: u8,
     hero_health: u8,
     hero_energy: u8,

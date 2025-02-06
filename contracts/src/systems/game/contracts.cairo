@@ -5,14 +5,14 @@ use starknet::ContractAddress;
 #[starknet::interface]
 trait IGameSystems<T> {
     fn mint(ref self: T, settings_id: u32);
-    fn enter_season(ref self: T, game_id: u128, season_id: u32);
-    fn start_game(ref self: T, game_id: u128, name: felt252);
-    fn abandon_game(ref self: T, game_id: u128);
+    fn enter_season(ref self: T, game_id: u64, season_id: u32);
+    fn start_game(ref self: T, game_id: u64, name: felt252);
+    fn abandon_game(ref self: T, game_id: u64);
 
-    fn score(self: @T, game_id: u128) -> u16;
+    fn score(self: @T, game_id: u64) -> u16;
     fn get_settings(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
-    fn get_game_settings(self: @T, game_id: u128) -> GameSettings;
+    fn get_game_settings(self: @T, game_id: u64) -> GameSettings;
     fn get_game_data(self: @T, token_id: u128) -> (felt252, u8, u16, u32, u8, Span<felt252>);
     fn get_player_games(self: @T, player_address: ContractAddress, limit: u256, page: u256, active: bool) -> Span<Game>;
 }
@@ -60,7 +60,7 @@ mod game_systems {
             game_token.mint(get_caller_address(), world_config.game_count.into(), settings_id);
         }
 
-        fn enter_season(ref self: ContractState, game_id: u128, season_id: u32) {
+        fn enter_season(ref self: ContractState, game_id: u64, season_id: u32) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
             let mut season: Season = world.read_model(season_id);
@@ -100,7 +100,7 @@ mod game_systems {
             store.progress(player_id, task_id, count: 1, time: time);
         }
 
-        fn start_game(ref self: ContractState, game_id: u128, name: felt252) {
+        fn start_game(ref self: ContractState, game_id: u64, name: felt252) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
             let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
@@ -143,7 +143,7 @@ mod game_systems {
             world.emit_event(@GameActionEvent {game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count});
         }
 
-        fn abandon_game(ref self: ContractState, game_id: u128) {
+        fn abandon_game(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
             let mut game: Game = world.read_model(game_id);
@@ -162,7 +162,7 @@ mod game_systems {
             world.emit_event(@GameActionEvent {game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count});
         }
 
-        fn score(self: @ContractState, game_id: u128) -> u16 {
+        fn score(self: @ContractState, game_id: u64) -> u16 {
             let world: WorldStorage = self.world(DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.hero_xp
@@ -180,7 +180,7 @@ mod game_systems {
             settings.exists()
         }
 
-        fn get_game_settings(self: @ContractState, game_id: u128) -> GameSettings {
+        fn get_game_settings(self: @ContractState, game_id: u64) -> GameSettings {
             let world: WorldStorage = self.world(DEFAULT_NS());
 
             let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);

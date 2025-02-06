@@ -1,6 +1,6 @@
 #[starknet::interface]
 trait IDraftSystems<T> {
-    fn pick_card(ref self: T, game_id: u128, option_id: u8);
+    fn pick_card(ref self: T, game_id: u64, option_id: u8);
 }
 
 #[dojo::contract]
@@ -22,7 +22,7 @@ mod draft_systems {
 
     #[abi(embed_v0)]
     impl DraftSystemsImpl of super::IDraftSystems<ContractState> {
-        fn pick_card(ref self: ContractState, game_id: u128, option_id: u8) {
+        fn pick_card(ref self: ContractState, game_id: u64, option_id: u8) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
             let mut game: Game = world.read_model(game_id);

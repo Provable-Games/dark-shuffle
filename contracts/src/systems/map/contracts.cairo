@@ -1,7 +1,7 @@
 #[starknet::interface]
 trait IMapSystems<T> {
-    fn generate_tree(ref self: T, game_id: u128);
-    fn select_node(ref self: T, game_id: u128, node_id: u8);
+    fn generate_tree(ref self: T, game_id: u64);
+    fn select_node(ref self: T, game_id: u64, node_id: u8);
 }
 
 #[dojo::contract]
@@ -23,7 +23,7 @@ mod map_systems {
 
     #[abi(embed_v0)]
     impl MapSystemsImpl of super::IMapSystems<ContractState> {
-        fn generate_tree(ref self: ContractState, game_id: u128) {
+        fn generate_tree(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
             let mut game: Game = world.read_model(game_id);
@@ -57,7 +57,7 @@ mod map_systems {
             }
         }
 
-        fn select_node(ref self: ContractState, game_id: u128, node_id: u8) {
+        fn select_node(ref self: ContractState, game_id: u64, node_id: u8) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
             let mut game: Game = world.read_model(game_id);

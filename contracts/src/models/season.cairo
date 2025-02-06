@@ -21,7 +21,7 @@ pub struct Leaderboard {
     season_id: u32,
     #[key]
     rank: u8,
-    game_id: u128,
+    game_id: u64,
     score: u16,
 }
 

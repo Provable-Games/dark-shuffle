@@ -1,6 +1,6 @@
 #[starknet::interface]
 trait IBattleSystems<T> {
-    fn battle_actions(ref self: T, game_id: u128, battle_id: u16, actions: Span<Span<u8>>);
+    fn battle_actions(ref self: T, game_id: u64, battle_id: u16, actions: Span<Span<u8>>);
 }
 
 #[dojo::contract]
@@ -33,7 +33,7 @@ mod battle_systems {
 
     #[abi(embed_v0)]
     impl BattleSystemsImpl of super::IBattleSystems<ContractState> {
-        fn battle_actions(ref self: ContractState, game_id: u128, battle_id: u16, actions: Span<Span<u8>>) {
+        fn battle_actions(ref self: ContractState, game_id: u64, battle_id: u16, actions: Span<Span<u8>>) {
             assert(*(*actions.at(actions.len() - 1)).at(0) == 1, 'Must end turn');
 
             let mut world: WorldStorage = self.world(DEFAULT_NS());

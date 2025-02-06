@@ -1,0 +1,57 @@
+name: test-contracts
+
+env:
+  SCARB_VERSION: 2.8.4
+  DOJO_VERSION: 1.0.5
+
+on:
+  pull_request:
+    paths-ignore:
+      - "client/**"
+      - "**/manifest.json"
+      - ".github/**"
+      - "pnpm-lock.yaml"
+  push:
+    branches:
+      - v1.1
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  setup-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl
+
+  sozo-test:
+    needs: [setup-environment]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Dojo release artifact
+        run: |
+          curl -L -o dojo-linux-x86_64.tar.gz https://github.com/dojoengine/dojo/releases/download/v${{ env.DOJO_VERSION }}/dojo_v${{ env.DOJO_VERSION }}_linux_amd64.tar.gz
+          tar -xzf dojo-linux-x86_64.tar.gz
+          sudo mv sozo /usr/local/bin/
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Run Dojo Build
+        run: |
+          cd contracts && sozo build
+      - name: Run Tests
+        run: |
+          cd contracts && sozo test --print-resource-usage
+
+  scarb-fmt:
+    needs: [setup-environment]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: ${{ env.SCARB_VERSION }}
+      - run: cd contracts && scarb fmt --check

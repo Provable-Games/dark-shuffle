@@ -11,7 +11,7 @@ use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721Dispatche
 #[dojo::model]
 pub struct Game {
     #[key]
-    game_id: u128,
+    game_id: u64,
     season_id: u32,
 
     hero_health: u8,
@@ -30,7 +30,7 @@ pub struct Game {
 #[dojo::model]
 pub struct GameFixedData {
     #[key]
-    game_id: u128,
+    game_id: u64,
     player_name: felt252,
 }
 
@@ -38,7 +38,7 @@ pub struct GameFixedData {
 #[dojo::model]
 pub struct GameEffects {   
     #[key]
-    game_id: u128,
+    game_id: u64,
     first_attack: u8,
     first_health: u8,
     first_creature_cost: u8,
@@ -106,6 +106,6 @@ impl GameOwnerImpl of GameOwnerTrait {
 pub struct GameActionEvent {
     #[key]
     tx_hash: felt252,
-    game_id: u128,
+    game_id: u64,
     count: u16
 }
