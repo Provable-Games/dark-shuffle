@@ -34,7 +34,7 @@ pub struct Donation {
     address: ContractAddress,
     name: felt252,
     social: felt252,
-    amount: u256
+    amount: u256,
 }
 
 #[generate_trait]

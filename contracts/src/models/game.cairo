@@ -50,7 +50,7 @@ pub struct GameEffects {
     hero_card_heal: bool,
     card_draw: u8,
     play_creature_heal: u8,
-    start_bonus_energy: u8
+    start_bonus_energy: u8,
 }
 
 #[derive(PartialEq, Introspect, Copy, Drop, Serde)]
@@ -104,5 +104,5 @@ pub struct GameActionEvent {
     #[key]
     tx_hash: felt252,
     game_id: u64,
-    count: u16
+    count: u16,
 }

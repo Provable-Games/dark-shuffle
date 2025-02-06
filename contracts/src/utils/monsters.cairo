@@ -1,6 +1,6 @@
-use darkshuffle::models::battle::{Battle, BattleEffects, RoundStats, BoardStats, Board};
+use darkshuffle::models::battle::{Battle, BattleEffects, Board, BoardStats, RoundStats};
 use darkshuffle::models::game::GameEffects;
-use darkshuffle::utils::{battle::BattleUtilsImpl, hand::HandUtilsImpl, board::BoardUtilsImpl, random};
+use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, hand::HandUtilsImpl, random};
 
 #[generate_trait]
 impl MonsterUtilsImpl of MonsterUtilsTrait {
@@ -10,7 +10,7 @@ impl MonsterUtilsImpl of MonsterUtilsTrait {
         board: Board,
         board_stats: BoardStats,
         round_stats: RoundStats,
-        seed: u128
+        seed: u128,
     ) {
         if battle.monster.monster_id == 1 {
             if battle.hand.len() > 0 {

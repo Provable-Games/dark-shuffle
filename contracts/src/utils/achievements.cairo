@@ -6,7 +6,7 @@ use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use starknet::{get_caller_address, get_block_timestamp};
+use starknet::{get_block_timestamp, get_caller_address};
 
 #[generate_trait]
 impl AchievementsUtilsImpl of AchievementsUtilsTrait {

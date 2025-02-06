@@ -1,17 +1,17 @@
-use darkshuffle::models::battle::{Battle, Card, Board, Creature};
+use darkshuffle::models::battle::{Battle, Board, Card, Creature};
 use darkshuffle::models::draft::{Draft};
-use darkshuffle::models::game::{Game, GameState, GameFixedData, GameOwnerTrait};
-use darkshuffle::systems::battle::contracts::{battle_systems, IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait};
+use darkshuffle::models::game::{Game, GameFixedData, GameOwnerTrait, GameState};
+use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
 use darkshuffle::utils::cards::CardUtilsImpl;
 
 use darkshuffle::utils::testing::{
-    world::spawn_darkshuffle, systems::{deploy_system, deploy_battle_systems},
-    general::{create_default_settings, mint_game_token, create_game, create_battle},
+    general::{create_battle, create_default_settings, create_game, mint_game_token},
+    systems::{deploy_battle_systems, deploy_system}, world::spawn_darkshuffle,
 };
-use dojo::model::{ModelStorage, ModelValueStorage, ModelStorageTest};
+use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
-use dojo_cairo_test::{NamespaceDef, TestResource, ContractDefTrait};
+use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
 
 use starknet::{ContractAddress, contract_address_const};
 
@@ -45,7 +45,7 @@ fn battle_test_end_turn() {
         monster_attack,
         10,
         array![1, 2, 3].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
     battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
@@ -73,7 +73,7 @@ fn battle_test_summon_creature() {
         0,
         100,
         array![card.card_id].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
     battle_systems_dispatcher
@@ -100,11 +100,11 @@ fn battle_test_attack_enemy() {
         3,
         100,
         array![].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
     let mut board: Board = world.read_model((battle_id, game_id));
-    board.creature1 = Creature { card_id: 255, attack: 1, health: 1, };
+    board.creature1 = Creature { card_id: 255, attack: 1, health: 1 };
     world.write_model_test(@board);
 
     battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());

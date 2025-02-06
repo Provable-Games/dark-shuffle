@@ -9,9 +9,9 @@ trait ISeasonSystems<T> {
 mod season_systems {
     use achievement::store::{Store, StoreTrait};
 
-    use darkshuffle::constants::{PRIZES, DEFAULT_NS, WORLD_CONFIG_ID};
-    use darkshuffle::models::config::{GameSettings, WorldConfig, GameSettingsTrait};
-    use darkshuffle::models::season::{Season, SeasonOwnerTrait, Leaderboard, Donation};
+    use darkshuffle::constants::{DEFAULT_NS, PRIZES, WORLD_CONFIG_ID};
+    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
+    use darkshuffle::models::season::{Donation, Leaderboard, Season, SeasonOwnerTrait};
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
     use darkshuffle::utils::{season::SeasonUtilsImpl};
     use dojo::model::ModelStorage;
@@ -20,7 +20,7 @@ mod season_systems {
 
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
-    use starknet::{get_caller_address, get_tx_info, get_contract_address};
+    use starknet::{get_caller_address, get_contract_address, get_tx_info};
 
     #[abi(embed_v0)]
     impl SeasonSystemsImpl of super::ISeasonSystems<ContractState> {
@@ -41,7 +41,7 @@ mod season_systems {
                         entry_amount,
                         reward_pool: 0,
                         finalized: false,
-                    }
+                    },
                 );
         }
 
@@ -57,7 +57,7 @@ mod season_systems {
             // Distribute prizes
             let chain_id = get_tx_info().unbox().chain_id;
             let payment_dispatcher = IERC20Dispatcher {
-                contract_address: SeasonUtilsImpl::get_lords_address(chain_id)
+                contract_address: SeasonUtilsImpl::get_lords_address(chain_id),
             };
             payment_dispatcher.approve(season.season_address, season.reward_pool);
 
@@ -100,7 +100,7 @@ mod season_systems {
             let address = get_caller_address();
 
             let payment_dispatcher = IERC20Dispatcher {
-                contract_address: SeasonUtilsImpl::get_lords_address(chain_id)
+                contract_address: SeasonUtilsImpl::get_lords_address(chain_id),
             };
             let amount_with_decimals: u256 = amount.into() * 1000000000000000000;
             payment_dispatcher.transfer_from(get_caller_address(), season.season_address, amount_with_decimals);

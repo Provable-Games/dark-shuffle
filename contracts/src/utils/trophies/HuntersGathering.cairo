@@ -1,4 +1,4 @@
-use darkshuffle::utils::trophies::interface::{TrophyTrait, BushidoTask, Task, TaskTrait};
+use darkshuffle::utils::trophies::interface::{BushidoTask, Task, TaskTrait, TrophyTrait};
 
 impl HuntersGathering of TrophyTrait {
     #[inline]

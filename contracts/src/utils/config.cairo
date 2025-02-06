@@ -1,6 +1,6 @@
 use darkshuffle::constants::{WORLD_CONFIG_ID};
 use darkshuffle::interface::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
-use darkshuffle::models::config::{WorldConfig, GameSettings};
+use darkshuffle::models::config::{GameSettings, WorldConfig};
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};

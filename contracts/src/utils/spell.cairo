@@ -1,10 +1,10 @@
-use darkshuffle::models::battle::{Battle, BattleEffects, Creature, Card, Board, BoardStats, CreatureType, RoundStats};
+use darkshuffle::models::battle::{Battle, BattleEffects, Board, BoardStats, Card, Creature, CreatureType, RoundStats};
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, cards::CardUtilsImpl};
 
 #[generate_trait]
 impl SpellUtilsImpl of SpellUtilsTrait {
-    fn cast_spell(card: Card, ref battle: Battle, ref board: Board, ref board_stats: BoardStats,) {
+    fn cast_spell(card: Card, ref battle: Battle, ref board: Board, ref board_stats: BoardStats) {
         if card.card_id == 76 {
             BattleUtilsImpl::increase_hero_energy(ref battle, 3);
         } else if card.card_id == 77 {

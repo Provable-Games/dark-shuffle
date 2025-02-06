@@ -1,16 +1,16 @@
 use darkshuffle::models::battle::{Battle};
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::models::map::{Map};
-use darkshuffle::systems::map::contracts::{map_systems, IMapSystemsDispatcher, IMapSystemsDispatcherTrait};
+use darkshuffle::systems::map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems};
 
 use darkshuffle::utils::testing::{
-    world::spawn_darkshuffle, systems::{deploy_system, deploy_map_systems},
-    general::{create_default_settings, mint_game_token, create_game, create_draft, create_map},
+    general::{create_default_settings, create_draft, create_game, create_map, mint_game_token},
+    systems::{deploy_map_systems, deploy_system}, world::spawn_darkshuffle,
 };
-use dojo::model::{ModelStorage, ModelValueStorage, ModelStorageTest};
+use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
-use dojo_cairo_test::{NamespaceDef, TestResource, ContractDefTrait};
+use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
 
 use starknet::{ContractAddress, contract_address_const};
 
@@ -53,7 +53,7 @@ fn map_test_select_node() {
         ref world,
         game_id,
         array![].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
     let node_id = 1;

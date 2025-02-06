@@ -1,4 +1,4 @@
-use darkshuffle::models::battle::{Card, CardType, CreatureType, CardTier};
+use darkshuffle::models::battle::{Card, CardTier, CardType, CreatureType};
 
 #[generate_trait]
 impl CardUtilsImpl of CardUtilsTrait {

@@ -20,9 +20,9 @@ trait IConfigSystems<T> {
 #[dojo::contract]
 mod config_systems {
     use achievement::components::achievable::AchievableComponent;
-    use darkshuffle::constants::{DEFAULT_NS, WORLD_CONFIG_ID};
-    use darkshuffle::models::config::{GameSettings, WorldConfig};
-    use darkshuffle::utils::trophies::index::{Trophy, TrophyTrait, TROPHY_COUNT};
+    use darkshuffle::constants::{DEFAULT_NS, VERSION, WORLD_CONFIG_ID};
+    use darkshuffle::models::config::{GameSettings, SettingsCount, WorldConfig};
+    use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -70,7 +70,22 @@ mod config_systems {
                 );
 
             trophy_id -= 1;
-        }
+        };
+
+        // Add genesis settings
+        world
+            .write_model(
+                @GameSettings {
+                    settings_id: 0,
+                    start_health: 100,
+                    start_energy: 1,
+                    start_hand_size: 1,
+                    draft_size: 20,
+                    max_energy: 6,
+                    max_hand_size: 10,
+                    include_spells: false,
+                },
+            );
     }
 
     #[abi(embed_v0)]
@@ -92,10 +107,15 @@ mod config_systems {
             assert(max_energy > 0, 'Invalid max energy');
             assert(max_hand_size > 0, 'Invalid max hand size');
 
+            // increment settings counter
+            let mut settings_count: SettingsCount = world.read_model(VERSION);
+            settings_count.count += 1;
+            world.write_model(@settings_count);
+
             world
                 .write_model(
                     @GameSettings {
-                        settings_id: world.dispatcher.uuid() + 1,
+                        settings_id: settings_count.count,
                         start_health,
                         start_energy,
                         start_hand_size,
@@ -103,7 +123,7 @@ mod config_systems {
                         max_energy,
                         max_hand_size,
                         include_spells,
-                    }
+                    },
                 );
         }
 
@@ -111,7 +131,7 @@ mod config_systems {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
             assert(
                 world.dispatcher.is_owner(selector_from_tag!("darkshuffle_s1-game_systems"), get_caller_address()),
-                'Not Owner'
+                'Not Owner',
             );
 
             let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
