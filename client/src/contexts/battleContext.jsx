@@ -13,6 +13,7 @@ import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
 import { delay } from "../helpers/utilities";
 import { getBattleState } from "../api/indexer";
+import { spellEffect } from "../battle/spellUtils";
 
 export const BattleContext = createContext()
 
@@ -115,6 +116,10 @@ export const BattleProvider = ({ children }) => {
   }
 
   const submitBattleActions = async () => {
+    if (game.values.replay) {
+      return
+    }
+
     setPendingTx(true)
 
     const res = await dojo.executeTx([{ contractName: "battle_systems", entrypoint: "battle_actions", calldata: [game.values.gameId, values.battleId, [...actions, [1]]] }], true)
@@ -204,6 +209,24 @@ export const BattleProvider = ({ children }) => {
     setBoard(prev => [...prev, { ...creature, id: (prev[prev.length - 1]?.id || 0) + 1 }])
     setHand(prev => prev.filter(card => card.id !== creature.id))
     setActions(prev => [...prev, [0, creature.cardId]])
+  }
+
+  const castSpell = (spell) => {
+    let cost = spell.cost;
+
+    if (cost > values.heroEnergy) {
+      return enqueueSnackbar('Not enough energy', { variant: 'warning' })
+    }
+
+    setValues(prev => ({ ...prev, heroEnergy: prev.heroEnergy - cost }))
+
+    spellEffect({
+      spell, values, board, healHero, updateBoard, reduceMonsterAttack,
+      increaseEnergy, damageMonster, battleEffects, setBattleEffects
+    })
+
+    setHand(prev => prev.filter(card => card.id !== spell.id))
+    setActions(prev => [...prev, [0, spell.cardId]])
   }
 
   const startNewTurn = () => {
@@ -359,7 +382,7 @@ export const BattleProvider = ({ children }) => {
       return;
     }
 
-    setValues(prev => ({ ...prev, heroHealth: Math.min(gameSettings.max_health, prev.heroHealth + amount) }))
+    setValues(prev => ({ ...prev, heroHealth: Math.min(255, prev.heroHealth + amount) }))
   }
 
   const damageHero = (amount) => {
@@ -377,7 +400,7 @@ export const BattleProvider = ({ children }) => {
     let cost = card.cost
 
     if (roundStats.creaturesPlayed < 1) {
-      cost -= gameEffects.firstCost ?? 0;
+      cost -= gameEffects.firstCreatureCost ?? 0;
     }
 
     return cost
@@ -430,8 +453,6 @@ export const BattleProvider = ({ children }) => {
       monsterAttack: data.battle.monster.attack,
       monsterHealth: data.battle.monster.health,
       monsterType: GET_MONSTER(data.battle.monster.monster_id).monsterType,
-
-      deckIndex: data.battle.deck_index,
     })
 
     setBattleEffects({
@@ -466,6 +487,7 @@ export const BattleProvider = ({ children }) => {
         actions: {
           startBattle,
           summonCreature,
+          castSpell,
           endTurn,
         },
 

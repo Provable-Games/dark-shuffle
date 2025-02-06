@@ -17,6 +17,9 @@ importers:
       '@dojoengine/core':
         specifier: ^1.0.0
         version: 1.0.0(starknet@6.11.0(encoding@0.1.13))(typescript@5.6.2)
+      '@dojoengine/torii-client':
+        specifier: ^1.0.11
+        version: 1.0.11
       '@dojoengine/utils':
         specifier: ^1.0.0
         version: 1.0.0(starknet@6.11.0(encoding@0.1.13))(typescript@5.6.2)(zod@3.23.8)
@@ -496,6 +499,12 @@ packages:
 
   '@dojoengine/recs@2.0.13':
     resolution: {integrity: sha512-Cgz4Unlnk2FSDoFTYKrJexX/KiSYPMFMxftxQkC+9LUKS5yNGkgFQM7xu4/L1HvpDAenL7NjUmH6ynRAS7Iifw==}
+
+  '@dojoengine/torii-client@1.0.11':
+    resolution: {integrity: sha512-s15fd6cRiT2eACiyYwbnDYyD7F3J+L6E+Sc1HGLTDHVoHyOP8u1OSaTlr3odZHd0NIYuYiHVEfv/ZkY1046R2w==}
+
+  '@dojoengine/torii-wasm@1.0.11':
+    resolution: {integrity: sha512-xKpMo7fWQjTHFWSTNQdNqH0bVsgVrT1P8nM+euGTktOULGoIrg/cUS+822EDzxA33fdBmA8kY44xft9SUM5KGg==}
 
   '@dojoengine/utils@1.0.0':
     resolution: {integrity: sha512-Muy1ozthnLpC2P4Nc0dGY1DqlLxRewTu9wQ2/9pf5bHl5IeGNRgG/OIav7fqn8vrVnqEtEKHJuOQrT1hIgPWNQ==}
@@ -3963,6 +3972,12 @@ snapshots:
       - typescript
       - utf-8-validate
       - zod
+
+  '@dojoengine/torii-client@1.0.11':
+    dependencies:
+      '@dojoengine/torii-wasm': 1.0.11
+
+  '@dojoengine/torii-wasm@1.0.11': {}
 
   '@dojoengine/utils@1.0.0(starknet@6.11.0(encoding@0.1.13))(typescript@5.6.2)(zod@3.23.8)':
     dependencies:

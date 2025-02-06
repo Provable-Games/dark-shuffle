@@ -1472,7 +1472,7 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle_s0-battle_systems",
+      "tag": "darkshuffle_s1-battle_systems",
       "selector": "0x36ec7b287e52c8113be388f562d5de5f001d5b072f31dbb9ec54b47e459dba",
       "systems": [
         "battle_actions",
@@ -1730,7 +1730,7 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle_s0-config_systems",
+      "tag": "darkshuffle_s1-config_systems",
       "selector": "0x7b252dba28ce7976adf52a353f0e7224eecbc2387dfc5ad61039378be025236",
       "systems": [
         "create_game_settings",
@@ -1935,7 +1935,7 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle_s0-draft_systems",
+      "tag": "darkshuffle_s1-draft_systems",
       "selector": "0x40005899756073e33299c53398902f22e35bf490e3d31f9cb6f40684ed8a540",
       "systems": [
         "pick_card",
@@ -2425,7 +2425,7 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle_s0-game_systems",
+      "tag": "darkshuffle_s1-game_systems",
       "selector": "0x1a77b9e09c653e0a73161661bb5347687e4458f8084f4fe6ed897d4b0881dea",
       "systems": [
         "mint",
@@ -2644,7 +2644,7 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle_s0-map_systems",
+      "tag": "darkshuffle_s1-map_systems",
       "selector": "0x2c137e0c6ddd00449f492e07b4588b812669ec70d84835a0256f6796feae24c",
       "systems": [
         "generate_tree",
@@ -2907,7 +2907,7 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle_s0-season_systems",
+      "tag": "darkshuffle_s1-season_systems",
       "selector": "0x464b0fd10a93213489ba77a7c658fe3e014fac9c6209a5e70ab36498de032e9",
       "systems": [
         "start_season",
@@ -2921,67 +2921,67 @@
     {
       "members": [],
       "class_hash": "0x8f75686dd35cef67800f2ad857be327719dbb9d035a0f3e34da4f02a0be592",
-      "tag": "darkshuffle_s0-Battle",
+      "tag": "darkshuffle_s1-Battle",
       "selector": "0x10cb45beda7269a244b32796909d9a706a2d77b02cd11beb5a2b1213fdd8b52"
     },
     {
       "members": [],
       "class_hash": "0x657074738ef37b1593f3cdc4ec1ec5f02b9c8a81097e4513bb674d745a211f1",
-      "tag": "darkshuffle_s0-Board",
+      "tag": "darkshuffle_s1-Board",
       "selector": "0x6947dbbdea156abd55ef96d5e0bf481b252e962ccf2e865f34813ffea244c2"
     },
     {
       "members": [],
       "class_hash": "0x7aea14df7168edcc7b30bc18df761ec642b32602529cc3b0d23c2f14570421f",
-      "tag": "darkshuffle_s0-Donation",
+      "tag": "darkshuffle_s1-Donation",
       "selector": "0x6c2e05aa49e15fb476ee4380ea9de2310547548aed8c6c0aa5fa4a1c2ef4ee2"
     },
     {
       "members": [],
       "class_hash": "0x399dfb33472fd39e36b2f7b60eb7cb199b969d8f1f7e3b4365b162aace8e207",
-      "tag": "darkshuffle_s0-Draft",
+      "tag": "darkshuffle_s1-Draft",
       "selector": "0x770912d6a6bffb95b582d75847f838ca4310a78275b8826154e739cd34add31"
     },
     {
       "members": [],
       "class_hash": "0x1cca2f66524922db9c09fd523202d4ad1321812d732e1b0a7fccf5a840d08e3",
-      "tag": "darkshuffle_s0-Game",
+      "tag": "darkshuffle_s1-Game",
       "selector": "0x3ab7bb3976da62ba9aa828bb64fb1f0fe2f7009c40aa54a504c07e9f49b9636"
     },
     {
       "members": [],
       "class_hash": "0xe476a96bd592cb28389eae29b9a75c5a4ba6c7d2d782a571673c53d9149429",
-      "tag": "darkshuffle_s0-GameEffects",
+      "tag": "darkshuffle_s1-GameEffects",
       "selector": "0x2f2be3d266e214c64d48769d90ea982070b29f270f48f4bd25d1997ce16562e"
     },
     {
       "members": [],
       "class_hash": "0x240e2fbb4909e3c5ad871504734f22e14a051bd40bce9fcf8cd888f0488a68c",
-      "tag": "darkshuffle_s0-GameSettings",
+      "tag": "darkshuffle_s1-GameSettings",
       "selector": "0x1876f1040b33843987ee0bcc1275d20fa8efc01ff5e55d5ed0c4a142f08360"
     },
     {
       "members": [],
       "class_hash": "0x1d47067e8bbe8669955710f39fd8f5f1f0c9720e2f270b808e7dc806cbb709b",
-      "tag": "darkshuffle_s0-Leaderboard",
+      "tag": "darkshuffle_s1-Leaderboard",
       "selector": "0x3f9a80280d5c1b9f65cb12beb39cfe8e1ab443ce93deb094a739a967fd2af39"
     },
     {
       "members": [],
       "class_hash": "0x5b714980f7fd65b81ca2d696e55ba74c34b7b5503611b11898228f47986b5ee",
-      "tag": "darkshuffle_s0-Map",
+      "tag": "darkshuffle_s1-Map",
       "selector": "0x360f701df745ddf6d2537f33d3056e7c85aaba16e03f4b3e1f3bb2db76a4d2a"
     },
     {
       "members": [],
       "class_hash": "0x31ece662f05778ddeedf55b1ff9744282f050f2bf134e39c1242cffd405c35f",
-      "tag": "darkshuffle_s0-Season",
+      "tag": "darkshuffle_s1-Season",
       "selector": "0x2738f2cda6ed5dfe18f09113568187d30bcfe62e652655c5b093bf9f3f861a1"
     },
     {
       "members": [],
       "class_hash": "0x4d3f1fb5f7447c51ca354980a54e00253cc5a34c4e9964d89c098fc5d0b1a3e",
-      "tag": "darkshuffle_s0-WorldConfig",
+      "tag": "darkshuffle_s1-WorldConfig",
       "selector": "0x23b9d02ef49e051885de2f7b77c8cab7e062285b69bc623a189413be27bf1c3"
     }
   ],
@@ -2989,13 +2989,13 @@
     {
       "members": [],
       "class_hash": "0x6b38999d987627835d4c20e7e571c73d32ddc856786d9790a131bdb3372a246",
-      "tag": "darkshuffle_s0-TrophyCreation",
+      "tag": "darkshuffle_s1-TrophyCreation",
       "selector": "0x4dad0cc116800ca38589df42f7817fff3183c89d6db464d798c0f909a160372"
     },
     {
       "members": [],
       "class_hash": "0xf05f290a704ad2671544b391f0c33d50d6d43d468d52791282852a833a00c7",
-      "tag": "darkshuffle_s0-TrophyProgression",
+      "tag": "darkshuffle_s1-TrophyProgression",
       "selector": "0x542d8a36883192f5307c75438e0666d0936c89812d49ae184aeac6e826ca6a4"
     }
   ]

@@ -21,9 +21,15 @@ import Leaderboard from './leaderboard'
 import Monsters from './monsters'
 import { DojoContext } from '../../contexts/dojoContext'
 import StartSeason from '../dialogs/startSeason'
+import { useReplay } from '../../contexts/replayContext'
+import { useEffect } from 'react'
+import LoadingReplayDialog from '../dialogs/loadingReplay'
+import { fetchGameSettings } from '../../api/starknet'
 
 function StartDraft() {
   const season = useSeason()
+  const replay = useReplay()
+
   const { address } = useAccount()
   const { enqueueSnackbar } = useSnackbar()
 
@@ -61,6 +67,10 @@ function StartDraft() {
 
     try {
       let data = await getActiveGame(game_id)
+      let settings = await fetchGameSettings(game_id)
+
+      gameState.setGameSettings(settings)
+
       await draft.actions.fetchDraft(data.game_id)
 
       if (data.state !== 'Draft') {
@@ -87,7 +97,7 @@ function StartDraft() {
           gameState.setGameEffects({
             firstAttack: effects.first_attack,
             firstHealth: effects.first_health,
-            firstCost: effects.first_cost,
+            firstCreatureCost: effects.first_creature_cost,
             allAttack: effects.all_attack,
             hunterAttack: effects.hunter_attack,
             hunterHealth: effects.hunter_health,
@@ -117,6 +127,8 @@ function StartDraft() {
         mapLevel: data.map_level,
         mapDepth: data.map_depth,
         lastNodeId: data.last_node_id,
+
+        replay: Boolean(replay.spectatingGameId)
       })
 
       setReconnecting(false)
@@ -128,6 +140,12 @@ function StartDraft() {
   }
 
   let currentTime = Date.now() / 1000
+
+  useEffect(() => {
+    if (replay.spectatingGameId) {
+      resumeGame(replay.spectatingGameId)
+    }
+  }, [replay.spectatingGameId])
 
   return (
     <>
@@ -159,7 +177,7 @@ function StartDraft() {
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mb: 1 }]}>
             <Typography>
-              {season.values.end > currentTime ? `Season 0 ${season.values.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 0'}
+              {season.values.end > currentTime ? `Season 1 ${season.values.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 1'}
             </Typography>
             <Typography variant='h5' color='primary'>
               {season.values.start > currentTime ? `${formatTimeUntil(season.values.start)}` : (season.values.end > currentTime ? `${formatTimeUntil(season.values.end)}` : 'Finished')}
@@ -167,7 +185,7 @@ function StartDraft() {
           </Box>
 
           <Typography variant='h3' textAlign={'center'}>
-            Season 0: New beginnings
+            Season 1: New beginnings
           </Typography>
 
           <LoadingButton variant='outlined'
@@ -222,7 +240,7 @@ function StartDraft() {
             <Box display='flex' gap={2}>
               <Box sx={[styles.kpi]}>
                 <Typography>
-                  {season.values.end > currentTime ? `Season 0 ${season.values.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 0'}
+                  {season.values.end > currentTime ? `Season 1 ${season.values.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 1'}
                 </Typography>
                 {season.values.start ? <Typography variant='h5' color='primary'>
                   {season.values.start > currentTime ? `${formatTimeUntil(season.values.start)}` : (season.values.end > currentTime ? `${formatTimeUntil(season.values.end)}` : 'Finished')}
@@ -257,7 +275,7 @@ function StartDraft() {
 
             <Box sx={{ maxWidth: '800px' }}>
               <Typography variant='h3'>
-                Season 0: New beginnings
+                Season 1: Spellbound
               </Typography>
 
               <ul style={{ paddingLeft: '16px', color: '#FFE97F' }}>
@@ -322,6 +340,7 @@ function StartDraft() {
       {status && <StartGameDialog status={status} isSeason={showWarnings} />}
       {gamesDialog && <GameTokens open={gamesDialog} close={openGamesDialog} address={address} resumeGame={resumeGame} startGame={startGame} />}
       {reconnecting && <ReconnectDialog close={() => setReconnecting(false)} />}
+      {(replay.loadingReplay && !replay.translatedEvents[0]) && <LoadingReplayDialog close={() => replay.endReplay()} />}
     </>
   )
 }

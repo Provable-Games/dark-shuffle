@@ -1,10 +1,10 @@
 use darkshuffle::models::battle::{CreatureType};
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Map {
     #[key]
-    game_id: u128,
+    game_id: u64,
     #[key]
     level: u8,
     seed: u128

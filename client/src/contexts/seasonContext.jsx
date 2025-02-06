@@ -39,7 +39,6 @@ export const SeasonProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use the SeasonContext
 export const useSeason = () => {
   return useContext(SeasonContext);
 };

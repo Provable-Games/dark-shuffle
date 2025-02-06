@@ -65,7 +65,7 @@ const cartridge = new ControllerConnector({
     },
   ],
   namespace: dojoConfig.namespace,
-  slot: "darkshuffle-mainnet-3",
+  slot: "darkshuffle-sepolia",
   preset: "dark-shuffle",
   rpc: dojoConfig.rpcUrl,
   colorMode: "dark",
@@ -74,7 +74,7 @@ const cartridge = new ControllerConnector({
     erc20: [dojoConfig.lordsAddress]
   },
   chains: [{ rpcUrl: dojoConfig.rpcUrl }],
-  defaultChainId: StarknetChainId.SN_MAIN,
+  defaultChainId: dojoConfig.chain === "mainnet" ? StarknetChainId.SN_MAIN : StarknetChainId.SN_SEPOLIA,
 })
 
 export function StarknetProvider({ children }) {

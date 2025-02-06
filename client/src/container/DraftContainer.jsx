@@ -10,10 +10,13 @@ import DraftStats from '../components/draft/draftStats';
 import Overview from '../components/draft/overview';
 import { DraftContext } from '../contexts/draftContext';
 import { GameContext } from '../contexts/gameContext';
+import { useReplay } from '../contexts/replayContext';
 import { CardSize } from '../helpers/cards';
 import { fadeChildrenContainer, fadeChildrenItem } from '../helpers/variants';
 
 function DraftContainer() {
+  const replay = useReplay()
+
   const game = useContext(GameContext)
   const { gameSettings } = game.getState
 
@@ -54,7 +57,7 @@ function DraftContainer() {
                     <motion.div style={styles.mobileCardContainer}
                       onClick={() => selectCard(index)}
                       variants={fadeChildrenItem}>
-                      <Card card={card} pendingCard={pendingCard} draftIndex={index} />
+                      <Card card={card} pendingCard={pendingCard} draftIndex={index} replaySelection={replay.getDraftCardSelection()} />
                     </motion.div>
                   ))}
               </motion.div>
@@ -113,7 +116,7 @@ function DraftContainer() {
                     <motion.div style={styles.cardContainer}
                       onClick={() => selectCard(index)}
                       variants={fadeChildrenItem}>
-                      <Card card={card} pendingCard={pendingCard} draftIndex={index} />
+                      <Card card={card} pendingCard={pendingCard} draftIndex={index} replaySelection={replay.getDraftCardSelection()} />
                     </motion.div>
                   ))}
               </motion.div>

@@ -8,10 +8,10 @@ import { GameContext } from '../contexts/gameContext'
 
 function ArenaPage() {
   const gameState = useContext(GameContext)
-  const { gameId, state } = gameState.values
+  const { gameId, state, replay } = gameState.values
 
   return (
-    <Scrollbars style={{ ...styles.container }}>
+    <Scrollbars style={{ ...styles.container, border: replay ? '1px solid #f59100' : 'none' }}>
       {gameId === null && <StartDraft />}
 
       {state === 'Draft' && <DraftContainer />}
@@ -29,5 +29,6 @@ const styles = {
   container: {
     width: '100%',
     height: '100%',
+    boxSizing: 'border-box'
   }
 }

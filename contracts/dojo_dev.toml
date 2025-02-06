@@ -8,20 +8,20 @@ website = "https://darkshuffle.dev/"
 x = "https://x.com/await_0x"
 github = "https://github.com/Await-0x/dark-shuffle"
 
-[namespace]
-default = "darkshuffle"
-
 [env]
 rpc_url = "http://localhost:5050/"
 account_address = "0x127fd5f1fe78a71f8bcd1fec63e3fe2f0486b6ecd5c86a0466c3a21fa5cfcec"
 private_key = "0xc5b2fcab997346f3ea1c00b002ecf6f382c5f9c9659a3894eb783c5320f912"
 
+[namespace]
+default = "darkshuffle_s1"
+
 [writers]
-"darkshuffle" = [
-    "darkshuffle-game_systems",
-    "darkshuffle-battle_systems",
-    "darkshuffle-season_systems",
-    "darkshuffle-draft_systems",
-    "darkshuffle-map_systems",
-    "darkshuffle-config_systems",
+"darkshuffle_s1" = [
+    "darkshuffle_s1-game_systems",
+    "darkshuffle_s1-battle_systems",
+    "darkshuffle_s1-season_systems",
+    "darkshuffle_s1-draft_systems",
+    "darkshuffle_s1-map_systems",
+    "darkshuffle_s1-config_systems",
 ]

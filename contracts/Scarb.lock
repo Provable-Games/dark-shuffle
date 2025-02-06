@@ -26,6 +26,7 @@ dependencies = [
  "achievement",
  "cartridge_vrf",
  "dojo",
+ "dojo_cairo_test",
  "openzeppelin",
 ]
 
@@ -35,6 +36,14 @@ version = "1.0.5"
 source = "git+https://github.com/dojoengine/dojo?tag=v1.0.5#c5e7d6b537d9c1e4a1df7367b5ace37ffd172015"
 dependencies = [
  "dojo_plugin",
+]
+
+[[package]]
+name = "dojo_cairo_test"
+version = "1.0.0-rc.0"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.5#c5e7d6b537d9c1e4a1df7367b5ace37ffd172015"
+dependencies = [
+ "dojo",
 ]
 
 [[package]]

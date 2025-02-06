@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import React from "react";
 import { isMobile } from 'react-device-detect';
 import sword from "../../../assets/images/sword.png";
-import { fetch_beast_image } from '../../../helpers/cards';
+import { fetch_card_image } from '../../../helpers/cards';
 import { EnemyHealthBar } from '../../../helpers/styles';
 import { normalise } from '../../../helpers/utilities';
 
@@ -14,7 +14,7 @@ export default function MonsterMain(props) {
     <EnemyHealthBar variant="determinate" value={normalise(monster.health, monster.startHealth)} />
 
     <Box sx={styles.imageContainer}>
-      {<img alt='' src={fetch_beast_image(monster.name)} height={'100%'} />}
+      {<img alt='' src={fetch_card_image(monster.name)} height={'100%'} />}
     </Box>
 
     <Box sx={styles.bottomContainer}>

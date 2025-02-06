@@ -18,6 +18,8 @@ import { useState } from 'react';
 import MobileHeader from './components/mobileHeader';
 import { AnimationHandler } from "./contexts/animationHandler";
 import { StarknetProvider } from "./contexts/starknet";
+import { ReplayProvider } from './contexts/replayContext';
+import ReplayOverlay from './components/replayOverlay';
 
 function Main() {
   const [connectWallet, showConnectWallet] = useState(false)
@@ -37,24 +39,27 @@ function Main() {
                       <SeasonProvider>
                         <GameProvider>
                           <DraftProvider>
-                          <BattleProvider>
+                            <BattleProvider>
+                              <ReplayProvider showConnectWallet={showConnectWallet}>
 
-                            <Box className='main'>
-                              {isBrowser && <Header connectWallet={connectWallet} showConnectWallet={showConnectWallet} />}
-                              {isMobile && <MobileHeader connectWallet={connectWallet} showConnectWallet={showConnectWallet} />}
+                                <Box className='main'>
+                                  <ReplayOverlay />
+                                  {isBrowser && <Header connectWallet={connectWallet} showConnectWallet={showConnectWallet} />}
+                                  {isMobile && <MobileHeader connectWallet={connectWallet} showConnectWallet={showConnectWallet} />}
 
-                              <AnimatePresence mode="wait">
+                                  <AnimatePresence mode="wait">
 
-                                <Routes>
-                                  {routes.map((route, index) => {
-                                    return <Route key={index} path={route.path} element={route.content} />
-                                  })}
-                                </Routes>
+                                    <Routes>
+                                      {routes.map((route, index) => {
+                                        return <Route key={index} path={route.path} element={route.content} />
+                                      })}
+                                    </Routes>
 
-                              </AnimatePresence>
-                            </Box>
+                                  </AnimatePresence>
+                                </Box>
 
-                          </BattleProvider>
+                              </ReplayProvider>
+                            </BattleProvider>
                           </DraftProvider>
                         </GameProvider>
                       </SeasonProvider>

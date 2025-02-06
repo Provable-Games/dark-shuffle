@@ -20,6 +20,10 @@ function ProfileMenu(props) {
   const game = useContext(GameContext)
 
   const abandonGame = async () => {
+    if (game.values.replay) {
+      return
+    }
+
     await dojo.executeTx([{
       contractName: "game_systems",
       entrypoint: "abandon_game",
@@ -65,7 +69,7 @@ function ProfileMenu(props) {
 
         <Divider sx={{ my: 1 }} />
 
-        <MenuItem onClick={() => { window.open("https://github.com/Await-0x/dark-shuffle", "_blank"); handleClose; }}>
+        <MenuItem onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); handleClose; }}>
           <ListItemIcon>
             <GitHubIcon fontSize="small" />
           </ListItemIcon>
@@ -74,7 +78,7 @@ function ProfileMenu(props) {
           </ListItemText>
         </MenuItem>
 
-        <MenuItem onClick={() => { window.open("https://twitter.com/await_0x", "_blank"); handleClose; }}>
+        <MenuItem onClick={() => { window.open("https://x.com/provablegames", "_blank"); handleClose; }}>
           <ListItemIcon>
             <XIcon fontSize="small" />
           </ListItemIcon>

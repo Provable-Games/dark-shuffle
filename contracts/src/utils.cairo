@@ -1,17 +1,20 @@
+pub mod achievements;
+pub mod attack;
 pub mod battle;
 pub mod board;
 pub mod cards;
+pub mod config;
+pub mod death;
 pub mod draft;
 pub mod game;
 pub mod hand;
-pub mod monsters;
 pub mod map;
+pub mod monsters;
 pub mod random;
-pub mod summon;
 pub mod season;
-pub mod death;
-pub mod attack;
-pub mod config;
-pub mod trophies;
+pub mod spell;
+pub mod summon;
 pub mod tasks;
-pub mod achievements;
+#[cfg(test)]
+pub mod testing;
+pub mod trophies;

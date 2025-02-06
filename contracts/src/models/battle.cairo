@@ -1,8 +1,8 @@
+use darkshuffle::models::game::{Game, GameOwnerTrait};
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use starknet::{ContractAddress, get_caller_address};
-use darkshuffle::models::game::{Game, GameOwnerTrait};
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
@@ -10,27 +10,22 @@ pub struct Battle {
     #[key]
     battle_id: u16,
     #[key]
-    game_id: u128,
-
+    game_id: u64,
     round: u8,
     hero: Hero,
     monster: Monster,
- 
     hand: Span<u8>,
     deck: Span<u8>,
-    deck_index: u8,
-
     battle_effects: BattleEffects
 }
 
 #[derive(Introspect, Copy, Drop, Serde)]
 #[dojo::model]
-pub struct Board {   
+pub struct Board {
     #[key]
     battle_id: u16,
     #[key]
-    game_id: u128,
-
+    game_id: u64,
     creature1: Creature,
     creature2: Creature,
     creature3: Creature,
@@ -39,28 +34,27 @@ pub struct Board {
     creature6: Creature,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Hero {
     health: u8,
-    max_health: u8, // doesn't change right now
     energy: u8,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Monster {
-    monster_id: u8,
+    monster_id: u8, // TODO: could be moved to fixed model
     attack: u8,
     health: u8,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Creature {
-    card_id: u8, // how many cards in the future?
+    card_id: u8,
     attack: u8,
     health: u8,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct BattleEffects {
     enemy_marks: u8,
     hero_dmg_reduction: u8,
@@ -123,11 +117,11 @@ pub enum CardTier {
 }
 
 #[generate_trait]
-impl BattleOwnerImpl of BattleOwnerTrait { 
+impl BattleOwnerImpl of BattleOwnerTrait {
     fn assert_battle(self: Battle, world: WorldStorage) {
         let game: Game = world.read_model(self.game_id);
         game.assert_owner(world);
-        
+
         assert(self.hero.health > 0, 'Battle over');
         assert(self.monster.health > 0, 'Battle over');
     }

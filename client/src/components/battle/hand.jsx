@@ -7,14 +7,15 @@ import { CardSize } from "../../helpers/cards";
 import Card from "../card";
 import SmallCard from "../smallCard";
 import DraggableCard from "./draggableCard";
+import { useReplay } from "../../contexts/replayContext";
 
 function Hand() {
+  const replay = useReplay()
   const battle = useContext(BattleContext)
   const { values, hand } = battle.state
 
   const [displayCard, setDisplayCard] = useState(null)
   const [selectedCard, setSelectedCard] = useState(null)
-
 
   const calculateCardPosition = (pos) => {
     const cards = hand.length
@@ -105,7 +106,14 @@ function Hand() {
               animate={cardStyle(i)}
               transition={{ ease: "easeOut", duration: 0.5 }}>
 
-              <SmallCard card={card} key={card.id} cost={battle.utils.getCardCost(card)} onHand={true} energy={values.heroEnergy} />
+              <SmallCard
+                card={card}
+                key={card.id}
+                onHand={true}
+                energy={values.heroEnergy}
+                cost={battle.utils.getCardCost(card)}
+                played={replay.getPlayedCards()?.includes(card.cardId)}
+              />
 
             </motion.div>
           </>

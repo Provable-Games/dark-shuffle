@@ -15,6 +15,7 @@ export const GAME_STATES = {
 const GAME_VALUES = {
   gameId: null,
   state: GAME_STATES[3],
+  replay: false
 }
 
 export const GameProvider = ({ children }) => {
@@ -28,10 +29,6 @@ export const GameProvider = ({ children }) => {
   const [map, setMap] = useState(null)
   const [score, setScore] = useState()
 
-  useEffect(() => {
-    setGameSettings(season.settings)
-  }, [season.settings])
-
   const setGame = (values) => {
     if (!isNaN(values.state || 0)) {
       values.state = GAME_STATES[values.state]
@@ -43,6 +40,7 @@ export const GameProvider = ({ children }) => {
   const endGame = () => {
     setValues({ ...GAME_VALUES })
     setGameEffects({})
+    setGameSettings({})
     setMap(null)
     setScore()
   }
@@ -74,6 +72,10 @@ export const GameProvider = ({ children }) => {
   }
 
   const generateMap = async () => {
+    if (values.replay) {
+      return
+    }
+
     const res = await dojo.executeTx([{ contractName: "map_systems", entrypoint: "generate_tree", calldata: [values.gameId] }], true);
 
     if (res) {

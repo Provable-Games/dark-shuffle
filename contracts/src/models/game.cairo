@@ -1,38 +1,44 @@
+use darkshuffle::constants::{LAST_NODE_DEPTH, WORLD_CONFIG_ID};
+use darkshuffle::models::config::{WorldConfig};
 use dojo::event::EventStorage;
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use starknet::{ContractAddress, get_caller_address};
-use darkshuffle::constants::{LAST_NODE_DEPTH, WORLD_CONFIG_ID};
-use darkshuffle::models::config::{WorldConfig};
 use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
+use starknet::{ContractAddress, get_caller_address};
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Game {
     #[key]
-    game_id: u128,
+    game_id: u64,
     season_id: u32,
-    player_name: felt252,
-    state: GameState,
-
     hero_health: u8,
     hero_xp: u16,
     monsters_slain: u16,
-
     map_level: u8,
     map_depth: u8,
     last_node_id: u8,
+    action_count: u16,
+    state: GameState,
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
-pub struct GameEffects {   
+pub struct GameFixedData {
     #[key]
-    game_id: u128,
+    game_id: u64,
+    player_name: felt252,
+}
+
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[dojo::model]
+pub struct GameEffects {
+    #[key]
+    game_id: u64,
     first_attack: u8,
     first_health: u8,
-    first_cost: u8,
+    first_creature_cost: u8,
     all_attack: u8,
     hunter_attack: u8,
     hunter_health: u8,
@@ -90,4 +96,13 @@ impl GameOwnerImpl of GameOwnerTrait {
     fn exists(self: Game) -> bool {
         self.hero_xp.is_non_zero()
     }
+}
+
+#[derive(Copy, Drop, Serde)]
+#[dojo::event(historical: true)]
+pub struct GameActionEvent {
+    #[key]
+    tx_hash: felt252,
+    game_id: u64,
+    count: u16
 }

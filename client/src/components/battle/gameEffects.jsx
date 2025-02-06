@@ -16,7 +16,7 @@ export default function GameEffects() {
 
   return <Box sx={isMobile ? styles.effectMobileContainer : styles.effectContainer}>
 
-    {(gameEffects.allAttack > 0 || gameEffects.firstCost > 0 || gameEffects.firstAttack > 0 || gameEffects.firstHealth > 0)
+    {(gameEffects.allAttack > 0 || gameEffects.firstCreatureCost > 0 || gameEffects.firstAttack > 0 || gameEffects.firstHealth > 0)
       && <LargeCustomTooltip title={
         <Box p={0.5}>
           <Box mb={0.5}>
@@ -27,8 +27,8 @@ export default function GameEffects() {
             All beasts get +{gameEffects.allAttack} attack.
           </Typography>}
 
-          {gameEffects.firstCost > 0 && <Typography sx={styles.effectText}>
-            The first beast you play each turn costs {gameEffects.firstCost} less.
+          {gameEffects.firstCreatureCost > 0 && <Typography sx={styles.effectText}>
+            The first beast you play each turn costs {gameEffects.firstCreatureCost} less.
           </Typography>}
 
           {gameEffects.firstAttack > 0 && <Typography sx={styles.effectText}>

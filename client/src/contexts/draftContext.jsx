@@ -7,6 +7,7 @@ import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
 import { useSeason } from "./seasonContext";
 import { delay } from "../helpers/utilities";
+import { fetchGameSettings } from "../api/starknet";
 
 export const DraftContext = createContext()
 
@@ -67,12 +68,27 @@ export const DraftProvider = ({ children }) => {
       const gameValues = res.find(e => e.componentName === 'Game')
       const draftValues = res.find(e => e.componentName === 'Draft')
 
+      if (isSeason) {
+        game.setGameSettings(season.settings)
+      } else {
+        let settings = await fetchGameSettings(gameId)
+        if (!settings) {
+          return
+        }
+
+        game.setGameSettings(settings)
+      }
+
       game.setGame(gameValues)
       setOptions(draftValues.options.map(option => CARD_DETAILS(option)))
     }
   }
 
   const selectCard = async (optionId) => {
+    if (game.values.replay) {
+      return
+    }
+
     setPendingCard(optionId)
 
     if (game.values.isDemo) {
@@ -99,8 +115,8 @@ export const DraftProvider = ({ children }) => {
   const fetchDraft = async (gameId) => {
     let data = await getDraft(gameId);
 
-    setCards(data.cards.map(card => CARD_DETAILS(card)))
-    setOptions(data.options.map(option => CARD_DETAILS(option)))
+    setCards(data.cards.map(card => CARD_DETAILS(card)));
+    setOptions(data.options.map(option => CARD_DETAILS(option)));
   }
 
   return (
@@ -110,6 +126,11 @@ export const DraftProvider = ({ children }) => {
           startDraft,
           selectCard,
           fetchDraft
+        },
+
+        update: {
+          setOptions,
+          setCards
         },
 
         getState: {

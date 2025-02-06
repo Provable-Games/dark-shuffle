@@ -1,5 +1,3 @@
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import InfoIcon from '@mui/icons-material/Info';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -8,13 +6,12 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import { LoadingButton } from '@mui/lab';
 import { Box, Divider, IconButton, List, Typography } from '@mui/material';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import { useAccount, useConnect, useDisconnect } from '@starknet-react/core';
-import { useSnackbar } from 'notistack';
+import { useConnect, useDisconnect } from '@starknet-react/core';
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DojoContext } from '../contexts/dojoContext';
 import { GameContext } from '../contexts/gameContext';
-import { ellipseAddress, formatNumber } from '../helpers/utilities';
+import { formatNumber } from '../helpers/utilities';
 
 const menuItems = [
   {
@@ -29,20 +26,16 @@ function MobileHeader(props) {
   const game = useContext(GameContext)
 
   const { connect, connector, connectors } = useConnect();
-  const { address } = useAccount()
   const { disconnect } = useDisconnect()
-  const { enqueueSnackbar } = useSnackbar()
-
   let cartridgeConnector = connectors.find(conn => conn.id === "controller")
 
   const [menu, toggleMenu] = useState(false)
 
-  const copyAddress = async () => {
-    await navigator.clipboard.writeText(address)
-    enqueueSnackbar('Address copied', { variant: 'info', autoHideDuration: 2000, anchorOrigin: { vertical: 'bottom', horizontal: 'center' } })
-  }
-
   const abandonGame = async () => {
+    if (game.values.replay) {
+      return
+    }
+
     await dojo.executeTx([{
       contractName: "game_systems",
       entrypoint: "abandon_game",

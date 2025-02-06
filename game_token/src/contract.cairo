@@ -12,7 +12,7 @@ trait IDarkShuffleGameToken<TState> {
 
 #[starknet::interface]
 trait IGame<TState> {
-    fn get_game_data(self: @TState, token_id: u128) -> (felt252, u8, u16, u32, u8, Span<felt252>);
+    fn get_game_data(self: @TState, token_id: u64) -> (felt252, u8, u16, u32, u8, Span<felt252>);
 }
 
 #[starknet::contract]

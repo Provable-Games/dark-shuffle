@@ -14,9 +14,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 4,
             };
-        }
-
-        else if id == 2 {
+        } else if id == 2 {
             return Card {
                 card_id: 2,
                 name: 'Typhon',
@@ -27,9 +25,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 6,
                 health: 6,
             };
-        }
-        
-        else if id == 3 {
+        } else if id == 3 {
             return Card {
                 card_id: 3,
                 name: 'Jiangshi',
@@ -40,9 +36,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 5,
                 health: 4,
             };
-        }
-        
-        else if id == 4 {
+        } else if id == 4 {
             return Card {
                 card_id: 4,
                 name: 'Anansi',
@@ -53,9 +47,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 5,
             };
-        }
-        
-        else if id == 5 {
+        } else if id == 5 {
             return Card {
                 card_id: 5,
                 name: 'Basilisk',
@@ -66,9 +58,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 6 {
+        } else if id == 6 {
             return Card {
                 card_id: 6,
                 name: 'Griffin',
@@ -79,22 +69,18 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 6,
                 health: 4,
             };
-        }
-        
-        else if id == 7 {
+        } else if id == 7 {
             return Card {
                 card_id: 7,
                 name: 'Manticore',
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Hunter,
-                cost: 3,
+                cost: 4,
                 attack: 4,
                 health: 5,
             };
-        }
-        
-        else if id == 8 {
+        } else if id == 8 {
             return Card {
                 card_id: 8,
                 name: 'Phoenix',
@@ -105,9 +91,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-        
-        else if id == 9 {
+        } else if id == 9 {
             return Card {
                 card_id: 9,
                 name: 'Dragon',
@@ -118,9 +102,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 3,
             };
-        }
-
-        else if id == 10 {
+        } else if id == 10 {
             return Card {
                 card_id: 10,
                 name: 'Minotaur',
@@ -131,22 +113,18 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 5,
                 health: 4,
             };
-        }
-        
-        else if id == 11 {
+        } else if id == 11 {
             return Card {
                 card_id: 11,
                 name: 'Kraken',
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Brute,
-                cost: 1,
+                cost: 2,
                 attack: 3,
-                health: 5,
+                health: 3,
             };
-        }
-        
-        else if id == 12 {
+        } else if id == 12 {
             return Card {
                 card_id: 12,
                 name: 'Colossus',
@@ -157,9 +135,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 5,
                 health: 7,
             };
-        }
-        
-        else if id == 13 {
+        } else if id == 13 {
             return Card {
                 card_id: 13,
                 name: 'Balrog',
@@ -170,35 +146,29 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 6,
             };
-        }
-
-        else if id == 14 {
+        } else if id == 14 {
             return Card {
                 card_id: 14,
                 name: 'Leviathan',
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Brute,
-                cost: 2,
-                attack: 5,
+                cost: 1,
+                attack: 4,
                 health: 3,
             };
-        }
-
-        else if id == 15 {
+        } else if id == 15 {
             return Card {
                 card_id: 15,
                 name: 'Tarrasque',
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Brute,
-                cost: 4,
+                cost: 2,
                 attack: 3,
-                health: 5,
+                health: 3,
             };
-        }
-
-        else if id == 16 {
+        } else if id == 16 {
             return Card {
                 card_id: 16,
                 name: 'Gorgon',
@@ -209,9 +179,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 3,
             };
-        }
-
-        else if id == 17 {
+        } else if id == 17 {
             return Card {
                 card_id: 17,
                 name: 'Kitsune',
@@ -222,22 +190,18 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 3,
             };
-        }
-
-        else if id == 18 {
+        } else if id == 18 {
             return Card {
                 card_id: 18,
                 name: 'Lich',
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Magical,
-                cost: 5,
+                cost: 4,
                 attack: 3,
                 health: 4,
             };
-        }
-
-        else if id == 19 {
+        } else if id == 19 {
             return Card {
                 card_id: 19,
                 name: 'Chimera',
@@ -248,22 +212,18 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 4,
             };
-        }
-
-        else if id == 20 {
+        } else if id == 20 {
             return Card {
                 card_id: 20,
                 name: 'Wendigo',
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Magical,
-                cost: 1,
+                cost: 2,
                 attack: 2,
                 health: 3,
             };
-        }
-
-        else if id == 21 {
+        } else if id == 21 {
             return Card {
                 card_id: 21,
                 name: 'Qilin',
@@ -274,9 +234,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 22 {
+        } else if id == 22 {
             return Card {
                 card_id: 22,
                 name: 'Ammit',
@@ -287,9 +245,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 5,
                 health: 2,
             };
-        }
-
-        else if id == 23 {
+        } else if id == 23 {
             return Card {
                 card_id: 23,
                 name: 'Nue',
@@ -300,9 +256,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 2,
             };
-        }
-
-        else if id == 24 {
+        } else if id == 24 {
             return Card {
                 card_id: 24,
                 name: 'Skinwalker',
@@ -313,9 +267,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 3,
             };
-        }
-
-        else if id == 25 {
+        } else if id == 25 {
             return Card {
                 card_id: 25,
                 name: 'Chupacabra',
@@ -326,9 +278,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 3,
             };
-        }
-
-        else if id == 26 {
+        } else if id == 26 {
             return Card {
                 card_id: 26,
                 name: 'Titan',
@@ -339,9 +289,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 5,
             };
-        }
-
-        else if id == 27 {
+        } else if id == 27 {
             return Card {
                 card_id: 27,
                 name: 'Nephilim',
@@ -352,9 +300,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 4,
             };
-        }
-
-        else if id == 28 {
+        } else if id == 28 {
             return Card {
                 card_id: 28,
                 name: 'Behemoth',
@@ -365,9 +311,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 3,
             };
-        }
-
-        else if id == 29 {
+        } else if id == 29 {
             return Card {
                 card_id: 29,
                 name: 'Hydra',
@@ -378,9 +322,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 30 {
+        } else if id == 30 {
             return Card {
                 card_id: 30,
                 name: 'Juggernaut',
@@ -391,9 +333,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 4,
             };
-        }
-
-        else if id == 31 {
+        } else if id == 31 {
             return Card {
                 card_id: 31,
                 name: 'Rakshasa',
@@ -404,9 +344,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 4,
             };
-        }
-
-        else if id == 32 {
+        } else if id == 32 {
             return Card {
                 card_id: 32,
                 name: 'Werewolf',
@@ -417,22 +355,18 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 3,
             };
-        }
-
-        else if id == 33 {
+        } else if id == 33 {
             return Card {
                 card_id: 33,
                 name: 'Banshee',
                 card_type: CardType::Creature,
                 card_tier: CardTier::T3,
                 creature_type: CreatureType::Magical,
-                cost: 5,
-                attack: 5,
+                cost: 4,
+                attack: 3,
                 health: 3,
             };
-        }
-
-        else if id == 34 {
+        } else if id == 34 {
             return Card {
                 card_id: 34,
                 name: 'Draugr',
@@ -443,9 +377,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 2,
             };
-        }
-
-        else if id == 35 {
+        } else if id == 35 {
             return Card {
                 card_id: 35,
                 name: 'Vampire',
@@ -456,9 +388,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 3,
             };
-        }
-
-        else if id == 36 {
+        } else if id == 36 {
             return Card {
                 card_id: 36,
                 name: 'Weretiger',
@@ -469,9 +399,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 6,
                 health: 3,
             };
-        }
-
-        else if id == 37 {
+        } else if id == 37 {
             return Card {
                 card_id: 37,
                 name: 'Wyvern',
@@ -482,9 +410,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 38 {
+        } else if id == 38 {
             return Card {
                 card_id: 38,
                 name: 'Roc',
@@ -495,9 +421,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 4,
             };
-        }
-
-        else if id == 39 {
+        } else if id == 39 {
             return Card {
                 card_id: 39,
                 name: 'Harpy',
@@ -508,9 +432,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 3,
             };
-        }
-
-        else if id == 40 {
+        } else if id == 40 {
             return Card {
                 card_id: 40,
                 name: 'Pegasus',
@@ -521,9 +443,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 2,
             };
-        }
-
-        else if id == 41 {
+        } else if id == 41 {
             return Card {
                 card_id: 41,
                 name: 'Oni',
@@ -534,9 +454,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 5,
             };
-        }
-
-        else if id == 42 {
+        } else if id == 42 {
             return Card {
                 card_id: 42,
                 name: 'Jotunn',
@@ -547,9 +465,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 3,
             };
-        }
-
-        else if id == 43 {
+        } else if id == 43 {
             return Card {
                 card_id: 43,
                 name: 'Ettin',
@@ -560,9 +476,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 5,
                 health: 3,
             };
-        }
-
-        else if id == 44 {
+        } else if id == 44 {
             return Card {
                 card_id: 44,
                 name: 'Cyclops',
@@ -573,9 +487,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 4,
             };
-        }
-
-        else if id == 45 {
+        } else if id == 45 {
             return Card {
                 card_id: 45,
                 name: 'Giant',
@@ -586,9 +498,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 3,
             };
-        }
-
-        else if id == 46 {
+        } else if id == 46 {
             return Card {
                 card_id: 46,
                 name: 'Goblin',
@@ -599,9 +509,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 3,
             };
-        }
-
-        else if id == 47 {
+        } else if id == 47 {
             return Card {
                 card_id: 47,
                 name: 'Ghoul',
@@ -612,9 +520,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 2,
             };
-        }
-
-        else if id == 48 {
+        } else if id == 48 {
             return Card {
                 card_id: 48,
                 name: 'Wraith',
@@ -625,9 +531,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 49 {
+        } else if id == 49 {
             return Card {
                 card_id: 49,
                 name: 'Sprite',
@@ -638,9 +542,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 3,
             };
-        }
-
-        else if id == 50 {
+        } else if id == 50 {
             return Card {
                 card_id: 50,
                 name: 'Kappa',
@@ -651,9 +553,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 3,
             };
-        }
-
-        else if id == 51 {
+        } else if id == 51 {
             return Card {
                 card_id: 51,
                 name: 'Hippogriff',
@@ -664,9 +564,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 1,
             };
-        }
-
-        else if id == 52 {
+        } else if id == 52 {
             return Card {
                 card_id: 52,
                 name: 'Fenrir',
@@ -677,9 +575,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 2,
             };
-        }
-
-        else if id == 53 {
+        } else if id == 53 {
             return Card {
                 card_id: 53,
                 name: 'Jaguar',
@@ -690,9 +586,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 3,
             };
-        }
-
-        else if id == 54 {
+        } else if id == 54 {
             return Card {
                 card_id: 54,
                 name: 'Satori',
@@ -703,9 +597,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 2,
             };
-        }
-
-        else if id == 55 {
+        } else if id == 55 {
             return Card {
                 card_id: 55,
                 name: 'Direwolf',
@@ -716,9 +608,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 2,
             };
-        }
-
-        else if id == 56 {
+        } else if id == 56 {
             return Card {
                 card_id: 56,
                 name: 'NemeanLion',
@@ -729,9 +619,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 4,
             };
-        }
-
-        else if id == 57 {
+        } else if id == 57 {
             return Card {
                 card_id: 57,
                 name: 'Berserker',
@@ -742,9 +630,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 58 {
+        } else if id == 58 {
             return Card {
                 card_id: 58,
                 name: 'Yeti',
@@ -755,9 +641,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 59 {
+        } else if id == 59 {
             return Card {
                 card_id: 59,
                 name: 'Golem',
@@ -768,9 +652,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 2,
             };
-        }
-
-        else if id == 60 {
+        } else if id == 60 {
             return Card {
                 card_id: 60,
                 name: 'Ent',
@@ -781,9 +663,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 3,
             };
-        }
-
-        else if id == 61 {
+        } else if id == 61 {
             return Card {
                 card_id: 61,
                 name: 'Fairy',
@@ -794,9 +674,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 3,
             };
-        }
-
-        else if id == 62 {
+        } else if id == 62 {
             return Card {
                 card_id: 62,
                 name: 'Leprechaun',
@@ -807,9 +685,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 2,
             };
-        }
-
-        else if id == 63 {
+        } else if id == 63 {
             return Card {
                 card_id: 63,
                 name: 'Kelpie',
@@ -820,9 +696,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 1,
                 health: 1,
             };
-        }
-
-        else if id == 64 {
+        } else if id == 64 {
             return Card {
                 card_id: 64,
                 name: 'Pixie',
@@ -833,9 +707,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 3,
             };
-        }
-
-        else if id == 65 {
+        } else if id == 65 {
             return Card {
                 card_id: 65,
                 name: 'Gnome',
@@ -846,9 +718,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 3,
             };
-        }
-
-        else if id == 66 {
+        } else if id == 66 {
             return Card {
                 card_id: 66,
                 name: 'Bear',
@@ -859,9 +729,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 67 {
+        } else if id == 67 {
             return Card {
                 card_id: 67,
                 name: 'Wolf',
@@ -872,9 +740,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 2,
             };
-        }
-
-        else if id == 68 {
+        } else if id == 68 {
             return Card {
                 card_id: 68,
                 name: 'Mantis',
@@ -885,9 +751,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 1,
                 health: 1,
             };
-        }
-
-        else if id == 69 {
+        } else if id == 69 {
             return Card {
                 card_id: 69,
                 name: 'Spider',
@@ -898,9 +762,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 70 {
+        } else if id == 70 {
             return Card {
                 card_id: 70,
                 name: 'Rat',
@@ -911,9 +773,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 4,
                 health: 4,
             };
-        }
-
-        else if id == 71 {
+        } else if id == 71 {
             return Card {
                 card_id: 71,
                 name: 'Troll',
@@ -924,9 +784,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 4,
             };
-        }
-
-        else if id == 72 {
+        } else if id == 72 {
             return Card {
                 card_id: 72,
                 name: 'Bigfoot',
@@ -937,9 +795,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 3,
                 health: 2,
             };
-        }
-
-        else if id == 73 {
+        } else if id == 73 {
             return Card {
                 card_id: 73,
                 name: 'Ogre',
@@ -950,9 +806,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 1,
                 health: 2,
             };
-        }
-
-        else if id == 74 {
+        } else if id == 74 {
             return Card {
                 card_id: 74,
                 name: 'Orc',
@@ -963,9 +817,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 attack: 2,
                 health: 3,
             };
-        }
-
-        else if id == 75 {
+        } else if id == 75 {
             return Card {
                 card_id: 75,
                 name: 'Skeleton',
@@ -975,6 +827,171 @@ impl CardUtilsImpl of CardUtilsTrait {
                 cost: 5,
                 attack: 4,
                 health: 3,
+            };
+        } else if id == 76 {
+            return Card {
+                card_id: 76,
+                name: 'Warlocks Pact',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T1,
+                creature_type: CreatureType::Spell,
+                cost: 1,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 77 {
+            return Card {
+                card_id: 77,
+                name: 'Dragons Breath',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T1,
+                creature_type: CreatureType::Spell,
+                cost: 1,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 78 {
+            return Card {
+                card_id: 78,
+                name: 'Jiangshis Curse',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T1,
+                creature_type: CreatureType::Spell,
+                cost: 2,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 79 {
+            return Card {
+                card_id: 79,
+                name: 'Gorgons Gaze',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T2,
+                creature_type: CreatureType::Spell,
+                cost: 2,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 80 {
+            return Card {
+                card_id: 80,
+                name: 'Titans Call',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T2,
+                creature_type: CreatureType::Spell,
+                cost: 1,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 81 {
+            return Card {
+                card_id: 81,
+                name: 'Wendigos Frenzy',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T2,
+                creature_type: CreatureType::Spell,
+                cost: 2,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 82 {
+            return Card {
+                card_id: 82,
+                name: 'Giant Shoulders',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T3,
+                creature_type: CreatureType::Spell,
+                cost: 2,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 83 {
+            return Card {
+                card_id: 83,
+                name: 'Werewolves Howl',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T3,
+                creature_type: CreatureType::Spell,
+                cost: 4,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 84 {
+            return Card {
+                card_id: 84,
+                name: 'Vampires Bite',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T3,
+                creature_type: CreatureType::Spell,
+                cost: 5,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 85 {
+            return Card {
+                card_id: 85,
+                name: 'Wraiths Shadow',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T4,
+                creature_type: CreatureType::Spell,
+                cost: 1,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 86 {
+            return Card {
+                card_id: 86,
+                name: 'Sprites Favor',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T4,
+                creature_type: CreatureType::Spell,
+                cost: 5,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 87 {
+            return Card {
+                card_id: 87,
+                name: 'Kappas Gift',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T4,
+                creature_type: CreatureType::Spell,
+                cost: 2,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 88 {
+            return Card {
+                card_id: 88,
+                name: 'Ogres Strength',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T5,
+                creature_type: CreatureType::Spell,
+                cost: 1,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 89 {
+            return Card {
+                card_id: 89,
+                name: 'Pixies Blessing',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T5,
+                creature_type: CreatureType::Spell,
+                cost: 1,
+                attack: 0,
+                health: 0,
+            };
+        } else if id == 90 {
+            return Card {
+                card_id: 90,
+                name: 'Bears Foot',
+                card_type: CardType::Spell,
+                card_tier: CardTier::T5,
+                creature_type: CreatureType::Spell,
+                cost: 1,
+                attack: 0,
+                health: 0,
             };
         }
 

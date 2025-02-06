@@ -1,0 +1,8 @@
+[indexing]
+contracts = [
+    "erc721:0x8b9a373942288e661677ca0f5690f92cc2a5ed2fbe107341712f20591ac1d4"
+]
+
+[events]
+raw = true
+historical = ["darkshuffle_s1-TrophyCreation", "darkshuffle_s1-TrophyProgression"]

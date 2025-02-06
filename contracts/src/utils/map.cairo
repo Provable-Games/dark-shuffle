@@ -1,15 +1,15 @@
+use darkshuffle::models::battle::{Battle, BattleEffects, Hero, Monster};
+
+use darkshuffle::models::config::{GameSettings};
+use darkshuffle::models::draft::{Draft};
+use darkshuffle::models::game::{Game, GameEffects, GameState};
+use darkshuffle::models::map::{Map, MonsterNode};
+use darkshuffle::utils::config::ConfigUtilsImpl;
+use darkshuffle::utils::hand::HandUtilsImpl;
+use darkshuffle::utils::random;
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
-use darkshuffle::models::config::{GameSettings};
-use darkshuffle::models::battle::{Battle, BattleEffects, Hero, Monster};
-use darkshuffle::models::game::{Game, GameEffects, GameState};
-use darkshuffle::models::draft::{Draft};
-use darkshuffle::models::map::{Map, MonsterNode};
-use darkshuffle::utils::random;
-use darkshuffle::utils::hand::HandUtilsImpl;
-use darkshuffle::utils::config::ConfigUtilsImpl;
 
 #[generate_trait]
 impl MapUtilsImpl of MapUtilsTrait {
@@ -67,7 +67,10 @@ impl MapUtilsImpl of MapUtilsTrait {
                 }
             } else {
                 current_node_id += 1;
-                if current_node_id == node_id && (game.last_node_id == current_node_id - 1 || game.last_node_id == current_node_id - depth_3_count) {
+                if current_node_id == node_id
+                    && (game.last_node_id == current_node_id
+                        - 1 || game.last_node_id == current_node_id
+                        - depth_3_count) {
                     is_available = true;
                     break;
                 }
@@ -104,11 +107,7 @@ impl MapUtilsImpl of MapUtilsTrait {
         let health = 35 + (map.level * 5);
         let attack = (map.level + 1);
 
-        MonsterNode {
-            monster_id,
-            attack,
-            health,
-        }
+        MonsterNode { monster_id, attack, health, }
     }
 
     fn start_battle(ref world: WorldStorage, ref game: Game, monster: MonsterNode, seed: u128) {
@@ -118,30 +117,16 @@ impl MapUtilsImpl of MapUtilsTrait {
 
         game.state = GameState::Battle;
 
-        let shuffled_deck = random::shuffle_deck(seed, draft.cards, 0);
-        let hand = HandUtilsImpl::get_starting_hand(shuffled_deck, game_settings.start_hand_size);
-            
-        world.write_model(@Battle {
+        let mut battle = Battle {
             battle_id: game.monsters_slain + 1,
             game_id: game.game_id,
-
             round: 1,
             hero: Hero {
-                health: game.hero_health,
-                max_health: game_settings.max_health,
-                energy: game_settings.start_energy + game_effects.start_bonus_energy,
+                health: game.hero_health, energy: game_settings.start_energy + game_effects.start_bonus_energy,
             },
-            
-            monster: Monster {
-                monster_id: monster.monster_id,
-                attack: monster.attack,
-                health: monster.health,
-            },
-
-            hand: hand,
-            deck: shuffled_deck,
-            deck_index: game_settings.start_hand_size,
-
+            monster: Monster { monster_id: monster.monster_id, attack: monster.attack, health: monster.health, },
+            hand: array![].span(),
+            deck: draft.cards,
             battle_effects: BattleEffects {
                 enemy_marks: 0,
                 hero_dmg_reduction: 0,
@@ -150,6 +135,9 @@ impl MapUtilsImpl of MapUtilsTrait {
                 next_brute_attack_bonus: 0,
                 next_brute_health_bonus: 0,
             }
-        });
+        };
+
+        HandUtilsImpl::draw_cards(ref battle, game_settings.start_hand_size, game_settings.max_hand_size, seed);
+        world.write_model(@battle);
     }
 }

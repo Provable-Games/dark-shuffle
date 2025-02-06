@@ -11,6 +11,7 @@ function parseData(value, type) {
     case 'boolean':
       return Boolean(parseInt(value))
     default:
+      
       return value
   }
 }

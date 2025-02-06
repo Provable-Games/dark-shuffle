@@ -8,4 +8,4 @@ cd contracts
 sozo build
 
 # Run katana with the disable-fee option
-katana --invoke-max-steps 25000000 --block-time 1000 --dev --dev.no-fee --http.cors_origins "*"
+katana --invoke-max-steps 25000000 --block-time 1000 --dev --dev.no-fee

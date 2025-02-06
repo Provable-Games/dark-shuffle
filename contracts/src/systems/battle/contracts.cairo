@@ -1,37 +1,32 @@
 #[starknet::interface]
-trait IBattleContract<T> {
-    fn battle_actions(ref self: T, game_id: u128, battle_id: u16, actions: Span<Span<u8>>);
+trait IBattleSystems<T> {
+    fn battle_actions(ref self: T, game_id: u64, battle_id: u16, actions: Span<Span<u8>>);
 }
 
 #[dojo::contract]
 mod battle_systems {
+    use achievement::store::{Store, StoreTrait};
+
+    use darkshuffle::constants::{DEFAULT_NS};
+    use darkshuffle::models::battle::{
+        Battle, BattleOwnerTrait, Card, Creature, Board, BoardStats, CardType, RoundStats
+    };
+    use darkshuffle::models::config::GameSettings;
+    use darkshuffle::models::game::{Game, GameEffects, GameActionEvent};
+    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
+    use darkshuffle::utils::{
+        achievements::AchievementsUtilsImpl, summon::SummonUtilsImpl, spell::SpellUtilsImpl, cards::CardUtilsImpl,
+        board::BoardUtilsImpl, battle::BattleUtilsImpl, game::GameUtilsImpl, monsters::MonsterUtilsImpl,
+        hand::HandUtilsImpl, config::ConfigUtilsImpl, random
+    };
+    use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-    use darkshuffle::constants::{DEFAULT_NS};
-    use darkshuffle::models::battle::{Battle, BattleOwnerTrait, Card, Creature, Board, BoardStats, CardType, RoundStats};
-    use darkshuffle::models::game::{Game, GameEffects};
-    use darkshuffle::models::config::GameSettings;
-    use darkshuffle::utils::{
-        achievements::AchievementsUtilsImpl,
-        summon::SummonUtilsImpl,
-        cards::CardUtilsImpl,
-        board::BoardUtilsImpl,
-        battle::BattleUtilsImpl,
-        game::GameUtilsImpl,
-        monsters::MonsterUtilsImpl,
-        hand::HandUtilsImpl,
-        config::ConfigUtilsImpl,
-        random
-    };
-
-    use achievement::store::{Store, StoreTrait};
-    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-
     #[abi(embed_v0)]
-    impl BattleContractImpl of super::IBattleContract<ContractState> {
-        fn battle_actions(ref self: ContractState, game_id: u128, battle_id: u16, actions: Span<Span<u8>>) {
+    impl BattleSystemsImpl of super::IBattleSystems<ContractState> {
+        fn battle_actions(ref self: ContractState, game_id: u64, battle_id: u16, actions: Span<Span<u8>>) {
             assert(*(*actions.at(actions.len() - 1)).at(0) == 1, 'Must end turn');
 
             let mut world: WorldStorage = self.world(DEFAULT_NS());
@@ -46,9 +41,7 @@ mod battle_systems {
             let mut board_stats: BoardStats = BoardUtilsImpl::get_board_stats(board, battle.monster.monster_id);
 
             let mut round_stats: RoundStats = RoundStats {
-                monster_start_health: battle.monster.health,
-                creatures_played: 0,
-                creature_attack_count: 0
+                monster_start_health: battle.monster.health, creatures_played: 0, creature_attack_count: 0
             };
 
             let mut action_index = 0;
@@ -61,24 +54,23 @@ mod battle_systems {
                         let card: Card = CardUtilsImpl::get_card(*action.at(1));
                         BattleUtilsImpl::energy_cost(ref battle, round_stats, game_effects, card);
 
-                        if card.card_type == CardType::Creature {
-                            let creature: Creature = SummonUtilsImpl::summon_creature(
-                                card,
-                                ref battle,
-                                ref board,
-                                ref board_stats,
-                                ref round_stats,
-                                game_effects
-                            );
-                            BoardUtilsImpl::add_creature_to_board(creature, ref board, ref board_stats);
-                            if game.season_id != 0 {
-                                AchievementsUtilsImpl::play_creature(ref world, card);
+                        match card.card_type {
+                            CardType::Creature => {
+                                let creature: Creature = SummonUtilsImpl::summon_creature(
+                                    card, ref battle, ref board, ref board_stats, ref round_stats, game_effects
+                                );
+                                BoardUtilsImpl::add_creature_to_board(creature, ref board, ref board_stats);
+                                if game.season_id != 0 {
+                                    AchievementsUtilsImpl::play_creature(ref world, card);
+                                }
+                            },
+                            CardType::Spell => {
+                                SpellUtilsImpl::cast_spell(card, ref battle, ref board, ref board_stats,);
                             }
                         }
 
                         HandUtilsImpl::remove_hand_card(ref battle, *action.at(1));
                     },
-
                     1 => {
                         assert(action_index == actions.len() - 1, 'Invalid action');
                         BoardUtilsImpl::attack_monster(ref battle, ref board, board_stats, ref round_stats);
@@ -89,10 +81,7 @@ mod battle_systems {
                             AchievementsUtilsImpl::big_hit(ref world);
                         }
                     },
-
-                    _ => {
-                        assert(false, 'Invalid action');
-                    }
+                    _ => { assert(false, 'Invalid action'); }
                 }
 
                 if GameUtilsImpl::is_battle_over(battle) {
@@ -101,6 +90,15 @@ mod battle_systems {
 
                 action_index += 1;
             };
+
+            world
+                .emit_event(
+                    @GameActionEvent {
+                        game_id,
+                        tx_hash: starknet::get_tx_info().unbox().transaction_hash,
+                        count: game.action_count + battle.round.into()
+                    }
+                );
 
             let random_hash = random::get_random_hash();
             let seed: u128 = random::get_entropy(random_hash);
@@ -131,10 +129,7 @@ mod battle_systems {
                     battle.hero.energy = battle.round;
                 }
 
-                let shuffled_deck = random::shuffle_deck(seed, battle.deck, battle.deck_index);
-
-                HandUtilsImpl::draw_cards(ref battle, shuffled_deck, 1 + game_effects.card_draw, battle.deck_index, game_settings.max_hand_size);
-                battle.deck = shuffled_deck;
+                HandUtilsImpl::draw_cards(ref battle, 1 + game_effects.card_draw, game_settings.max_hand_size, seed);
 
                 world.write_model(@battle);
                 world.write_model(@board);

@@ -1252,8 +1252,8 @@
   },
   "contracts": [
     {
-      "address": "0x2580bd4ced5e62cd9817549c672a0c8edfb3a72f98a66c1b86ebb599b513f23",
-      "class_hash": "0x69f1a09bb52c354735ee01c91d0dadc6baf4f08702cff8cd6115e00118cd036",
+      "address": "0x1430c91ad2ebdc18fccdfb5e9884cca1f944e620667cbbc1290da4e7291900a",
+      "class_hash": "0x3dedeef58efa9cacb57052c9a7549c81bb1f46ab90a4420ec4a8cc6960e5aca",
       "abi": [
         {
           "type": "impl",
@@ -1339,8 +1339,12 @@
               "name": "battle_actions",
               "inputs": [
                 {
+                  "name": "game_id",
+                  "type": "core::integer::u128"
+                },
+                {
                   "name": "battle_id",
-                  "type": "core::integer::u32"
+                  "type": "core::integer::u16"
                 },
                 {
                   "name": "actions",
@@ -1468,16 +1472,293 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle-battle_systems",
-      "selector": "0x75f1a1576f2aad0c034746529f1bd4657acb549d3cf0e8efe0567d4f440c108",
+      "tag": "darkshuffle_s1-battle_systems",
+      "selector": "0x36ec7b287e52c8113be388f562d5de5f001d5b072f31dbb9ec54b47e459dba",
       "systems": [
         "battle_actions",
         "upgrade"
       ]
     },
     {
-      "address": "0x2884225986f7f3c9f1a9f53f7281002684e8b8ae99f637ced434010d66d128c",
-      "class_hash": "0x55bbaaf5c031b1eb77797969af1aaf78d69db14668b69428a29e21eea6f29f7",
+      "address": "0x6e666f304fefdb08fb4ef078b18a11586cb525dd66d7e3cbed43daee1800610",
+      "class_hash": "0x1bfc3eebf382d445f06e42c5e9e1fae4a730b73ed5a63e81e207bc80add1a36",
+      "abi": [
+        {
+          "type": "impl",
+          "name": "config_systems__ContractImpl",
+          "interface_name": "dojo::contract::interface::IContract"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::interface::IContract",
+          "items": []
+        },
+        {
+          "type": "impl",
+          "name": "config_systems__DeployedContractImpl",
+          "interface_name": "dojo::meta::interface::IDeployedResource"
+        },
+        {
+          "type": "struct",
+          "name": "core::byte_array::ByteArray",
+          "members": [
+            {
+              "name": "data",
+              "type": "core::array::Array::<core::bytes_31::bytes31>"
+            },
+            {
+              "name": "pending_word",
+              "type": "core::felt252"
+            },
+            {
+              "name": "pending_word_len",
+              "type": "core::integer::u32"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::meta::interface::IDeployedResource",
+          "items": [
+            {
+              "type": "function",
+              "name": "dojo_name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "view"
+        },
+        {
+          "type": "impl",
+          "name": "ConfigContractImpl",
+          "interface_name": "darkshuffle::systems::config::contracts::IConfigContract"
+        },
+        {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "darkshuffle::systems::config::contracts::IConfigContract",
+          "items": [
+            {
+              "type": "function",
+              "name": "create_game_settings",
+              "inputs": [
+                {
+                  "name": "start_health",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "start_energy",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "start_hand_size",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "draft_size",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "max_health",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "max_energy",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "max_hand_size",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "include_spells",
+                  "type": "core::bool"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "set_game_token_address",
+              "inputs": [
+                {
+                  "name": "game_token_address",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "get_game_token_address",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "WorldProviderImpl",
+          "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
+        },
+        {
+          "type": "struct",
+          "name": "dojo::world::iworld::IWorldDispatcher",
+          "members": [
+            {
+              "name": "contract_address",
+              "type": "core::starknet::contract_address::ContractAddress"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::world_provider::IWorldProvider",
+          "items": [
+            {
+              "type": "function",
+              "name": "world_dispatcher",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::world::iworld::IWorldDispatcher"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "UpgradeableImpl",
+          "interface_name": "dojo::contract::components::upgradeable::IUpgradeable"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::upgradeable::IUpgradeable",
+          "items": [
+            {
+              "type": "function",
+              "name": "upgrade",
+              "inputs": [
+                {
+                  "name": "new_class_hash",
+                  "type": "core::starknet::class_hash::ClassHash"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "constructor",
+          "name": "constructor",
+          "inputs": []
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+          "kind": "struct",
+          "members": [
+            {
+              "name": "class_hash",
+              "type": "core::starknet::class_hash::ClassHash",
+              "kind": "data"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "Upgraded",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+              "kind": "nested"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+          "kind": "enum",
+          "variants": []
+        },
+        {
+          "type": "event",
+          "name": "achievement::components::achievable::AchievableComponent::Event",
+          "kind": "enum",
+          "variants": []
+        },
+        {
+          "type": "event",
+          "name": "darkshuffle::systems::config::contracts::config_systems::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "UpgradeableEvent",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+              "kind": "nested"
+            },
+            {
+              "name": "WorldProviderEvent",
+              "type": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+              "kind": "nested"
+            },
+            {
+              "name": "AchievableEvent",
+              "type": "achievement::components::achievable::AchievableComponent::Event",
+              "kind": "flat"
+            }
+          ]
+        }
+      ],
+      "init_calldata": [],
+      "tag": "darkshuffle_s1-config_systems",
+      "selector": "0x7b252dba28ce7976adf52a353f0e7224eecbc2387dfc5ad61039378be025236",
+      "systems": [
+        "create_game_settings",
+        "set_game_token_address",
+        "upgrade"
+      ]
+    },
+    {
+      "address": "0x4fd1e96727b591ebc1f823215751eaa23084ef77d73caa3a353211b254f9743",
+      "class_hash": "0x2314571efaf1bb1bf62e67d54bbbf317dafa86101b541b2852c46256e0f1aa1",
       "abi": [
         {
           "type": "impl",
@@ -1544,7 +1825,7 @@
               "inputs": [
                 {
                   "name": "game_id",
-                  "type": "core::integer::u32"
+                  "type": "core::integer::u128"
                 },
                 {
                   "name": "option_id",
@@ -1672,16 +1953,16 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle-draft_systems",
-      "selector": "0x22c64f2ab3e4e550d92fed2bd5f2b60c590b5b49a6d9aded921ddd5c22a091b",
+      "tag": "darkshuffle_s1-draft_systems",
+      "selector": "0x40005899756073e33299c53398902f22e35bf490e3d31f9cb6f40684ed8a540",
       "systems": [
         "pick_card",
         "upgrade"
       ]
     },
     {
-      "address": "0x4f3380c391b8283a8d26feb8319ba12b47c4d27ef21f0eb9c2c7aab56486921",
-      "class_hash": "0x5b702c127124e7d44f0f0107e3b03011237a4c58a0698c2947afa0769d1cb8d",
+      "address": "0x415f5cd0339f5b14e7a20caffd0309d91cc6e1af05a65f6c25f217b60abc631",
+      "class_hash": "0x26708b8d1bab16d9ac52fd6ab92fda13cddc8205c262c91d270bb179d0a23d8",
       "abi": [
         {
           "type": "impl",
@@ -1739,16 +2020,202 @@
           "interface_name": "darkshuffle::systems::game::contracts::IGameContract"
         },
         {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "darkshuffle::models::config::GameSettings",
+          "members": [
+            {
+              "name": "settings_id",
+              "type": "core::integer::u32"
+            },
+            {
+              "name": "start_health",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "start_energy",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "start_hand_size",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "draft_size",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "max_health",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "max_energy",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "max_hand_size",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "include_spells",
+              "type": "core::bool"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "core::array::Span::<core::felt252>",
+          "members": [
+            {
+              "name": "snapshot",
+              "type": "@core::array::Array::<core::felt252>"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "core::integer::u256",
+          "members": [
+            {
+              "name": "low",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "high",
+              "type": "core::integer::u128"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "darkshuffle::models::game::GameState",
+          "variants": [
+            {
+              "name": "Draft",
+              "type": "()"
+            },
+            {
+              "name": "Battle",
+              "type": "()"
+            },
+            {
+              "name": "Map",
+              "type": "()"
+            },
+            {
+              "name": "Over",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "darkshuffle::models::game::Game",
+          "members": [
+            {
+              "name": "game_id",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "season_id",
+              "type": "core::integer::u32"
+            },
+            {
+              "name": "player_name",
+              "type": "core::felt252"
+            },
+            {
+              "name": "state",
+              "type": "darkshuffle::models::game::GameState"
+            },
+            {
+              "name": "hero_health",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "hero_xp",
+              "type": "core::integer::u16"
+            },
+            {
+              "name": "monsters_slain",
+              "type": "core::integer::u16"
+            },
+            {
+              "name": "map_level",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "map_depth",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "last_node_id",
+              "type": "core::integer::u8"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "core::array::Span::<darkshuffle::models::game::Game>",
+          "members": [
+            {
+              "name": "snapshot",
+              "type": "@core::array::Array::<darkshuffle::models::game::Game>"
+            }
+          ]
+        },
+        {
           "type": "interface",
           "name": "darkshuffle::systems::game::contracts::IGameContract",
           "items": [
             {
               "type": "function",
-              "name": "start_game",
+              "name": "mint",
               "inputs": [
+                {
+                  "name": "settings_id",
+                  "type": "core::integer::u32"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "enter_season",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u128"
+                },
                 {
                   "name": "season_id",
                   "type": "core::integer::u32"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "start_game",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u128"
                 },
                 {
                   "name": "name",
@@ -1764,11 +2231,103 @@
               "inputs": [
                 {
                   "name": "game_id",
-                  "type": "core::integer::u32"
+                  "type": "core::integer::u128"
                 }
               ],
               "outputs": [],
               "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "score",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::integer::u16"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "get_settings",
+              "inputs": [
+                {
+                  "name": "settings_id",
+                  "type": "core::integer::u32"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "darkshuffle::models::config::GameSettings"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "settings_exists",
+              "inputs": [
+                {
+                  "name": "settings_id",
+                  "type": "core::integer::u32"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "get_game_data",
+              "inputs": [
+                {
+                  "name": "token_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "(core::felt252, core::integer::u8, core::integer::u16, core::integer::u32, core::integer::u8, core::array::Span::<core::felt252>)"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "get_player_games",
+              "inputs": [
+                {
+                  "name": "player_address",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                },
+                {
+                  "name": "limit",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "page",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "active",
+                  "type": "core::bool"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::array::Span::<darkshuffle::models::game::Game>"
+                }
+              ],
+              "state_mutability": "view"
             }
           ]
         },
@@ -1888,17 +2447,19 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle-game_systems",
-      "selector": "0x289f5c0676054e419cd1994b6d88498da5add073e09ec4a1016d59bc74b988e",
+      "tag": "darkshuffle_s1-game_systems",
+      "selector": "0x1a77b9e09c653e0a73161661bb5347687e4458f8084f4fe6ed897d4b0881dea",
       "systems": [
+        "mint",
+        "enter_season",
         "start_game",
         "abandon_game",
         "upgrade"
       ]
     },
     {
-      "address": "0xf383ee2775d4a8e723b279b31a21779c5dc212dea7fc022131f793ce18319b",
-      "class_hash": "0x6d236d7b6c0648d5d02a71fd0a691051cac52da91cb369990ea65954927a4ac",
+      "address": "0x33058abadd44084f1bd31fd76b73543200ae7e8743b85da39a8f7cdd78562ed",
+      "class_hash": "0x1f620c13cb9e2d91c509b597d002327b6ce776c096cad2ec603d553851d1c8e",
       "abi": [
         {
           "type": "impl",
@@ -1965,7 +2526,7 @@
               "inputs": [
                 {
                   "name": "game_id",
-                  "type": "core::integer::u32"
+                  "type": "core::integer::u128"
                 }
               ],
               "outputs": [],
@@ -1977,7 +2538,7 @@
               "inputs": [
                 {
                   "name": "game_id",
-                  "type": "core::integer::u32"
+                  "type": "core::integer::u128"
                 },
                 {
                   "name": "node_id",
@@ -2105,8 +2666,8 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle-map_systems",
-      "selector": "0x42ce15e9786cc3f4b414b85949c185515724df602038b40b7114fde29273d30",
+      "tag": "darkshuffle_s1-map_systems",
+      "selector": "0x2c137e0c6ddd00449f492e07b4588b812669ec70d84835a0256f6796feae24c",
       "systems": [
         "generate_tree",
         "select_node",
@@ -2114,8 +2675,8 @@
       ]
     },
     {
-      "address": "0x432248a3eec5b52c42de44d8cc8bddd5e2639ae4178b195511e8a7d88648403",
-      "class_hash": "0x78bb117f3e5c23ae3d2ab70c8d1f29f7b88c48530b2c53c7d8731def09c4e69",
+      "address": "0x7b667d54435c0dbe4243a637fc968bc99aa609c69e858b63221d45042b3ec1b",
+      "class_hash": "0x310ace0cbb46d79f6ab4067bd9dab66c93ec96aee104d7f9256b402c0120647",
       "abi": [
         {
           "type": "impl",
@@ -2205,6 +2766,10 @@
                 {
                   "name": "entry_amount",
                   "type": "core::integer::u256"
+                },
+                {
+                  "name": "settings_id",
+                  "type": "core::integer::u32"
                 }
               ],
               "outputs": [],
@@ -2232,7 +2797,7 @@
                 },
                 {
                   "name": "amount",
-                  "type": "core::integer::u256"
+                  "type": "core::integer::u32"
                 },
                 {
                   "name": "name",
@@ -2364,8 +2929,8 @@
         }
       ],
       "init_calldata": [],
-      "tag": "darkshuffle-season_systems",
-      "selector": "0x22c760ac7dee58d9d6a84cd0f9e4606c8239d445a1d9619611813323bd78a47",
+      "tag": "darkshuffle_s1-season_systems",
+      "selector": "0x464b0fd10a93213489ba77a7c658fe3e014fac9c6209a5e70ab36498de032e9",
       "systems": [
         "start_season",
         "end_season",
@@ -2377,70 +2942,83 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x6c22804c6422052601ec757aaaf20e37d0c9cd7c18dbadc791bcee2ff3a903d",
-      "tag": "darkshuffle-Battle",
-      "selector": "0x6adbb0ba14306ee0120e0aafaa59e98f44bf1b897edbfa1af89386d5ca26fe1"
+      "class_hash": "0x8f75686dd35cef67800f2ad857be327719dbb9d035a0f3e34da4f02a0be592",
+      "tag": "darkshuffle_s1-Battle",
+      "selector": "0x10cb45beda7269a244b32796909d9a706a2d77b02cd11beb5a2b1213fdd8b52"
     },
     {
       "members": [],
-      "class_hash": "0x5b79dab6af0763770514dc7e19a8bf06edae4a5bedcc26c5aa9614346cf3fe4",
-      "tag": "darkshuffle-BattleEffects",
-      "selector": "0x157af533f10d2429e0324cff153cd430e0e9551aa55ee1f51cee5aedf8c2c34"
-    },
-    {
-      "members": [],
-      "class_hash": "0x52a465907ce72a9757a9a6d25a909434d09428ac7c3199a8915ea56458c42be",
-      "tag": "darkshuffle-Board",
-      "selector": "0x359638a3b7e5908f2efe696ef928787916140c8bb3ce20b956a1fb37ddc0957"
+      "class_hash": "0x657074738ef37b1593f3cdc4ec1ec5f02b9c8a81097e4513bb674d745a211f1",
+      "tag": "darkshuffle_s1-Board",
+      "selector": "0x6947dbbdea156abd55ef96d5e0bf481b252e962ccf2e865f34813ffea244c2"
     },
     {
       "members": [],
       "class_hash": "0x7aea14df7168edcc7b30bc18df761ec642b32602529cc3b0d23c2f14570421f",
-      "tag": "darkshuffle-Donation",
-      "selector": "0x3b354b9250e73d0cf4ede2ec5b16371a24e373a01ff1d52b2594cda528010dd"
+      "tag": "darkshuffle_s1-Donation",
+      "selector": "0x6c2e05aa49e15fb476ee4380ea9de2310547548aed8c6c0aa5fa4a1c2ef4ee2"
     },
     {
       "members": [],
-      "class_hash": "0x73cd152f64ff0eee5332571e3c58fe4ac1bf1469e5bbfda8a5402ab20451b25",
-      "tag": "darkshuffle-Draft",
-      "selector": "0x2febb181a7f6e5196432f8079e21fb0fdacc61b9a78805402d318c49133b66e"
+      "class_hash": "0x399dfb33472fd39e36b2f7b60eb7cb199b969d8f1f7e3b4365b162aace8e207",
+      "tag": "darkshuffle_s1-Draft",
+      "selector": "0x770912d6a6bffb95b582d75847f838ca4310a78275b8826154e739cd34add31"
     },
     {
       "members": [],
-      "class_hash": "0x73f55c5414f41e434ae1550d70aa5321a6ba47b0b2003a2d1d44cd37e28adb2",
-      "tag": "darkshuffle-Game",
-      "selector": "0x1a3b9b6c5802b83d9a8a21a24d6472b1a47b0529b4b6c805f26f744c22a35a9"
+      "class_hash": "0x1cca2f66524922db9c09fd523202d4ad1321812d732e1b0a7fccf5a840d08e3",
+      "tag": "darkshuffle_s1-Game",
+      "selector": "0x3ab7bb3976da62ba9aa828bb64fb1f0fe2f7009c40aa54a504c07e9f49b9636"
     },
     {
       "members": [],
-      "class_hash": "0x60818c7510dc21482c3b675e07f36bf738bbdc754a27579114f7bf3d30c5899",
-      "tag": "darkshuffle-GameEffects",
-      "selector": "0x1c0e9539fbce953b02e41710151458afe69463e676129a87998ab3ad86568da"
+      "class_hash": "0xb75053e260472794073e0e24a52f783e8f3830e03b10cd683afd89247e9cd2",
+      "tag": "darkshuffle_s1-GameEffects",
+      "selector": "0x2f2be3d266e214c64d48769d90ea982070b29f270f48f4bd25d1997ce16562e"
     },
     {
       "members": [],
-      "class_hash": "0x65cc58824c886cbaeb60a31321198da259596d379c1458af94f8ea1d2c6555d",
-      "tag": "darkshuffle-Leaderboard",
-      "selector": "0xdbeecd6ebdc49d0c7692b3576e074dfa43fcd48c6b060ca8f7379b672e390e"
+      "class_hash": "0x55c9b1598b59e63fe02424542e5dad943a0f43d4e0c641d6d0566acc7948413",
+      "tag": "darkshuffle_s1-GameSettings",
+      "selector": "0x1876f1040b33843987ee0bcc1275d20fa8efc01ff5e55d5ed0c4a142f08360"
     },
     {
       "members": [],
-      "class_hash": "0x598cb6bd80d6811d7119e1a0ea39166a2238dd11c9e4c6724d328f9d4c675d",
-      "tag": "darkshuffle-Map",
-      "selector": "0x744824e25bd8d5b415e9c6ced8c275711f104d630199321aa62931e9519c61f"
+      "class_hash": "0x1d47067e8bbe8669955710f39fd8f5f1f0c9720e2f270b808e7dc806cbb709b",
+      "tag": "darkshuffle_s1-Leaderboard",
+      "selector": "0x3f9a80280d5c1b9f65cb12beb39cfe8e1ab443ce93deb094a739a967fd2af39"
     },
     {
       "members": [],
-      "class_hash": "0x5f87cb804628f63f0f7cd51bddb15cc75ed378d1815733dbbda6da95846654a",
-      "tag": "darkshuffle-PlayerReward",
-      "selector": "0x5494aa17ccbd1b2a9dc209ee2e1d9ade0098ef02e0bbdad88e64508910e5fa9"
+      "class_hash": "0x5b714980f7fd65b81ca2d696e55ba74c34b7b5503611b11898228f47986b5ee",
+      "tag": "darkshuffle_s1-Map",
+      "selector": "0x360f701df745ddf6d2537f33d3056e7c85aaba16e03f4b3e1f3bb2db76a4d2a"
     },
     {
       "members": [],
-      "class_hash": "0x5d7efdc4d97678e795f52457168b03688356ee40c1110e5394593410fdae655",
-      "tag": "darkshuffle-Season",
-      "selector": "0x28c4cd34d5c7b81b84b329dbd437cb86ed946217214a2f6c67f49506b4c26e"
+      "class_hash": "0x31ece662f05778ddeedf55b1ff9744282f050f2bf134e39c1242cffd405c35f",
+      "tag": "darkshuffle_s1-Season",
+      "selector": "0x2738f2cda6ed5dfe18f09113568187d30bcfe62e652655c5b093bf9f3f861a1"
+    },
+    {
+      "members": [],
+      "class_hash": "0x4d3f1fb5f7447c51ca354980a54e00253cc5a34c4e9964d89c098fc5d0b1a3e",
+      "tag": "darkshuffle_s1-WorldConfig",
+      "selector": "0x23b9d02ef49e051885de2f7b77c8cab7e062285b69bc623a189413be27bf1c3"
     }
   ],
-  "events": []
+  "events": [
+    {
+      "members": [],
+      "class_hash": "0x6b38999d987627835d4c20e7e571c73d32ddc856786d9790a131bdb3372a246",
+      "tag": "darkshuffle_s1-TrophyCreation",
+      "selector": "0x4dad0cc116800ca38589df42f7817fff3183c89d6db464d798c0f909a160372"
+    },
+    {
+      "members": [],
+      "class_hash": "0xf05f290a704ad2671544b391f0c33d50d6d43d468d52791282852a833a00c7",
+      "tag": "darkshuffle_s1-TrophyProgression",
+      "selector": "0x542d8a36883192f5307c75438e0666d0936c89812d49ae184aeac6e826ca6a4"
+    }
+  ]
 }

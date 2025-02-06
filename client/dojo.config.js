@@ -1,6 +1,8 @@
-import manifest from "./manifest_mainnet.json";
+import manifest_sepolia from "./manifest_sepolia.json";
+import manifest_mainnet from "./manifest_mainnet.json";
 
 const {
+  VITE_PUBLIC_CHAIN,
   VITE_PUBLIC_NODE_URL,
   VITE_PUBLIC_TORII,
   VITE_PUBLIC_TORII_RAW,
@@ -15,8 +17,9 @@ const {
 } = import.meta.env;
 
 export const dojoConfig = {
-  seasonId: 7,
-  version: "0.4.6",
+  seasonId: 5,
+  version: "1.1",
+  chain: VITE_PUBLIC_CHAIN,
   namespace: VITE_PUBLIC_NAMESPACE,
   rpcUrl: VITE_PUBLIC_NODE_URL,
   toriiUrl: VITE_PUBLIC_TORII,
@@ -28,5 +31,5 @@ export const dojoConfig = {
   ethAddress: VITE_PUBLIC_ETH_ADDRESS,
   lordsAddress: VITE_PUBLIC_LORDS_ADDRESS,
   gameTokenAddress: VITE_PUBLIC_GAME_TOKEN_ADDRESS,
-  manifest,
+  manifest: VITE_PUBLIC_CHAIN === "mainnet" ? manifest_mainnet : manifest_sepolia,
 };

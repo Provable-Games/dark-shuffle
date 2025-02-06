@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import React, { useContext, useState } from "react";
 import { isMobile } from 'react-device-detect';
 import { DraftContext } from "../../contexts/draftContext";
-import { CardSize, fetch_beast_image } from "../../helpers/cards";
+import { CardSize, fetch_card_image } from "../../helpers/cards";
 import { uniquefy } from '../../helpers/utilities';
 import Card from "../card";
 
@@ -32,7 +32,7 @@ function Overview() {
               </Typography>
             </Box>
             <Box height={'90%'}>
-              <img alt='' src={fetch_beast_image(card.name)} height={'100%'} />
+              <img alt='' src={fetch_card_image(card.name)} height={'100%'} />
             </Box>
 
             <Typography>

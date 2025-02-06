@@ -13,6 +13,9 @@ openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", re
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.5" }
 achievement = { git = "https://github.com/cartridge-gg/arcade", tag = "v1.0.5" }
 
+[dev-dependencies]
+dojo_cairo_test = { git = "https://github.com/dojoengine/dojo.git", tag = "v1.0.5" }
+
 [[target.starknet-contract]]
 build-external-contracts = [
     "dojo::world::world_contract::world",

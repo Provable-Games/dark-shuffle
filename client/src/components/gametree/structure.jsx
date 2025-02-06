@@ -8,13 +8,15 @@ import skull from "../../assets/images/skull.png";
 import sword from "../../assets/images/sword.png";
 import { GET_MONSTER } from '../../battle/monsterUtils';
 import { GameContext } from '../../contexts/gameContext';
-import { CardSize, fetch_beast_image, fetchBeastTypeImage } from '../../helpers/cards';
+import { CardSize, fetch_card_image, fetchBeastTypeImage } from '../../helpers/cards';
 import { LargeCustomTooltip } from '../../helpers/styles';
 import { isMobile } from 'react-device-detect';
+import { useReplay } from '../../contexts/replayContext';
 
 const INACTIVE_OPACITY = 0.5
 
 function Structure(props) {
+  const replay = useReplay()
   const game = useContext(GameContext)
 
   const { map } = game.getState
@@ -113,6 +115,10 @@ function Structure(props) {
   }
 
   function nodeStyle(node) {
+    if (game.values.replay && node.nodeId === replay.getMapSelection()) {
+      return { opacity: 1, borderColor: 'green' }
+    }
+
     if (node.active || node.status !== 0) {
       return { opacity: 1, borderColor: '#FFE97F' }
     }
@@ -294,7 +300,7 @@ function Structure(props) {
           </Box>
 
           <Box sx={{ pt: '4%', width: '100%', height: '70%', display: 'flex', justifyContent: 'center', opacity: node.status !== 0 ? 0.5 : 1 }}>
-            {<img alt='' src={fetch_beast_image(monster.name)} height={'100%'} />}
+            {<img alt='' src={fetch_card_image(monster.name)} height={'100%'} />}
           </Box>
 
           <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
