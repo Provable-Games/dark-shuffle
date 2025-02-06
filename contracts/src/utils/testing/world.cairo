@@ -1,15 +1,8 @@
 use core::array::{ArrayTrait, SpanTrait};
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_cairo_test::{
-    spawn_test_world, NamespaceDef, TestResource, ContractDefTrait, ContractDef, WorldStorageTestTrait
-};
 use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR};
 use darkshuffle::models::{
-    battle::{m_Battle, m_Board},
-    config::{m_WorldConfig, m_GameSettings},
-    draft::{m_Draft},
-    game::{m_Game, m_GameEffects, m_GameFixedData},
-    map::{m_Map},
+    battle::{m_Battle, m_Board}, config::{m_WorldConfig, m_GameSettings}, draft::{m_Draft},
+    game::{m_Game, m_GameEffects, m_GameFixedData}, map::{m_Map},
 };
 use darkshuffle::systems::{
     game::contracts::{game_systems, IGameSystemsDispatcher, IGameSystemsDispatcherTrait},
@@ -17,6 +10,10 @@ use darkshuffle::systems::{
     draft::contracts::{draft_systems, IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait},
     config::contracts::{config_systems, IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait},
     battle::contracts::{battle_systems, IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait}
+};
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo_cairo_test::{
+    spawn_test_world, NamespaceDef, TestResource, ContractDefTrait, ContractDef, WorldStorageTestTrait
 };
 
 use starknet::{ContractAddress, contract_address_const};
@@ -36,7 +33,6 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Event(darkshuffle::models::game::e_GameActionEvent::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyCreation::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyProgression::TEST_CLASS_HASH.try_into().unwrap()),
-
             TestResource::Contract(game_systems::TEST_CLASS_HASH),
             TestResource::Contract(map_systems::TEST_CLASS_HASH),
             TestResource::Contract(draft_systems::TEST_CLASS_HASH),
@@ -77,6 +73,6 @@ fn spawn_darkshuffle() -> dojo::world::WorldStorage {
     starknet::testing::set_contract_address(contract_address_const::<'player1'>());
     starknet::testing::set_account_contract_address(contract_address_const::<'player1'>());
     starknet::testing::set_block_timestamp(300000);
-    
+
     world
 }

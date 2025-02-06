@@ -1,9 +1,9 @@
+use darkshuffle::constants::{WORLD_CONFIG_ID};
+use darkshuffle::interface::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
+use darkshuffle::models::config::{WorldConfig, GameSettings};
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use darkshuffle::models::config::{WorldConfig, GameSettings};
-use darkshuffle::interface::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
-use darkshuffle::constants::{WORLD_CONFIG_ID};
 
 #[generate_trait]
 impl ConfigUtilsImpl of ConfigUtilsTrait {

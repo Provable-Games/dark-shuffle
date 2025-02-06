@@ -19,30 +19,25 @@ trait IGameSystems<T> {
 
 #[dojo::contract]
 mod game_systems {
+    use achievement::store::{Store, StoreTrait};
+
+    use darkshuffle::constants::{WORLD_CONFIG_ID, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, DEFAULT_NS, LAST_NODE_DEPTH};
+    use darkshuffle::interface::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
+    use darkshuffle::models::battle::{Card};
+    use darkshuffle::models::config::{WorldConfig, GameSettings, GameSettingsTrait};
+    use darkshuffle::models::draft::{Draft};
+    use darkshuffle::models::game::{Game, GameState, GameOwnerTrait, GameActionEvent, GameFixedData};
+    use darkshuffle::models::season::{Season, SeasonOwnerTrait};
+    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
+    use darkshuffle::utils::{season::SeasonUtilsImpl, draft::DraftUtilsImpl, cards::CardUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
-    use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use darkshuffle::interface::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
     use starknet::{get_caller_address, get_tx_info, ContractAddress};
-
-    use darkshuffle::constants::{WORLD_CONFIG_ID, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, DEFAULT_NS, LAST_NODE_DEPTH};
-    use darkshuffle::models::game::{Game, GameState, GameOwnerTrait, GameActionEvent, GameFixedData};
-    use darkshuffle::models::battle::{Card};
-    use darkshuffle::models::draft::{Draft};
-    use darkshuffle::models::config::{WorldConfig, GameSettings, GameSettingsTrait};
-    use darkshuffle::models::season::{Season, SeasonOwnerTrait};
-    use darkshuffle::utils::{
-        season::SeasonUtilsImpl,
-        draft::DraftUtilsImpl,
-        cards::CardUtilsImpl,
-        random
-    };
-    use achievement::store::{Store, StoreTrait};
-    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 
     #[abi(embed_v0)]
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
@@ -79,11 +74,15 @@ mod game_systems {
             let season_distribution = season.entry_amount / 100 * 90;
 
             let chain_id = get_tx_info().unbox().chain_id;
-            let payment_dispatcher = IERC20Dispatcher { contract_address: SeasonUtilsImpl::get_lords_address(chain_id) };
+            let payment_dispatcher = IERC20Dispatcher {
+                contract_address: SeasonUtilsImpl::get_lords_address(chain_id)
+            };
             // veLORDS
-            payment_dispatcher.transfer_from(get_caller_address(), SeasonUtilsImpl::get_velords_address(chain_id), fee_distribution);
+            payment_dispatcher
+                .transfer_from(get_caller_address(), SeasonUtilsImpl::get_velords_address(chain_id), fee_distribution);
             // PG FEE
-            payment_dispatcher.transfer_from(get_caller_address(), SeasonUtilsImpl::get_pg_address(chain_id), fee_distribution);
+            payment_dispatcher
+                .transfer_from(get_caller_address(), SeasonUtilsImpl::get_pg_address(chain_id), fee_distribution);
             // SEASON POOL
             payment_dispatcher.transfer_from(get_caller_address(), season.season_address, season_distribution);
 
@@ -109,38 +108,36 @@ mod game_systems {
 
             let random_hash = random::get_random_hash();
             let seed: u128 = random::get_entropy(random_hash);
-            let options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells); 
+            let options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells);
             let season_id = game_token.season_pass(game_id.into());
             let action_count = 0;
 
-            world.write_model(@GameFixedData {
-                game_id,
-                player_name: name,
-            });
+            world.write_model(@GameFixedData { game_id, player_name: name, });
 
-            world.write_model(@Game {
-                game_id,
-                season_id,
-                state: GameState::Draft,    
+            world
+                .write_model(
+                    @Game {
+                        game_id,
+                        season_id,
+                        state: GameState::Draft,
+                        hero_health: game_settings.start_health,
+                        hero_xp: 1,
+                        monsters_slain: 0,
+                        map_level: 0,
+                        map_depth: LAST_NODE_DEPTH,
+                        last_node_id: 0,
+                        action_count,
+                    }
+                );
 
-                hero_health: game_settings.start_health,
-                hero_xp: 1,
-                monsters_slain: 0,
+            world.write_model(@Draft { game_id, options, cards: array![].span() });
 
-                map_level: 0,
-                map_depth: LAST_NODE_DEPTH,
-                last_node_id: 0,
-
-                action_count,
-            });
-
-            world.write_model(@Draft {
-                game_id,
-                options,
-                cards: array![].span()
-            });
-
-            world.emit_event(@GameActionEvent {game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count});
+            world
+                .emit_event(
+                    @GameActionEvent {
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count
+                    }
+                );
         }
 
         fn abandon_game(ref self: ContractState, game_id: u64) {
@@ -159,7 +156,12 @@ mod game_systems {
             }
 
             world.write_model(@game);
-            world.emit_event(@GameActionEvent {game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count});
+            world
+                .emit_event(
+                    @GameActionEvent {
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count
+                    }
+                );
         }
 
         fn score(self: @ContractState, game_id: u64) -> u16 {
@@ -204,17 +206,26 @@ mod game_systems {
                 cards.append(card.name);
                 i += 1;
             };
-            
-            (game_fixed_data.player_name, game.hero_health, game.hero_xp, game.season_id, game.state.into(), cards.span())
+
+            (
+                game_fixed_data.player_name,
+                game.hero_health,
+                game.hero_xp,
+                game.season_id,
+                game.state.into(),
+                cards.span()
+            )
         }
 
-        fn get_player_games(self: @ContractState, player_address: ContractAddress, limit: u256, page: u256, active: bool) -> Span<Game> {
+        fn get_player_games(
+            self: @ContractState, player_address: ContractAddress, limit: u256, page: u256, active: bool
+        ) -> Span<Game> {
             let world: WorldStorage = self.world(DEFAULT_NS());
             let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
 
             let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
             let game_token_dispatcher = IERC721Dispatcher { contract_address: world_config.game_token_address };
-            
+
             let mut balance = game_token_dispatcher.balance_of(player_address);
             let mut last_index = balance - (page * limit);
 

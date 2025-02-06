@@ -1,11 +1,6 @@
-use darkshuffle::models::game::GameEffects;
 use darkshuffle::models::battle::{Battle, BattleEffects, RoundStats, BoardStats, Board};
-use darkshuffle::utils::{
-    battle::BattleUtilsImpl,
-    hand::HandUtilsImpl,
-    board::BoardUtilsImpl,
-    random
-};
+use darkshuffle::models::game::GameEffects;
+use darkshuffle::utils::{battle::BattleUtilsImpl, hand::HandUtilsImpl, board::BoardUtilsImpl, random};
 
 #[generate_trait]
 impl MonsterUtilsImpl of MonsterUtilsTrait {
@@ -22,41 +17,27 @@ impl MonsterUtilsImpl of MonsterUtilsTrait {
                 let random_card = random::get_random_number(seed, battle.hand.len().try_into().unwrap()) - 1;
                 HandUtilsImpl::remove_hand_card(ref battle, *battle.hand.at(random_card.into()));
             }
-        }
-
-        else if battle.monster.monster_id == 2 {
+        } else if battle.monster.monster_id == 2 {
             BattleUtilsImpl::damage_hero(ref battle, game_effects, battle.hand.len().try_into().unwrap());
-        }
-
-        else if battle.monster.monster_id == 14 {
+        } else if battle.monster.monster_id == 14 {
             battle.monster.attack += battle.hand.len().try_into().unwrap();
-        }
-
-        else if battle.monster.monster_id == 15 {
+        } else if battle.monster.monster_id == 15 {
             battle.monster.attack += round_stats.creature_attack_count;
-        }
-
-        else if battle.monster.monster_id == 30 && battle.monster.health >= round_stats.monster_start_health {
+        } else if battle.monster.monster_id == 30 && battle.monster.health >= round_stats.monster_start_health {
             BattleUtilsImpl::damage_hero(ref battle, game_effects, 3);
-        }
-
-        else if battle.monster.monster_id == 57 {
+        } else if battle.monster.monster_id == 57 {
             let mut strongest_creature = BoardUtilsImpl::get_strongest_creature(board);
 
             if strongest_creature.attack > battle.monster.attack {
                 battle.monster.health += 2;
             }
-        }
-
-        else if battle.monster.monster_id == 58 {
+        } else if battle.monster.monster_id == 58 {
             let strongest_creature = BoardUtilsImpl::get_strongest_creature(board);
 
             if strongest_creature.attack > battle.monster.attack {
                 battle.monster.attack += 1;
             }
-        }
-
-        else if battle.monster.monster_id == 59 {
+        } else if battle.monster.monster_id == 59 {
             if battle.monster.health >= round_stats.monster_start_health {
                 battle.monster.attack += 2;
             }

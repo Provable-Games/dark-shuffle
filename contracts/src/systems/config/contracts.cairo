@@ -3,7 +3,7 @@ use starknet::ContractAddress;
 #[starknet::interface]
 trait IConfigSystems<T> {
     fn create_game_settings(
-        ref self: T, 
+        ref self: T,
         start_health: u8,
         start_energy: u8,
         start_hand_size: u8,
@@ -19,16 +19,15 @@ trait IConfigSystems<T> {
 
 #[dojo::contract]
 mod config_systems {
+    use achievement::components::achievable::AchievableComponent;
+    use darkshuffle::constants::{DEFAULT_NS, WORLD_CONFIG_ID};
+    use darkshuffle::models::config::{GameSettings, WorldConfig};
+    use darkshuffle::utils::trophies::index::{Trophy, TrophyTrait, TROPHY_COUNT};
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
     use starknet::{ContractAddress, get_caller_address};
-    use darkshuffle::models::config::{GameSettings, WorldConfig};
-    use darkshuffle::constants::{DEFAULT_NS, WORLD_CONFIG_ID};
-
-    use achievement::components::achievable::AchievableComponent;
-    use darkshuffle::utils::trophies::index::{Trophy, TrophyTrait, TROPHY_COUNT};
 
     component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
     impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
@@ -49,24 +48,26 @@ mod config_systems {
     fn dojo_init(self: @ContractState) {
         let mut world: WorldStorage = self.world(DEFAULT_NS());
         let mut trophy_id: u8 = TROPHY_COUNT;
-    
+
         while trophy_id > 0 {
             let trophy: Trophy = trophy_id.into();
-            self.achievable.create(
-                world,
-                id: trophy.identifier(),
-                hidden: trophy.hidden(),
-                index: trophy.index(),
-                points: trophy.points(),
-                start: 0,
-                end: 0,
-                group: trophy.group(),
-                icon: trophy.icon(),
-                title: trophy.title(),
-                description: trophy.description(),
-                tasks: trophy.tasks(),
-                data: trophy.data(),
-            );
+            self
+                .achievable
+                .create(
+                    world,
+                    id: trophy.identifier(),
+                    hidden: trophy.hidden(),
+                    index: trophy.index(),
+                    points: trophy.points(),
+                    start: 0,
+                    end: 0,
+                    group: trophy.group(),
+                    icon: trophy.icon(),
+                    title: trophy.title(),
+                    description: trophy.description(),
+                    tasks: trophy.tasks(),
+                    data: trophy.data(),
+                );
 
             trophy_id -= 1;
         }
@@ -75,7 +76,7 @@ mod config_systems {
     #[abi(embed_v0)]
     impl ConfigSystemsImpl of super::IConfigSystems<ContractState> {
         fn create_game_settings(
-            ref self: ContractState, 
+            ref self: ContractState,
             start_health: u8,
             start_energy: u8,
             start_hand_size: u8,
@@ -85,22 +86,25 @@ mod config_systems {
             include_spells: bool,
         ) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
-            
+
             assert(start_health > 0, 'Invalid start health');
             assert(draft_size > 0, 'Invalid draft size');
             assert(max_energy > 0, 'Invalid max energy');
             assert(max_hand_size > 0, 'Invalid max hand size');
 
-            world.write_model(@GameSettings {
-                settings_id: world.dispatcher.uuid() + 1,
-                start_health,
-                start_energy,
-                start_hand_size,
-                draft_size,
-                max_energy,
-                max_hand_size,
-                include_spells,
-            });
+            world
+                .write_model(
+                    @GameSettings {
+                        settings_id: world.dispatcher.uuid() + 1,
+                        start_health,
+                        start_energy,
+                        start_hand_size,
+                        draft_size,
+                        max_energy,
+                        max_hand_size,
+                        include_spells,
+                    }
+                );
         }
 
         fn set_game_token_address(ref self: ContractState, game_token_address: ContractAddress) {

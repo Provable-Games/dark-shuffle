@@ -1,7 +1,7 @@
-use darkshuffle::models::game::GameEffects;
-use darkshuffle::models::battle::{Battle, BoardStats, Creature, Card, CardType, CreatureType, RoundStats};
-use darkshuffle::utils::cards::CardUtilsImpl;
 use darkshuffle::constants::U8_MAX;
+use darkshuffle::models::battle::{Battle, BoardStats, Creature, Card, CardType, CreatureType, RoundStats};
+use darkshuffle::models::game::GameEffects;
+use darkshuffle::utils::cards::CardUtilsImpl;
 
 #[generate_trait]
 impl BattleUtilsImpl of BattleUtilsTrait {
@@ -20,7 +20,9 @@ impl BattleUtilsImpl of BattleUtilsTrait {
     fn energy_cost(ref battle: Battle, round_stats: RoundStats, game_effects: GameEffects, card: Card) {
         let mut cost = card.cost;
 
-        if card.card_type == CardType::Creature && round_stats.creatures_played == 0 && game_effects.first_creature_cost > 0 {
+        if card.card_type == CardType::Creature
+            && round_stats.creatures_played == 0
+            && game_effects.first_creature_cost > 0 {
             if game_effects.first_creature_cost >= cost {
                 return;
             }
@@ -66,7 +68,7 @@ impl BattleUtilsImpl of BattleUtilsTrait {
 
     fn damage_monster(ref battle: Battle, amount: u8, creature_type: CreatureType) {
         let mut damage = amount + battle.battle_effects.enemy_marks;
-        
+
         if damage == 0 {
             return;
         }

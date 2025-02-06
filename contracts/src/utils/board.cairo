@@ -1,46 +1,26 @@
 use darkshuffle::models::battle::{Creature, Board, Battle, BattleEffects, CreatureType, BoardStats, RoundStats};
-use darkshuffle::utils::{
-    attack::AttackUtilsImpl,
-    death::DeathUtilsImpl,
-    cards::CardUtilsImpl
-};
+use darkshuffle::utils::{attack::AttackUtilsImpl, death::DeathUtilsImpl, cards::CardUtilsImpl};
 
 #[generate_trait]
 impl BoardUtilsImpl of BoardUtilsTrait {
     fn no_creature() -> Creature {
-        Creature {
-            card_id: 0,
-            attack: 0,
-            health: 0,
-        }
+        Creature { card_id: 0, attack: 0, health: 0, }
     }
 
     fn add_creature_to_board(creature: Creature, ref board: Board, ref board_stats: BoardStats) {
         if board.creature1.card_id == 0 {
             board.creature1 = creature;
-        }
-        
-        else if board.creature2.card_id == 0 {
+        } else if board.creature2.card_id == 0 {
             board.creature2 = creature;
-        }
-
-        else if board.creature3.card_id == 0 {
+        } else if board.creature3.card_id == 0 {
             board.creature3 = creature;
-        }
-
-        else if board.creature4.card_id == 0 {
+        } else if board.creature4.card_id == 0 {
             board.creature4 = creature;
-        }
-
-        else if board.creature5.card_id == 0 {
+        } else if board.creature5.card_id == 0 {
             board.creature5 = creature;
-        }
-
-        else if board.creature6.card_id == 0 {
+        } else if board.creature6.card_id == 0 {
             board.creature6 = creature;
-        }
-
-        else {
+        } else {
             panic(array!['Board is full']);
         }
 
@@ -59,7 +39,7 @@ impl BoardUtilsImpl of BoardUtilsTrait {
             AttackUtilsImpl::creature_attack(ref board.creature1, ref battle, board_stats);
             round_stats.creature_attack_count += 1;
         }
-        
+
         if board.creature2.card_id != 0 {
             AttackUtilsImpl::creature_attack(ref board.creature2, ref battle, board_stats);
             round_stats.creature_attack_count += 1;
@@ -165,42 +145,48 @@ impl BoardUtilsImpl of BoardUtilsTrait {
 
     fn update_creatures(ref board: Board, creature_type: CreatureType, attack: u8, health: u8) {
         if board.creature1.card_id != 0 {
-            if creature_type == CreatureType::All || creature_type == CardUtilsImpl::get_card(board.creature1.card_id).creature_type {
+            if creature_type == CreatureType::All
+                || creature_type == CardUtilsImpl::get_card(board.creature1.card_id).creature_type {
                 board.creature1.attack += attack;
                 board.creature1.health += health;
             }
         }
-        
+
         if board.creature2.card_id != 0 {
-            if creature_type == CreatureType::All || creature_type == CardUtilsImpl::get_card(board.creature2.card_id).creature_type {
+            if creature_type == CreatureType::All
+                || creature_type == CardUtilsImpl::get_card(board.creature2.card_id).creature_type {
                 board.creature2.attack += attack;
                 board.creature2.health += health;
             }
         }
 
         if board.creature3.card_id != 0 {
-            if creature_type == CreatureType::All || creature_type == CardUtilsImpl::get_card(board.creature3.card_id).creature_type {
+            if creature_type == CreatureType::All
+                || creature_type == CardUtilsImpl::get_card(board.creature3.card_id).creature_type {
                 board.creature3.attack += attack;
                 board.creature3.health += health;
             }
         }
 
         if board.creature4.card_id != 0 {
-            if creature_type == CreatureType::All || creature_type == CardUtilsImpl::get_card(board.creature4.card_id).creature_type {
+            if creature_type == CreatureType::All
+                || creature_type == CardUtilsImpl::get_card(board.creature4.card_id).creature_type {
                 board.creature4.attack += attack;
                 board.creature4.health += health;
             }
         }
 
         if board.creature5.card_id != 0 {
-            if creature_type == CreatureType::All || creature_type == CardUtilsImpl::get_card(board.creature5.card_id).creature_type {
+            if creature_type == CreatureType::All
+                || creature_type == CardUtilsImpl::get_card(board.creature5.card_id).creature_type {
                 board.creature5.attack += attack;
                 board.creature5.health += health;
             }
         }
 
         if board.creature6.card_id != 0 {
-            if creature_type == CreatureType::All || creature_type == CardUtilsImpl::get_card(board.creature6.card_id).creature_type {
+            if creature_type == CreatureType::All
+                || creature_type == CardUtilsImpl::get_card(board.creature6.card_id).creature_type {
                 board.creature6.attack += attack;
                 board.creature6.health += health;
             }

@@ -1,11 +1,10 @@
+use darkshuffle::constants::{PRIZES, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID};
+use darkshuffle::models::game::{Game};
+use darkshuffle::models::season::{Leaderboard};
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use starknet::{ContractAddress, contract_address_const};
-
-use darkshuffle::constants::{PRIZES, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID};
-use darkshuffle::models::season::{Leaderboard};
-use darkshuffle::models::game::{Game};
 
 #[generate_trait]
 impl SeasonUtilsImpl of SeasonUtilsTrait {
@@ -31,17 +30,17 @@ impl SeasonUtilsImpl of SeasonUtilsTrait {
 
         let mut i = rank;
         let mut previous_position: Leaderboard = world.read_model((game.season_id, rank));
-        world.write_model(@Leaderboard { season_id: game.season_id, rank, game_id: game.game_id, score: game.hero_xp });  
+        world.write_model(@Leaderboard { season_id: game.season_id, rank, game_id: game.game_id, score: game.hero_xp });
 
         while true {
             i += 1;
 
-            if i > PRIZES || previous_position.score == 0  {
+            if i > PRIZES || previous_position.score == 0 {
                 break;
             }
-            
+
             let mut next_position: Leaderboard = world.read_model((game.season_id, i));
-            
+
             previous_position.rank = i;
             world.write_model(@previous_position);
 

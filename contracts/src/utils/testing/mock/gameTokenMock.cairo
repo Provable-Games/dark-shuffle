@@ -10,12 +10,11 @@ trait IGameTokenMock<TState> {
 
 #[starknet::contract]
 pub mod GameTokenMock {
-    use starknet::ContractAddress;
-    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map};
-
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
+    use starknet::ContractAddress;
+    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map};
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -44,12 +43,10 @@ pub mod GameTokenMock {
     }
 
     #[constructor]
-    fn constructor(
-        ref self: ContractState,
-    ) {
+    fn constructor(ref self: ContractState,) {
         self.erc721.initializer("Dark Shuffle Game Token", "DSGT", "");
     }
-    
+
     #[abi(embed_v0)]
     impl GameTokenMockImpl of super::IGameTokenMock<ContractState> {
         fn mint(ref self: ContractState, recipient: ContractAddress, token_id: u256, settings_id: u32) {

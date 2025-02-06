@@ -1,19 +1,18 @@
+use darkshuffle::models::battle::{Battle};
+use darkshuffle::models::game::{Game, GameState};
+use darkshuffle::models::map::{Map};
+use darkshuffle::systems::map::contracts::{map_systems, IMapSystemsDispatcher, IMapSystemsDispatcherTrait};
+
+use darkshuffle::utils::testing::{
+    world::spawn_darkshuffle, systems::{deploy_system, deploy_map_systems},
+    general::{create_default_settings, mint_game_token, create_game, create_draft, create_map},
+};
 use dojo::model::{ModelStorage, ModelValueStorage, ModelStorageTest};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
 use dojo_cairo_test::{NamespaceDef, TestResource, ContractDefTrait};
 
 use starknet::{ContractAddress, contract_address_const};
-
-use darkshuffle::models::battle::{Battle};
-use darkshuffle::models::game::{Game, GameState};
-use darkshuffle::models::map::{Map};
-
-use darkshuffle::utils::testing::{
-    world::spawn_darkshuffle, systems::{deploy_system, deploy_map_systems},
-    general::{create_default_settings, mint_game_token, create_game, create_draft, create_map},
-};
-use darkshuffle::systems::map::contracts::{map_systems, IMapSystemsDispatcher, IMapSystemsDispatcherTrait};
 
 fn setup() -> (WorldStorage, u64, IMapSystemsDispatcher) {
     let mut world = spawn_darkshuffle();
@@ -50,7 +49,12 @@ fn map_test_select_node() {
     let (mut world, game_id, map_systems_dispatcher) = setup();
 
     create_map(ref world, game_id, 1, 1000);
-    create_draft(ref world, game_id, array![].span(), array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span());
+    create_draft(
+        ref world,
+        game_id,
+        array![].span(),
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+    );
 
     let node_id = 1;
     let mut game: Game = world.read_model(game_id);

@@ -2,7 +2,7 @@ use darkshuffle::models::battle::{Battle};
 use darkshuffle::utils::random;
 
 #[generate_trait]
-impl HandUtilsImpl of HandUtilsTrait {           
+impl HandUtilsImpl of HandUtilsTrait {
     fn remove_hand_card(ref battle: Battle, card_id: u8) {
         let mut card_removed = false;
         let mut new_hand = array![];

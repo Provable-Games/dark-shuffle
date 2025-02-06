@@ -1,11 +1,11 @@
+use darkshuffle::constants::{LAST_NODE_DEPTH, WORLD_CONFIG_ID};
+use darkshuffle::models::config::{WorldConfig};
 use dojo::event::EventStorage;
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use starknet::{ContractAddress, get_caller_address};
-use darkshuffle::constants::{LAST_NODE_DEPTH, WORLD_CONFIG_ID};
-use darkshuffle::models::config::{WorldConfig};
 use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
+use starknet::{ContractAddress, get_caller_address};
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
@@ -13,15 +13,12 @@ pub struct Game {
     #[key]
     game_id: u64,
     season_id: u32,
-
     hero_health: u8,
     hero_xp: u16,
     monsters_slain: u16,
-
     map_level: u8,
     map_depth: u8,
     last_node_id: u8,
-
     action_count: u16,
     state: GameState,
 }
@@ -36,7 +33,7 @@ pub struct GameFixedData {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
-pub struct GameEffects {   
+pub struct GameEffects {
     #[key]
     game_id: u64,
     first_attack: u8,

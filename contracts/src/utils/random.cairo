@@ -1,11 +1,9 @@
-use starknet::{get_block_timestamp, get_tx_info, ContractAddress, contract_address_const, get_caller_address};
 use cartridge_vrf::{IVrfProviderDispatcher, IVrfProviderDispatcherTrait, Source};
 
-use core::{
-    integer::{u256_try_as_non_zero, U256DivRem},
-};
+use core::{integer::{u256_try_as_non_zero, U256DivRem},};
 
 use darkshuffle::constants::{CARD_POOL_SIZE, U128_MAX, LCG_PRIME, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID};
+use starknet::{get_block_timestamp, get_tx_info, ContractAddress, contract_address_const, get_caller_address};
 
 fn get_vrf_address() -> ContractAddress {
     contract_address_const::<0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f>()
@@ -23,9 +21,7 @@ fn get_random_hash() -> felt252 {
 }
 
 fn get_entropy(felt_to_split: felt252) -> u128 {
-    let (_d, r) = U256DivRem::div_rem(
-        felt_to_split.into(), u256_try_as_non_zero(U128_MAX.into()).unwrap()
-    );
+    let (_d, r) = U256DivRem::div_rem(felt_to_split.into(), u256_try_as_non_zero(U128_MAX.into()).unwrap());
 
     r.try_into().unwrap() % LCG_PRIME
 }
@@ -39,9 +35,13 @@ fn LCG(seed: u128) -> u128 {
 }
 
 fn get_random_card_id(seed: u128, include_spells: bool) -> u8 {
-    let range: u128 = if include_spells { 270 } else { 225 };
+    let range: u128 = if include_spells {
+        270
+    } else {
+        225
+    };
     let card_number: u16 = (seed % range + 1).try_into().unwrap();
-    
+
     // Spells
     if card_number > 255 {
         ((270 - card_number) / 5 + 88).try_into().unwrap()
@@ -53,9 +53,7 @@ fn get_random_card_id(seed: u128, include_spells: bool) -> u8 {
         ((234 - card_number) / 2 + 79).try_into().unwrap()
     } else if card_number > 225 {
         ((228 - card_number) + 76).try_into().unwrap()
-    }
-
-    // Creatures
+    }// Creatures
     else if card_number > 150 {
         ((225 - card_number) / 5 + 61).try_into().unwrap()
     } else if card_number > 90 {

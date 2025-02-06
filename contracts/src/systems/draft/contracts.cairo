@@ -5,20 +5,16 @@ trait IDraftSystems<T> {
 
 #[dojo::contract]
 mod draft_systems {
+    use darkshuffle::constants::{DEFAULT_NS};
+    use darkshuffle::models::config::{GameSettings};
+    use darkshuffle::models::draft::{Draft, DraftOwnerTrait};
+
+    use darkshuffle::models::game::{Game, GameOwnerTrait, GameState, GameActionEvent};
+    use darkshuffle::utils::{random, draft::DraftUtilsImpl, config::ConfigUtilsImpl};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
-    use darkshuffle::models::game::{Game, GameOwnerTrait, GameState, GameActionEvent};
-    use darkshuffle::models::draft::{Draft, DraftOwnerTrait};
-    use darkshuffle::models::config::{GameSettings};
-    use darkshuffle::utils::{
-        random,
-        draft::DraftUtilsImpl,
-        config::ConfigUtilsImpl
-    };
-    use darkshuffle::constants::{DEFAULT_NS};
 
     #[abi(embed_v0)]
     impl DraftSystemsImpl of super::IDraftSystems<ContractState> {
@@ -42,11 +38,18 @@ mod draft_systems {
             } else {
                 let random_hash = random::get_random_hash();
                 let seed: u128 = random::get_entropy(random_hash);
-                draft.options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells); 
+                draft.options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells);
             }
 
             world.write_model(@draft);
-            world.emit_event(@GameActionEvent {game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: current_draft_size.try_into().unwrap()});
+            world
+                .emit_event(
+                    @GameActionEvent {
+                        game_id,
+                        tx_hash: starknet::get_tx_info().unbox().transaction_hash,
+                        count: current_draft_size.try_into().unwrap()
+                    }
+                );
         }
     }
 }

@@ -1,5 +1,3 @@
-mod index;
-mod interface;
 mod BigHit;
 mod BruteForce;
 mod BruteSquad;
@@ -12,3 +10,5 @@ mod MagicalAssembly;
 mod MagicalMayhem;
 mod Seasoned;
 mod Survivor;
+mod index;
+mod interface;

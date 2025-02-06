@@ -1,10 +1,3 @@
-use dojo::model::ModelStorage;
-
-use dojo::world::WorldStorage;
-use dojo::world::WorldStorageTrait;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_cairo_test::deploy_contract;
-
 use darkshuffle::systems::{
     game::contracts::{game_systems, IGameSystemsDispatcher, IGameSystemsDispatcherTrait},
     map::contracts::{map_systems, IMapSystemsDispatcher, IMapSystemsDispatcherTrait},
@@ -13,6 +6,12 @@ use darkshuffle::systems::{
     battle::contracts::{battle_systems, IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait}
 };
 use darkshuffle::utils::testing::mock::gameTokenMock::{GameTokenMock};
+use dojo::model::ModelStorage;
+
+use dojo::world::WorldStorage;
+use dojo::world::WorldStorageTrait;
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo_cairo_test::deploy_contract;
 
 use starknet::{ContractAddress};
 
@@ -51,9 +50,7 @@ fn deploy_battle_systems(ref world: WorldStorage) -> IBattleSystemsDispatcher {
 
 fn deploy_config_systems(ref world: WorldStorage) -> IConfigSystemsDispatcher {
     let config_systems_address = deploy_system(ref world, "config_systems");
-    let config_systems_dispatcher = IConfigSystemsDispatcher {
-        contract_address: config_systems_address
-    };
+    let config_systems_dispatcher = IConfigSystemsDispatcher { contract_address: config_systems_address };
 
     config_systems_dispatcher
 }

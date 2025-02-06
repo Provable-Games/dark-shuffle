@@ -1,19 +1,18 @@
+use darkshuffle::models::battle::{Battle};
+use darkshuffle::models::draft::{Draft};
+use darkshuffle::models::game::{Game, GameState, GameFixedData, GameOwnerTrait};
+use darkshuffle::systems::game::contracts::{game_systems, IGameSystemsDispatcher, IGameSystemsDispatcherTrait};
+
+use darkshuffle::utils::testing::{
+    world::spawn_darkshuffle, systems::{deploy_system, deploy_game_systems},
+    general::{create_default_settings, mint_game_token},
+};
 use dojo::model::{ModelStorage, ModelValueStorage, ModelStorageTest};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
 use dojo_cairo_test::{NamespaceDef, TestResource, ContractDefTrait};
 
 use starknet::{ContractAddress, contract_address_const};
-
-use darkshuffle::models::battle::{Battle};
-use darkshuffle::models::game::{Game, GameState, GameFixedData, GameOwnerTrait};
-use darkshuffle::models::draft::{Draft};
-
-use darkshuffle::utils::testing::{
-    world::spawn_darkshuffle, systems::{deploy_system, deploy_game_systems},
-    general::{create_default_settings, mint_game_token},
-};
-use darkshuffle::systems::game::contracts::{game_systems, IGameSystemsDispatcher, IGameSystemsDispatcherTrait};
 
 fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
     let mut world = spawn_darkshuffle();

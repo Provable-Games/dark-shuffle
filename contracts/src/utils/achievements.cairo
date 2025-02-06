@@ -1,12 +1,12 @@
+use achievement::store::{Store, StoreTrait};
+use darkshuffle::models::battle::{Card, CreatureType};
+use darkshuffle::utils::cards::CardUtilsImpl;
+use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use starknet::{get_caller_address, get_block_timestamp};
-use darkshuffle::models::battle::{Card, CreatureType};
-use darkshuffle::utils::cards::CardUtilsImpl;
-use achievement::store::{Store, StoreTrait};
-use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 
 #[generate_trait]
 impl AchievementsUtilsImpl of AchievementsUtilsTrait {

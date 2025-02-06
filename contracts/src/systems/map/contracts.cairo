@@ -6,20 +6,17 @@ trait IMapSystems<T> {
 
 #[dojo::contract]
 mod map_systems {
+    use achievement::store::{Store, StoreTrait};
+    use darkshuffle::constants::{DEFAULT_NS};
+
+    use darkshuffle::models::game::{Game, GameOwnerTrait, GameActionEvent};
+    use darkshuffle::models::map::{Map, MonsterNode};
+    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
+    use darkshuffle::utils::{random, map::MapUtilsImpl};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
-    use darkshuffle::models::game::{Game, GameOwnerTrait, GameActionEvent};
-    use darkshuffle::models::map::{Map, MonsterNode};
-    use darkshuffle::utils::{
-        random,
-        map::MapUtilsImpl
-    };
-    use darkshuffle::constants::{DEFAULT_NS};
-    use achievement::store::{Store, StoreTrait};
-    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 
     #[abi(embed_v0)]
     impl MapSystemsImpl of super::IMapSystems<ContractState> {
@@ -38,14 +35,15 @@ mod map_systems {
             game.last_node_id = 0;
             game.action_count += 1;
 
-            world.write_model(@Map {
-                game_id,
-                level: game.map_level,
-                seed,
-            });
+            world.write_model(@Map { game_id, level: game.map_level, seed, });
 
             world.write_model(@game);
-            world.emit_event(@GameActionEvent {game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count});
+            world
+                .emit_event(
+                    @GameActionEvent {
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count
+                    }
+                );
 
             // [Achievement] Complete a map
             if game.season_id != 0 && game.map_level > 1 {
@@ -78,7 +76,12 @@ mod map_systems {
             game.action_count += 1;
 
             world.write_model(@game);
-            world.emit_event(@GameActionEvent {game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count});
+            world
+                .emit_event(
+                    @GameActionEvent {
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count
+                    }
+                );
         }
     }
 }
