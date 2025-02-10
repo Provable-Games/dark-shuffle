@@ -2,6 +2,7 @@ use darkshuffle::utils::random;
 
 #[generate_trait]
 impl DraftUtilsImpl of DraftUtilsTrait {
+    // TODO: Consider using the algorithm from LS Market in which we select a starting point and an offset
     fn get_draft_options(mut entropy: u128, include_spells: bool) -> Span<u8> {
         let mut card_1 = 0;
         let mut card_2 = 0;

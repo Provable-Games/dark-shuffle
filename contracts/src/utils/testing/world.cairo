@@ -1,19 +1,19 @@
 use core::array::{ArrayTrait, SpanTrait};
 use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR};
 use darkshuffle::models::{
-    battle::{m_Battle, m_Board}, config::{m_WorldConfig, m_GameSettings}, draft::{m_Draft},
-    game::{m_Game, m_GameEffects, m_GameFixedData}, map::{m_Map},
+    battle::{m_Battle, m_Board}, config::{m_SettingDetails, m_WorldConfig}, draft::{m_Draft},
+    game::{m_Game, m_GameEffects}, map::{m_Map},
 };
 use darkshuffle::systems::{
-    game::contracts::{game_systems, IGameSystemsDispatcher, IGameSystemsDispatcherTrait},
-    map::contracts::{map_systems, IMapSystemsDispatcher, IMapSystemsDispatcherTrait},
-    draft::contracts::{draft_systems, IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait},
-    config::contracts::{config_systems, IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait},
-    battle::contracts::{battle_systems, IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait}
+    battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems},
+    config::contracts::{IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait, config_systems},
+    draft::contracts::{IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait, draft_systems},
+    game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems},
+    map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems},
 };
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_cairo_test::{
-    spawn_test_world, NamespaceDef, TestResource, ContractDefTrait, ContractDef, WorldStorageTestTrait
+    ContractDef, ContractDefTrait, NamespaceDef, TestResource, WorldStorageTestTrait, spawn_test_world,
 };
 
 use starknet::{ContractAddress, contract_address_const};
@@ -24,12 +24,25 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_Battle::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Board::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_WorldConfig::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_GameSettings::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_SettingDetails::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Draft::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Game::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_GameFixedData::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_GameEffects::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Map::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(
+                tournaments::components::models::game::m_TokenMetadata::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
+            TestResource::Model(
+                tournaments::components::models::game::m_GameCounter::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
+            TestResource::Model(tournaments::components::models::game::m_Score::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(tournaments::components::models::game::m_Settings::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(
+                tournaments::components::models::game::m_SettingsDetails::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
+            TestResource::Model(
+                tournaments::components::models::game::m_SettingsCounter::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
             TestResource::Event(darkshuffle::models::game::e_GameActionEvent::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyCreation::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyProgression::TEST_CLASS_HASH.try_into().unwrap()),
@@ -38,7 +51,7 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Contract(draft_systems::TEST_CLASS_HASH),
             TestResource::Contract(config_systems::TEST_CLASS_HASH),
             TestResource::Contract(battle_systems::TEST_CLASS_HASH),
-        ].span()
+        ].span(),
     };
 
     ndef

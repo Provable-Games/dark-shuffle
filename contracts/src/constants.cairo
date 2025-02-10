@@ -23,9 +23,9 @@ const U128_MAX: u128 = 340282366920938463463374607431768211455;
 const LCG_PRIME: u128 = 281474976710656;
 
 fn DEFAULT_NS() -> @ByteArray {
-    @"darkshuffle_s1"
+    @"ds"
 }
 
 fn DEFAULT_NS_STR() -> ByteArray {
-    "darkshuffle_s1"
+    "ds"
 }

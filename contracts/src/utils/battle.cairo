@@ -1,5 +1,5 @@
 use darkshuffle::constants::U8_MAX;
-use darkshuffle::models::battle::{Battle, BoardStats, Creature, Card, CardType, CreatureType, RoundStats};
+use darkshuffle::models::battle::{Battle, BoardStats, Card, CardType, Creature, CreatureType, RoundStats};
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::cards::CardUtilsImpl;
 

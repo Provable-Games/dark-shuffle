@@ -1,6 +1,6 @@
 use darkshuffle::models::battle::{Battle, BattleEffects, Hero, Monster};
 
-use darkshuffle::models::config::{GameSettings};
+use darkshuffle::models::config::{SettingDetails};
 use darkshuffle::models::draft::{Draft};
 use darkshuffle::models::game::{Game, GameEffects, GameState};
 use darkshuffle::models::map::{Map, MonsterNode};
@@ -107,13 +107,13 @@ impl MapUtilsImpl of MapUtilsTrait {
         let health = 35 + (map.level * 5);
         let attack = (map.level + 1);
 
-        MonsterNode { monster_id, attack, health, }
+        MonsterNode { monster_id, attack, health }
     }
 
     fn start_battle(ref world: WorldStorage, ref game: Game, monster: MonsterNode, seed: u128) {
         let draft: Draft = world.read_model(game.game_id);
         let game_effects: GameEffects = world.read_model(game.game_id);
-        let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game.game_id);
+        let game_settings: SettingDetails = ConfigUtilsImpl::get_game_settings(world, game.game_id);
 
         game.state = GameState::Battle;
 
@@ -124,7 +124,7 @@ impl MapUtilsImpl of MapUtilsTrait {
             hero: Hero {
                 health: game.hero_health, energy: game_settings.start_energy + game_effects.start_bonus_energy,
             },
-            monster: Monster { monster_id: monster.monster_id, attack: monster.attack, health: monster.health, },
+            monster: Monster { monster_id: monster.monster_id, attack: monster.attack, health: monster.health },
             hand: array![].span(),
             deck: draft.cards,
             battle_effects: BattleEffects {
@@ -134,7 +134,7 @@ impl MapUtilsImpl of MapUtilsTrait {
                 next_hunter_health_bonus: 0,
                 next_brute_attack_bonus: 0,
                 next_brute_health_bonus: 0,
-            }
+            },
         };
 
         HandUtilsImpl::draw_cards(ref battle, game_settings.start_hand_size, game_settings.max_hand_size, seed);

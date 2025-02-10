@@ -6,11 +6,11 @@ trait IDraftSystems<T> {
 #[dojo::contract]
 mod draft_systems {
     use darkshuffle::constants::{DEFAULT_NS};
-    use darkshuffle::models::config::{GameSettings};
+    use darkshuffle::models::config::{SettingDetails};
     use darkshuffle::models::draft::{Draft, DraftOwnerTrait};
 
-    use darkshuffle::models::game::{Game, GameOwnerTrait, GameState, GameActionEvent};
-    use darkshuffle::utils::{random, draft::DraftUtilsImpl, config::ConfigUtilsImpl};
+    use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait, GameState};
+    use darkshuffle::utils::{config::ConfigUtilsImpl, draft::DraftUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
@@ -28,7 +28,7 @@ mod draft_systems {
             let mut draft: Draft = world.read_model(game_id);
             draft.add_card(*draft.options.at(option_id.into()));
 
-            let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
+            let game_settings: SettingDetails = ConfigUtilsImpl::get_game_settings(world, game_id);
             let current_draft_size = draft.cards.len();
 
             if current_draft_size == game_settings.draft_size.into() {
@@ -47,8 +47,8 @@ mod draft_systems {
                     @GameActionEvent {
                         game_id,
                         tx_hash: starknet::get_tx_info().unbox().transaction_hash,
-                        count: current_draft_size.try_into().unwrap()
-                    }
+                        count: current_draft_size.try_into().unwrap(),
+                    },
                 );
         }
     }

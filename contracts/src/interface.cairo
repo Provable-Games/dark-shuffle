@@ -1,5 +1,6 @@
 use starknet::ContractAddress;
 
+// TODO: Remove
 #[starknet::interface]
 trait IGameToken<TState> {
     fn mint(ref self: TState, recipient: ContractAddress, token_id: u256, settings_id: u32);

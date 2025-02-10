@@ -9,9 +9,17 @@ pub struct WorldConfig {
     game_count: u256,
 }
 
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
+pub struct SettingsCount {
+    #[key]
+    id: felt252,
+    count: u32,
+}
+
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
-pub struct GameSettings {
+pub struct SettingDetails {
     #[key]
     settings_id: u32,
     start_health: u8,
@@ -24,8 +32,8 @@ pub struct GameSettings {
 }
 
 #[generate_trait]
-impl GameSettingsImpl of GameSettingsTrait {
-    fn exists(self: GameSettings) -> bool {
+impl SettingDetailsImpl of SettingDetailsTrait {
+    fn exists(self: SettingDetails) -> bool {
         self.start_health.is_non_zero()
     }
 }

@@ -32,11 +32,7 @@ const cartridge = new ControllerConnector({
     },
     {
       target: game_systems,
-      method: "enter_season",
-    },
-    {
-      target: game_systems,
-      method: "start_game",
+      method: "start",
     },
     {
       target: draft_systems,

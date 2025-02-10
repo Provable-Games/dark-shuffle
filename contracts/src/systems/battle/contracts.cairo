@@ -9,15 +9,15 @@ mod battle_systems {
 
     use darkshuffle::constants::{DEFAULT_NS};
     use darkshuffle::models::battle::{
-        Battle, BattleOwnerTrait, Card, Creature, Board, BoardStats, CardType, RoundStats
+        Battle, BattleOwnerTrait, Board, BoardStats, Card, CardType, Creature, RoundStats,
     };
-    use darkshuffle::models::config::GameSettings;
-    use darkshuffle::models::game::{Game, GameEffects, GameActionEvent};
+    use darkshuffle::models::config::SettingDetails;
+    use darkshuffle::models::game::{Game, GameActionEvent, GameEffects};
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
     use darkshuffle::utils::{
-        achievements::AchievementsUtilsImpl, summon::SummonUtilsImpl, spell::SpellUtilsImpl, cards::CardUtilsImpl,
-        board::BoardUtilsImpl, battle::BattleUtilsImpl, game::GameUtilsImpl, monsters::MonsterUtilsImpl,
-        hand::HandUtilsImpl, config::ConfigUtilsImpl, random
+        achievements::AchievementsUtilsImpl, battle::BattleUtilsImpl, board::BoardUtilsImpl, cards::CardUtilsImpl,
+        config::ConfigUtilsImpl, game::GameUtilsImpl, hand::HandUtilsImpl, monsters::MonsterUtilsImpl, random,
+        spell::SpellUtilsImpl, summon::SummonUtilsImpl,
     };
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
@@ -35,13 +35,13 @@ mod battle_systems {
             battle.assert_battle(world);
 
             let mut game: Game = world.read_model(game_id);
-            let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, battle.game_id);
+            let game_settings: SettingDetails = ConfigUtilsImpl::get_game_settings(world, battle.game_id);
             let mut game_effects: GameEffects = world.read_model(battle.game_id);
             let mut board: Board = world.read_model((battle_id, game_id));
             let mut board_stats: BoardStats = BoardUtilsImpl::get_board_stats(board, battle.monster.monster_id);
 
             let mut round_stats: RoundStats = RoundStats {
-                monster_start_health: battle.monster.health, creatures_played: 0, creature_attack_count: 0
+                monster_start_health: battle.monster.health, creatures_played: 0, creature_attack_count: 0,
             };
 
             let mut action_index = 0;
@@ -57,7 +57,7 @@ mod battle_systems {
                         match card.card_type {
                             CardType::Creature => {
                                 let creature: Creature = SummonUtilsImpl::summon_creature(
-                                    card, ref battle, ref board, ref board_stats, ref round_stats, game_effects
+                                    card, ref battle, ref board, ref board_stats, ref round_stats, game_effects,
                                 );
                                 BoardUtilsImpl::add_creature_to_board(creature, ref board, ref board_stats);
                                 if game.season_id != 0 {
@@ -65,8 +65,8 @@ mod battle_systems {
                                 }
                             },
                             CardType::Spell => {
-                                SpellUtilsImpl::cast_spell(card, ref battle, ref board, ref board_stats,);
-                            }
+                                SpellUtilsImpl::cast_spell(card, ref battle, ref board, ref board_stats);
+                            },
                         }
 
                         HandUtilsImpl::remove_hand_card(ref battle, *action.at(1));
@@ -81,7 +81,7 @@ mod battle_systems {
                             AchievementsUtilsImpl::big_hit(ref world);
                         }
                     },
-                    _ => { assert(false, 'Invalid action'); }
+                    _ => { assert(false, 'Invalid action'); },
                 }
 
                 if GameUtilsImpl::is_battle_over(battle) {
@@ -96,8 +96,8 @@ mod battle_systems {
                     @GameActionEvent {
                         game_id,
                         tx_hash: starknet::get_tx_info().unbox().transaction_hash,
-                        count: game.action_count + battle.round.into()
-                    }
+                        count: game.action_count + battle.round.into(),
+                    },
                 );
 
             let random_hash = random::get_random_hash();

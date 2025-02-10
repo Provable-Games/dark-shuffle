@@ -13,7 +13,7 @@ trait IConfigSystems<T> {
         include_spells: bool,
     );
 
-    fn set_game_token_address(ref self: T, game_token_address: ContractAddress);
+    fn set_game_token_address(ref self: T, game_token_address: felt252);
     fn get_game_token_address(self: @T) -> ContractAddress;
 }
 
@@ -21,8 +21,8 @@ trait IConfigSystems<T> {
 mod config_systems {
     use achievement::components::achievable::AchievableComponent;
     use darkshuffle::constants::{DEFAULT_NS, WORLD_CONFIG_ID};
-    use darkshuffle::models::config::{GameSettings, WorldConfig};
-    use darkshuffle::utils::trophies::index::{Trophy, TrophyTrait, TROPHY_COUNT};
+    use darkshuffle::models::config::{SettingDetails, SettingsCount, WorldConfig};
+    use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -70,7 +70,22 @@ mod config_systems {
                 );
 
             trophy_id -= 1;
-        }
+        };
+
+        // TODO: Make stock game settings a constant
+        world
+            .write_model(
+                @SettingDetails {
+                    settings_id: 0,
+                    start_health: 50,
+                    start_energy: 1,
+                    start_hand_size: 5,
+                    draft_size: 20,
+                    max_energy: 7,
+                    max_hand_size: 10,
+                    include_spells: true,
+                },
+            );
     }
 
     #[abi(embed_v0)]
@@ -92,10 +107,15 @@ mod config_systems {
             assert(max_energy > 0, 'Invalid max energy');
             assert(max_hand_size > 0, 'Invalid max hand size');
 
+            // TODO: replace with a constant
+            let mut settings_count: SettingsCount = world.read_model('1');
+            settings_count.count += 1;
+            world.write_model(@settings_count);
+
             world
                 .write_model(
-                    @GameSettings {
-                        settings_id: world.dispatcher.uuid() + 1,
+                    @SettingDetails {
+                        settings_id: settings_count.count,
                         start_health,
                         start_energy,
                         start_hand_size,
@@ -103,18 +123,20 @@ mod config_systems {
                         max_energy,
                         max_hand_size,
                         include_spells,
-                    }
+                    },
                 );
         }
 
-        fn set_game_token_address(ref self: ContractState, game_token_address: ContractAddress) {
+        // TODO: Remove as the NFT is now embedded in game_systems contract
+        fn set_game_token_address(ref self: ContractState, game_token_address: felt252) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
             assert(
-                world.dispatcher.is_owner(selector_from_tag!("darkshuffle_s1-game_systems"), get_caller_address()),
-                'Not Owner'
+                world.dispatcher.is_owner(selector_from_tag!("ds-game_systems"), get_caller_address(),), 'Not Owner',
             );
 
             let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
+
+            let game_token_address: ContractAddress = game_token_address.try_into().unwrap();
             world_config.game_token_address = game_token_address;
             world.write_model(@world_config);
         }

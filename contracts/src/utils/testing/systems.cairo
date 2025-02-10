@@ -1,9 +1,9 @@
 use darkshuffle::systems::{
-    game::contracts::{game_systems, IGameSystemsDispatcher, IGameSystemsDispatcherTrait},
-    map::contracts::{map_systems, IMapSystemsDispatcher, IMapSystemsDispatcherTrait},
-    draft::contracts::{draft_systems, IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait},
-    config::contracts::{config_systems, IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait},
-    battle::contracts::{battle_systems, IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait}
+    battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems},
+    config::contracts::{IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait, config_systems},
+    draft::contracts::{IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait, draft_systems},
+    game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems},
+    map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems},
 };
 use darkshuffle::utils::testing::mock::gameTokenMock::{GameTokenMock};
 use dojo::model::ModelStorage;

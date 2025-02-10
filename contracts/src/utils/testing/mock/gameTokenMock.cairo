@@ -1,6 +1,7 @@
 // Game Token Mock
 use starknet::ContractAddress;
 
+// TODO: Replace with Game Component Mock
 #[starknet::interface]
 trait IGameTokenMock<TState> {
     fn mint(ref self: TState, recipient: ContractAddress, token_id: u256, settings_id: u32);
@@ -14,7 +15,7 @@ pub mod GameTokenMock {
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
     use starknet::ContractAddress;
-    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map};
+    use starknet::storage::{Map, StoragePathEntry, StoragePointerReadAccess, StoragePointerWriteAccess};
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -43,7 +44,7 @@ pub mod GameTokenMock {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState,) {
+    fn constructor(ref self: ContractState) {
         self.erc721.initializer("Dark Shuffle Game Token", "DSGT", "");
     }
 

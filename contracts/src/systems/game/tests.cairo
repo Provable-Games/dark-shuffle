@@ -1,16 +1,16 @@
 use darkshuffle::models::battle::{Battle};
 use darkshuffle::models::draft::{Draft};
-use darkshuffle::models::game::{Game, GameState, GameFixedData, GameOwnerTrait};
-use darkshuffle::systems::game::contracts::{game_systems, IGameSystemsDispatcher, IGameSystemsDispatcherTrait};
+use darkshuffle::models::game::{Game, GameFixata, GameOwnerTrait, GameState};
+use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
 
 use darkshuffle::utils::testing::{
-    world::spawn_darkshuffle, systems::{deploy_system, deploy_game_systems},
-    general::{create_default_settings, mint_game_token},
+    general::{create_default_settings, mint_game_token}, systems::{deploy_game_systems, deploy_system},
+    world::spawn_darkshuffle,
 };
-use dojo::model::{ModelStorage, ModelValueStorage, ModelStorageTest};
+use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
-use dojo_cairo_test::{NamespaceDef, TestResource, ContractDefTrait};
+use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
 
 use starknet::{ContractAddress, contract_address_const};
 
@@ -27,17 +27,15 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
 }
 
 #[test] // 83761896 gas
-fn game_test_start_game() {
+fn game_test_start() {
     let (mut world, game_id, game_systems_dispatcher) = setup();
 
-    game_systems_dispatcher.start_game(game_id, 'Test');
+    game_systems_dispatcher.start(game_id);
 
-    let game_fixed_data: GameFixedData = world.read_model(game_id);
     let game: Game = world.read_model(game_id);
     let draft: Draft = world.read_model(game_id);
 
     assert(game.exists(), 'Game not created');
-    assert(game_fixed_data.player_name == 'Test', 'Player name not set');
     assert(game.state == GameState::Draft, 'Game state not set to draft');
     assert(draft.options.len() > 0, 'Draft options not set');
 }

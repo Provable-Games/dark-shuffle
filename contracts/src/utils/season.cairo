@@ -1,4 +1,4 @@
-use darkshuffle::constants::{PRIZES, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID};
+use darkshuffle::constants::{MAINNET_CHAIN_ID, PRIZES, SEPOLIA_CHAIN_ID};
 use darkshuffle::models::game::{Game};
 use darkshuffle::models::season::{Leaderboard};
 use dojo::model::ModelStorage;

@@ -47,17 +47,11 @@ export const DraftProvider = ({ children }) => {
         entrypoint: "approve",
         calldata: [getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address, season.values.entryFee, "0"]
       })
-
-      txs.push({
-        contractName: "game_systems",
-        entrypoint: "enter_season",
-        calldata: [gameId, dojoConfig.seasonId]
-      })
     }
 
     txs.push({
       contractName: "game_systems",
-      entrypoint: "start_game",
+      entrypoint: "start",
       calldata: [gameId, '0x' + (dojo.customName || dojo.userName || 'Demo').split('').map(char => char.charCodeAt(0).toString(16)).join('')]
     })
 

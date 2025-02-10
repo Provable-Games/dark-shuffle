@@ -26,7 +26,7 @@ function ProfileMenu(props) {
 
     await dojo.executeTx([{
       contractName: "game_systems",
-      entrypoint: "abandon_game",
+      entrypoint: "quit",
       calldata: [game.values.gameId]
     }])
 
