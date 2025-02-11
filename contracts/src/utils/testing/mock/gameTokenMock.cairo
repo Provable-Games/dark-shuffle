@@ -5,7 +5,6 @@ use starknet::ContractAddress;
 trait IGameTokenMock<TState> {
     fn mint(ref self: TState, recipient: ContractAddress, token_id: u256, settings_id: u32);
     fn settings_id(self: @TState, token_id: u256) -> u32;
-    fn season_pass(self: @TState, token_id: u256) -> u32;
 }
 
 #[starknet::contract]
@@ -56,10 +55,6 @@ pub mod GameTokenMock {
 
         fn settings_id(self: @ContractState, token_id: u256) -> u32 {
             self.settings_id.entry(token_id).read()
-        }
-
-        fn season_pass(self: @ContractState, token_id: u256) -> u32 {
-            1
         }
     }
 }

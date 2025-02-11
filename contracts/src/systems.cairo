@@ -18,9 +18,6 @@ pub mod map {
     #[cfg(test)]
     pub mod tests;
 }
-pub mod season {
-    pub mod contracts;
-}
 pub mod config {
     pub mod contracts;
     #[cfg(test)]

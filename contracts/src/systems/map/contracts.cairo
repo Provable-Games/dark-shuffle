@@ -46,7 +46,7 @@ mod map_systems {
                 );
 
             // [Achievement] Complete a map
-            if game.season_id != 0 && game.map_level > 1 {
+            if game.map_level > 1 {
                 let player_id: felt252 = starknet::get_caller_address().into();
                 let task_id: felt252 = Task::Explorer.identifier();
                 let time = starknet::get_block_timestamp();

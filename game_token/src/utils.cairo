@@ -17,14 +17,6 @@ fn game_state(state: u8) -> ByteArray {
     }
 }
 
-fn season_pass(season_id: u32) -> ByteArray {
-    if season_id > 0 {
-        return "Season Pass";
-    }
-
-    ""
-}
-
 fn create_text(
     text: ByteArray,
     x: ByteArray,
@@ -84,7 +76,6 @@ fn create_metadata(
     hero_name: felt252,
     hero_health: u8,
     hero_xp: u16,
-    season_id: u32,
     state: u8,
     cards: Span<felt252>
 ) -> ByteArray {
@@ -104,7 +95,6 @@ fn create_metadata(
     let mut elements = array![
         rect,
         logo_element,
-        create_text(season_pass(season_id).clone(), "450", "61", "16", "right", "end"),
         create_text("#" + _game_id.clone(), "100", "50", "24", "middle", "left"),
     ];
 

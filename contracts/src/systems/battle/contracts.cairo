@@ -60,9 +60,7 @@ mod battle_systems {
                                     card, ref battle, ref board, ref board_stats, ref round_stats, game_effects,
                                 );
                                 BoardUtilsImpl::add_creature_to_board(creature, ref board, ref board_stats);
-                                if game.season_id != 0 {
-                                    AchievementsUtilsImpl::play_creature(ref world, card);
-                                }
+                                AchievementsUtilsImpl::play_creature(ref world, card);
                             },
                             CardType::Spell => {
                                 SpellUtilsImpl::cast_spell(card, ref battle, ref board, ref board_stats);
@@ -77,7 +75,7 @@ mod battle_systems {
                         BoardUtilsImpl::clean_board(ref battle, ref board, board_stats);
                         board_stats = BoardUtilsImpl::get_board_stats(board, battle.monster.monster_id);
 
-                        if game.season_id != 0 && battle.monster.health + 25 <= round_stats.monster_start_health {
+                        if battle.monster.health + 25 <= round_stats.monster_start_health {
                             AchievementsUtilsImpl::big_hit(ref world);
                         }
                     },

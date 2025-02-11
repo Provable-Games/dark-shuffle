@@ -12,7 +12,6 @@ use starknet::{ContractAddress, get_caller_address};
 pub struct Game {
     #[key]
     game_id: u64,
-    season_id: u32,
     hero_health: u8,
     hero_xp: u16,
     monsters_slain: u16,

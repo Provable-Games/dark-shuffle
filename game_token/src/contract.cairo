@@ -4,8 +4,6 @@ use starknet::ContractAddress;
 #[starknet::interface]
 trait IDarkShuffleGameToken<TState> {
     fn mint(ref self: TState, recipient: ContractAddress, token_id: u256, settings_id: u32);
-    fn attach_season_pass(ref self: TState, token_id: u256, season_id: u32);
-    fn season_pass(self: @TState, token_id: u256) -> u32;
     fn settings_id(self: @TState, token_id: u256) -> u32;
     fn get_token_of_owner_by_index(self: @TState, owner: ContractAddress, index: u256) -> u256;
 }
@@ -50,7 +48,6 @@ mod DarkShuffleGameToken {
 
     #[storage]
     struct Storage {
-        season_pass: Map<u256, u32>,
         settings_id: Map<u256, u32>,
 
         #[substorage(v0)]
@@ -106,11 +103,11 @@ mod DarkShuffleGameToken {
         /// - `token_id` exists.
         fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
             self.erc721._require_owned(token_id);
-            let (hero_name, hero_health, hero_xp, season_id, state, cards) = IGameDispatcher {
+            let (hero_name, hero_health, hero_xp, state, cards) = IGameDispatcher {
                 contract_address: self.ownable.Ownable_owner.read()
             }.get_game_data(token_id.try_into().unwrap());
 
-            create_metadata(token_id, hero_name, hero_health, hero_xp, season_id, state, cards)
+            create_metadata(token_id, hero_name, hero_health, hero_xp, state, cards)
         }
     }
 
@@ -132,21 +129,6 @@ mod DarkShuffleGameToken {
             self.ownable.assert_only_owner();
             self.erc721.mint(recipient, token_id);
             self.settings_id.entry(token_id).write(settings_id);
-        }
-
-        fn attach_season_pass(ref self: ContractState, token_id: u256, season_id: u32) {
-            self.ownable.assert_only_owner();
-            assert!(self.erc721.owner_of(token_id) != Zeroable::zero(), "ESP: Game token does not exist");
-
-            // add season pass to game token
-            let season_pass = self.season_pass.entry(token_id).read();
-            assert!(season_pass == 0, "ESP: Game token already has a season pass");
-
-            self.season_pass.entry(token_id).write(season_id);
-        }
-
-        fn season_pass(self: @ContractState, token_id: u256) -> u32 {
-            self.season_pass.entry(token_id).read()
         }
 
         fn settings_id(self: @ContractState, token_id: u256) -> u32 {

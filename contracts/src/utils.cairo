@@ -11,7 +11,6 @@ pub mod hand;
 pub mod map;
 pub mod monsters;
 pub mod random;
-pub mod season;
 pub mod spell;
 pub mod summon;
 pub mod tasks;
