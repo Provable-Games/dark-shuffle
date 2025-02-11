@@ -20,8 +20,8 @@ trait IConfigSystems<T> {
 #[dojo::contract]
 mod config_systems {
     use achievement::components::achievable::AchievableComponent;
-    use darkshuffle::constants::{DEFAULT_NS, WORLD_CONFIG_ID, DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS};
-    use darkshuffle::models::config::{GameSettings, WorldConfig};
+    use darkshuffle::constants::{DEFAULT_NS, DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS, VERSION, WORLD_CONFIG_ID};
+    use darkshuffle::models::config::{GameSettings, SettingsCounter, WorldConfig};
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
@@ -90,15 +90,21 @@ mod config_systems {
         ) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
+            // TODO: add upper bounds assertions
             assert(start_health > 0, 'Invalid start health');
             assert(draft_size > 0, 'Invalid draft size');
             assert(max_energy > 0, 'Invalid max energy');
             assert(max_hand_size > 0, 'Invalid max hand size');
 
+            // increment settings counter
+            let mut settings_count: SettingsCounter = world.read_model(VERSION);
+            settings_count.count += 1;
+            world.write_model(@settings_count);
+
             world
                 .write_model(
                     @GameSettings {
-                        settings_id: world.dispatcher.uuid() + 1,
+                        settings_id: settings_count.count,
                         start_health,
                         start_energy,
                         start_hand_size,

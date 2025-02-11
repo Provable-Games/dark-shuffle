@@ -23,6 +23,14 @@ pub struct GameSettings {
     include_spells: bool,
 }
 
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
+pub struct SettingsCounter {
+    #[key]
+    id: felt252,
+    count: u32,
+}
+
 #[generate_trait]
 impl GameSettingsImpl of GameSettingsTrait {
     fn exists(self: GameSettings) -> bool {
