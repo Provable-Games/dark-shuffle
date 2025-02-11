@@ -1,5 +1,5 @@
 [world]
-seed = "darkshuffle7"
+seed = "ds8"
 name = "Dark Shuffle"
 description = "Enter the darkness"
 website = "https://darkshuffle.io/"
@@ -9,17 +9,17 @@ x = "https://x.com/await_0x"
 github = "https://github.com/Await-0x/dark-shuffle"
 
 [namespace]
-default = "darkshuffle_s1"
+default = "ds"
 
 [writers]
-"darkshuffle_s1" = [
-    "darkshuffle_s1-game_systems",
-    "darkshuffle_s1-battle_systems",
-    "darkshuffle_s1-season_systems",
-    "darkshuffle_s1-draft_systems",
-    "darkshuffle_s1-map_systems",
-    "darkshuffle_s1-config_systems",
+"ds" = [
+    "ds-game_systems",
+    "ds-battle_systems",
+    "ds-season_systems",
+    "ds-draft_systems",
+    "ds-map_systems",
+    "ds-config_systems",
 ]
 
 [env]
-# world_address = "0x0581f5394a8d43cebd38eda3d8e4e4f9bfb566c04485ba28cb47393bb0a82fe4"
+# world_address = "0x045ca7e6580af452a7189ab7e57eb2189ed9c68fcd1a2f3bac222fd683ca9838"
