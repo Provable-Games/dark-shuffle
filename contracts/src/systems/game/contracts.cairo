@@ -4,12 +4,9 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IGameSystems<T> {
-    fn mint(ref self: T, settings_id: u32);
     fn enter_season(ref self: T, game_id: u64, season_id: u32);
     fn start_game(ref self: T, game_id: u64, name: felt252);
     fn abandon_game(ref self: T, game_id: u64);
-
-    fn score(self: @T, game_id: u64) -> u16;
     fn get_settings(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
     fn get_game_settings(self: @T, game_id: u64) -> GameSettings;
@@ -21,7 +18,9 @@ trait IGameSystems<T> {
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
 
-    use darkshuffle::constants::{DEFAULT_NS, LAST_NODE_DEPTH, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, WORLD_CONFIG_ID};
+    use darkshuffle::constants::{
+        DEFAULT_NS, DEFAULT_NS_STR, LAST_NODE_DEPTH, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, WORLD_CONFIG_ID,
+    };
     use darkshuffle::interface::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
     use darkshuffle::models::battle::{Card};
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
@@ -37,24 +36,81 @@ mod game_systems {
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
+
+    use openzeppelin_introspection::src5::SRC5Component;
+    use openzeppelin_token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
     use starknet::{ContractAddress, get_caller_address, get_tx_info};
+    use tournaments::components::game::{IGame, IGameDetails, ISettings, game_component};
+    use tournaments::components::models::game::{TokenMetadata};
+
+    component!(path: game_component, storage: game, event: GameEvent);
+    component!(path: SRC5Component, storage: src5, event: SRC5Event);
+    component!(path: ERC721Component, storage: erc721, event: ERC721Event);
+
+    #[abi(embed_v0)]
+    impl GameImpl = game_component::GameImpl<ContractState>;
+    #[abi(embed_v0)]
+    impl ERC721MixinImpl = ERC721Component::ERC721MixinImpl<ContractState>;
+
+    impl GameInternalImpl = game_component::InternalImpl<ContractState>;
+    impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
+
+    #[storage]
+    struct Storage {
+        #[substorage(v0)]
+        game: game_component::Storage,
+        #[substorage(v0)]
+        erc721: ERC721Component::Storage,
+        #[substorage(v0)]
+        src5: SRC5Component::Storage,
+    }
+
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    enum Event {
+        #[flat]
+        GameEvent: game_component::Event,
+        #[flat]
+        ERC721Event: ERC721Component::Event,
+        #[flat]
+        SRC5Event: SRC5Component::Event,
+    }
+
+    fn dojo_init(ref self: ContractState) {
+        self.erc721.initializer("Dark Shuffle", "DARK", "darkshuffle.dev");
+        self
+            .game
+            .initializer(
+                'Dark Shuffle',
+                "A deck building game",
+                'Provable Games',
+                'Provable Games',
+                'Deck Building',
+                "https://github.com/Provable-Games/dark-shuffle/blob/feat/integrate-tournament/client/public/favicon.svg",
+                DEFAULT_NS_STR(),
+            );
+    }
+
+    #[abi(embed_v0)]
+    impl SettingsImpl of ISettings<ContractState> {
+        fn setting_exists(self: @ContractState, settings_id: u32) -> bool {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let settings: GameSettings = world.read_model(settings_id);
+            settings.exists()
+        }
+    }
+
+    #[abi(embed_v0)]
+    impl GameDetailsImpl of IGameDetails<ContractState> {
+        fn score(self: @ContractState, game_id: u64) -> u32 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(game_id);
+            game.hero_xp.into()
+        }
+    }
 
     #[abi(embed_v0)]
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
-        fn mint(ref self: ContractState, settings_id: u32) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
-
-            let settings: GameSettings = world.read_model(settings_id);
-            assert(settings.exists(), 'Invalid settings');
-
-            let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            world_config.game_count += 1;
-            world.write_model(@world_config);
-
-            let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
-            game_token.mint(get_caller_address(), world_config.game_count.into(), settings_id);
-        }
-
         fn enter_season(ref self: ContractState, game_id: u64, season_id: u32) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
@@ -162,12 +218,6 @@ mod game_systems {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
                     },
                 );
-        }
-
-        fn score(self: @ContractState, game_id: u64) -> u16 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
-            let game: Game = world.read_model(game_id);
-            game.hero_xp
         }
 
         fn get_settings(self: @ContractState, settings_id: u32) -> GameSettings {

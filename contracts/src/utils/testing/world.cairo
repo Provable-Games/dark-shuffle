@@ -31,6 +31,23 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_GameFixedData::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_GameEffects::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Map::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(
+                tournaments::components::models::game::m_GameMetadata::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
+            TestResource::Model(
+                tournaments::components::models::game::m_TokenMetadata::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
+            TestResource::Model(
+                tournaments::components::models::game::m_GameCounter::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
+            TestResource::Model(tournaments::components::models::game::m_Score::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(tournaments::components::models::game::m_Settings::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(
+                tournaments::components::models::game::m_SettingsDetails::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
+            TestResource::Model(
+                tournaments::components::models::game::m_SettingsCounter::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
             TestResource::Event(darkshuffle::models::game::e_GameActionEvent::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyCreation::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyProgression::TEST_CLASS_HASH.try_into().unwrap()),
