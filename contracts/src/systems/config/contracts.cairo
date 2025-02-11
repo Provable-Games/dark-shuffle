@@ -11,6 +11,7 @@ trait IConfigSystems<T> {
         max_energy: u8,
         max_hand_size: u8,
         include_spells: bool,
+        card_ids_allowed: Span<u64>,
     );
 
     fn set_game_token_address(ref self: T, game_token_address: ContractAddress);
@@ -84,6 +85,7 @@ mod config_systems {
             max_energy: u8,
             max_hand_size: u8,
             include_spells: bool,
+            card_ids_allowed: Span<u64>,
         ) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
@@ -91,6 +93,7 @@ mod config_systems {
             assert(draft_size > 0, 'Invalid draft size');
             assert(max_energy > 0, 'Invalid max energy');
             assert(max_hand_size > 0, 'Invalid max hand size');
+            assert(card_ids_allowed.len() > 10, 'Minimum 10 card ids required');
 
             world
                 .write_model(
@@ -103,6 +106,7 @@ mod config_systems {
                         max_energy,
                         max_hand_size,
                         include_spells,
+                        card_ids_allowed,
                     }
                 );
         }

@@ -1,4 +1,5 @@
 use darkshuffle::models::game::{Game, GameOwnerTrait};
+use darkshuffle::models::card::CardType;
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -42,7 +43,7 @@ pub struct Hero {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Monster {
-    monster_id: u8, // TODO: could be moved to fixed model
+    monster_id: u8,
     attack: u8,
     health: u8,
 }
@@ -62,6 +63,8 @@ pub struct BattleEffects {
     next_hunter_health_bonus: u8,
     next_brute_attack_bonus: u8,
     next_brute_health_bonus: u8,
+    next_magical_attack_bonus: u8,
+    next_magical_health_bonus: u8,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -69,7 +72,7 @@ pub struct BoardStats {
     magical_count: u8,
     brute_count: u8,
     hunter_count: u8,
-    monster_type: CreatureType,
+    monster_type: CardType,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -77,43 +80,6 @@ pub struct RoundStats {
     monster_start_health: u8,
     creatures_played: u8,
     creature_attack_count: u8,
-}
-
-#[derive(Copy, Drop)]
-pub struct Card {
-    card_id: u8,
-    name: felt252,
-    card_type: CardType,
-    card_tier: CardTier,
-    creature_type: CreatureType,
-    cost: u8,
-    attack: u8,
-    health: u8,
-}
-
-#[derive(PartialEq, Introspect, Copy, Drop, Serde)]
-pub enum CardType {
-    Creature,
-    Spell,
-}
-
-#[derive(PartialEq, Introspect, Copy, Drop, Serde)]
-pub enum CreatureType {
-    Hunter,
-    Brute,
-    Magical,
-    Spell,
-    All,
-    None
-}
-
-#[derive(Introspect, Copy, Drop, Serde)]
-pub enum CardTier {
-    T1,
-    T2,
-    T3,
-    T4,
-    T5,
 }
 
 #[generate_trait]
@@ -140,10 +106,5 @@ impl BattleOwnerImpl of BattleOwnerTrait {
         };
 
         is_in_hand
-    }
-
-    fn assert_creature(self: Creature) {
-        assert(self.card_id != 0, 'Creature not found');
-        assert(self.health > 0, 'Creature dead');
     }
 }

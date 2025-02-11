@@ -23,7 +23,7 @@ mod game_systems {
 
     use darkshuffle::constants::{WORLD_CONFIG_ID, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, DEFAULT_NS, LAST_NODE_DEPTH};
     use darkshuffle::interface::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
-    use darkshuffle::models::battle::{Card};
+    use darkshuffle::models::card::{Card};
     use darkshuffle::models::config::{WorldConfig, GameSettings, GameSettingsTrait};
     use darkshuffle::models::draft::{Draft};
     use darkshuffle::models::game::{Game, GameState, GameOwnerTrait, GameActionEvent, GameFixedData};

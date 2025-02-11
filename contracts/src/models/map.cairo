@@ -1,5 +1,3 @@
-use darkshuffle::models::battle::{CreatureType};
-
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Map {

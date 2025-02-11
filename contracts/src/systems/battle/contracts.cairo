@@ -9,11 +9,11 @@ mod battle_systems {
 
     use darkshuffle::constants::{DEFAULT_NS};
     use darkshuffle::models::battle::{
-        Battle, BattleOwnerTrait, Card, Creature, Board, BoardStats, CardType, RoundStats
+        Battle, BattleOwnerTrait, Creature, Board, BoardStats, RoundStats
     };
+    use darkshuffle::models::card::{Card, CardDetails};
     use darkshuffle::models::config::GameSettings;
     use darkshuffle::models::game::{Game, GameEffects, GameActionEvent};
-    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
     use darkshuffle::utils::{
         achievements::AchievementsUtilsImpl, summon::SummonUtilsImpl, spell::SpellUtilsImpl, cards::CardUtilsImpl,
         board::BoardUtilsImpl, battle::BattleUtilsImpl, game::GameUtilsImpl, monsters::MonsterUtilsImpl,
@@ -52,20 +52,20 @@ mod battle_systems {
                     0 => {
                         assert(battle.card_in_hand(*action.at(1)), 'Card not in hand');
                         let card: Card = CardUtilsImpl::get_card(*action.at(1));
-                        BattleUtilsImpl::energy_cost(ref battle, round_stats, game_effects, card);
+                        BattleUtilsImpl::deduct_energy_cost(ref battle, round_stats, game_effects, card);
 
-                        match card.card_type {
-                            CardType::Creature => {
+                        match card.card_details {
+                            CardDetails::creature_card(creature_details) => {
                                 let creature: Creature = SummonUtilsImpl::summon_creature(
-                                    card, ref battle, ref board, ref board_stats, ref round_stats, game_effects
+                                    card, creature_details, ref battle, ref board, board_stats, ref round_stats, game_effects
                                 );
                                 BoardUtilsImpl::add_creature_to_board(creature, ref board, ref board_stats);
                                 if game.season_id != 0 {
                                     AchievementsUtilsImpl::play_creature(ref world, card);
                                 }
                             },
-                            CardType::Spell => {
-                                SpellUtilsImpl::cast_spell(card, ref battle, ref board, ref board_stats,);
+                            CardDetails::spell_card(spell_details) => {
+                                SpellUtilsImpl::cast_spell(card, spell_details, ref battle, ref board, board_stats);
                             }
                         }
 

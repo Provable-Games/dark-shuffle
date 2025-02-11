@@ -1,5 +1,5 @@
 use achievement::store::{Store, StoreTrait};
-use darkshuffle::models::battle::{Card, CreatureType};
+use darkshuffle::models::card::{Card, CardType};
 use darkshuffle::utils::cards::CardUtilsImpl;
 use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 use dojo::model::ModelStorage;
@@ -15,16 +15,16 @@ impl AchievementsUtilsImpl of AchievementsUtilsTrait {
         let player_id: felt252 = get_caller_address().into();
         let time = get_block_timestamp();
 
-        match card.creature_type {
-            CreatureType::Hunter => {
+        match card.card_type {
+            CardType::Hunter => {
                 let task_id: felt252 = Task::HuntersGathering.identifier();
                 store.progress(player_id, task_id, count: 1, time: time);
             },
-            CreatureType::Brute => {
+            CardType::Brute => {
                 let task_id: felt252 = Task::BruteSquad.identifier();
                 store.progress(player_id, task_id, count: 1, time: time);
             },
-            CreatureType::Magical => {
+            CardType::Magical => {
                 let task_id: felt252 = Task::MagicalAssembly.identifier();
                 store.progress(player_id, task_id, count: 1, time: time);
             },
@@ -37,17 +37,17 @@ impl AchievementsUtilsImpl of AchievementsUtilsTrait {
         let player_id: felt252 = get_caller_address().into();
         let time = get_block_timestamp();
 
-        let monster_type: CreatureType = CardUtilsImpl::get_card(monster_id).creature_type;
+        let monster_type: CardType = CardUtilsImpl::get_card(monster_id).card_type;
         match monster_type {
-            CreatureType::Hunter => {
+            CardType::Hunter => {
                 let task_id: felt252 = Task::HuntersProwess.identifier();
                 store.progress(player_id, task_id, count: 1, time: time);
             },
-            CreatureType::Brute => {
+            CardType::Brute => {
                 let task_id: felt252 = Task::BruteForce.identifier();
                 store.progress(player_id, task_id, count: 1, time: time);
             },
-            CreatureType::Magical => {
+            CardType::Magical => {
                 let task_id: felt252 = Task::MagicalMayhem.identifier();
                 store.progress(player_id, task_id, count: 1, time: time);
             },

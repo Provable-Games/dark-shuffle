@@ -353,7 +353,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cost: 1,
         attack: 3,
         health: 2,
-        text: "On Attack: Deals 1 extra damage if the enemy is Magical. Gains +1 health if it survives combat"
+        text: "On Attack: Deals 1 extra damage if the enemy is Magical"
       };
 
     case 22:

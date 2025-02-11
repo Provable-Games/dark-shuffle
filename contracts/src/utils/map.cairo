@@ -134,6 +134,8 @@ impl MapUtilsImpl of MapUtilsTrait {
                 next_hunter_health_bonus: 0,
                 next_brute_attack_bonus: 0,
                 next_brute_health_bonus: 0,
+                next_magical_attack_bonus: 0,
+                next_magical_health_bonus: 0,
             }
         };
 

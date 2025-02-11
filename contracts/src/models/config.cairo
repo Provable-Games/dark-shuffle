@@ -6,10 +6,12 @@ pub struct WorldConfig {
     #[key]
     config_id: u8,
     game_token_address: ContractAddress,
-    game_count: u256,
+    game_count: u64,
+    card_count: u64,
+    settings_count: u32,
 }
 
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
 #[dojo::model]
 pub struct GameSettings {
     #[key]
@@ -21,6 +23,7 @@ pub struct GameSettings {
     max_energy: u8,
     max_hand_size: u8,
     include_spells: bool,
+    card_ids_allowed: Span<u64>,
 }
 
 #[generate_trait]
