@@ -66,7 +66,7 @@ fn config_test_start_battle() {
     let map_systems_dispatcher = deploy_map_systems(ref world);
     let game_systems_dispatcher = deploy_game_systems(ref world);
 
-    game_systems_dispatcher.start_game(game_id, 'Test');
+    game_systems_dispatcher.start_game(game_id);
     create_map(ref world, game_id, 1, 1000);
     create_draft(ref world, game_id, array![].span(), array![1, 2, 3, 4, 5].span());
 

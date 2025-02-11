@@ -1,6 +1,6 @@
 use darkshuffle::models::battle::{Battle, Board, Card, Creature};
 use darkshuffle::models::draft::{Draft};
-use darkshuffle::models::game::{Game, GameFixedData, GameOwnerTrait, GameState};
+use darkshuffle::models::game::{Game, GameOwnerTrait, GameState};
 use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
 use darkshuffle::utils::cards::CardUtilsImpl;
 

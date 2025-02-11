@@ -1,6 +1,6 @@
 use darkshuffle::models::battle::{Battle};
 use darkshuffle::models::draft::{Draft};
-use darkshuffle::models::game::{Game, GameFixedData, GameOwnerTrait, GameState};
+use darkshuffle::models::game::{Game, GameOwnerTrait, GameState};
 use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
 
 use darkshuffle::utils::testing::{
@@ -30,14 +30,12 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
 fn game_test_start_game() {
     let (mut world, game_id, game_systems_dispatcher) = setup();
 
-    game_systems_dispatcher.start_game(game_id, 'Test');
+    game_systems_dispatcher.start_game(game_id);
 
-    let game_fixed_data: GameFixedData = world.read_model(game_id);
     let game: Game = world.read_model(game_id);
     let draft: Draft = world.read_model(game_id);
 
     assert(game.exists(), 'Game not created');
-    assert(game_fixed_data.player_name == 'Test', 'Player name not set');
     assert(game.state == GameState::Draft, 'Game state not set to draft');
     assert(draft.options.len() > 0, 'Draft options not set');
 }

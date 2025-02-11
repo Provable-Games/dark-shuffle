@@ -24,14 +24,6 @@ pub struct Game {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
-pub struct GameFixedData {
-    #[key]
-    game_id: u64,
-    player_name: felt252,
-}
-
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
-#[dojo::model]
 pub struct GameEffects {
     #[key]
     game_id: u64,

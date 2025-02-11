@@ -2,7 +2,7 @@ use core::array::{ArrayTrait, SpanTrait};
 use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR};
 use darkshuffle::models::{
     battle::{m_Battle, m_Board}, config::{m_GameSettings, m_WorldConfig}, draft::{m_Draft},
-    game::{m_Game, m_GameEffects, m_GameFixedData}, map::{m_Map},
+    game::{m_Game, m_GameEffects}, map::{m_Map},
 };
 use darkshuffle::systems::{
     battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems},
@@ -28,7 +28,6 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_GameSettings::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Draft::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Game::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_GameFixedData::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_GameEffects::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Map::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(

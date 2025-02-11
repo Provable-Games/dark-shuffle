@@ -4,7 +4,7 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IGameSystems<T> {
-    fn start_game(ref self: T, game_id: u64, name: felt252);
+    fn start_game(ref self: T, game_id: u64);
     fn abandon_game(ref self: T, game_id: u64);
     fn get_settings(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
@@ -24,7 +24,7 @@ mod game_systems {
     use darkshuffle::models::battle::{Card};
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
     use darkshuffle::models::draft::{Draft};
-    use darkshuffle::models::game::{Game, GameActionEvent, GameFixedData, GameOwnerTrait, GameState};
+    use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait, GameState};
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
     use darkshuffle::utils::{cards::CardUtilsImpl, draft::DraftUtilsImpl, random};
     use dojo::event::EventStorage;
@@ -109,7 +109,7 @@ mod game_systems {
 
     #[abi(embed_v0)]
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
-        fn start_game(ref self: ContractState, game_id: u64, name: felt252) {
+        fn start_game(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
             let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
@@ -120,8 +120,6 @@ mod game_systems {
             let seed: u128 = random::get_entropy(random_hash);
             let options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells);
             let action_count = 0;
-
-            world.write_model(@GameFixedData { game_id, player_name: name });
 
             world
                 .write_model(
@@ -193,7 +191,6 @@ mod game_systems {
             let world: WorldStorage = self.world(DEFAULT_NS());
 
             let game: Game = world.read_model(token_id);
-            let game_fixed_data: GameFixedData = world.read_model(game.game_id);
             let draft: Draft = world.read_model(game.game_id);
             let mut cards = array![];
 
@@ -204,7 +201,10 @@ mod game_systems {
                 i += 1;
             };
 
-            (game_fixed_data.player_name, game.hero_health, game.hero_xp, game.state.into(), cards.span())
+            let token_metadata: TokenMetadata = world.read_model(token_id);
+            let player_name = token_metadata.player_name;
+
+            (player_name, game.hero_health, game.hero_xp, game.state.into(), cards.span())
         }
 
         fn get_player_games(
