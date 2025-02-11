@@ -1,6 +1,6 @@
 use darkshuffle::models::battle::{Battle};
 use darkshuffle::models::draft::{Draft};
-use darkshuffle::models::game::{Game, GameFixata, GameOwnerTrait, GameState};
+use darkshuffle::models::game::{Game, GameOwnerTrait, GameState};
 use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
 
 use darkshuffle::utils::testing::{
@@ -16,12 +16,20 @@ use starknet::{ContractAddress, contract_address_const};
 
 fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
     let mut world = spawn_darkshuffle();
-    let game_systems_dispatcher = deploy_game_systems(ref world);
+    let (game_systems_dispatcher, game_component_dispatcher) = deploy_game_systems(ref world);
 
-    let game_id = 1;
     let settings_id = create_default_settings(ref world);
 
-    mint_game_token(ref world, game_id, settings_id);
+    let (game_systems_dispatcher, _) = deploy_game_systems(ref world);
+    let game_id = mint_game_token(
+        ref world,
+        game_systems_dispatcher.contract_address,
+        'player1',
+        settings_id,
+        0,
+        0,
+        contract_address_const::<'player1'>()
+    );
 
     (world, game_id, game_systems_dispatcher)
 }
@@ -38,4 +46,7 @@ fn game_test_start() {
     assert(game.exists(), 'Game not created');
     assert(game.state == GameState::Draft, 'Game state not set to draft');
     assert(draft.options.len() > 0, 'Draft options not set');
+
+    let invalid_game: Game = world.read_model(game_id + 1);
+    assert(!invalid_game.exists(), 'Invalid game not created');
 }

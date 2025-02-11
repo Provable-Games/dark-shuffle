@@ -5,7 +5,7 @@ use darkshuffle::systems::map::contracts::{IMapSystemsDispatcher, IMapSystemsDis
 
 use darkshuffle::utils::testing::{
     general::{create_default_settings, create_draft, create_game, create_map, mint_game_token},
-    systems::{deploy_map_systems, deploy_system}, world::spawn_darkshuffle,
+    systems::{deploy_map_systems, deploy_system, deploy_game_systems}, world::spawn_darkshuffle,
 };
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -18,10 +18,20 @@ fn setup() -> (WorldStorage, u64, IMapSystemsDispatcher) {
     let mut world = spawn_darkshuffle();
     let map_systems_dispatcher = deploy_map_systems(ref world);
 
-    let game_id = 1;
-    let settings_id = create_default_settings(ref world);
+    let settings_id = create_default_settings(
+        ref world
+    ); // TODO: we should be able to remove this as DS deploys with default settings
 
-    mint_game_token(ref world, game_id, settings_id);
+    let (game_systems_dispatcher, game_component_dispatcher) = deploy_game_systems(ref world);
+    let game_id = mint_game_token(
+        ref world,
+        game_systems_dispatcher.contract_address,
+        'player1',
+        settings_id,
+        0,
+        0,
+        contract_address_const::<'player1'>()
+    );
     create_game(ref world, game_id, GameState::Map);
 
     (world, game_id, map_systems_dispatcher)

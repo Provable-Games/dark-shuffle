@@ -28,6 +28,7 @@ dependencies = [
  "cartridge_vrf",
  "dojo",
  "dojo_cairo_test",
+ "openzeppelin_introspection",
  "openzeppelin_token",
  "tournaments",
 ]

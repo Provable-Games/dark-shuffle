@@ -30,6 +30,9 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_GameEffects::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Map::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(
+                tournaments::components::models::game::m_GameMetadata::TEST_CLASS_HASH.try_into().unwrap(),
+            ),
+            TestResource::Model(
                 tournaments::components::models::game::m_TokenMetadata::TEST_CLASS_HASH.try_into().unwrap(),
             ),
             TestResource::Model(

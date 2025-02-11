@@ -6,6 +6,8 @@ use darkshuffle::systems::{
     map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems},
 };
 use darkshuffle::utils::testing::mock::gameTokenMock::{GameTokenMock};
+
+use tournaments::components::game::{IGameDispatcher, IGameDispatcherTrait, IGameDetails, ISettings, game_component};
 use dojo::model::ModelStorage;
 
 use dojo::world::WorldStorage;
@@ -20,11 +22,12 @@ fn deploy_system(ref world: WorldStorage, name: ByteArray) -> ContractAddress {
     contract_address
 }
 
-fn deploy_game_systems(ref world: WorldStorage) -> IGameSystemsDispatcher {
+fn deploy_game_systems(ref world: WorldStorage) -> (IGameSystemsDispatcher, IGameDispatcher) {
     let game_systems_address = deploy_system(ref world, "game_systems");
     let game_systems_dispatcher = IGameSystemsDispatcher { contract_address: game_systems_address };
+    let game_component_dispatcher = IGameDispatcher { contract_address: game_systems_address };
 
-    game_systems_dispatcher
+    (game_systems_dispatcher, game_component_dispatcher)
 }
 
 fn deploy_map_systems(ref world: WorldStorage) -> IMapSystemsDispatcher {

@@ -13,7 +13,7 @@ dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.9" }
 achievement = { git = "https://github.com/cartridge-gg/arcade", tag = "v1.0.9" }
 tournaments= { git = "https://github.com/Provable-Games/tournaments.git", branch = "feat/dark-shuffle-integration"}
 openzeppelin_token = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.18.0" }
-
+openzeppelin_introspection = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.18.0" }
 [dev-dependencies]
 dojo_cairo_test = { git = "https://github.com/dojoengine/dojo.git", tag = "v1.0.9" }
 
