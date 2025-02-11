@@ -29,3 +29,28 @@ fn DEFAULT_NS() -> @ByteArray {
 fn DEFAULT_NS_STR() -> ByteArray {
     "darkshuffle_s1"
 }
+
+pub mod DEFAULT_SETTINGS {
+    use darkshuffle::models::config::GameSettings;
+
+    const START_HEALTH: u8 = 50;
+    const START_ENERGY: u8 = 1;
+    const START_HAND_SIZE: u8 = 5;
+    const DRAFT_SIZE: u8 = 20;
+    const MAX_ENERGY: u8 = 7;
+    const MAX_HAND_SIZE: u8 = 10;
+    const INCLUDE_SPELLS: bool = true;
+
+    fn GET_DEFAULT_SETTINGS() -> @GameSettings {
+        @GameSettings {
+            settings_id: 0,
+            start_health: START_HEALTH,
+            start_energy: START_ENERGY,
+            start_hand_size: START_HAND_SIZE,
+            draft_size: DRAFT_SIZE,
+            max_energy: MAX_ENERGY,
+            max_hand_size: MAX_HAND_SIZE,
+            include_spells: INCLUDE_SPELLS,
+        }
+    }
+}

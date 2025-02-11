@@ -20,7 +20,7 @@ trait IConfigSystems<T> {
 #[dojo::contract]
 mod config_systems {
     use achievement::components::achievable::AchievableComponent;
-    use darkshuffle::constants::{DEFAULT_NS, WORLD_CONFIG_ID};
+    use darkshuffle::constants::{DEFAULT_NS, WORLD_CONFIG_ID, DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS};
     use darkshuffle::models::config::{GameSettings, WorldConfig};
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
@@ -70,7 +70,10 @@ mod config_systems {
                 );
 
             trophy_id -= 1;
-        }
+        };
+
+        // initialize game with default settings
+        world.write_model(GET_DEFAULT_SETTINGS());
     }
 
     #[abi(embed_v0)]
