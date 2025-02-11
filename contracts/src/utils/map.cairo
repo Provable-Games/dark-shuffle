@@ -107,7 +107,7 @@ impl MapUtilsImpl of MapUtilsTrait {
         let health = 35 + (map.level * 5);
         let attack = (map.level + 1);
 
-        MonsterNode { monster_id, attack, health, }
+        MonsterNode { monster_id, attack, health }
     }
 
     fn start_battle(ref world: WorldStorage, ref game: Game, monster: MonsterNode, seed: u128) {
@@ -124,7 +124,7 @@ impl MapUtilsImpl of MapUtilsTrait {
             hero: Hero {
                 health: game.hero_health, energy: game_settings.start_energy + game_effects.start_bonus_energy,
             },
-            monster: Monster { monster_id: monster.monster_id, attack: monster.attack, health: monster.health, },
+            monster: Monster { monster_id: monster.monster_id, attack: monster.attack, health: monster.health },
             hand: array![].span(),
             deck: draft.cards,
             battle_effects: BattleEffects {
@@ -134,7 +134,7 @@ impl MapUtilsImpl of MapUtilsTrait {
                 next_hunter_health_bonus: 0,
                 next_brute_attack_bonus: 0,
                 next_brute_health_bonus: 0,
-            }
+            },
         };
 
         HandUtilsImpl::draw_cards(ref battle, game_settings.start_hand_size, game_settings.max_hand_size, seed);

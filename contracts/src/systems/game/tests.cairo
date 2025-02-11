@@ -1,16 +1,16 @@
 use darkshuffle::models::battle::{Battle};
 use darkshuffle::models::draft::{Draft};
-use darkshuffle::models::game::{Game, GameState, GameFixedData, GameOwnerTrait};
-use darkshuffle::systems::game::contracts::{game_systems, IGameSystemsDispatcher, IGameSystemsDispatcherTrait};
+use darkshuffle::models::game::{Game, GameFixedData, GameOwnerTrait, GameState};
+use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
 
 use darkshuffle::utils::testing::{
-    world::spawn_darkshuffle, systems::{deploy_system, deploy_game_systems},
-    general::{create_default_settings, mint_game_token},
+    general::{create_default_settings, mint_game_token}, systems::{deploy_game_systems, deploy_system},
+    world::spawn_darkshuffle,
 };
-use dojo::model::{ModelStorage, ModelValueStorage, ModelStorageTest};
+use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
-use dojo_cairo_test::{NamespaceDef, TestResource, ContractDefTrait};
+use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
 
 use starknet::{ContractAddress, contract_address_const};
 

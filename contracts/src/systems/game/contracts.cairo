@@ -21,15 +21,15 @@ trait IGameSystems<T> {
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
 
-    use darkshuffle::constants::{WORLD_CONFIG_ID, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, DEFAULT_NS, LAST_NODE_DEPTH};
+    use darkshuffle::constants::{DEFAULT_NS, LAST_NODE_DEPTH, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, WORLD_CONFIG_ID};
     use darkshuffle::interface::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
     use darkshuffle::models::battle::{Card};
-    use darkshuffle::models::config::{WorldConfig, GameSettings, GameSettingsTrait};
+    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
     use darkshuffle::models::draft::{Draft};
-    use darkshuffle::models::game::{Game, GameState, GameOwnerTrait, GameActionEvent, GameFixedData};
+    use darkshuffle::models::game::{Game, GameActionEvent, GameFixedData, GameOwnerTrait, GameState};
     use darkshuffle::models::season::{Season, SeasonOwnerTrait};
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-    use darkshuffle::utils::{season::SeasonUtilsImpl, draft::DraftUtilsImpl, cards::CardUtilsImpl, random};
+    use darkshuffle::utils::{cards::CardUtilsImpl, draft::DraftUtilsImpl, random, season::SeasonUtilsImpl};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
@@ -37,7 +37,7 @@ mod game_systems {
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
-    use starknet::{get_caller_address, get_tx_info, ContractAddress};
+    use starknet::{ContractAddress, get_caller_address, get_tx_info};
 
     #[abi(embed_v0)]
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
@@ -75,7 +75,7 @@ mod game_systems {
 
             let chain_id = get_tx_info().unbox().chain_id;
             let payment_dispatcher = IERC20Dispatcher {
-                contract_address: SeasonUtilsImpl::get_lords_address(chain_id)
+                contract_address: SeasonUtilsImpl::get_lords_address(chain_id),
             };
             // veLORDS
             payment_dispatcher
@@ -112,7 +112,7 @@ mod game_systems {
             let season_id = game_token.season_pass(game_id.into());
             let action_count = 0;
 
-            world.write_model(@GameFixedData { game_id, player_name: name, });
+            world.write_model(@GameFixedData { game_id, player_name: name });
 
             world
                 .write_model(
@@ -127,7 +127,7 @@ mod game_systems {
                         map_depth: LAST_NODE_DEPTH,
                         last_node_id: 0,
                         action_count,
-                    }
+                    },
                 );
 
             world.write_model(@Draft { game_id, options, cards: array![].span() });
@@ -135,8 +135,8 @@ mod game_systems {
             world
                 .emit_event(
                     @GameActionEvent {
-                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count
-                    }
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count,
+                    },
                 );
         }
 
@@ -159,8 +159,8 @@ mod game_systems {
             world
                 .emit_event(
                     @GameActionEvent {
-                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count
-                    }
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
+                    },
                 );
         }
 
@@ -213,12 +213,12 @@ mod game_systems {
                 game.hero_xp,
                 game.season_id,
                 game.state.into(),
-                cards.span()
+                cards.span(),
             )
         }
 
         fn get_player_games(
-            self: @ContractState, player_address: ContractAddress, limit: u256, page: u256, active: bool
+            self: @ContractState, player_address: ContractAddress, limit: u256, page: u256, active: bool,
         ) -> Span<Game> {
             let world: WorldStorage = self.world(DEFAULT_NS());
             let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);

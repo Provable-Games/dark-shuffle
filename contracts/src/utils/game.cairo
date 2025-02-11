@@ -5,7 +5,7 @@ use darkshuffle::models::map::{Map, MonsterNode};
 use darkshuffle::models::season::{Season, SeasonOwnerTrait};
 
 use darkshuffle::utils::{
-    season::SeasonUtilsImpl, battle::BattleUtilsImpl, map::MapUtilsImpl, achievements::AchievementsUtilsImpl
+    achievements::AchievementsUtilsImpl, battle::BattleUtilsImpl, map::MapUtilsImpl, season::SeasonUtilsImpl,
 };
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
@@ -42,7 +42,7 @@ impl GameUtilsImpl of GameUtilsTrait {
         ref battle: Battle,
         ref game_effects: GameEffects,
         ref game: Game,
-        monster_node: MonsterNode
+        monster_node: MonsterNode,
     ) {
         if game.season_id != 0 {
             // [Achievement] Defeat enemy
@@ -121,7 +121,7 @@ impl GameUtilsImpl of GameUtilsTrait {
             game_effects.magical_health += 1;
         } else if battle.monster.monster_id == 73 || battle.monster.monster_id == 75 {
             game_effects.magical_attack += 1;
-        }// Heal rewards
+        } // Heal rewards
         else if battle.monster.monster_id > 3 && battle.monster.monster_id < 30 {
             BattleUtilsImpl::heal_hero(ref battle, 20);
         } else if battle.monster.monster_id == 31

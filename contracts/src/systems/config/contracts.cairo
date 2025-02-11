@@ -22,7 +22,7 @@ mod config_systems {
     use achievement::components::achievable::AchievableComponent;
     use darkshuffle::constants::{DEFAULT_NS, WORLD_CONFIG_ID};
     use darkshuffle::models::config::{GameSettings, WorldConfig};
-    use darkshuffle::utils::trophies::index::{Trophy, TrophyTrait, TROPHY_COUNT};
+    use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -103,7 +103,7 @@ mod config_systems {
                         max_energy,
                         max_hand_size,
                         include_spells,
-                    }
+                    },
                 );
         }
 
@@ -111,7 +111,7 @@ mod config_systems {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
             assert(
                 world.dispatcher.is_owner(selector_from_tag!("darkshuffle_s1-game_systems"), get_caller_address()),
-                'Not Owner'
+                'Not Owner',
             );
 
             let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);

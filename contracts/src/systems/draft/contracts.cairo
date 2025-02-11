@@ -9,8 +9,8 @@ mod draft_systems {
     use darkshuffle::models::config::{GameSettings};
     use darkshuffle::models::draft::{Draft, DraftOwnerTrait};
 
-    use darkshuffle::models::game::{Game, GameOwnerTrait, GameState, GameActionEvent};
-    use darkshuffle::utils::{random, draft::DraftUtilsImpl, config::ConfigUtilsImpl};
+    use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait, GameState};
+    use darkshuffle::utils::{config::ConfigUtilsImpl, draft::DraftUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
@@ -47,8 +47,8 @@ mod draft_systems {
                     @GameActionEvent {
                         game_id,
                         tx_hash: starknet::get_tx_info().unbox().transaction_hash,
-                        count: current_draft_size.try_into().unwrap()
-                    }
+                        count: current_draft_size.try_into().unwrap(),
+                    },
                 );
         }
     }

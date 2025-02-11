@@ -7,7 +7,7 @@ pub struct Map {
     game_id: u64,
     #[key]
     level: u8,
-    seed: u128
+    seed: u128,
 }
 
 #[derive(Copy, Drop, Serde)]

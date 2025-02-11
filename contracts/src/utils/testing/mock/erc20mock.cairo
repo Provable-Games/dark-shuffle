@@ -12,7 +12,7 @@ trait IERC20<TState> {
 #[starknet::contract]
 mod ERC20Mock {
     use starknet::ContractAddress;
-    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map};
+    use starknet::storage::{Map, StoragePathEntry, StoragePointerReadAccess, StoragePointerWriteAccess};
     use super::IERC20;
 
     #[storage]
@@ -47,7 +47,7 @@ mod ERC20Mock {
         }
 
         fn transfer_from(
-            ref self: ContractState, sender: ContractAddress, recipient: ContractAddress, amount: u256
+            ref self: ContractState, sender: ContractAddress, recipient: ContractAddress, amount: u256,
         ) -> bool {
             let caller = starknet::get_caller_address();
             let caller_allowance = self.allowances.entry((sender, caller)).read();

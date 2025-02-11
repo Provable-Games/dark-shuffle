@@ -1,10 +1,10 @@
-use darkshuffle::models::battle::{Creature, Board, Battle, BattleEffects, CreatureType, BoardStats, RoundStats};
-use darkshuffle::utils::{attack::AttackUtilsImpl, death::DeathUtilsImpl, cards::CardUtilsImpl};
+use darkshuffle::models::battle::{Battle, BattleEffects, Board, BoardStats, Creature, CreatureType, RoundStats};
+use darkshuffle::utils::{attack::AttackUtilsImpl, cards::CardUtilsImpl, death::DeathUtilsImpl};
 
 #[generate_trait]
 impl BoardUtilsImpl of BoardUtilsTrait {
     fn no_creature() -> Creature {
-        Creature { card_id: 0, attack: 0, health: 0, }
+        Creature { card_id: 0, attack: 0, health: 0 }
     }
 
     fn add_creature_to_board(creature: Creature, ref board: Board, ref board_stats: BoardStats) {
