@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x45575a88cc5cef1e444c77ce60b7b4c9e73a01cbbe20926d5a4c72a94011410",
-    "address": "0x566a7ad2d1150eb4cc2ba1726b2cc5f02a80b0880282dd04e28b147483318b8",
-    "seed": "darkshuffle13",
+    "address": "0x21cc11eab0001dade1751f7934596d67c6fd95b7659560520c620c82c8a537b",
+    "seed": "darkshuffle_v1.1.0",
     "name": "Dark Shuffle",
     "entrypoints": [
       "uuid",
@@ -1252,7 +1252,7 @@
   },
   "contracts": [
     {
-      "address": "0x2afa5033dce9fc75b3896d98fd6ed45d4cb34a16322313490d433b5d4af47ec",
+      "address": "0xe198072d27ce9c96cbacf845dcf694fa2c28171dbf66b2422245223de82de",
       "class_hash": "0x54fa8c2794ca04064d70a2dca92b8454947798b95ebc268d7ad66d3052aa004",
       "abi": [
         {
@@ -1480,8 +1480,8 @@
       ]
     },
     {
-      "address": "0x7b7c4f63aa8f8e095e66f4ac535ef3520865cb977ac67c950ba2bfa34ed1830",
-      "class_hash": "0x609118951573893f19c4e033230760bc107b9e311bbaff3a807266d7d82f6df",
+      "address": "0x1da781e3d6420f23b6072b1a4064dfc9896cd47f33ab5f849cf651c1c730e6c",
+      "class_hash": "0x56d94562b104fa3441704b1b4f79072bdeaefa71437b3deb336bddf392e48d4",
       "abi": [
         {
           "type": "impl",
@@ -1560,12 +1560,50 @@
           ]
         },
         {
+          "type": "struct",
+          "name": "darkshuffle::models::config::GameSettings",
+          "members": [
+            {
+              "name": "settings_id",
+              "type": "core::integer::u32"
+            },
+            {
+              "name": "start_health",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "start_energy",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "start_hand_size",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "draft_size",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "max_energy",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "max_hand_size",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "include_spells",
+              "type": "core::bool"
+            }
+          ]
+        },
+        {
           "type": "interface",
           "name": "darkshuffle::systems::config::contracts::IConfigSystems",
           "items": [
             {
               "type": "function",
-              "name": "create_game_settings",
+              "name": "add_settings",
               "inputs": [
                 {
                   "name": "start_health",
@@ -1601,11 +1639,48 @@
             },
             {
               "type": "function",
-              "name": "get_game_token_address",
-              "inputs": [],
+              "name": "setting_details",
+              "inputs": [
+                {
+                  "name": "settings_id",
+                  "type": "core::integer::u32"
+                }
+              ],
               "outputs": [
                 {
-                  "type": "core::starknet::contract_address::ContractAddress"
+                  "type": "darkshuffle::models::config::GameSettings"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "settings_exists",
+              "inputs": [
+                {
+                  "name": "settings_id",
+                  "type": "core::integer::u32"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "game_settings",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "darkshuffle::models::config::GameSettings"
                 }
               ],
               "state_mutability": "view"
@@ -1735,12 +1810,12 @@
       "tag": "ds-config_systems",
       "selector": "0x4b081ebf23f1d1d2408d14fc2cfb83b46879bbff1ea33e89a879f9af4d22093",
       "systems": [
-        "create_game_settings",
+        "add_settings",
         "upgrade"
       ]
     },
     {
-      "address": "0x2953eb73c526ae206d3822e4a3eda8b4913ea2f98ed3890296ee19df507f4a4",
+      "address": "0x5e6dc86245d78b0721a031ac5a7a65f9427c94d45b742f2588469acbf6b70e4",
       "class_hash": "0x4a693033f05ab4f94348b69c16245d5fdfd493bdd884efea292cf8f99dcbb14",
       "abi": [
         {
@@ -1944,8 +2019,8 @@
       ]
     },
     {
-      "address": "0x3ee0c69b16a00d78f9dfcd30faa526f2654137e00279b0ad34e969f683e8396",
-      "class_hash": "0x272fb318341efd3f668935574000b3931084c093463f5c8a0615eb19ec8cceb",
+      "address": "0x711a2ed50ba5442259950cf741b81f66f17b9b751e44d0368a87926a3233e3e",
+      "class_hash": "0x75006737f0ce65ae3090e0340be06cb491fb8183c60b472b4c7b6631446a30a",
       "abi": [
         {
           "type": "impl",
@@ -2084,49 +2159,33 @@
         },
         {
           "type": "struct",
-          "name": "darkshuffle::models::config::GameSettings",
-          "members": [
-            {
-              "name": "settings_id",
-              "type": "core::integer::u32"
-            },
-            {
-              "name": "start_health",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "start_energy",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "start_hand_size",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "draft_size",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "max_energy",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "max_hand_size",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "include_spells",
-              "type": "core::bool"
-            }
-          ]
-        },
-        {
-          "type": "struct",
           "name": "core::array::Span::<core::felt252>",
           "members": [
             {
               "name": "snapshot",
               "type": "@core::array::Array::<core::felt252>"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "darkshuffle::models::game::GameState",
+          "variants": [
+            {
+              "name": "Draft",
+              "type": "()"
+            },
+            {
+              "name": "Battle",
+              "type": "()"
+            },
+            {
+              "name": "Map",
+              "type": "()"
+            },
+            {
+              "name": "Over",
+              "type": "()"
             }
           ]
         },
@@ -2148,51 +2207,7 @@
             },
             {
               "type": "function",
-              "name": "abandon_game",
-              "inputs": [
-                {
-                  "name": "game_id",
-                  "type": "core::integer::u64"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "get_settings",
-              "inputs": [
-                {
-                  "name": "settings_id",
-                  "type": "core::integer::u32"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "darkshuffle::models::config::GameSettings"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "settings_exists",
-              "inputs": [
-                {
-                  "name": "settings_id",
-                  "type": "core::integer::u32"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::bool"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "get_game_settings",
+              "name": "action_count",
               "inputs": [
                 {
                   "name": "game_id",
@@ -2201,23 +2216,151 @@
               ],
               "outputs": [
                 {
-                  "type": "darkshuffle::models::config::GameSettings"
+                  "type": "core::integer::u16"
                 }
               ],
               "state_mutability": "view"
             },
             {
               "type": "function",
-              "name": "get_game_data",
+              "name": "cards",
               "inputs": [
                 {
-                  "name": "token_id",
-                  "type": "core::integer::u128"
+                  "name": "game_id",
+                  "type": "core::integer::u64"
                 }
               ],
               "outputs": [
                 {
-                  "type": "(core::felt252, core::integer::u8, core::integer::u16, core::integer::u8, core::array::Span::<core::felt252>)"
+                  "type": "core::array::Span::<core::felt252>"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "game_state",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "darkshuffle::models::game::GameState"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "health",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::integer::u8"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "last_node_id",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::integer::u8"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "level",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::integer::u8"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "map_depth",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::integer::u8"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "monsters_slain",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::integer::u16"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "player_name",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::felt252"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "xp",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::integer::u16"
                 }
               ],
               "state_mutability": "view"
@@ -3003,7 +3146,6 @@
       "systems": [
         "dojo_init",
         "start_game",
-        "abandon_game",
         "upgrade",
         "mint",
         "safe_transfer_from",
@@ -3016,7 +3158,7 @@
       ]
     },
     {
-      "address": "0x689dc241bf02939192d04fd0926de7f43c920c36f2241ff3e98a9e6b09873a4",
+      "address": "0x34682994270f6d1f0b80115f0f5174f5746add5df88822fc2c331e52dd08929",
       "class_hash": "0x2b6aacb77ade0f4ef3cd9fc993fa88e8361ab1d6c414ea86fa077fb1e7f73a2",
       "abi": [
         {
