@@ -129,6 +129,10 @@ mod game_systems {
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
         fn start_game(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
+
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            self.validate_start_conditions(game_id, @token_metadata);
+
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let random_hash = random::get_random_hash();
             let seed: u128 = random::get_entropy(random_hash);
@@ -260,6 +264,49 @@ mod game_systems {
             let cards = self.cards(token_id_u64);
 
             create_metadata(token_id_u64, hero_name, hero_health, hero_xp, game_state.into(), cards)
+        }
+    }
+
+    #[generate_trait]
+    impl InternalImpl of InternalTrait {
+        #[inline(always)]
+        fn validate_start_conditions(self: @ContractState, token_id: u64, token_metadata: @TokenMetadata) {
+            self.assert_token_ownership(token_id);
+            self.assert_game_not_started(token_id);
+            self.assert_game_is_available(token_id, *token_metadata.available_at);
+            self.assert_game_not_expired(token_id, *token_metadata.expires_at);
+        }
+
+        #[inline(always)]
+        fn assert_token_ownership(self: @ContractState, token_id: u64) {
+            let token_owner = ERC721Impl::owner_of(self, token_id.into());
+            assert!(
+                token_owner == starknet::get_caller_address(),
+                "Dark Shuffle: Caller is not owner of token {}",
+                token_id,
+            );
+        }
+
+        #[inline(always)]
+        fn assert_game_not_started(self: @ContractState, game_id: u64) {
+            let game: Game = self.world(DEFAULT_NS()).read_model(game_id);
+            assert!(game.hero_xp == 0, "Dark Shuffle: Game {} has already started", game_id);
+        }
+
+        #[inline(always)]
+        fn assert_game_not_expired(self: @ContractState, game_id: u64, expires_at: u64) {
+            let now = starknet::get_block_timestamp();
+            if expires_at != 0 {
+                assert!(now < expires_at, "Dark Shuffle: Game {} expired at {}", game_id, expires_at);
+            }
+        }
+
+        #[inline(always)]
+        fn assert_game_is_available(self: @ContractState, game_id: u64, available_at: u64) {
+            let now = starknet::get_block_timestamp();
+            if available_at != 0 {
+                assert!(now >= available_at, "Dark Shuffle: Game {} is not playable until {}", game_id, available_at);
+            }
         }
     }
 }
