@@ -5,4 +5,4 @@ contracts = [
 
 [events]
 raw = true
-historical = ["darkshuffle_s1-TrophyCreation", "darkshuffle_s1-TrophyProgression"]
+historical = ["ds-TrophyCreation", "ds-TrophyProgression"]

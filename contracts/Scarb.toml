@@ -25,6 +25,13 @@ build-external-contracts = [
     "dojo::world::world_contract::world",
     "achievement::events::index::e_TrophyCreation",
     "achievement::events::index::e_TrophyProgression",
+    "tournaments::components::models::game::m_GameMetadata",
+    "tournaments::components::models::game::m_TokenMetadata",
+    "tournaments::components::models::game::m_GameCounter",
+    "tournaments::components::models::game::m_Score",
+    "tournaments::components::models::game::m_Settings",
+    "tournaments::components::models::game::m_SettingsDetails",
+    "tournaments::components::models::game::m_SettingsCounter",
 ]
 
 [tool.fmt]

@@ -24,11 +24,11 @@ const LCG_PRIME: u128 = 281474976710656;
 const VERSION: felt252 = '0.0.1';
 
 fn DEFAULT_NS() -> @ByteArray {
-    @"darkshuffle_s1"
+    @"ds"
 }
 
 fn DEFAULT_NS_STR() -> ByteArray {
-    "darkshuffle_s1"
+    "ds"
 }
 
 pub mod DEFAULT_SETTINGS {
