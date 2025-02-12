@@ -67,7 +67,7 @@ fn create_svg(internals: ByteArray) -> ByteArray {
 }
 
 fn create_metadata(
-    token_id: u256, hero_name: felt252, hero_health: u8, hero_xp: u16, state: u8, cards: Span<felt252>,
+    token_id: u64, hero_name: felt252, hero_health: u8, hero_xp: u16, state: u8, cards: Span<felt252>,
 ) -> ByteArray {
     let rect = create_rect();
     let logo_element = logo();

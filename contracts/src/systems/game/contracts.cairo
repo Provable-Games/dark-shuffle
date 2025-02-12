@@ -1,20 +1,20 @@
 use darkshuffle::models::config::{GameSettings};
-use darkshuffle::models::game::{Game};
+use darkshuffle::models::game::{Game, GameState};
 use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IGameSystems<T> {
     fn start_game(ref self: T, game_id: u64);
-    fn get_game_data(self: @T, token_id: u128) -> (felt252, u8, u16, u8, Span<felt252>);
-    fn player_name(self: @T, token_id: u128) -> felt252;
-    fn player_health(self: @T, token_id: u128) -> u8;
-    fn player_xp(self: @T, token_id: u128) -> u16;
-    fn player_cards(self: @T, token_id: u128) -> Span<felt252>;
-    fn monsters_slain(self: @T, token_id: u128) -> u16;
-    fn map_level(self: @T, token_id: u128) -> u8;
-    fn map_depth(self: @T, token_id: u128) -> u8;
-    fn last_node_id(self: @T, token_id: u128) -> u8;
-    fn action_count(self: @T, token_id: u128) -> u16;
+    fn action_count(self: @T, game_id: u64) -> u16;
+    fn cards(self: @T, game_id: u64) -> Span<felt252>;
+    fn game_state(self: @T, game_id: u64) -> GameState;
+    fn health(self: @T, game_id: u64) -> u8;
+    fn last_node_id(self: @T, game_id: u64) -> u8;
+    fn level(self: @T, game_id: u64) -> u8;
+    fn map_depth(self: @T, game_id: u64) -> u8;
+    fn monsters_slain(self: @T, game_id: u64) -> u16;
+    fn player_name(self: @T, game_id: u64) -> felt252;
+    fn xp(self: @T, game_id: u64) -> u16;
 }
 
 #[dojo::contract]
@@ -160,47 +160,33 @@ mod game_systems {
                 );
         }
 
-        fn get_game_data(self: @ContractState, token_id: u128) -> (felt252, u8, u16, u8, Span<felt252>) {
+        fn player_name(self: @ContractState, game_id: u64) -> felt252 {
             let world: WorldStorage = self.world(DEFAULT_NS());
-
-            let game: Game = world.read_model(token_id);
-            let draft: Draft = world.read_model(game.game_id);
-            let mut cards = array![];
-
-            let mut i = 0;
-            while i < draft.cards.len() {
-                let card: Card = CardUtilsImpl::get_card(*draft.cards.at(i));
-                cards.append(card.name);
-                i += 1;
-            };
-
-            let token_metadata: TokenMetadata = world.read_model(token_id);
-            let player_name = token_metadata.player_name;
-
-            (player_name, game.hero_health, game.hero_xp, game.state.into(), cards.span())
-        }
-
-        fn player_name(self: @ContractState, token_id: u128) -> felt252 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
-            let token_metadata: TokenMetadata = world.read_model(token_id);
+            let token_metadata: TokenMetadata = world.read_model(game_id);
             token_metadata.player_name
         }
 
-        fn player_health(self: @ContractState, token_id: u128) -> u8 {
+        fn health(self: @ContractState, game_id: u64) -> u8 {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let game: Game = world.read_model(token_id);
+            let game: Game = world.read_model(game_id);
             game.hero_health
         }
 
-        fn player_xp(self: @ContractState, token_id: u128) -> u16 {
+        fn game_state(self: @ContractState, game_id: u64) -> GameState {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let game: Game = world.read_model(token_id);
+            let game: Game = world.read_model(game_id);
+            game.state
+        }
+
+        fn xp(self: @ContractState, game_id: u64) -> u16 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(game_id);
             game.hero_xp
         }
 
-        fn player_cards(self: @ContractState, token_id: u128) -> Span<felt252> {
+        fn cards(self: @ContractState, game_id: u64) -> Span<felt252> {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let draft: Draft = world.read_model(token_id);
+            let draft: Draft = world.read_model(game_id);
             let mut cards = array![];
 
             let mut i = 0;
@@ -213,33 +199,33 @@ mod game_systems {
             cards.span()
         }
 
-        fn monsters_slain(self: @ContractState, token_id: u128) -> u16 {
+        fn monsters_slain(self: @ContractState, game_id: u64) -> u16 {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let game: Game = world.read_model(token_id);
+            let game: Game = world.read_model(game_id);
             game.monsters_slain
         }
 
-        fn map_level(self: @ContractState, token_id: u128) -> u8 {
+        fn level(self: @ContractState, game_id: u64) -> u8 {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let game: Game = world.read_model(token_id);
+            let game: Game = world.read_model(game_id);
             game.map_level
         }
 
-        fn map_depth(self: @ContractState, token_id: u128) -> u8 {
+        fn map_depth(self: @ContractState, game_id: u64) -> u8 {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let game: Game = world.read_model(token_id);
+            let game: Game = world.read_model(game_id);
             game.map_depth
         }
 
-        fn last_node_id(self: @ContractState, token_id: u128) -> u8 {
+        fn last_node_id(self: @ContractState, game_id: u64) -> u8 {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let game: Game = world.read_model(token_id);
+            let game: Game = world.read_model(game_id);
             game.last_node_id
         }
 
-        fn action_count(self: @ContractState, token_id: u128) -> u16 {
+        fn action_count(self: @ContractState, game_id: u64) -> u16 {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let game: Game = world.read_model(token_id);
+            let game: Game = world.read_model(game_id);
             game.action_count
         }
     }
@@ -264,8 +250,16 @@ mod game_systems {
         /// - `token_id` exists.
         fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
             self.erc721._require_owned(token_id);
-            let (hero_name, hero_health, hero_xp, state, cards) = self.get_game_data(token_id.try_into().unwrap());
-            create_metadata(token_id, hero_name, hero_health, hero_xp, state, cards)
+
+            let token_id_u64 = token_id.try_into().unwrap();
+
+            let hero_name = self.player_name(token_id_u64);
+            let hero_health = self.health(token_id_u64);
+            let hero_xp = self.xp(token_id_u64);
+            let game_state = self.game_state(token_id_u64);
+            let cards = self.cards(token_id_u64);
+
+            create_metadata(token_id_u64, hero_name, hero_health, hero_xp, game_state.into(), cards)
         }
     }
 }
