@@ -16,7 +16,7 @@ pub struct Battle {
     monster: Monster,
     hand: Span<u8>,
     deck: Span<u8>,
-    battle_effects: BattleEffects
+    battle_effects: BattleEffects,
 }
 
 #[derive(Introspect, Copy, Drop, Serde)]
@@ -104,7 +104,7 @@ pub enum CreatureType {
     Magical,
     Spell,
     All,
-    None
+    None,
 }
 
 #[derive(Introspect, Copy, Drop, Serde)]

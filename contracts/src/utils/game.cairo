@@ -2,11 +2,8 @@ use darkshuffle::models::battle::{Battle};
 
 use darkshuffle::models::game::{Game, GameEffects, GameState};
 use darkshuffle::models::map::{Map, MonsterNode};
-use darkshuffle::models::season::{Season, SeasonOwnerTrait};
 
-use darkshuffle::utils::{
-    season::SeasonUtilsImpl, battle::BattleUtilsImpl, map::MapUtilsImpl, achievements::AchievementsUtilsImpl
-};
+use darkshuffle::utils::{achievements::AchievementsUtilsImpl, battle::BattleUtilsImpl, map::MapUtilsImpl};
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -42,20 +39,18 @@ impl GameUtilsImpl of GameUtilsTrait {
         ref battle: Battle,
         ref game_effects: GameEffects,
         ref game: Game,
-        monster_node: MonsterNode
+        monster_node: MonsterNode,
     ) {
-        if game.season_id != 0 {
-            // [Achievement] Defeat enemy
-            AchievementsUtilsImpl::defeat_enemy(ref world, battle.monster.monster_id);
-            // [Achievement] Survivor
-            if battle.hero.health == 1 {
-                AchievementsUtilsImpl::survivor(ref world);
-            }
-            // [Achievement] Heroic
-            if battle.hero.health > game.hero_health {
-                AchievementsUtilsImpl::heroic(ref world);
-            }
-        };
+        // [Achievement] Defeat enemy
+        AchievementsUtilsImpl::defeat_enemy(ref world, battle.monster.monster_id);
+        // [Achievement] Survivor
+        if battle.hero.health == 1 {
+            AchievementsUtilsImpl::survivor(ref world);
+        }
+        // [Achievement] Heroic
+        if battle.hero.health > game.hero_health {
+            AchievementsUtilsImpl::heroic(ref world);
+        }
 
         Self::add_monster_reward(ref game_effects, ref battle);
 
@@ -71,15 +66,12 @@ impl GameUtilsImpl of GameUtilsTrait {
 
     fn battle_lost(ref world: WorldStorage, ref battle: Battle, ref game: Game, monster_node: MonsterNode) {
         game.state = GameState::Over;
+
+        // TODO: health should already be zero so this is should either be removed or be an assertion
         game.hero_health = 0;
 
         if monster_node.health > battle.monster.health {
             game.hero_xp += (monster_node.health - battle.monster.health).into();
-        }
-
-        let season: Season = world.read_model(game.season_id);
-        if season.season_id != 0 && season.is_active() {
-            SeasonUtilsImpl::score_game(ref world, game);
         }
 
         world.write_model(@game);
@@ -121,7 +113,7 @@ impl GameUtilsImpl of GameUtilsTrait {
             game_effects.magical_health += 1;
         } else if battle.monster.monster_id == 73 || battle.monster.monster_id == 75 {
             game_effects.magical_attack += 1;
-        }// Heal rewards
+        } // Heal rewards
         else if battle.monster.monster_id > 3 && battle.monster.monster_id < 30 {
             BattleUtilsImpl::heal_hero(ref battle, 20);
         } else if battle.monster.monster_id == 31

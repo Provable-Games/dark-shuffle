@@ -12,7 +12,6 @@ use starknet::{ContractAddress, get_caller_address};
 pub struct Game {
     #[key]
     game_id: u64,
-    season_id: u32,
     hero_health: u8,
     hero_xp: u16,
     monsters_slain: u16,
@@ -21,14 +20,6 @@ pub struct Game {
     last_node_id: u8,
     action_count: u16,
     state: GameState,
-}
-
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
-#[dojo::model]
-pub struct GameFixedData {
-    #[key]
-    game_id: u64,
-    player_name: felt252,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -50,7 +41,7 @@ pub struct GameEffects {
     hero_card_heal: bool,
     card_draw: u8,
     play_creature_heal: u8,
-    start_bonus_energy: u8
+    start_bonus_energy: u8,
 }
 
 #[derive(PartialEq, Introspect, Copy, Drop, Serde)]
@@ -104,5 +95,5 @@ pub struct GameActionEvent {
     #[key]
     tx_hash: felt252,
     game_id: u64,
-    count: u16
+    count: u16,
 }

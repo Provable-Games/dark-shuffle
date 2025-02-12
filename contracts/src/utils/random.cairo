@@ -1,9 +1,9 @@
 use cartridge_vrf::{IVrfProviderDispatcher, IVrfProviderDispatcherTrait, Source};
 
-use core::{integer::{u256_try_as_non_zero, U256DivRem},};
+use core::{integer::{U256DivRem, u256_try_as_non_zero}};
 
-use darkshuffle::constants::{CARD_POOL_SIZE, U128_MAX, LCG_PRIME, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID};
-use starknet::{get_block_timestamp, get_tx_info, ContractAddress, contract_address_const, get_caller_address};
+use darkshuffle::constants::{CARD_POOL_SIZE, LCG_PRIME, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, U128_MAX};
+use starknet::{ContractAddress, contract_address_const, get_block_timestamp, get_caller_address, get_tx_info};
 
 fn get_vrf_address() -> ContractAddress {
     contract_address_const::<0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f>()
@@ -11,13 +11,13 @@ fn get_vrf_address() -> ContractAddress {
 
 fn get_random_hash() -> felt252 {
     let chain_id = get_tx_info().unbox().chain_id;
-    if chain_id == MAINNET_CHAIN_ID || chain_id == SEPOLIA_CHAIN_ID {
+    // TODO: readd support for sepolia, currently throwing an Index out of bounds
+    if chain_id == MAINNET_CHAIN_ID {
         let vrf_provider = IVrfProviderDispatcher { contract_address: get_vrf_address() };
-        return vrf_provider.consume_random(Source::Nonce(get_caller_address()));
+        vrf_provider.consume_random(Source::Nonce(get_caller_address()))
+    } else {
+        get_block_timestamp().into()
     }
-
-    let current_timestamp = get_block_timestamp();
-    current_timestamp.into()
 }
 
 fn get_entropy(felt_to_split: felt252) -> u128 {
@@ -53,7 +53,7 @@ fn get_random_card_id(seed: u128, include_spells: bool) -> u8 {
         ((234 - card_number) / 2 + 79).try_into().unwrap()
     } else if card_number > 225 {
         ((228 - card_number) + 76).try_into().unwrap()
-    }// Creatures
+    } // Creatures
     else if card_number > 150 {
         ((225 - card_number) / 5 + 61).try_into().unwrap()
     } else if card_number > 90 {

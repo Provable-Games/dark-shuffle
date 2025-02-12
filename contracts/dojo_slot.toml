@@ -15,7 +15,6 @@ default = "darkshuffle"
 "darkshuffle" = [
     "darkshuffle-game_systems",
     "darkshuffle-battle_systems",
-    "darkshuffle-season_systems",
     "darkshuffle-draft_systems",
     "darkshuffle-map_systems",
     "darkshuffle-config_systems",

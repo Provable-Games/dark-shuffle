@@ -4,36 +4,73 @@ version = 1
 [[package]]
 name = "achievement"
 version = "0.0.0"
-source = "git+https://github.com/cartridge-gg/arcade?tag=v1.0.5#75fbf3f8a9ce46d7f72f15cfd0d0f484034fd41d"
+source = "git+https://github.com/cartridge-gg/arcade?tag=v1.0.9#b8ca8eb64c7e44637402f577b1cc608ea7b7d014"
 dependencies = [
  "dojo",
 ]
 
 [[package]]
+name = "alexandria_data_structures"
+version = "0.2.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?tag=cairo-v2.6.0#946e6e2f9d390ad9f345882a352c0dd6f02ef3ad"
+dependencies = [
+ "alexandria_encoding",
+]
+
+[[package]]
+name = "alexandria_encoding"
+version = "0.1.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?tag=cairo-v2.6.0#946e6e2f9d390ad9f345882a352c0dd6f02ef3ad"
+dependencies = [
+ "alexandria_math",
+ "alexandria_numeric",
+]
+
+[[package]]
+name = "alexandria_math"
+version = "0.2.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?tag=cairo-v2.6.0#946e6e2f9d390ad9f345882a352c0dd6f02ef3ad"
+dependencies = [
+ "alexandria_data_structures",
+]
+
+[[package]]
+name = "alexandria_numeric"
+version = "0.1.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?tag=cairo-v2.6.0#946e6e2f9d390ad9f345882a352c0dd6f02ef3ad"
+dependencies = [
+ "alexandria_math",
+]
+
+[[package]]
 name = "cartridge_vrf"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/vrf#3fc02297d2444392b08d1445054fa5be97dac5ac"
+source = "git+https://github.com/loothero/vrf.git?branch=feat%2Fupgrade-starknet-2.8.5#99e7795d000d52f37862a442c35ae5b85dc75617"
 dependencies = [
- "openzeppelin",
+ "openzeppelin_access",
+ "openzeppelin_upgrades",
  "snforge_std",
  "stark_vrf",
 ]
 
 [[package]]
 name = "darkshuffle"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "achievement",
+ "alexandria_math",
  "cartridge_vrf",
  "dojo",
  "dojo_cairo_test",
+ "graffiti",
  "openzeppelin",
+ "tournaments",
 ]
 
 [[package]]
 name = "dojo"
-version = "1.0.5"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.0.5#c5e7d6b537d9c1e4a1df7367b5ace37ffd172015"
+version = "1.0.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.9#04b5f025d998eee19cd21d33bd8a992498a73160"
 dependencies = [
  "dojo_plugin",
 ]
@@ -41,7 +78,7 @@ dependencies = [
 [[package]]
 name = "dojo_cairo_test"
 version = "1.0.0-rc.0"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.0.5#c5e7d6b537d9c1e4a1df7367b5ace37ffd172015"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.9#04b5f025d998eee19cd21d33bd8a992498a73160"
 dependencies = [
  "dojo",
 ]
@@ -49,17 +86,24 @@ dependencies = [
 [[package]]
 name = "dojo_plugin"
 version = "2.8.4"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.0.5#c5e7d6b537d9c1e4a1df7367b5ace37ffd172015"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.9#04b5f025d998eee19cd21d33bd8a992498a73160"
+
+[[package]]
+name = "graffiti"
+version = "0.1.0"
+source = "git+https://github.com/ponderingdemocritus/graffiti?rev=bc569531791dbc71c6cd8d9bc154c34eedad31fe#bc569531791dbc71c6cd8d9bc154c34eedad31fe"
 
 [[package]]
 name = "openzeppelin"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
 dependencies = [
  "openzeppelin_access",
  "openzeppelin_account",
+ "openzeppelin_finance",
  "openzeppelin_governance",
  "openzeppelin_introspection",
+ "openzeppelin_merkle_tree",
  "openzeppelin_presets",
  "openzeppelin_security",
  "openzeppelin_token",
@@ -69,8 +113,8 @@ dependencies = [
 
 [[package]]
 name = "openzeppelin_access"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
 dependencies = [
  "openzeppelin_introspection",
  "openzeppelin_utils",
@@ -78,71 +122,108 @@ dependencies = [
 
 [[package]]
 name = "openzeppelin_account"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
 dependencies = [
  "openzeppelin_introspection",
- "openzeppelin_token",
  "openzeppelin_utils",
 ]
 
 [[package]]
-name = "openzeppelin_governance"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
+name = "openzeppelin_finance"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
 dependencies = [
  "openzeppelin_access",
- "openzeppelin_introspection",
+ "openzeppelin_token",
 ]
 
 [[package]]
-name = "openzeppelin_introspection"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
-
-[[package]]
-name = "openzeppelin_presets"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
+name = "openzeppelin_governance"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
 dependencies = [
  "openzeppelin_access",
  "openzeppelin_account",
  "openzeppelin_introspection",
  "openzeppelin_token",
+]
+
+[[package]]
+name = "openzeppelin_introspection"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
+
+[[package]]
+name = "openzeppelin_merkle_tree"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
+
+[[package]]
+name = "openzeppelin_presets"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
+dependencies = [
+ "openzeppelin_access",
+ "openzeppelin_account",
+ "openzeppelin_finance",
+ "openzeppelin_introspection",
+ "openzeppelin_token",
  "openzeppelin_upgrades",
+ "openzeppelin_utils",
 ]
 
 [[package]]
 name = "openzeppelin_security"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
 
 [[package]]
 name = "openzeppelin_token"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
 dependencies = [
  "openzeppelin_account",
- "openzeppelin_governance",
  "openzeppelin_introspection",
+ "openzeppelin_utils",
 ]
 
 [[package]]
 name = "openzeppelin_upgrades"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
 
 [[package]]
 name = "openzeppelin_utils"
-version = "0.15.0-rc.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=a13bae3#a13bae3390a7114a8c14c0352c6898eff5f4f5d7"
+version = "0.18.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.18.0#2f37306b490e63c0afa9e33ad192ba428141b487"
+
+[[package]]
+name = "snforge_scarb_plugin"
+version = "0.31.0"
+source = "registry+https://scarbs.xyz/"
+checksum = "sha256:1fce075fcbf7fce1b0935f6f9a034549704837fb221da212d3b6e9134cebfdaa"
 
 [[package]]
 name = "snforge_std"
-version = "0.26.0"
-source = "git+https://github.com/foundry-rs/starknet-foundry.git?tag=v0.26.0#50eb589db65e113efe4f09241feb59b574228c7e"
+version = "0.31.0"
+source = "registry+https://scarbs.xyz/"
+checksum = "sha256:60ac980b297281f9a59a5f1668cb56bdea1b28fd2f8008008270f9a3c91ad3ba"
+dependencies = [
+ "snforge_scarb_plugin",
+]
 
 [[package]]
 name = "stark_vrf"
 version = "0.1.0"
 source = "git+https://github.com/dojoengine/stark-vrf.git#96d6d2a88b1ef46c4a285d0ccc334237205edae3"
+
+[[package]]
+name = "tournaments"
+version = "0.0.1"
+source = "git+https://github.com/Provable-Games/tournaments.git?branch=feat%2Fdark-shuffle-integration#d985e7f5b06f6b435d62e14fcac931f8f723291f"
+dependencies = [
+ "dojo",
+ "openzeppelin_introspection",
+ "openzeppelin_token",
+]

@@ -9,10 +9,10 @@ mod map_systems {
     use achievement::store::{Store, StoreTrait};
     use darkshuffle::constants::{DEFAULT_NS};
 
-    use darkshuffle::models::game::{Game, GameOwnerTrait, GameActionEvent};
+    use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait};
     use darkshuffle::models::map::{Map, MonsterNode};
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-    use darkshuffle::utils::{random, map::MapUtilsImpl};
+    use darkshuffle::utils::{map::MapUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
@@ -35,18 +35,18 @@ mod map_systems {
             game.last_node_id = 0;
             game.action_count += 1;
 
-            world.write_model(@Map { game_id, level: game.map_level, seed, });
+            world.write_model(@Map { game_id, level: game.map_level, seed });
 
             world.write_model(@game);
             world
                 .emit_event(
                     @GameActionEvent {
-                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count
-                    }
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
+                    },
                 );
 
             // [Achievement] Complete a map
-            if game.season_id != 0 && game.map_level > 1 {
+            if game.map_level > 1 {
                 let player_id: felt252 = starknet::get_caller_address().into();
                 let task_id: felt252 = Task::Explorer.identifier();
                 let time = starknet::get_block_timestamp();
@@ -79,8 +79,8 @@ mod map_systems {
             world
                 .emit_event(
                     @GameActionEvent {
-                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count
-                    }
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
+                    },
                 );
         }
     }

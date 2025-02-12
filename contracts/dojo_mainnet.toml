@@ -9,10 +9,14 @@ default = "darkshuffle_s1"
 "darkshuffle_s1" = [
     "darkshuffle_s1-game_systems",
     "darkshuffle_s1-battle_systems",
-    "darkshuffle_s1-season_systems",
     "darkshuffle_s1-draft_systems",
     "darkshuffle_s1-map_systems",
     "darkshuffle_s1-config_systems",
+]
+
+[init_call_args]
+"darkshuffle_s1-game_systems" = [
+    "0x000B39b235b44c53a2E9F0c5D35939D9C8E8dAFDd0a2ba2E695b501Fc1e9fd2f",
 ]
 
 [env]

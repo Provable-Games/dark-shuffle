@@ -1,27 +1,34 @@
 use darkshuffle::models::battle::{Battle};
 use darkshuffle::models::draft::{Draft};
 use darkshuffle::models::game::{Game, GameState};
-use darkshuffle::systems::draft::contracts::{draft_systems, IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait};
+use darkshuffle::systems::draft::contracts::{IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait, draft_systems};
 
 use darkshuffle::utils::testing::{
-    world::spawn_darkshuffle, systems::{deploy_system, deploy_draft_systems},
-    general::{create_default_settings, mint_game_token, create_game, create_draft},
+    general::{create_default_settings, create_draft, create_game, mint_game_token},
+    systems::{deploy_draft_systems, deploy_system}, world::spawn_darkshuffle,
 };
-use dojo::model::{ModelStorage, ModelValueStorage, ModelStorageTest};
+use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
-use dojo_cairo_test::{NamespaceDef, TestResource, ContractDefTrait};
+use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
 
 use starknet::{ContractAddress, contract_address_const};
 
 fn setup() -> (WorldStorage, u64, IDraftSystemsDispatcher) {
-    let mut world = spawn_darkshuffle();
+    let (mut world, game_systems_dispatcher) = spawn_darkshuffle();
     let draft_systems_dispatcher = deploy_draft_systems(ref world);
 
-    let game_id = 1;
-    let settings_id = create_default_settings(ref world);
+    let settings_id = 0;
+    let game_id = mint_game_token(
+        world,
+        game_systems_dispatcher.contract_address,
+        'player1',
+        settings_id,
+        0,
+        0,
+        contract_address_const::<'player1'>(),
+    );
 
-    mint_game_token(ref world, game_id, settings_id);
     create_game(ref world, game_id, GameState::Draft);
 
     (world, game_id, draft_systems_dispatcher)
@@ -49,7 +56,7 @@ fn draft_test_draft_complete() {
         ref world,
         game_id,
         array![1, 2, 3].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].span()
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].span(),
     );
 
     draft_systems_dispatcher.pick_card(game_id, 1);
