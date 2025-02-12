@@ -24,8 +24,8 @@ const START_HAND_SIZE: u8 = 1;
 const MAX_ENERGY: u8 = 15;
 const MAX_HAND_SIZE: u8 = 2;
 
-fn setup() -> (WorldStorage, u64) {
-    let mut world = spawn_darkshuffle();
+fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
+    let (mut world, game_systems_dispatcher) = spawn_darkshuffle();
 
     let draft_size = 5;
 
@@ -33,15 +33,22 @@ fn setup() -> (WorldStorage, u64) {
         ref world, START_HEALTH, START_ENERGY, START_HAND_SIZE, draft_size, MAX_ENERGY, MAX_HAND_SIZE, true,
     );
 
-    let game_id = 1;
-    mint_game_token(ref world, game_id, settings_id);
+    let game_id = mint_game_token(
+        world,
+        game_systems_dispatcher.contract_address,
+        'player1',
+        settings_id,
+        0,
+        0,
+        contract_address_const::<'player1'>(),
+    );
 
-    (world, game_id)
+    (world, game_id, game_systems_dispatcher)
 }
 
 #[test] // 106622001 gas
 fn config_test_draft_size() {
-    let (mut world, game_id) = setup();
+    let (mut world, game_id, _) = setup();
     let draft_systems_dispatcher = deploy_draft_systems(ref world);
 
     create_game(ref world, game_id, GameState::Draft);
@@ -62,9 +69,8 @@ fn config_test_draft_size() {
 
 #[test] // 108082996 gas
 fn config_test_start_battle() {
-    let (mut world, game_id) = setup();
+    let (mut world, game_id, game_systems_dispatcher) = setup();
     let map_systems_dispatcher = deploy_map_systems(ref world);
-    let game_systems_dispatcher = deploy_game_systems(ref world);
 
     game_systems_dispatcher.start_game(game_id);
     create_map(ref world, game_id, 1, 1000);
@@ -89,7 +95,7 @@ fn config_test_start_battle() {
 
 #[test] // 106246647 gas
 fn config_test_max_energy_and_hand_size() {
-    let (mut world, game_id) = setup();
+    let (mut world, game_id, _) = setup();
     let battle_systems_dispatcher = deploy_battle_systems(ref world);
 
     let hero_health = 50;

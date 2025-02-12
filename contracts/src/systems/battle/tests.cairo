@@ -16,13 +16,19 @@ use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
 use starknet::{ContractAddress, contract_address_const};
 
 fn setup() -> (WorldStorage, u64, IBattleSystemsDispatcher) {
-    let mut world = spawn_darkshuffle();
+    let (mut world, game_systems_dispatcher) = spawn_darkshuffle();
     let battle_systems_dispatcher = deploy_battle_systems(ref world);
 
-    let game_id = 1;
-    let settings_id = create_default_settings(ref world);
-
-    mint_game_token(ref world, game_id, settings_id);
+    let settings_id = 0;
+    let game_id = mint_game_token(
+        world,
+        game_systems_dispatcher.contract_address,
+        'player1',
+        settings_id,
+        0,
+        0,
+        contract_address_const::<'player1'>(),
+    );
     create_game(ref world, game_id, GameState::Battle);
 
     (world, game_id, battle_systems_dispatcher)

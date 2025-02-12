@@ -25,7 +25,7 @@ mod DarkShuffleGameToken {
     use openzeppelin::token::erc721::extensions::ERC721EnumerableComponent;
     use openzeppelin::token::erc721::interface::{
         IERC721Metadata, IERC721MetadataDispatcher, IERC721MetadataDispatcherTrait, IERC721Dispatcher,
-        IERC721DispatcherTrait, IERC721MetadataCamelOnly,
+        IERC721DispatcherTrait, IERC721MetadataCamelOnly, ERC721ABI
     };
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
@@ -84,15 +84,61 @@ mod DarkShuffleGameToken {
     }
 
     #[abi(embed_v0)]
-    impl ERC721Metadata of IERC721Metadata<ContractState> {
-        /// Returns the NFT name.
-        fn name(self: @ContractState) -> ByteArray {
-            self.erc721.ERC721_name.read()
+    impl ERC721Impl of ERC721ABI<ContractState> {
+        fn balance_of(self: @ComponentState<TContractState>, account: ContractAddress) -> u256 {
+            ERC721::balance_of(self, account)
         }
 
-        /// Returns the NFT symbol.
-        fn symbol(self: @ContractState) -> ByteArray {
-            self.erc721.ERC721_symbol.read()
+        fn owner_of(self: @ComponentState<TContractState>, token_id: u256) -> ContractAddress {
+            ERC721::owner_of(self, token_id)
+        }
+
+        fn safe_transfer_from(
+            ref self: ComponentState<TContractState>,
+            from: ContractAddress,
+            to: ContractAddress,
+            token_id: u256,
+            data: Span<felt252>
+        ) {
+            ERC721::safe_transfer_from(ref self, from, to, token_id, data);
+        }
+
+        fn transfer_from(
+            ref self: ComponentState<TContractState>,
+            from: ContractAddress,
+            to: ContractAddress,
+            token_id: u256
+        ) {
+            ERC721::transfer_from(ref self, from, to, token_id);
+        }
+
+        fn approve(ref self: ComponentState<TContractState>, to: ContractAddress, token_id: u256) {
+            ERC721::approve(ref self, to, token_id);
+        }
+
+        fn set_approval_for_all(
+            ref self: ComponentState<TContractState>, operator: ContractAddress, approved: bool
+        ) {
+            ERC721::set_approval_for_all(ref self, operator, approved);
+        }
+
+        fn get_approved(self: @ComponentState<TContractState>, token_id: u256) -> ContractAddress {
+            ERC721::get_approved(self, token_id)
+        }
+
+        fn is_approved_for_all(
+            self: @ComponentState<TContractState>, owner: ContractAddress, operator: ContractAddress
+        ) -> bool {
+            ERC721::is_approved_for_all(self, owner, operator)
+        }
+
+        // IERC721Metadata
+        fn name(self: @ComponentState<TContractState>) -> ByteArray {
+            ERC721Metadata::name(self)
+        }
+
+        fn symbol(self: @ComponentState<TContractState>) -> ByteArray {
+            ERC721Metadata::symbol(self)
         }
 
         /// Returns the Uniform Resource Identifier (URI) for the `token_id` token.
@@ -108,6 +154,63 @@ mod DarkShuffleGameToken {
             }.get_game_data(token_id.try_into().unwrap());
 
             create_metadata(token_id, hero_name, hero_health, hero_xp, state, cards)
+        }
+
+        // IERC721CamelOnly
+        fn balanceOf(self: @ComponentState<TContractState>, account: ContractAddress) -> u256 {
+            ERC721CamelOnly::balanceOf(self, account)
+        }
+
+        fn ownerOf(self: @ComponentState<TContractState>, tokenId: u256) -> ContractAddress {
+            ERC721CamelOnly::ownerOf(self, tokenId)
+        }
+
+        fn safeTransferFrom(
+            ref self: ComponentState<TContractState>,
+            from: ContractAddress,
+            to: ContractAddress,
+            tokenId: u256,
+            data: Span<felt252>
+        ) {
+            ERC721CamelOnly::safeTransferFrom(ref self, from, to, tokenId, data);
+        }
+
+        fn transferFrom(
+            ref self: ComponentState<TContractState>,
+            from: ContractAddress,
+            to: ContractAddress,
+            tokenId: u256
+        ) {
+            ERC721CamelOnly::transferFrom(ref self, from, to, tokenId);
+        }
+
+        fn setApprovalForAll(
+            ref self: ComponentState<TContractState>, operator: ContractAddress, approved: bool
+        ) {
+            ERC721CamelOnly::setApprovalForAll(ref self, operator, approved);
+        }
+
+        fn getApproved(self: @ComponentState<TContractState>, tokenId: u256) -> ContractAddress {
+            ERC721CamelOnly::getApproved(self, tokenId)
+        }
+
+        fn isApprovedForAll(
+            self: @ComponentState<TContractState>, owner: ContractAddress, operator: ContractAddress
+        ) -> bool {
+            ERC721CamelOnly::isApprovedForAll(self, owner, operator)
+        }
+
+        // IERC721MetadataCamelOnly
+        fn tokenURI(self: @ComponentState<TContractState>, tokenId: u256) -> ByteArray {
+            ERC721MetadataCamelOnly::tokenURI(self, tokenId)
+        }
+
+        // ISRC5
+        fn supports_interface(
+            self: @ComponentState<TContractState>, interface_id: felt252
+        ) -> bool {
+            let src5 = get_dep_component!(self, SRC5);
+            src5.supports_interface(interface_id)
         }
     }
 

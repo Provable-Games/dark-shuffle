@@ -10,7 +10,6 @@ trait IGameSystems<T> {
     fn settings_exists(self: @T, settings_id: u32) -> bool;
     fn get_game_settings(self: @T, game_id: u64) -> GameSettings;
     fn get_game_data(self: @T, token_id: u128) -> (felt252, u8, u16, u8, Span<felt252>);
-    fn get_player_games(self: @T, player_address: ContractAddress, limit: u256, page: u256, active: bool) -> Span<Game>;
 }
 
 #[dojo::contract]
@@ -25,19 +24,20 @@ mod game_systems {
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
     use darkshuffle::models::draft::{Draft};
     use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait, GameState};
+    use darkshuffle::utils::renderer::utils::create_metadata;
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-    use darkshuffle::utils::{cards::CardUtilsImpl, draft::DraftUtilsImpl, random};
+    use darkshuffle::utils::{cards::CardUtilsImpl, config::ConfigUtilsImpl, draft::DraftUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
-    use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
+    use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
 
     use openzeppelin_introspection::src5::SRC5Component;
     use openzeppelin_token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
-    use starknet::{ContractAddress, get_caller_address, get_tx_info};
+    use starknet::{ContractAddress, get_caller_address, get_contract_address, get_tx_info};
     use tournaments::components::game::{IGame, IGameDetails, ISettings, game_component};
     use tournaments::components::models::game::{TokenMetadata};
 
@@ -47,11 +47,16 @@ mod game_systems {
 
     #[abi(embed_v0)]
     impl GameImpl = game_component::GameImpl<ContractState>;
-    #[abi(embed_v0)]
-    impl ERC721MixinImpl = ERC721Component::ERC721MixinImpl<ContractState>;
-
     impl GameInternalImpl = game_component::InternalImpl<ContractState>;
+
+    #[abi(embed_v0)]
+    impl ERC721Impl = ERC721Component::ERC721Impl<ContractState>;
+    #[abi(embed_v0)]
+    impl ERC721CamelOnlyImpl = ERC721Component::ERC721CamelOnlyImpl<ContractState>;
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
+
+    #[abi(embed_v0)]
+    impl SRC5Impl = SRC5Component::SRC5Impl<ContractState>;
 
     #[storage]
     struct Storage {
@@ -74,11 +79,12 @@ mod game_systems {
         SRC5Event: SRC5Component::Event,
     }
 
-    fn dojo_init(ref self: ContractState) {
+    fn dojo_init(ref self: ContractState, creator_address: ContractAddress) {
         self.erc721.initializer("Dark Shuffle", "DARK", "darkshuffle.dev");
         self
             .game
             .initializer(
+                creator_address,
                 'Dark Shuffle',
                 "A deck building game",
                 'Provable Games',
@@ -87,6 +93,13 @@ mod game_systems {
                 "https://github.com/Provable-Games/dark-shuffle/blob/feat/integrate-tournament/client/public/favicon.svg",
                 DEFAULT_NS_STR(),
             );
+
+        // TODO: We shouldn't need to store this as the token address is the game system address which is already being
+        // stored
+        let mut world: WorldStorage = self.world(DEFAULT_NS());
+        let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
+        world_config.game_token_address = get_contract_address();
+        world.write_model(@world_config);
     }
 
     #[abi(embed_v0)]
@@ -111,11 +124,7 @@ mod game_systems {
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
         fn start_game(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
-
-            let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
-            let game_settings: GameSettings = world.read_model(game_token.settings_id(game_id.into()));
-
+            let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let random_hash = random::get_random_hash();
             let seed: u128 = random::get_entropy(random_hash);
             let options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells);
@@ -179,11 +188,8 @@ mod game_systems {
 
         fn get_game_settings(self: @ContractState, game_id: u64) -> GameSettings {
             let world: WorldStorage = self.world(DEFAULT_NS());
-
-            let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
-            let game_settings: GameSettings = world.read_model(game_token.settings_id(game_id.into()));
-
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            let game_settings: GameSettings = world.read_model(token_metadata.settings_id);
             game_settings
         }
 
@@ -206,38 +212,30 @@ mod game_systems {
 
             (player_name, game.hero_health, game.hero_xp, game.state.into(), cards.span())
         }
+    }
 
-        fn get_player_games(
-            self: @ContractState, player_address: ContractAddress, limit: u256, page: u256, active: bool,
-        ) -> Span<Game> {
-            let world: WorldStorage = self.world(DEFAULT_NS());
-            let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
+    #[abi(embed_v0)]
+    impl ERC721Metadata of IERC721Metadata<ContractState> {
+        /// Returns the NFT name.
+        fn name(self: @ContractState) -> ByteArray {
+            self.erc721.ERC721_name.read()
+        }
 
-            let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
-            let game_token_dispatcher = IERC721Dispatcher { contract_address: world_config.game_token_address };
+        /// Returns the NFT symbol.
+        fn symbol(self: @ContractState) -> ByteArray {
+            self.erc721.ERC721_symbol.read()
+        }
 
-            let mut balance = game_token_dispatcher.balance_of(player_address);
-            let mut last_index = balance - (page * limit);
-
-            let mut games = array![];
-            let mut i = last_index;
-            let mut game_count = 0;
-
-            while i > 0 && game_count < limit {
-                i -= 1;
-
-                let token_id: u128 = game_token.get_token_of_owner_by_index(player_address, i).try_into().unwrap();
-                let game: Game = world.read_model(token_id);
-
-                if (active && game.state == GameState::Over) || (!active && game.state != GameState::Over) {
-                    continue;
-                }
-
-                games.append(game);
-                game_count += 1;
-            };
-
-            games.span()
+        /// Returns the Uniform Resource Identifier (URI) for the `token_id` token.
+        /// If the URI is not set, the return value will be an empty ByteArray.
+        ///
+        /// Requirements:
+        ///
+        /// - `token_id` exists.
+        fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
+            self.erc721._require_owned(token_id);
+            let (hero_name, hero_health, hero_xp, state, cards) = self.get_game_data(token_id.try_into().unwrap());
+            create_metadata(token_id, hero_name, hero_health, hero_xp, state, cards)
         }
     }
 }

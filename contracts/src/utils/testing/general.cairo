@@ -10,15 +10,22 @@ use darkshuffle::utils::testing::systems::{deploy_game_token_mock};
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
-use starknet::{contract_address_const, get_caller_address};
+use starknet::{ContractAddress, contract_address_const, get_caller_address};
+use tournaments::components::game::{
+    IGame, IGameDetails, IGameDispatcher, IGameDispatcherTrait, ISettings, game_component,
+};
 
-fn mint_game_token(ref world: WorldStorage, game_id: u64, settings_id: u32) {
-    let game_token_address = deploy_game_token_mock(ref world);
-
-    world.write_model_test(@WorldConfig { config_id: 1, game_token_address, game_count: 0 });
-
-    let game_token = IGameTokenMockDispatcher { contract_address: game_token_address };
-    game_token.mint(contract_address_const::<'player1'>(), game_id.into(), settings_id);
+fn mint_game_token(
+    world: WorldStorage,
+    token_address: ContractAddress,
+    player_name: felt252,
+    settings_id: u32,
+    available_at: u64,
+    expires_at: u64,
+    to: ContractAddress,
+) -> u64 {
+    let game_systems_dispatcher = IGameDispatcher { contract_address: token_address };
+    game_systems_dispatcher.mint(player_name, settings_id, available_at, expires_at, to)
 }
 
 fn create_game(ref world: WorldStorage, game_id: u64, state: GameState) {

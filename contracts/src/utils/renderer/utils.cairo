@@ -1,6 +1,6 @@
 use alexandria_encoding::base64::Base64Encoder;
-use core::{array::{SpanTrait, ArrayTrait}, traits::Into, clone::Clone,};
-use dsgt::encoding::{bytes_base64_encode, U256BytesUsedTraitImpl};
+use core::{array::{ArrayTrait, SpanTrait}, clone::Clone, traits::Into};
+use darkshuffle::utils::renderer::encoding::{U256BytesUsedTraitImpl, bytes_base64_encode};
 use graffiti::json::JsonImpl;
 
 fn logo() -> ByteArray {
@@ -13,17 +13,12 @@ fn game_state(state: u8) -> ByteArray {
         1 => "In Battle",
         2 => "Exploring",
         3 => "Game Over",
-        _ => "Unknown"
+        _ => "Unknown",
     }
 }
 
 fn create_text(
-    text: ByteArray,
-    x: ByteArray,
-    y: ByteArray,
-    fontsize: ByteArray,
-    baseline: ByteArray,
-    text_anchor: ByteArray,
+    text: ByteArray, x: ByteArray, y: ByteArray, fontsize: ByteArray, baseline: ByteArray, text_anchor: ByteArray,
 ) -> ByteArray {
     "<text x='"
         + x
@@ -51,7 +46,7 @@ fn combine_elements(ref elements: Span<ByteArray>) -> ByteArray {
 
                 count += 1;
             },
-            Option::None(()) => { break; }
+            Option::None(()) => { break; },
         }
     };
 
@@ -72,12 +67,7 @@ fn create_svg(internals: ByteArray) -> ByteArray {
 }
 
 fn create_metadata(
-    token_id: u256,
-    hero_name: felt252,
-    hero_health: u8,
-    hero_xp: u16,
-    state: u8,
-    cards: Span<felt252>
+    token_id: u256, hero_name: felt252, hero_health: u8, hero_xp: u16, state: u8, cards: Span<felt252>,
 ) -> ByteArray {
     let rect = create_rect();
     let logo_element = logo();
@@ -93,9 +83,7 @@ fn create_metadata(
 
     // Combine all elements
     let mut elements = array![
-        rect,
-        logo_element,
-        create_text("#" + _game_id.clone(), "100", "50", "24", "middle", "left"),
+        rect, logo_element, create_text("#" + _game_id.clone(), "100", "50", "24", "middle", "left"),
     ];
 
     if hero_xp.is_non_zero() {
@@ -135,10 +123,7 @@ fn create_metadata(
 
     let mut metadata = JsonImpl::new()
         .add("name", "Game" + " #" + _game_id)
-        .add(
-            "description",
-            "An NFT representing ownership of a game of Dark Shuffle."
-        )
+        .add("description", "An NFT representing ownership of a game of Dark Shuffle.")
         .add("image", base64_image);
 
     let name: ByteArray = JsonImpl::new().add("trait", "Name").add("value", _name).build();
@@ -167,30 +152,35 @@ mod tests {
             1,
             1,
             array![
-                'Wolf', 'Colossus', 'Ogre', 'Dragon', 'Sprite', 'Warlock', 'Kraken', 'Nemeanlion', 'Ghoul', 'Fairy',
-                'Direwolf', 'Gnome', 'Pheonix', 'Pegasus', 'Golem', 'Spider', 'Rat', 'Skeleton', 'Leprechaun', 'Minotaur'
-            ].span()
+                'Wolf',
+                'Colossus',
+                'Ogre',
+                'Dragon',
+                'Sprite',
+                'Warlock',
+                'Kraken',
+                'Nemeanlion',
+                'Ghoul',
+                'Fairy',
+                'Direwolf',
+                'Gnome',
+                'Pheonix',
+                'Pegasus',
+                'Golem',
+                'Spider',
+                'Rat',
+                'Skeleton',
+                'Leprechaun',
+                'Minotaur',
+            ]
+                .span(),
         );
 
         let current_2 = create_metadata(
-            999,
-            'Await',
-            50,
-            423,
-            0,
-            array![
-                'Wolf', 'Colossus', 'Ogre', 'Dragon', 'Sprite'
-            ].span()
+            999, 'Await', 50, 423, 0, array!['Wolf', 'Colossus', 'Ogre', 'Dragon', 'Sprite'].span(),
         );
 
-        let current_3 = create_metadata(
-            999,
-            0,
-            0,
-            0,
-            0,
-            array![].span()
-        );
+        let current_3 = create_metadata(999, 0, 0, 0, 0, array![].span());
 
         println!("Current 1: {}", current_1);
         println!("Current 2: {}", current_2);

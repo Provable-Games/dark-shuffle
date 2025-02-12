@@ -1,7 +1,7 @@
 use core::array::{ArrayTrait, SpanTrait};
 use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR};
 use darkshuffle::models::{
-    battle::{m_Battle, m_Board}, config::{m_GameSettings, m_WorldConfig}, draft::{m_Draft},
+    battle::{m_Battle, m_Board}, config::{WorldConfig, m_GameSettings, m_WorldConfig}, draft::{m_Draft},
     game::{m_Game, m_GameEffects}, map::{m_Map},
 };
 use darkshuffle::systems::{
@@ -11,7 +11,9 @@ use darkshuffle::systems::{
     game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems},
     map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems},
 };
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use darkshuffle::utils::testing::systems::{deploy_game_systems};
+use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
 use dojo_cairo_test::{
     ContractDef, ContractDefTrait, NamespaceDef, TestResource, WorldStorageTestTrait, spawn_test_world,
 };
@@ -64,7 +66,8 @@ fn namespace_def() -> NamespaceDef {
 fn contract_defs() -> Span<ContractDef> {
     [
         ContractDefTrait::new(DEFAULT_NS(), @"game_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
+            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span())
+            .with_init_calldata(array![contract_address_const::<'player1'>().into()].span()),
         ContractDefTrait::new(DEFAULT_NS(), @"map_systems")
             .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
         ContractDefTrait::new(DEFAULT_NS(), @"draft_systems")
@@ -79,7 +82,7 @@ fn contract_defs() -> Span<ContractDef> {
 
 
 // used to spawn a test world with all the models and systems registered
-fn spawn_darkshuffle() -> dojo::world::WorldStorage {
+fn spawn_darkshuffle() -> (dojo::world::WorldStorage, IGameSystemsDispatcher) {
     let ndef = namespace_def();
     let mut world = spawn_test_world([ndef].span());
     world.sync_perms_and_inits(contract_defs());
@@ -92,5 +95,11 @@ fn spawn_darkshuffle() -> dojo::world::WorldStorage {
     starknet::testing::set_account_contract_address(contract_address_const::<'player1'>());
     starknet::testing::set_block_timestamp(300000);
 
-    world
+    let game_systems_dispatcher = deploy_game_systems(ref world);
+    let world_config = WorldConfig {
+        config_id: 1, game_token_address: game_systems_dispatcher.contract_address, game_count: 0,
+    };
+    world.write_model_test(@world_config);
+
+    (world, game_systems_dispatcher)
 }

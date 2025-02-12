@@ -13,7 +13,6 @@ trait IConfigSystems<T> {
         include_spells: bool,
     );
 
-    fn set_game_token_address(ref self: T, game_token_address: ContractAddress);
     fn get_game_token_address(self: @T) -> ContractAddress;
 }
 
@@ -114,18 +113,6 @@ mod config_systems {
                         include_spells,
                     },
                 );
-        }
-
-        fn set_game_token_address(ref self: ContractState, game_token_address: ContractAddress) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
-            assert(
-                world.dispatcher.is_owner(selector_from_tag!("darkshuffle_s1-game_systems"), get_caller_address()),
-                'Not Owner',
-            );
-
-            let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            world_config.game_token_address = game_token_address;
-            world.write_model(@world_config);
         }
 
         fn get_game_token_address(self: @ContractState) -> ContractAddress {

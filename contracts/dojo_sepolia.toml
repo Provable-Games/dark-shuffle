@@ -11,6 +11,11 @@ github = "https://github.com/Await-0x/dark-shuffle"
 [namespace]
 default = "darkshuffle_s1"
 
+[init_call_args]
+"darkshuffle_s1-game_systems" = [
+    "0x0238df9Efd27Aba2ccB0bdC97a4cf440caA403e9ed3f1883294Ab6CDBA6C5282",
+]
+
 [writers]
 "darkshuffle_s1" = [
     "darkshuffle_s1-game_systems",
