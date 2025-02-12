@@ -5,10 +5,16 @@ use starknet::ContractAddress;
 #[starknet::interface]
 trait IGameSystems<T> {
     fn start_game(ref self: T, game_id: u64);
-    fn get_settings(self: @T, settings_id: u32) -> GameSettings;
-    fn settings_exists(self: @T, settings_id: u32) -> bool;
-    fn get_game_settings(self: @T, game_id: u64) -> GameSettings;
     fn get_game_data(self: @T, token_id: u128) -> (felt252, u8, u16, u8, Span<felt252>);
+    fn player_name(self: @T, token_id: u128) -> felt252;
+    fn player_health(self: @T, token_id: u128) -> u8;
+    fn player_xp(self: @T, token_id: u128) -> u16;
+    fn player_cards(self: @T, token_id: u128) -> Span<felt252>;
+    fn monsters_slain(self: @T, token_id: u128) -> u16;
+    fn map_level(self: @T, token_id: u128) -> u8;
+    fn map_depth(self: @T, token_id: u128) -> u8;
+    fn last_node_id(self: @T, token_id: u128) -> u8;
+    fn action_count(self: @T, token_id: u128) -> u16;
 }
 
 #[dojo::contract]
@@ -154,25 +160,6 @@ mod game_systems {
                 );
         }
 
-        fn get_settings(self: @ContractState, settings_id: u32) -> GameSettings {
-            let world: WorldStorage = self.world(DEFAULT_NS());
-            let settings: GameSettings = world.read_model(settings_id);
-            settings
-        }
-
-        fn settings_exists(self: @ContractState, settings_id: u32) -> bool {
-            let world: WorldStorage = self.world(DEFAULT_NS());
-            let settings: GameSettings = world.read_model(settings_id);
-            settings.exists()
-        }
-
-        fn get_game_settings(self: @ContractState, game_id: u64) -> GameSettings {
-            let world: WorldStorage = self.world(DEFAULT_NS());
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            let game_settings: GameSettings = world.read_model(token_metadata.settings_id);
-            game_settings
-        }
-
         fn get_game_data(self: @ContractState, token_id: u128) -> (felt252, u8, u16, u8, Span<felt252>) {
             let world: WorldStorage = self.world(DEFAULT_NS());
 
@@ -191,6 +178,69 @@ mod game_systems {
             let player_name = token_metadata.player_name;
 
             (player_name, game.hero_health, game.hero_xp, game.state.into(), cards.span())
+        }
+
+        fn player_name(self: @ContractState, token_id: u128) -> felt252 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let token_metadata: TokenMetadata = world.read_model(token_id);
+            token_metadata.player_name
+        }
+
+        fn player_health(self: @ContractState, token_id: u128) -> u8 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
+            game.hero_health
+        }
+
+        fn player_xp(self: @ContractState, token_id: u128) -> u16 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
+            game.hero_xp
+        }
+
+        fn player_cards(self: @ContractState, token_id: u128) -> Span<felt252> {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let draft: Draft = world.read_model(token_id);
+            let mut cards = array![];
+
+            let mut i = 0;
+            while i < draft.cards.len() {
+                let card: Card = CardUtilsImpl::get_card(*draft.cards.at(i));
+                cards.append(card.name);
+                i += 1;
+            };
+
+            cards.span()
+        }
+
+        fn monsters_slain(self: @ContractState, token_id: u128) -> u16 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
+            game.monsters_slain
+        }
+
+        fn map_level(self: @ContractState, token_id: u128) -> u8 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
+            game.map_level
+        }
+
+        fn map_depth(self: @ContractState, token_id: u128) -> u8 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
+            game.map_depth
+        }
+
+        fn last_node_id(self: @ContractState, token_id: u128) -> u8 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
+            game.last_node_id
+        }
+
+        fn action_count(self: @ContractState, token_id: u128) -> u16 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
+            game.action_count
         }
     }
 
