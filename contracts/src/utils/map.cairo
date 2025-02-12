@@ -127,6 +127,7 @@ impl MapUtilsImpl of MapUtilsTrait {
             monster: Monster { monster_id: monster.monster_id, attack: monster.attack, health: monster.health, },
             hand: array![].span(),
             deck: draft.cards,
+            board: array![].span(),
             battle_effects: BattleEffects {
                 enemy_marks: 0,
                 hero_dmg_reduction: 0,

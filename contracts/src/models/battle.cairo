@@ -17,22 +17,8 @@ pub struct Battle {
     monster: Monster,
     hand: Span<u8>,
     deck: Span<u8>,
+    board: Span<Creature>,
     battle_effects: BattleEffects
-}
-
-#[derive(Introspect, Copy, Drop, Serde)]
-#[dojo::model]
-pub struct Board {
-    #[key]
-    battle_id: u16,
-    #[key]
-    game_id: u64,
-    creature1: Creature,
-    creature2: Creature,
-    creature3: Creature,
-    creature4: Creature,
-    creature5: Creature,
-    creature6: Creature,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]

@@ -1,4 +1,4 @@
-use darkshuffle::models::battle::{Battle, BattleEffects, RoundStats, BoardStats, Board};
+use darkshuffle::models::battle::{Battle, BattleEffects, RoundStats, BoardStats, Creature};
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::{battle::BattleUtilsImpl, hand::HandUtilsImpl, board::BoardUtilsImpl, random};
 
@@ -7,7 +7,7 @@ impl MonsterUtilsImpl of MonsterUtilsTrait {
     fn monster_ability(
         ref battle: Battle,
         game_effects: GameEffects,
-        board: Board,
+        ref board: Array<Creature>,
         board_stats: BoardStats,
         round_stats: RoundStats,
         seed: u128
@@ -26,13 +26,13 @@ impl MonsterUtilsImpl of MonsterUtilsTrait {
         } else if battle.monster.monster_id == 30 && battle.monster.health >= round_stats.monster_start_health {
             BattleUtilsImpl::damage_hero(ref battle, game_effects, 3);
         } else if battle.monster.monster_id == 57 {
-            let mut strongest_creature = BoardUtilsImpl::get_strongest_creature(board);
+            let mut strongest_creature = BoardUtilsImpl::get_strongest_creature(ref board);
 
             if strongest_creature.attack > battle.monster.attack {
                 battle.monster.health += 2;
             }
         } else if battle.monster.monster_id == 58 {
-            let strongest_creature = BoardUtilsImpl::get_strongest_creature(board);
+            let strongest_creature = BoardUtilsImpl::get_strongest_creature(ref board);
 
             if strongest_creature.attack > battle.monster.attack {
                 battle.monster.attack += 1;

@@ -1,5 +1,5 @@
 use achievement::store::{Store, StoreTrait};
-use darkshuffle::models::battle::{Battle, BattleEffects, Creature, Board, BoardStats, RoundStats};
+use darkshuffle::models::battle::{Battle, BattleEffects, Creature, BoardStats, RoundStats};
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl};
 use darkshuffle::models::card::{Card, CardRarity, CardDetails, CardType, CreatureCard, SpellCard, CardEffect, CardModifier, Modifier, Requirement, ValueType};
@@ -11,7 +11,7 @@ impl CardUtilsImpl of CardUtilsTrait {
         card_effect: CardEffect,
         ref creature: Creature,
         ref battle: Battle,
-        ref board: Board,
+        ref board: Array<Creature>,
         board_stats: BoardStats,
     ) {
         let mut modifier_value: u8 = match card_effect.modifier.value_type {
@@ -34,10 +34,10 @@ impl CardUtilsImpl of CardUtilsTrait {
             Modifier::EnemyHealth => BattleUtilsImpl::damage_monster(ref battle, modifier_value, card_type),
             Modifier::NextAllyAttack => BattleUtilsImpl::next_ally_attack(ref battle, card_type, modifier_value),
             Modifier::NextAllyHealth => BattleUtilsImpl::next_ally_health(ref battle, card_type, modifier_value),
-            Modifier::AllAttack => BoardUtilsImpl::update_creatures(ref board, CardType::All, modifier_value, 0),
-            Modifier::AllHealth => BoardUtilsImpl::update_creatures(ref board, CardType::All, 0, modifier_value),
-            Modifier::AllyAttack => BoardUtilsImpl::update_creatures(ref board, card_type, modifier_value, 0),
-            Modifier::AllyHealth => BoardUtilsImpl::update_creatures(ref board, card_type, 0, modifier_value),
+            Modifier::AllAttack => BoardUtilsImpl::update_creatures(ref board, Option::None, modifier_value, 0),
+            Modifier::AllHealth => BoardUtilsImpl::update_creatures(ref board, Option::None, 0, modifier_value),
+            Modifier::AllyAttack => BoardUtilsImpl::update_creatures(ref board, Option::Some(card_type), modifier_value, 0),
+            Modifier::AllyHealth => BoardUtilsImpl::update_creatures(ref board, Option::Some(card_type), 0, modifier_value),
             Modifier::SelfAttack => creature.attack += modifier_value,
             Modifier::SelfHealth => creature.health += modifier_value,
         }
@@ -82,7 +82,6 @@ impl CardUtilsImpl of CardUtilsTrait {
             CardType::Hunter => board_stats.hunter_count,
             CardType::Brute => board_stats.brute_count,
             CardType::Magical => board_stats.magical_count,
-            CardType::All => board_stats.hunter_count + board_stats.brute_count + board_stats.magical_count,
         }
     }
 

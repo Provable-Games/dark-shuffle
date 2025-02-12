@@ -124,18 +124,18 @@ impl BattleUtilsImpl of BattleUtilsTrait {
     }
 
     fn next_ally_attack(ref battle: Battle, card_type: CardType, amount: u8) {
-        // match card_type {
-        //     CardType::Hunter => battle.battle_effects.next_hunter_attack_bonus += amount,
-        //     CardType::Brute => battle.battle_effects.next_brute_attack_bonus += amount,
-        //     CardType::Magical => battle.battle_effects.next_magical_attack_bonus += amount,
-        // }
+        match card_type {
+            CardType::Hunter => battle.battle_effects.next_hunter_attack_bonus += amount,
+            CardType::Brute => battle.battle_effects.next_brute_attack_bonus += amount,
+            CardType::Magical => battle.battle_effects.next_magical_attack_bonus += amount,
+        };
     }
 
     fn next_ally_health(ref battle: Battle, card_type: CardType, amount: u8) {
-        // match card_type {
-        //     CardType::Hunter => battle.battle_effects.next_hunter_health_bonus += amount,
-        //     CardType::Brute => battle.battle_effects.next_brute_health_bonus += amount,
-        //     CardType::Magical => battle.battle_effects.next_magical_health_bonus += amount,
-        // }
+        match card_type {
+            CardType::Hunter => battle.battle_effects.next_hunter_health_bonus += amount,
+            CardType::Brute => battle.battle_effects.next_brute_health_bonus += amount,
+            CardType::Magical => battle.battle_effects.next_magical_health_bonus += amount,
+        };
     }
 }

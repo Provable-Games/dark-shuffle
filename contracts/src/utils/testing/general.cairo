@@ -120,6 +120,7 @@ fn create_battle(
                 monster: Monster { monster_id, attack: monster_attack, health: monster_health, },
                 hand,
                 deck,
+                board: array![].span(),
                 battle_effects: BattleEffects {
                     enemy_marks: 0,
                     hero_dmg_reduction: 0,

@@ -95,5 +95,4 @@ pub enum CardType {
     Hunter,
     Brute,
     Magical,
-    All,
 }

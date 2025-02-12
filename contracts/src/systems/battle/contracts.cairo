@@ -9,7 +9,7 @@ mod battle_systems {
 
     use darkshuffle::constants::{DEFAULT_NS};
     use darkshuffle::models::battle::{
-        Battle, BattleOwnerTrait, Creature, Board, BoardStats, RoundStats
+        Battle, BattleOwnerTrait, Creature, BoardStats, RoundStats
     };
     use darkshuffle::models::card::{Card, CardDetails};
     use darkshuffle::models::config::GameSettings;
@@ -37,8 +37,8 @@ mod battle_systems {
             let mut game: Game = world.read_model(game_id);
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, battle.game_id);
             let mut game_effects: GameEffects = world.read_model(battle.game_id);
-            let mut board: Board = world.read_model((battle_id, game_id));
-            let mut board_stats: BoardStats = BoardUtilsImpl::get_board_stats(board, battle.monster.monster_id);
+            let mut board: Array<Creature> = BoardUtilsImpl::get_board(battle.board);
+            let mut board_stats: BoardStats = BoardUtilsImpl::get_board_stats(ref board, battle.monster.monster_id);
 
             let mut round_stats: RoundStats = RoundStats {
                 monster_start_health: battle.monster.health, creatures_played: 0, creature_attack_count: 0
@@ -56,10 +56,9 @@ mod battle_systems {
 
                         match card.card_details {
                             CardDetails::creature_card(creature_details) => {
-                                let creature: Creature = SummonUtilsImpl::summon_creature(
-                                    card, creature_details, ref battle, ref board, board_stats, ref round_stats, game_effects
+                                SummonUtilsImpl::summon_creature(
+                                    card, creature_details, ref battle, ref board, ref board_stats, ref round_stats, game_effects
                                 );
-                                BoardUtilsImpl::add_creature_to_board(creature, ref board, ref board_stats);
                                 if game.season_id != 0 {
                                     AchievementsUtilsImpl::play_creature(ref world, card);
                                 }
@@ -74,8 +73,8 @@ mod battle_systems {
                     1 => {
                         assert(action_index == actions.len() - 1, 'Invalid action');
                         BoardUtilsImpl::attack_monster(ref battle, ref board, board_stats, ref round_stats);
-                        BoardUtilsImpl::clean_board(ref battle, ref board, board_stats);
-                        board_stats = BoardUtilsImpl::get_board_stats(board, battle.monster.monster_id);
+                        BoardUtilsImpl::remove_dead_creatures(ref battle, ref board, board_stats);
+                        board_stats = BoardUtilsImpl::get_board_stats(ref board, battle.monster.monster_id);
 
                         if game.season_id != 0 && battle.monster.health + 25 <= round_stats.monster_start_health {
                             AchievementsUtilsImpl::big_hit(ref world);
@@ -112,8 +111,8 @@ mod battle_systems {
                 BattleUtilsImpl::heal_hero(ref battle, battle.hand.len().try_into().unwrap());
             }
 
-            MonsterUtilsImpl::monster_ability(ref battle, game_effects, board, board_stats, round_stats, seed);
-            BoardUtilsImpl::clean_board(ref battle, ref board, board_stats);
+            MonsterUtilsImpl::monster_ability(ref battle, game_effects, ref board, board_stats, round_stats, seed);
+            BoardUtilsImpl::remove_dead_creatures(ref battle, ref board, board_stats);
 
             if battle.monster.health > 0 {
                 BattleUtilsImpl::damage_hero(ref battle, game_effects, battle.monster.attack);
@@ -122,7 +121,9 @@ mod battle_systems {
             if GameUtilsImpl::is_battle_over(battle) {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects);
             } else {
+                battle.board = board.span();
                 battle.round += 1;
+
                 if battle.round > game_settings.max_energy {
                     battle.hero.energy = game_settings.max_energy;
                 } else {
@@ -132,7 +133,6 @@ mod battle_systems {
                 HandUtilsImpl::draw_cards(ref battle, 1 + game_effects.card_draw, game_settings.max_hand_size, seed);
 
                 world.write_model(@battle);
-                world.write_model(@board);
             }
         }
     }

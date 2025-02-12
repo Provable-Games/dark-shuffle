@@ -1,10 +1,10 @@
-use darkshuffle::models::battle::{Battle, Board, BoardStats};
+use darkshuffle::models::battle::{Battle, BoardStats, Creature};
 use darkshuffle::models::card::{Card, SpellCard, CardDetails};
 use darkshuffle::utils::{cards::CardUtilsImpl, board::BoardUtilsImpl};
 
 #[generate_trait]
 impl SpellUtilsImpl of SpellUtilsTrait {
-    fn cast_spell(card: Card, spell_details: SpellCard, ref battle: Battle, ref board: Board, board_stats: BoardStats) {
+    fn cast_spell(card: Card, spell_details: SpellCard, ref battle: Battle, ref board: Array<Creature>, board_stats: BoardStats) {
         let mut creature = BoardUtilsImpl::no_creature();
 
         if let CardDetails::spell_card(spell_card) = card.card_details {

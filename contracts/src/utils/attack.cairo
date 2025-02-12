@@ -1,10 +1,10 @@
-use darkshuffle::models::battle::{Battle, BattleEffects, Creature, Board, BoardStats};
+use darkshuffle::models::battle::{Battle, Creature, BoardStats};
 use darkshuffle::models::card::{Card, CardDetails, CreatureCard};
 use darkshuffle::utils::{battle::BattleUtilsImpl, cards::CardUtilsImpl};
 
 #[generate_trait]
 impl AttackUtilsImpl of AttackUtilsTrait {
-    fn creature_attack(ref creature: Creature, ref battle: Battle, ref board: Board, board_stats: BoardStats) {
+    fn creature_attack(ref creature: Creature, ref battle: Battle, ref board: Array<Creature>, board_stats: BoardStats) {
         let card = CardUtilsImpl::get_card(creature.card_id);
 
         if let CardDetails::creature_card(creature_card) = card.card_details {

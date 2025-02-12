@@ -1,5 +1,5 @@
 use achievement::store::{Store, StoreTrait};
-use darkshuffle::models::battle::{Battle, BattleEffects, Creature, Board, BoardStats, RoundStats};
+use darkshuffle::models::battle::{Battle, BattleEffects, Creature, BoardStats, RoundStats};
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, cards::CardUtilsImpl};
@@ -11,11 +11,11 @@ impl SummonUtilsImpl of SummonUtilsTrait {
         card: Card,
         creature_details: CreatureCard,
         ref battle: Battle,
-        ref board: Board,
-        board_stats: BoardStats,
+        ref board: Array<Creature>,
+        ref board_stats: BoardStats,
         ref round_stats: RoundStats,
         game_effects: GameEffects
-    ) -> Creature {
+    ) {
         let mut creature = Creature { 
             card_id: 1,
             attack: creature_details.attack,
@@ -84,7 +84,12 @@ impl SummonUtilsImpl of SummonUtilsTrait {
             }
         }
 
+        match card.card_type {
+            CardType::Magical => board_stats.magical_count += 1,
+            CardType::Brute => board_stats.brute_count += 1,
+            CardType::Hunter => board_stats.hunter_count += 1,
+        };
         round_stats.creatures_played += 1;
-        creature
+        board.append(creature);
     }
 }
