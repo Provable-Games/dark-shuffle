@@ -11,13 +11,13 @@ fn get_vrf_address() -> ContractAddress {
 
 fn get_random_hash() -> felt252 {
     let chain_id = get_tx_info().unbox().chain_id;
-    if chain_id == MAINNET_CHAIN_ID || chain_id == SEPOLIA_CHAIN_ID {
+    // TODO: readd support for sepolia, currently throwing an Index out of bounds
+    if chain_id == MAINNET_CHAIN_ID {
         let vrf_provider = IVrfProviderDispatcher { contract_address: get_vrf_address() };
-        return vrf_provider.consume_random(Source::Nonce(get_caller_address()));
+        vrf_provider.consume_random(Source::Nonce(get_caller_address()))
+    } else {
+        get_block_timestamp().into()
     }
-
-    let current_timestamp = get_block_timestamp();
-    current_timestamp.into()
 }
 
 fn get_entropy(felt_to_split: felt252) -> u128 {
