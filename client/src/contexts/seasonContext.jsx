@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { dojoConfig } from '../../dojo.config';
-import { getSeason, getSettings } from '../api/indexer';
+import { getTournament, getSettings } from '../api/indexer';
 
 // Create a context
 const SeasonContext = createContext();
@@ -12,17 +12,17 @@ export const SeasonProvider = ({ children }) => {
 
   useEffect(() => {
     async function fetchSeason() {
-      const season = await getSeason(dojoConfig.seasonId)
+      const tournament = await getTournament(dojoConfig.tournamentId)
 
       setValues({
-        settingsId: season.settings_id,
-        end: parseInt(season.end, 16),
-        start: parseInt(season.start, 16),
-        entryFee: parseInt(season.entry_amount, 16),
-        rewardPool: parseInt(season.reward_pool, 16),
+        settingsId: tournament.game_config.settings_id,
+        end: parseInt(tournament.schedule.end, 16),
+        start: parseInt(tournament.schedule.start, 16),
+        entryFee: parseInt(tournament.entry_fee.amount, 16),
+        rewardPool: 0
       })
 
-      const settings = await getSettings(season.settings_id)
+      const settings = await getSettings(tournament.game_config.settings_id)
       setSettings(settings)
     }
 

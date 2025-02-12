@@ -38,9 +38,9 @@ function Leaderboard() {
 
       let data = []
       if (tab === 'one') {
-        data = await getLeaderboard(dojoConfig.seasonId, page - 1)
+        data = await getLeaderboard(dojoConfig.tournamentId)
       } else {
-        data = await getActiveLeaderboard(dojoConfig.seasonId, page - 1)
+        data = await getActiveLeaderboard(dojoConfig.tournamentId)
       }
 
       setLeaderboard(data ?? [])

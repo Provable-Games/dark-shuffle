@@ -20,7 +20,6 @@ import StartGameDialog from '../dialogs/startGame'
 import Leaderboard from './leaderboard'
 import Monsters from './monsters'
 import { DojoContext } from '../../contexts/dojoContext'
-import StartSeason from '../dialogs/startSeason'
 import { useReplay } from '../../contexts/replayContext'
 import { useEffect } from 'react'
 import LoadingReplayDialog from '../dialogs/loadingReplay'
@@ -37,29 +36,32 @@ function StartDraft() {
   const gameState = useContext(GameContext)
   const battle = useContext(BattleContext)
   const draft = useContext(DraftContext)
-  const { status } = draft.getState
 
   const [showWarnings, setShowWarnings] = useState(false)
   const [gamesDialog, openGamesDialog] = useState(false)
   const [reconnecting, setReconnecting] = useState(false)
 
-  const [startSeasonDialog, openStartSeasonDialog] = useState(false)
-
-  async function beginDraft(isSeason) {
-    if (isSeason) {
-      if (dojo.balances.lords < season.values.entryFee) {
-        enqueueSnackbar('You do not have enough $LORDS to enter the season', { variant: 'warning' })
-        return
-      }
-
-      setShowWarnings(true)
+  const startTournamentGame = async () => {
+    if (dojo.balances.lords < season.values.entryFee) {
+      enqueueSnackbar('You do not have enough $LORDS to enter the season', { variant: 'warning' })
+      return
     }
 
-    await draft.actions.startDraft(isSeason)
+    setShowWarnings(true)
+
+    gameState.setStartStatus('Minting Game Token')
+    let tokenData = await gameState.actions.mintTournamentGame()
+    startMintedGame(tokenData)
   }
 
-  const startGame = async (isSeason, gameId) => {
-    await draft.actions.startDraft(isSeason, gameId)
+  const startFreeGame = async () => {
+    gameState.setStartStatus('Minting Game Token')
+    let tokenData = await gameState.actions.mintFreeGame()
+    startMintedGame(tokenData)
+  }
+
+  const startMintedGame = async (tokenData) => {
+    await draft.actions.startDraft(tokenData)
   }
 
   const resumeGame = async (game_id) => {
@@ -116,8 +118,6 @@ function StartDraft() {
 
       gameState.setGame({
         gameId: data.game_id,
-        seasonId: data.season_id,
-        player_name: hexToAscii(data.player_name),
         state: data.state,
 
         heroHealth: data.hero_health,
@@ -189,8 +189,8 @@ function StartDraft() {
           </Typography>
 
           <LoadingButton variant='outlined'
-            loading={status || !season.values.entryFee}
-            onClick={() => openStartSeasonDialog(true)}
+            loading={gameState.getState.startStatus || !season.values.entryFee}
+            onClick={() => startTournamentGame()}
             sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}
             disabled={season.values.start > currentTime || season.values.end < currentTime}
           >
@@ -201,7 +201,7 @@ function StartDraft() {
             My Games
           </Button>
 
-          <LoadingButton color='secondary' variant='outlined' loading={status} onClick={() => beginDraft(false)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
+          <LoadingButton color='secondary' variant='outlined' loading={gameState.getState.startStatus} onClick={() => startFreeGame()} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
             Play Demo
           </LoadingButton>
 
@@ -306,8 +306,8 @@ function StartDraft() {
 
               <Box mt={4} display={'flex'} alignItems={'center'} gap={2}>
                 <LoadingButton variant='outlined'
-                  loading={status || !season.values.entryFee}
-                  onClick={() => openStartSeasonDialog(true)}
+                  loading={gameState.getState.startStatus || !season.values.entryFee}
+                  onClick={() => startTournamentGame()}
                   sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}
                   disabled={season.values.start > currentTime || season.values.end < currentTime}
                 >
@@ -318,8 +318,8 @@ function StartDraft() {
                   My Games
                 </Button>
 
-                <LoadingButton color='secondary' variant='outlined' loading={status}
-                  onClick={() => beginDraft(false)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
+                <LoadingButton color='secondary' variant='outlined' loading={gameState.getState.startStatus}
+                  onClick={() => startFreeGame()} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
                   Play Demo
                 </LoadingButton>
               </Box>
@@ -336,9 +336,8 @@ function StartDraft() {
         </Box >
       </BrowserView>
 
-      {startSeasonDialog && <StartSeason open={startSeasonDialog} close={openStartSeasonDialog} start={() => beginDraft(true)} />}
-      {status && <StartGameDialog status={status} isSeason={showWarnings} />}
-      {gamesDialog && <GameTokens open={gamesDialog} close={openGamesDialog} address={address} resumeGame={resumeGame} startGame={startGame} />}
+      {gameState.getState.startStatus && <StartGameDialog status={gameState.getState.startStatus} isSeason={showWarnings} />}
+      {gamesDialog && <GameTokens open={gamesDialog} close={openGamesDialog} address={address} resumeGame={resumeGame} startGame={startMintedGame} />}
       {reconnecting && <ReconnectDialog close={() => setReconnecting(false)} />}
       {(replay.loadingReplay && !replay.translatedEvents[0]) && <LoadingReplayDialog close={() => replay.endReplay()} />}
     </>
