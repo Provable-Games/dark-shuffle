@@ -5,7 +5,6 @@ use starknet::ContractAddress;
 #[starknet::interface]
 trait IGameSystems<T> {
     fn start_game(ref self: T, game_id: u64);
-    fn abandon_game(ref self: T, game_id: u64);
     fn get_settings(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
     fn get_game_settings(self: @T, game_id: u64) -> GameSettings;
@@ -151,25 +150,6 @@ mod game_systems {
                 .emit_event(
                     @GameActionEvent {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count,
-                    },
-                );
-        }
-
-        fn abandon_game(ref self: ContractState, game_id: u64) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
-
-            let mut game: Game = world.read_model(game_id);
-            game.assert_owner(world);
-
-            game.state = GameState::Over;
-            game.hero_health = 0;
-            game.action_count += 1;
-
-            world.write_model(@game);
-            world
-                .emit_event(
-                    @GameActionEvent {
-                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
                     },
                 );
         }
