@@ -1,1 +1,0 @@
-{"version":1,"contracts":[{"id":"repssui4pltvi","package_name":"dsgt","contract_name":"DarkShuffleGameToken","module_path":"dsgt::contract::DarkShuffleGameToken","artifacts":{"sierra":"dsgt_unittest_DarkShuffleGameToken.test.contract_class.json","casm":null}}]}
