@@ -1,19 +1,14 @@
-import { getContractByName } from "@dojoengine/core";
 import React, { createContext, useContext, useState } from "react";
-import { dojoConfig } from "../../dojo.config";
 import { getDraft, getSettings } from "../api/indexer";
 import { CARD_DETAILS } from "../helpers/cards";
+import { delay } from "../helpers/utilities";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
-import { useSeason } from "./seasonContext";
-import { delay } from "../helpers/utilities";
-import { fetchGameSettings } from "../api/starknet";
 
 export const DraftContext = createContext()
 
 export const DraftProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
-  const season = useSeason()
   const game = useContext(GameContext)
   const { gameSettings } = game.getState
 

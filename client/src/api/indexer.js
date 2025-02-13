@@ -9,10 +9,10 @@ let NS_SHORT = get_short_namespace();
 export async function getTournament(tournament_id) {
   const document = gql`
   {
-    tournamentsTournamentModels(where:{tournament_id:${tournament_id}}) {
+    tournamentsTournamentModels(where:{id:"${tournament_id}"}) {
       edges {
         node {
-          tournament_id,
+          id,
           schedule {
             game {
               start,
@@ -23,17 +23,27 @@ export async function getTournament(tournament_id) {
             settings_id
           },
           entry_fee {
-            token_address,
-            amount,
-            distribution
+            Some {
+              amount
+            }
           }
+        }
+      }
+    }
+    tournamentsEntryCountModels(where:{tournament_id:"${tournament_id}"}) {
+      edges {
+        node {
+          count
         }
       }
     }
   }`
 
   const res = await request(dojoConfig.toriiUrl, document)
-  return res?.[`${NS_SHORT}TournamentModels`]?.edges[0]?.node
+  return {
+    tournament: res?.tournamentsTournamentModels?.edges[0]?.node,
+    entryCount: res?.tournamentsEntryCountModels?.edges[0]?.node?.count || 0
+  }
 }
 
 export async function getSettings(settings_id) {
@@ -236,15 +246,17 @@ export async function getBattleState(battle_id, game_id) {
   return result;
 }
 
-export async function getLeaderboard(tournamentId) {
+export async function getLeaderboard(page) {
+  let pageSize = 10;
+
   try {
     const document = gql`
     {
-      tournamentsRegistrationModels (where: {tournament_id: ${tournamentId}}, limit: 10000) {
+      ${NS_SHORT}GameModels (where: {hero_health: 0}, order:{field:HERO_XP, direction:DESC}, limit:${pageSize}, offset:${pageSize * page}) {
         edges {
           node {
-            game_token_id
-            has_submitted
+            game_id,
+            hero_xp
           }
         }
       }
@@ -252,21 +264,23 @@ export async function getLeaderboard(tournamentId) {
   `
     const res = await request(dojoConfig.toriiUrl, document);
 
-    return res?.tournamentsRegistrationModels?.edges.map(edge => edge.node);
+    return res?.[`${NS_SHORT}GameModels`]?.edges.map(edge => edge.node);
   } catch (ex) {
     console.log(ex)
   }
 }
 
-export async function getActiveLeaderboard(tournamentId) {
+export async function getActiveLeaderboard(page) {
+  let pageSize = 10;
+
   try {
     const document = gql`
     {
-      tournamentsRegistrationModels (where: {tournament_id: ${tournamentId}, has_submitted: true}, limit: 10000) {
+      ${NS_SHORT}GameModels (where: {hero_healthGT: 0}, order:{field:HERO_XP, direction:DESC}, limit:${pageSize}, offset:${pageSize * page}) {
         edges {
           node {
-            game_token_id
-            has_submitted
+            game_id,
+            hero_xp
           }
         }
       }
@@ -274,7 +288,7 @@ export async function getActiveLeaderboard(tournamentId) {
   `
     const res = await request(dojoConfig.toriiUrl, document);
 
-    return res?.tournamentsRegistrationModels?.edges.map(edge => edge.node);
+    return res?.[`${NS_SHORT}GameModels`]?.edges.map(edge => edge.node);
   } catch (ex) {
     console.log(ex)
   }

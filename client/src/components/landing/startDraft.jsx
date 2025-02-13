@@ -10,7 +10,7 @@ import logo from '../../assets/images/logo.svg'
 import { BattleContext } from '../../contexts/battleContext'
 import { DraftContext } from '../../contexts/draftContext'
 import { GameContext } from '../../contexts/gameContext'
-import { useSeason } from '../../contexts/seasonContext'
+import { useTournament } from '../../contexts/tournamentContext'
 import { generateMapNodes } from '../../helpers/map'
 import { _styles } from '../../helpers/styles'
 import { formatTimeUntil } from '../../helpers/utilities'
@@ -26,7 +26,9 @@ import LoadingReplayDialog from '../dialogs/loadingReplay'
 import { fetchGameSettings } from '../../api/starknet'
 
 function StartDraft() {
-  const season = useSeason()
+  const tournamentProvider = useTournament()
+  const { season } = tournamentProvider
+
   const replay = useReplay()
 
   const { address } = useAccount()
@@ -37,25 +39,27 @@ function StartDraft() {
   const battle = useContext(BattleContext)
   const draft = useContext(DraftContext)
 
-  const [showWarnings, setShowWarnings] = useState(false)
+  const [startingSeasonGame, setStartingSeasonGame] = useState(false)
   const [gamesDialog, openGamesDialog] = useState(false)
   const [reconnecting, setReconnecting] = useState(false)
 
-  const startTournamentGame = async () => {
-    if (dojo.balances.lords < season.values.entryFee) {
+  const startSeasonGame = async () => {
+    if (dojo.balances.lords < season.entryFee) {
       enqueueSnackbar('You do not have enough $LORDS to enter the season', { variant: 'warning' })
       return
     }
 
-    setShowWarnings(true)
-
+    setStartingSeasonGame(true)
     gameState.setStartStatus('Minting Game Token')
-    let tokenData = await gameState.actions.mintTournamentGame()
+
+    let tokenData = await tournamentProvider.actions.enterTournament(season.tournamentId)
     startMintedGame(tokenData)
   }
 
   const startFreeGame = async () => {
+    setStartingSeasonGame(false)
     gameState.setStartStatus('Minting Game Token')
+
     let tokenData = await gameState.actions.mintFreeGame()
     startMintedGame(tokenData)
   }
@@ -170,17 +174,17 @@ function StartDraft() {
               Season Pool
             </Typography>
             <Typography variant='h5' color='primary'>
-              {Math.floor(season.values.rewardPool / 1e18)} $LORDS
+              {Math.floor(season.rewardPool / 1e18)} $LORDS
             </Typography>
 
           </Box>
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mb: 1 }]}>
             <Typography>
-              {season.values.end > currentTime ? `Season 1 ${season.values.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 1'}
+              {season.end > currentTime ? `Season 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 1'}
             </Typography>
             <Typography variant='h5' color='primary'>
-              {season.values.start > currentTime ? `${formatTimeUntil(season.values.start)}` : (season.values.end > currentTime ? `${formatTimeUntil(season.values.end)}` : 'Finished')}
+              {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
             </Typography>
           </Box>
 
@@ -189,10 +193,10 @@ function StartDraft() {
           </Typography>
 
           <LoadingButton variant='outlined'
-            loading={gameState.getState.startStatus || !season.values.entryFee}
-            onClick={() => startTournamentGame()}
+            loading={gameState.getState.startStatus || !season.entryFee}
+            onClick={() => startSeasonGame()}
             sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}
-            disabled={season.values.start > currentTime || season.values.end < currentTime}
+            disabled={season.start > currentTime || season.end < currentTime}
           >
             Play Season
           </LoadingButton>
@@ -240,10 +244,10 @@ function StartDraft() {
             <Box display='flex' gap={2}>
               <Box sx={[styles.kpi]}>
                 <Typography>
-                  {season.values.end > currentTime ? `Season 1 ${season.values.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 1'}
+                  {season.end > currentTime ? `Season 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 1'}
                 </Typography>
-                {season.values.start ? <Typography variant='h5' color='primary'>
-                  {season.values.start > currentTime ? `${formatTimeUntil(season.values.start)}` : (season.values.end > currentTime ? `${formatTimeUntil(season.values.end)}` : 'Finished')}
+                {season.start ? <Typography variant='h5' color='primary'>
+                  {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
               </Box>
 
@@ -251,8 +255,8 @@ function StartDraft() {
                 <Typography>
                   Season Entry
                 </Typography>
-                {season.values.entryFee ? <Typography variant={'h5'} color='primary'>
-                  {Math.floor(season.values.entryFee / 1e18)} $LORDS
+                {season.entryFee ? <Typography variant={'h5'} color='primary'>
+                  {Math.floor(season.entryFee / 1e18)} $LORDS
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
               </Box>
 
@@ -262,8 +266,8 @@ function StartDraft() {
                     Season Pool
                   </Typography>
                 </Box>
-                {season.values.rewardPool !== undefined ? <Typography variant={'h5'} color='primary'>
-                  {Math.floor(season.values.rewardPool / 1e18)} $LORDS
+                {season.rewardPool !== undefined ? <Typography variant={'h5'} color='primary'>
+                  {Math.floor(season.rewardPool / 1e18)} $LORDS
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
               </Box>
             </Box>
@@ -306,10 +310,10 @@ function StartDraft() {
 
               <Box mt={4} display={'flex'} alignItems={'center'} gap={2}>
                 <LoadingButton variant='outlined'
-                  loading={gameState.getState.startStatus || !season.values.entryFee}
-                  onClick={() => startTournamentGame()}
+                  loading={gameState.getState.startStatus || !season.entryFee}
+                  onClick={() => startSeasonGame()}
                   sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}
-                  disabled={season.values.start > currentTime || season.values.end < currentTime}
+                  disabled={season.start > currentTime || season.end < currentTime}
                 >
                   Play Season
                 </LoadingButton>
@@ -336,7 +340,7 @@ function StartDraft() {
         </Box >
       </BrowserView>
 
-      {gameState.getState.startStatus && <StartGameDialog status={gameState.getState.startStatus} isSeason={showWarnings} />}
+      {gameState.getState.startStatus && <StartGameDialog status={gameState.getState.startStatus} isSeason={startingSeasonGame} />}
       {gamesDialog && <GameTokens open={gamesDialog} close={openGamesDialog} address={address} resumeGame={resumeGame} startGame={startMintedGame} />}
       {reconnecting && <ReconnectDialog close={() => setReconnecting(false)} />}
       {(replay.loadingReplay && !replay.translatedEvents[0]) && <LoadingReplayDialog close={() => replay.endReplay()} />}

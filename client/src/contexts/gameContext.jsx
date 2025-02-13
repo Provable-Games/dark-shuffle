@@ -1,7 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { generateMapNodes } from "../helpers/map";
 import { DojoContext } from "./dojoContext";
-import { useSeason } from "./seasonContext";
 
 export const GameContext = createContext()
 
@@ -20,8 +19,6 @@ const GAME_VALUES = {
 
 export const GameProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
-  const season = useSeason()
-
   const [startStatus, setStartStatus] = useState()
 
   const [values, setValues] = useState({ ...GAME_VALUES })
@@ -47,14 +44,9 @@ export const GameProvider = ({ children }) => {
     setScore()
   }
 
-  const mintTournamentGame = async (tournament) => {
-    const res = await dojo.executeTx([{ contractName: "tournament", entrypoint: "enter_tournament", calldata: [tournament.settingsId] }])
-    return 1
-  }
-
   const mintFreeGame = async (settingsId = 0) => {
     const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "mint", calldata: [
-      '0x' + (dojo.customName || dojo.userName || 'Demo').split('').map(char => char.charCodeAt(0).toString(16)).join(''),
+      '0x' + dojo.playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
       settingsId,
       0,
       0,
@@ -124,7 +116,6 @@ export const GameProvider = ({ children }) => {
         actions: {
           generateMap,
           updateMapStatus,
-          mintTournamentGame,
           mintFreeGame,
         }
       }}

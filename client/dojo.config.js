@@ -1,5 +1,6 @@
 import manifest_sepolia from "./manifest_sepolia.json";
 import manifest_mainnet from "./manifest_mainnet.json";
+import manifest_tournaments from "./manifest_tournaments.json";
 
 const {
   VITE_PUBLIC_CHAIN,
@@ -17,7 +18,7 @@ const {
 } = import.meta.env;
 
 export const dojoConfig = {
-  tournamentId: 5,
+  seasonTournamentId: 2,
   version: "1.1",
   chain: VITE_PUBLIC_CHAIN,
   namespace: VITE_PUBLIC_NAMESPACE,
@@ -32,4 +33,5 @@ export const dojoConfig = {
   lordsAddress: VITE_PUBLIC_LORDS_ADDRESS,
   gameTokenAddress: VITE_PUBLIC_GAME_TOKEN_ADDRESS,
   manifest: VITE_PUBLIC_CHAIN === "mainnet" ? manifest_mainnet : manifest_sepolia,
+  tournamentManifest: manifest_tournaments
 };

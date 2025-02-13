@@ -9,11 +9,13 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { dojoConfig } from '../../../dojo.config';
 import { isMobile } from 'react-device-detect';
 import { formatNumber } from '../../helpers/utilities';
-import { useSeason } from "../../contexts/seasonContext";
+import { useTournament } from "../../contexts/tournamentContext";
 import { useReplay } from '../../contexts/replayContext';
 
 function Leaderboard() {
-  const season = useSeason()
+  const tournamentProvider = useTournament()
+  const { season } = tournamentProvider
+
   const replay = useReplay()
 
   const [leaderboard, setLeaderboard] = useState([]);
@@ -38,9 +40,9 @@ function Leaderboard() {
 
       let data = []
       if (tab === 'one') {
-        data = await getLeaderboard(dojoConfig.tournamentId)
+        data = await getLeaderboard(dojoConfig.seasonTournamentId)
       } else {
-        data = await getActiveLeaderboard(dojoConfig.tournamentId)
+        data = await getActiveLeaderboard(dojoConfig.seasonTournamentId)
       }
 
       setLeaderboard(data ?? [])
@@ -50,7 +52,7 @@ function Leaderboard() {
     fetchLeaderboard()
   }, [page, tab])
 
-  const seasonPool = Math.floor(season.values.rewardPool / 1e18)
+  const seasonPool = Math.floor(season.rewardPool / 1e18)
   const prizeDistribution = [0.35, 0.20, 0.15, 0.10, 0.08, 0.02, 0.02, 0.02, 0.02, 0.02]
 
   return (
