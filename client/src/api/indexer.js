@@ -1,10 +1,12 @@
-import { getEntityIdFromKeys } from "@dojoengine/utils";
+import { getEntityIdFromKeys, hexToAscii } from "@dojoengine/utils";
 import { gql, request } from 'graphql-request';
 import { dojoConfig } from '../../dojo.config';
 import { get_short_namespace } from '../helpers/components';
+import { getContractByName } from "@dojoengine/core";
 
 let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace();
+let GAME_ADDRESS = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
 
 export async function getTournament(tournament_id) {
   const document = gql`
@@ -246,13 +248,32 @@ export async function getBattleState(battle_id, game_id) {
   return result;
 }
 
-export async function getLeaderboard(page) {
+export async function getTournamentRegistrations(tournament_id) {
+  const document = gql`
+  {
+    tournamentsRegistrationModels(where:{tournament_id:"${tournament_id}"}) {
+      edges {
+        node {
+          game_token_id
+        }
+      }
+    }
+  }`
+
+  const res = await request(dojoConfig.toriiUrl, document)
+
+  return res?.tournamentsRegistrationModels?.edges.map(edge => parseInt(edge.node.game_token_id, 16))
+}
+
+
+export async function getLeaderboard(page, game_token_ids) {
+  let gameIds = game_token_ids.map(tokenId => `"${tokenId.toString()}"`);
   let pageSize = 10;
 
   try {
     const document = gql`
     {
-      ${NS_SHORT}GameModels (where: {hero_health: 0}, order:{field:HERO_XP, direction:DESC}, limit:${pageSize}, offset:${pageSize * page}) {
+      ${NS_SHORT}GameModels (where: {hero_health: 0, game_idIN:[${gameIds}]}, order:{field:HERO_XP, direction:DESC}, limit:${pageSize}, offset:${pageSize * page}) {
         edges {
           node {
             game_id,
@@ -270,13 +291,14 @@ export async function getLeaderboard(page) {
   }
 }
 
-export async function getActiveLeaderboard(page) {
+export async function getActiveLeaderboard(page, game_token_ids) {
+  let gameIds = game_token_ids.map(tokenId => `"${tokenId.toString()}"`);
   let pageSize = 10;
 
   try {
     const document = gql`
     {
-      ${NS_SHORT}GameModels (where: {hero_healthGT: 0}, order:{field:HERO_XP, direction:DESC}, limit:${pageSize}, offset:${pageSize * page}) {
+      ${NS_SHORT}GameModels (where: {hero_healthGT: 0, game_idIN:[${gameIds}]}, order:{field:HERO_XP, direction:DESC}, limit:${pageSize}, offset:${pageSize * page}) {
         edges {
           node {
             game_id,
@@ -314,3 +336,138 @@ export async function getGameTxs(game_id) {
   return res?.[`${NS_SHORT}GameActionEventModels`]?.edges.map(edge => edge.node);
 }
 
+export const getGameTokens = async (accountAddress) => {
+  const document = gql`
+  {
+    tokenBalances(accountAddress:"${accountAddress}", limit:10000) {
+      edges {
+        node {
+        tokenMetadata {
+          ... on ERC721__Token {
+              contractAddress
+              tokenId
+            }
+          }
+        }
+      }
+    }
+  }
+  `
+
+  const res = await request(dojoConfig.toriiUrl, document);
+
+  return res?.tokenBalances?.edges.map(edge => edge.node.tokenMetadata).filter(token => token.contractAddress === GAME_ADDRESS);
+}
+
+export const populateGameTokens = async (tokenIds) => {
+  tokenIds = tokenIds.map(tokenId => `"${tokenId.toString()}"`);
+
+  const document = gql`
+  {
+    ${NS_SHORT}TokenMetadataModels (limit:10000, where:{
+      token_idIN:[${tokenIds}]}
+    ){
+      edges {
+        node {
+          token_id
+          player_name
+          settings_id
+          available_at
+          expires_at
+        }
+      }
+    }
+
+    ${NS_SHORT}GameModels (limit:10000, where:{
+      game_idIN:[${tokenIds}]}
+    ){
+      edges {
+        node {
+          game_id
+          hero_health
+          hero_xp
+        }
+      }
+    }
+
+    tournamentsRegistrationModels (limit:10000, where:{
+      game_token_idIN:[${tokenIds}]}
+    ){
+      edges {
+        node {
+          tournament_id
+          game_token_id
+        }
+      }
+    }
+  }
+  `
+
+  try {
+    const res = await request(dojoConfig.toriiUrl, document)
+    let tokenMetadata = res?.[`${NS_SHORT}TokenMetadataModels`]?.edges.map(edge => edge.node) ?? []
+    let gameData = res?.[`${NS_SHORT}GameModels`]?.edges.map(edge => edge.node) ?? []
+    let tournaments = res?.tournamentsRegistrationModels?.edges.map(edge => edge.node) ?? []
+
+    let games = tokenMetadata.map(metaData => {
+      let game = gameData.find(game => game.game_id === metaData.token_id)
+      let tournament = tournaments.find(tournament => tournament.game_token_id === metaData.token_id)
+
+      let tokenId = parseInt(metaData.token_id, 16)
+      let expires_at = parseInt(metaData.expires_at, 16) * 1000
+
+      return {
+        id: tokenId,
+        player_name: hexToAscii(metaData.player_name),
+        available_at: parseInt(metaData.available_at, 16) * 1000,
+        expires_at,
+        tokenId,
+        settingsId: parseInt(metaData.settings_id, 16),
+        health: game?.hero_health,
+        xp: game?.hero_xp,
+        tournament_id: parseInt(tournament?.tournament_id, 16),
+        active: game?.hero_health !== 0 && (expires_at === 0 || expires_at > Date.now())
+      }
+    })
+
+    return games
+  } catch (ex) {
+    return []
+  }
+}
+
+export async function getActiveTournaments() {
+  const document = gql`
+  {
+    tournamentsTournamentModels(limit:10000) {
+      edges {
+        node {
+          id,
+          schedule {
+            game {
+              start,
+              end
+            }
+          },
+          metadata {
+            name,
+            description,
+          },
+          game_config {
+            settings_id
+            address
+          },
+          entry_fee {
+            Some {
+              amount
+            }
+          }
+        }
+      }
+    }
+  }`
+
+  const res = await request(dojoConfig.toriiUrl, document)
+  let tournaments = res?.tournamentsTournamentModels?.edges.map(edge => edge.node)
+  return tournaments.filter(tournament => tournament.game_config.address === GAME_ADDRESS.toLowerCase() && parseInt(tournament.schedule.game.end, 16) * 1000 > Date.now())
+}

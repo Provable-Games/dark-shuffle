@@ -1,5 +1,3 @@
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -9,7 +7,6 @@ import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, T
 import { useDisconnect } from '@starknet-react/core';
 import React, { useContext } from 'react';
 import { DojoContext } from '../../contexts/dojoContext';
-import { GameContext } from '../../contexts/gameContext';
 import { formatNumber } from '../../helpers/utilities';
 
 function ProfileMenu(props) {
@@ -17,21 +14,6 @@ function ProfileMenu(props) {
   const { disconnect } = useDisconnect()
 
   const dojo = useContext(DojoContext)
-  const game = useContext(GameContext)
-
-  const abandonGame = async () => {
-    if (game.values.replay) {
-      return
-    }
-
-    await dojo.executeTx([{
-      contractName: "game_systems",
-      entrypoint: "abandon_game",
-      calldata: [game.values.gameId]
-    }])
-
-    window.location.reload();
-  }
 
   return (
     <>
@@ -78,7 +60,7 @@ function ProfileMenu(props) {
           </ListItemText>
         </MenuItem>
 
-        <MenuItem onClick={() => { window.open("https://x.com/provablegames", "_blank"); handleClose; }}>
+        <MenuItem onClick={() => { window.open("https://x.com/darkshuffle_gg", "_blank"); handleClose; }}>
           <ListItemIcon>
             <XIcon fontSize="small" />
           </ListItemIcon>
@@ -88,18 +70,6 @@ function ProfileMenu(props) {
         </MenuItem>
 
         <Divider sx={{ my: 2 }} />
-
-        {game?.values?.gameId && <>
-          <MenuItem onClick={abandonGame}>
-            <ListItemIcon>
-              <DeleteForeverIcon fontSize="small" htmlColor='#fb3a3a' />
-            </ListItemIcon>
-            <ListItemText>
-              Abandon Game
-            </ListItemText>
-          </MenuItem>
-          <Divider sx={{ my: 2 }} />
-        </>}
 
         <MenuItem onClick={() => { disconnect(); handleClose(); }}>
           <ListItemIcon>

@@ -1,10 +1,11 @@
 import { useAccount, useConnect } from '@starknet-react/core';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { dojoConfig } from '../../dojo.config';
-import { getTournament } from '../api/indexer';
+import { getActiveTournaments, getTournament } from '../api/indexer';
 import TournamentSDK from '../sdk/tournaments';
 import { DojoContext } from './dojoContext';
 import { translateEvent } from '../helpers/events';
+import { hexToAscii } from '@dojoengine/utils';
 
 // Create a context
 const TournamentContext = createContext();
@@ -17,22 +18,37 @@ export const TournamentProvider = ({ children }) => {
   const { connect, connectors } = useConnect();
 
   const [season, setSeason] = useState({});
+  const [tournaments, setTournaments] = useState([])
+
+  async function fetchSeason() {
+    const data = await getTournament(dojoConfig.seasonTournamentId)
+    let entryFee = parseInt(data.tournament.entry_fee?.Some?.amount || 0, 16)
+
+    setSeason({
+      tournamentId: dojoConfig.seasonTournamentId,
+      start: parseInt(data.tournament.schedule?.game?.start || 0, 16),
+      end: parseInt(data.tournament.schedule?.game?.end || 0, 16),
+      entryFee: entryFee,
+      rewardPool: entryFee * data.entryCount,
+    })
+  }
+
+  async function fetchTournaments() {
+    const data = await getActiveTournaments()
+
+    setTournaments(data.map(tournament => ({
+      id: parseInt(tournament.id, 16),
+      name: hexToAscii(tournament.metadata?.name || ""),
+      description: tournament.metadata?.description || "",
+      start: parseInt(tournament.schedule?.game?.start || 0, 16),
+      end: parseInt(tournament.schedule?.game?.end || 0, 16),
+      entryFee: parseInt(tournament.entry_fee?.Some?.amount || 0, 16)
+    })))
+  }
 
   useEffect(() => {
-    async function fetchSeason() {
-      const data = await getTournament(dojoConfig.seasonTournamentId)
-      let entryFee = parseInt(data.tournament.entry_fee?.Some?.amount || 0, 16)
-
-      setSeason({
-        tournamentId: dojoConfig.seasonTournamentId,
-        start: parseInt(data.tournament.schedule?.game?.start || 0, 16),
-        end: parseInt(data.tournament.schedule?.game?.end || 0, 16),
-        entryFee: entryFee,
-        rewardPool: entryFee * data.entryCount,
-      })
-    }
-  
     fetchSeason()
+    fetchTournaments()
   }, [])
 
   const enterTournament = async (tournamentId) => {
@@ -42,7 +58,7 @@ export const TournamentProvider = ({ children }) => {
     }
 
     const receipt = await tournamentSDK.enterTournament({ account, tournamentId, playerName: dojo.playerName })
-    
+
     const translatedEvents = receipt.events.map(event => translateEvent(event)).filter(Boolean)
     const tokenMetadata = translatedEvents.find(e => e.componentName === 'TokenMetadata')
     return tokenMetadata
@@ -51,6 +67,7 @@ export const TournamentProvider = ({ children }) => {
   return (
     <TournamentContext.Provider value={{
       season,
+      tournaments,
 
       actions: {
         enterTournament,

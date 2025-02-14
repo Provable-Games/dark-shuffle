@@ -2,7 +2,7 @@ import { createClient } from "@dojoengine/torii-client";
 import { useAccount, useConnect } from '@starknet-react/core';
 import { useSnackbar } from 'notistack';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getGameTxs } from '../api/indexer';
+import { getGameTxs, getSettings } from '../api/indexer';
 import { CARD_DETAILS, formatBoard } from '../helpers/cards';
 import { translateEvent } from '../helpers/events';
 import { generateMapNodes } from '../helpers/map';
@@ -35,7 +35,7 @@ export const ReplayProvider = ({ children }) => {
   const [translatedEvents, setTranslatedEvents] = useState({})
   const [loadingReplay, setLoadingReplay] = useState(false)
 
-  const [spectatingGameId, setSpectatingGameId] = useState(null)
+  const [spectatingGame, setSpectatingGame] = useState(null)
 
   useEffect(() => {
     if (translatedEvents[step]) {
@@ -45,7 +45,7 @@ export const ReplayProvider = ({ children }) => {
   }, [step, translatedEvents])
 
   const fetchEvents = async (step, txHash) => {
-    if (translatedEvents[step] && !spectatingGameId) {
+    if (translatedEvents[step] && !spectatingGame) {
       return
     }
 
@@ -68,7 +68,7 @@ export const ReplayProvider = ({ children }) => {
     setTranslatedEvents(prev => ({ ...prev, [step]: events }))
   }
 
-  const startReplay = async (game_id) => {
+  const startReplay = async (game) => {
     if (!account) {
       connect({ connector: cartridgeConnector })
       return
@@ -76,7 +76,9 @@ export const ReplayProvider = ({ children }) => {
 
     setLoadingReplay(true)
 
-    let txs = await getGameTxs(game_id)
+    let txs = await getGameTxs(game.id)
+    let settings = await getSettings(game.settingsId)
+    game.setGameSettings(settings)
 
     if (txs.length > 0) {
       fetchEvents(0, txs[0].tx_hash)
@@ -92,7 +94,7 @@ export const ReplayProvider = ({ children }) => {
     setAppliedStep(null)
     setTxHashes([])
     setTranslatedEvents({})
-    setSpectatingGameId(null)
+    setSpectatingGame(null)
     setLoadingReplay(false)
 
     battle.utils.resetBattleState()
@@ -115,12 +117,12 @@ export const ReplayProvider = ({ children }) => {
     }
   }
 
-  const spectateGame = (gameId) => {
-    setSpectatingGameId(parseInt(gameId, 16))
+  const spectateGame = (game) => {
+    setSpectatingGame(game)
   }
 
   const applyEvents = () => {
-    if (appliedStep === step && !spectatingGameId) return;
+    if (appliedStep === step && !spectatingGame) return;
 
     const events = translatedEvents[step]
 
@@ -128,7 +130,7 @@ export const ReplayProvider = ({ children }) => {
     if (gameValues) {
       game.setGame({ ...gameValues, replay: true })
 
-      if (!spectatingGameId && gameValues.mapDepth === LAST_NODE_LEVEL && GAME_STATES[gameValues.state] === 'Map') {
+      if (!spectatingGame && gameValues.mapDepth === LAST_NODE_LEVEL && GAME_STATES[gameValues.state] === 'Map') {
         if (appliedStep < step) {
           setStep(prev => prev + 1)
         } else {
@@ -215,7 +217,7 @@ export const ReplayProvider = ({ children }) => {
           if (Boolean(data[`${dojoConfig.namespace}-GameActionEvent`])) {
             let gameId = data[`${dojoConfig.namespace}-GameActionEvent`]["game_id"].value
 
-            if (parseInt(gameId, 16) === spectatingGameId) {
+            if (parseInt(gameId, 16) === spectatingGame?.id) {
               fetchEvents(step, data[`${dojoConfig.namespace}-GameActionEvent`]["tx_hash"].value)
             }
           }
@@ -225,7 +227,7 @@ export const ReplayProvider = ({ children }) => {
       console.log(error)
       throw error;
     }
-  }, [toriiClient, spectatingGameId]);
+  }, [toriiClient, spectatingGame?.id]);
 
   useEffect(() => {
     let unsubscribe = undefined;
@@ -260,7 +262,7 @@ export const ReplayProvider = ({ children }) => {
 
       loadingReplay,
       translatedEvents,
-      spectatingGameId
+      spectatingGame
     }}>
       {children}
     </ReplayContext.Provider>

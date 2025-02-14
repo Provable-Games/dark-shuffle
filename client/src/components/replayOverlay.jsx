@@ -24,13 +24,13 @@ function ReplayOverlay(props) {
     };
   }, [replay]);
 
-  if (!game.values.replay && !replay.spectatingGameId) {
+  if (!game.values.replay && !replay.spectatingGame) {
     return null;
   }
 
   return (
     <Box sx={styles.container}>
-      {!replay.spectatingGameId ? <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '2px' }} onClick={() => replay.previousStep()}>
+      {!replay.spectatingGame ? <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '2px' }} onClick={() => replay.previousStep()}>
         <IconButton onClick={() => replay.previousStep()}>
           <ArrowBackIosIcon color='primary' sx={{ fontSize: '20px' }} />
         </IconButton>
@@ -43,16 +43,16 @@ function ReplayOverlay(props) {
           <Typography color={'#FFF'} sx={{ fontSize: '10px', mt: '-2px' }}>(Left Arrow)</Typography>
         </Box>
       </Box> : <Box sx={{ pl: 1, width: '150px' }}>
-        <Typography>{game.values.player_name}</Typography>
-        <Typography sx={{ fontSize: '12px' }}>#{replay.spectatingGameId}</Typography>
+        <Typography>{replay.spectatingGame.player_name}</Typography>
+        <Typography sx={{ fontSize: '12px' }}>#{replay.spectatingGame.id}</Typography>
       </Box>
       }
 
       <Button variant='outlined' color='primary' onClick={() => replay.endReplay()}>
-        {replay.spectatingGameId ? "Stop Spectating" : "End Replay"}
+        {replay.spectatingGame ? "Stop Spectating" : "End Replay"}
       </Button>
 
-      {!replay.spectatingGameId ? <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '2px' }} onClick={() => replay.nextStep()}>
+      {!replay.spectatingGame ? <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '2px' }} onClick={() => replay.nextStep()}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}>
             <Typography variant='body1' color={'primary'}>Next Step</Typography>

@@ -1,29 +1,26 @@
-import { hexToAscii } from '@dojoengine/utils'
 import { LoadingButton, Skeleton } from '@mui/lab'
 import { Box, Button, Typography } from '@mui/material'
 import { useAccount } from '@starknet-react/core'
 import { useSnackbar } from 'notistack'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { BrowserView, MobileView } from 'react-device-detect'
-import { getActiveGame, getGameEffects, getMap } from '../../api/indexer'
+import { getActiveGame, getGameEffects, getMap, getSettings } from '../../api/indexer'
 import logo from '../../assets/images/logo.svg'
 import { BattleContext } from '../../contexts/battleContext'
+import { DojoContext } from '../../contexts/dojoContext'
 import { DraftContext } from '../../contexts/draftContext'
 import { GameContext } from '../../contexts/gameContext'
+import { useReplay } from '../../contexts/replayContext'
 import { useTournament } from '../../contexts/tournamentContext'
 import { generateMapNodes } from '../../helpers/map'
 import { _styles } from '../../helpers/styles'
 import { formatTimeUntil } from '../../helpers/utilities'
 import GameTokens from '../dialogs/gameTokens'
+import LoadingReplayDialog from '../dialogs/loadingReplay'
 import ReconnectDialog from '../dialogs/reconnecting'
 import StartGameDialog from '../dialogs/startGame'
 import Leaderboard from './leaderboard'
 import Monsters from './monsters'
-import { DojoContext } from '../../contexts/dojoContext'
-import { useReplay } from '../../contexts/replayContext'
-import { useEffect } from 'react'
-import LoadingReplayDialog from '../dialogs/loadingReplay'
-import { fetchGameSettings } from '../../api/starknet'
 
 function StartDraft() {
   const tournamentProvider = useTournament()
@@ -68,12 +65,12 @@ function StartDraft() {
     await draft.actions.startDraft(tokenData)
   }
 
-  const resumeGame = async (game_id) => {
+  const resumeGame = async (game) => {
     setReconnecting(true)
 
     try {
-      let data = await getActiveGame(game_id)
-      let settings = await fetchGameSettings(game_id)
+      let data = await getActiveGame(game.id)
+      let settings = await getSettings(game.settingsId)
 
       gameState.setGameSettings(settings)
 
@@ -132,7 +129,7 @@ function StartDraft() {
         mapDepth: data.map_depth,
         lastNodeId: data.last_node_id,
 
-        replay: Boolean(replay.spectatingGameId)
+        replay: Boolean(replay.spectatingGame?.id)
       })
 
       setReconnecting(false)
@@ -146,10 +143,10 @@ function StartDraft() {
   let currentTime = Date.now() / 1000
 
   useEffect(() => {
-    if (replay.spectatingGameId) {
-      resumeGame(replay.spectatingGameId)
+    if (replay.spectatingGame) {
+      resumeGame(replay.spectatingGame)
     }
-  }, [replay.spectatingGameId])
+  }, [replay.spectatingGame])
 
   return (
     <>

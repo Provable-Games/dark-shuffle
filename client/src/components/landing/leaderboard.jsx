@@ -1,16 +1,14 @@
 import TheatersIcon from '@mui/icons-material/Theaters';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Box, Tab, Tabs, Typography, Pagination, Button, IconButton } from '@mui/material'
-import React, { useState } from 'react'
-import { useEffect } from 'react';
-import { getActiveLeaderboard, getLeaderboard } from '../../api/indexer';
-import { hexToAscii } from '@dojoengine/utils';
+import { Box, IconButton, Pagination, Tab, Tabs, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { dojoConfig } from '../../../dojo.config';
 import { isMobile } from 'react-device-detect';
-import { formatNumber } from '../../helpers/utilities';
-import { useTournament } from "../../contexts/tournamentContext";
+import { dojoConfig } from '../../../dojo.config';
+import { getActiveLeaderboard, getLeaderboard, getTournamentRegistrations, populateGameTokens } from '../../api/indexer';
 import { useReplay } from '../../contexts/replayContext';
+import { useTournament } from "../../contexts/tournamentContext";
+import { formatNumber } from '../../helpers/utilities';
 
 function Leaderboard() {
   const tournamentProvider = useTournament()
@@ -18,6 +16,7 @@ function Leaderboard() {
 
   const replay = useReplay()
 
+  const [registrations, setRegistrations] = useState([])
   const [leaderboard, setLeaderboard] = useState([]);
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -35,24 +34,37 @@ function Leaderboard() {
   };
 
   useEffect(() => {
+    async function fetchRegistrations() {
+      const data = await getTournamentRegistrations(dojoConfig.seasonTournamentId)
+      setRegistrations(data)
+    }
+
+    fetchRegistrations()
+  }, [])
+
+  useEffect(() => {
     async function fetchLeaderboard() {
       setLoading(true)
 
       let data = []
       if (tab === 'one') {
-        data = await getLeaderboard(dojoConfig.seasonTournamentId)
+        data = await getLeaderboard(page - 1, registrations)
       } else {
-        data = await getActiveLeaderboard(dojoConfig.seasonTournamentId)
+        data = await getActiveLeaderboard(page - 1, registrations)
       }
 
-      setLeaderboard(data ?? [])
+      let games = await populateGameTokens(data.map(game => game.game_id))
+      setLeaderboard(games ?? [])
       setLoading(false)
     }
 
-    fetchLeaderboard()
-  }, [page, tab])
+    if (registrations.length > 0) {
+      fetchLeaderboard()
+    }
+  }, [page, tab, registrations])
 
   const seasonPool = Math.floor(season.rewardPool / 1e18)
+  // TODO: Add prize distribution from tournament model
   const prizeDistribution = [0.35, 0.20, 0.15, 0.10, 0.08, 0.02, 0.02, 0.02, 0.02, 0.02]
 
   return (
@@ -94,17 +106,17 @@ function Leaderboard() {
 
       <Scrollbars style={{ width: '100%', paddingBottom: '20px', height: '220px' }}>
         {!loading && React.Children.toArray(
-          leaderboard.map((player, i) => {
+          leaderboard.map((game, i) => {
             let rank = (page - 1) * 10 + i + 1
 
             return <>
               <Box sx={styles.row}>
                 <Box width='25px' textAlign={'center'}>
-                  {tab === 'one' && <IconButton onClick={() => replay.startReplay(player.game_id)}>
+                  {tab === 'one' && <IconButton onClick={() => replay.startReplay(game)}>
                     <TheatersIcon fontSize='small' color='primary' />
                   </IconButton>}
 
-                  {tab === 'two' && <IconButton onClick={() => replay.spectateGame(player.game_id)}>
+                  {tab === 'two' && <IconButton onClick={() => replay.spectateGame(game)}>
                     <VisibilityIcon fontSize='small' color='primary' />
                   </IconButton>}
                 </Box>
@@ -114,11 +126,11 @@ function Leaderboard() {
                 </Box>
 
                 <Box width={isMobile ? '150px' : '250px'}>
-                  <Typography>{hexToAscii(player.player_name)}</Typography>
+                  <Typography>{game.player_name}</Typography>
                 </Box>
 
                 <Box width='80px' textAlign={'center'}>
-                  <Typography>{player.hero_xp}</Typography>
+                  <Typography>{game.xp}</Typography>
                 </Box>
 
                 <Box width='55px' display={'flex'} gap={0.5} alignItems={'center'}>
