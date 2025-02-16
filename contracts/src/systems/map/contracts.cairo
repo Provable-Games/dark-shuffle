@@ -11,7 +11,6 @@ mod map_systems {
 
     use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait};
     use darkshuffle::models::map::{Map, MonsterNode};
-    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
     use darkshuffle::utils::{map::MapUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
@@ -82,6 +81,7 @@ mod map_systems {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
                     },
                 );
+            game.update_metadata(world);
         }
     }
 }

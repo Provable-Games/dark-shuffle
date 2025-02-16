@@ -21,10 +21,7 @@ trait IGameSystems<T> {
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
 
-    use darkshuffle::constants::{
-        DEFAULT_NS, DEFAULT_NS_STR, LAST_NODE_DEPTH, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, WORLD_CONFIG_ID,
-    };
-    use darkshuffle::interface::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
+    use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR, LAST_NODE_DEPTH, WORLD_CONFIG_ID};
     use darkshuffle::models::battle::{Card};
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
     use darkshuffle::models::draft::{Draft};
@@ -37,9 +34,9 @@ mod game_systems {
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-
+    
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
-
+    
     use openzeppelin_introspection::src5::SRC5Component;
     use openzeppelin_token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
     use starknet::{ContractAddress, get_caller_address, get_contract_address, get_tx_info};
@@ -139,21 +136,19 @@ mod game_systems {
             let options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells);
             let action_count = 0;
 
-            world
-                .write_model(
-                    @Game {
-                        game_id,
-                        state: GameState::Draft,
-                        hero_health: game_settings.start_health,
-                        hero_xp: 1,
-                        monsters_slain: 0,
-                        map_level: 0,
-                        map_depth: LAST_NODE_DEPTH,
-                        last_node_id: 0,
-                        action_count,
-                    },
-                );
+            let game = Game {
+                game_id,
+                state: GameState::Draft,
+                hero_health: game_settings.start_health,
+                hero_xp: 1,
+                monsters_slain: 0,
+                map_level: 0,
+                map_depth: LAST_NODE_DEPTH,
+                last_node_id: 0,
+                action_count,
+            };
 
+            world.write_model(@game);
             world.write_model(@Draft { game_id, options, cards: array![].span() });
 
             world
@@ -162,6 +157,7 @@ mod game_systems {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count,
                     },
                 );
+            game.update_metadata(world);
         }
 
         fn player_name(self: @ContractState, game_id: u64) -> felt252 {

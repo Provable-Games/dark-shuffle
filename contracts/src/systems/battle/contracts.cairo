@@ -12,8 +12,7 @@ mod battle_systems {
         Battle, BattleOwnerTrait, Board, BoardStats, Card, CardType, Creature, RoundStats,
     };
     use darkshuffle::models::config::GameSettings;
-    use darkshuffle::models::game::{Game, GameActionEvent, GameEffects};
-    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
+    use darkshuffle::models::game::{Game, GameActionEvent, GameEffects, GameOwnerTrait};
     use darkshuffle::utils::{
         achievements::AchievementsUtilsImpl, battle::BattleUtilsImpl, board::BoardUtilsImpl, cards::CardUtilsImpl,
         config::ConfigUtilsImpl, game::GameUtilsImpl, hand::HandUtilsImpl, monsters::MonsterUtilsImpl, random,
@@ -132,6 +131,8 @@ mod battle_systems {
                 world.write_model(@battle);
                 world.write_model(@board);
             }
+
+            game.update_metadata(world);
         }
     }
 }

@@ -50,6 +50,7 @@ mod draft_systems {
                         count: current_draft_size.try_into().unwrap(),
                     },
                 );
+            game.update_metadata(world);
         }
     }
 }

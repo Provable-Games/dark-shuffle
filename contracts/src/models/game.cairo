@@ -1,11 +1,11 @@
-use darkshuffle::constants::{LAST_NODE_DEPTH, WORLD_CONFIG_ID};
-use darkshuffle::models::config::{WorldConfig};
+use darkshuffle::constants::LAST_NODE_DEPTH;
 use dojo::event::EventStorage;
 use dojo::model::ModelStorage;
-use dojo::world::WorldStorage;
+use dojo::world::{WorldStorage, WorldStorageTrait};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
-use starknet::{ContractAddress, get_caller_address};
+use tournaments::components::interfaces::{IGameDispatcher, IGameDispatcherTrait};
+use starknet::{get_caller_address};
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
@@ -65,9 +65,15 @@ impl GameStateIntoU8 of Into<GameState, u8> {
 
 #[generate_trait]
 impl GameOwnerImpl of GameOwnerTrait {
+    fn update_metadata(self: Game, world: WorldStorage) {
+        let (contract_address, _) = world.dns(@"game_systems").unwrap();
+        let game_system_dispatcher = IGameDispatcher { contract_address };
+        game_system_dispatcher.set_token_uri(self.game_id.into());
+    }
+
     fn assert_owner(self: Game, world: WorldStorage) {
-        let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-        let game_token = IERC721Dispatcher { contract_address: world_config.game_token_address };
+        let (contract_address, _) = world.dns(@"game_systems").unwrap();
+        let game_token = IERC721Dispatcher { contract_address };
         assert(game_token.owner_of(self.game_id.into()) == get_caller_address(), 'Not Owner');
     }
 
