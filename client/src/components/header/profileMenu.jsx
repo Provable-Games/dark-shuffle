@@ -1,12 +1,15 @@
 import EditIcon from '@mui/icons-material/Edit';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
+import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import XIcon from '@mui/icons-material/X';
 import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from '@mui/material';
 import { useDisconnect } from '@starknet-react/core';
 import React, { useContext } from 'react';
 import { DojoContext } from '../../contexts/dojoContext';
+import { useTournament } from '../../contexts/tournamentContext';
 import { formatNumber } from '../../helpers/utilities';
 
 function ProfileMenu(props) {
@@ -14,6 +17,7 @@ function ProfileMenu(props) {
   const { disconnect } = useDisconnect()
 
   const dojo = useContext(DojoContext)
+  const { season } = useTournament()
 
   return (
     <>
@@ -66,6 +70,26 @@ function ProfileMenu(props) {
           </ListItemIcon>
           <ListItemText>
             Twitter
+          </ListItemText>
+        </MenuItem>
+
+        <Divider sx={{ my: 2 }} />
+
+        <MenuItem disabled={season.end >= new Date() / 1000} onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); handleClose; }}>
+          <ListItemIcon>
+            <SportsScoreIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Submit Season
+          </ListItemText>
+        </MenuItem>
+
+        <MenuItem disabled={season.end + season.submissionPeriod >= new Date() / 1000} onClick={() => { window.open("https://x.com/darkshuffle_gg", "_blank"); handleClose; }}>
+          <ListItemIcon>
+            <EmojiEventsIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Distribute Prizes
           </ListItemText>
         </MenuItem>
 

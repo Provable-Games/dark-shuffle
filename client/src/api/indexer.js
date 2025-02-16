@@ -19,7 +19,8 @@ export async function getTournament(tournament_id) {
             game {
               start,
               end
-            }
+            },
+            submission_period
           },
           game_config {
             settings_id

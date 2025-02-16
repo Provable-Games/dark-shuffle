@@ -51,14 +51,34 @@ class TournamentSDK {
       contractName: this.contractName,
       entrypoint: "enter_tournament",
       calldata: [
-          tournamentId,
-          '0x' + playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
-          account.address,
-          1
-        ]
+        tournamentId,
+        '0x' + playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
+        account.address,
+        1
+      ]
     })
 
     return this.execute(account, txs);
+  }
+
+  async submitScore({ account, tournamentId, tokenId, position }) {
+    return this.execute(account, [
+      {
+        contractName: this.contractName,
+        entrypoint: "submit_score",
+        calldata: [tournamentId, tokenId, position]
+      }
+    ]);
+  }
+
+  async claimPrize({ account, tournamentId, prizeType }) {
+    return this.execute(account, [
+      {
+        contractName: this.contractName,
+        entrypoint: "claim_prize",
+        calldata: [tournamentId, prizeType]
+      }
+    ]);
   }
 }
 

@@ -30,6 +30,7 @@ export const TournamentProvider = ({ children }) => {
       end: parseInt(data.tournament.schedule?.game?.end || 0, 16),
       entryFee: entryFee,
       rewardPool: entryFee * data.entryCount,
+      submissionPeriod: parseInt(data.tournament.schedule?.submission_period || 0, 16)
     })
   }
 
@@ -42,7 +43,8 @@ export const TournamentProvider = ({ children }) => {
       description: tournament.metadata?.description || "",
       start: parseInt(tournament.schedule?.game?.start || 0, 16),
       end: parseInt(tournament.schedule?.game?.end || 0, 16),
-      entryFee: parseInt(tournament.entry_fee?.Some?.amount || 0, 16)
+      entryFee: parseInt(tournament.entry_fee?.Some?.amount || 0, 16),
+      submissionPeriod: parseInt(tournament.schedule?.submission_period || 0, 16)
     })))
   }
 
