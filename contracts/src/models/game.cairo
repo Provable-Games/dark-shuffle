@@ -68,7 +68,7 @@ impl GameOwnerImpl of GameOwnerTrait {
     fn update_metadata(self: Game, world: WorldStorage) {
         let (contract_address, _) = world.dns(@"game_systems").unwrap();
         let game_system_dispatcher = IGameDispatcher { contract_address };
-        game_system_dispatcher.set_token_uri(self.game_id.into());
+        game_system_dispatcher.emit_metadata_update_event(self.game_id.into());
     }
 
     fn assert_owner(self: Game, world: WorldStorage) {
