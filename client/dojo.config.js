@@ -18,7 +18,7 @@ const {
 } = import.meta.env;
 
 export const dojoConfig = {
-  seasonTournamentId: 2,
+  seasonTournamentId: 3,
   version: "1.1",
   chain: VITE_PUBLIC_CHAIN,
   namespace: VITE_PUBLIC_NAMESPACE,
