@@ -1,11 +1,11 @@
 use darkshuffle::constants::LAST_NODE_DEPTH;
 use dojo::event::EventStorage;
 use dojo::model::ModelStorage;
-use dojo::world::{WorldStorage, WorldStorageTrait};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo::world::{WorldStorage, WorldStorageTrait};
 use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
-use tournaments::components::interfaces::{IGameDispatcher, IGameDispatcherTrait};
 use starknet::{get_caller_address};
+use tournaments::components::interfaces::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
@@ -67,8 +67,8 @@ impl GameStateIntoU8 of Into<GameState, u8> {
 impl GameOwnerImpl of GameOwnerTrait {
     fn update_metadata(self: Game, world: WorldStorage) {
         let (contract_address, _) = world.dns(@"game_systems").unwrap();
-        let game_system_dispatcher = IGameDispatcher { contract_address };
-        game_system_dispatcher.emit_metadata_update_event(self.game_id.into());
+        let game_token_dispatcher = IGameTokenDispatcher { contract_address };
+        game_token_dispatcher.emit_metadata_update(self.game_id.into());
     }
 
     fn assert_owner(self: Game, world: WorldStorage) {

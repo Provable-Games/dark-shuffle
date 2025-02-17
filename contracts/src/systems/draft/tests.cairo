@@ -24,8 +24,8 @@ fn setup() -> (WorldStorage, u64, IDraftSystemsDispatcher) {
         game_systems_dispatcher.contract_address,
         'player1',
         settings_id,
-        0,
-        0,
+        Option::None,
+        Option::None,
         contract_address_const::<'player1'>(),
     );
 

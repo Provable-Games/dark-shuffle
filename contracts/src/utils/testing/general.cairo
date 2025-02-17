@@ -11,8 +11,9 @@ use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
 use starknet::{ContractAddress, contract_address_const, get_caller_address};
-use tournaments::components::game::{
-    IGame, IGameDetails, IGameDispatcher, IGameDispatcherTrait, ISettings, game_component,
+use tournaments::components::game::game_component;
+use tournaments::components::interfaces::{
+    IGameDetails, IGameToken, IGameTokenDispatcher, IGameTokenDispatcherTrait, ISettings,
 };
 
 fn mint_game_token(
@@ -20,11 +21,11 @@ fn mint_game_token(
     token_address: ContractAddress,
     player_name: felt252,
     settings_id: u32,
-    available_at: u64,
-    expires_at: u64,
+    available_at: Option<u64>,
+    expires_at: Option<u64>,
     to: ContractAddress,
 ) -> u64 {
-    let game_systems_dispatcher = IGameDispatcher { contract_address: token_address };
+    let game_systems_dispatcher = IGameTokenDispatcher { contract_address: token_address };
     game_systems_dispatcher.mint(player_name, settings_id, available_at, expires_at, to)
 }
 
