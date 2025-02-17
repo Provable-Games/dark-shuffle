@@ -18,9 +18,9 @@ impl SpellUtilsImpl of SpellUtilsTrait {
         } else if card.card_id == 79 {
             BattleUtilsImpl::reduce_monster_attack(ref battle, 1);
         } else if card.card_id == 80 {
-            BoardUtilsImpl::update_creatures(ref board, CreatureType::Brute, 2, 0);
+            BoardUtilsImpl::update_creatures(ref board, CreatureType::Brute, 3, 0);
         } else if card.card_id == 81 {
-            BoardUtilsImpl::update_creatures(ref board, CreatureType::All, 2, 0);
+            BoardUtilsImpl::update_creatures(ref board, CreatureType::All, 3, 0);
         } else if card.card_id == 82 {
             BattleUtilsImpl::heal_hero(ref battle, board_stats.brute_count);
         } else if card.card_id == 83 {

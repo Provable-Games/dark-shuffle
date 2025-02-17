@@ -1179,7 +1179,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cost: 1,
         attack: 0,
         health: 0,
-        text: "Your brutes gain +2 attack"
+        text: "Your brutes gain +3 attack"
       }
 
     case 81:
@@ -1193,7 +1193,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cost: 2,
         attack: 0,
         health: 0,
-        text: "Your creatures gain +2 attack"
+        text: "Your creatures gain +3 attack"
       }
 
     case 82:
@@ -1218,7 +1218,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.SPELL,
         creatureType: tags.SPELL,
         cardTier: 3,
-        cost: 4,
+        cost: 3,
         attack: 0,
         health: 0,
         text: "Your Hunter creatures gain +3 attack and +3 health"

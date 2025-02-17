@@ -118,6 +118,11 @@ export const ReplayProvider = ({ children }) => {
   }
 
   const spectateGame = (game) => {
+    if (!account) {
+      connect({ connector: cartridgeConnector })
+      return
+    }
+    
     setSpectatingGame(game)
   }
 

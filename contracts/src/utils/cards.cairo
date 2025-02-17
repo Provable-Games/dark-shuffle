@@ -912,7 +912,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Spell,
                 card_tier: CardTier::T3,
                 creature_type: CreatureType::Spell,
-                cost: 4,
+                cost: 3,
                 attack: 0,
                 health: 0,
             };

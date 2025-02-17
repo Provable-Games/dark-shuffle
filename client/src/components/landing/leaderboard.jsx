@@ -138,7 +138,7 @@ function Leaderboard() {
                     <Typography color={'primary'} sx={{ fontSize: '12px' }}>
                       {formatNumber(seasonPool * season.distribution[rank - 1] / 100)}
                     </Typography>
-                    {season.leaderboard.includes(game.tokenId) && <CheckIcon sx={{ fontSize: '14px' }} color='primary' />}
+                    {season.leaderboard[i] === game.tokenId && <CheckIcon sx={{ fontSize: '14px' }} color='primary' />}
                   </>}
                 </Box>
               </Box>
