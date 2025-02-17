@@ -32,6 +32,15 @@ class TournamentSDK {
     return tournamentDetails;
   }
 
+  async getTournamentLeaderboard(tournamentId) {
+    const leaderboard = await this.provider.call(this.namespace, {
+      contractName: this.contractName,
+      entrypoint: "get_leaderboard",
+      calldata: [tournamentId]
+    });
+    return leaderboard;
+  }
+
   async enterTournament({ account, tournamentId, playerName }) {
     const tournamentDetails = await this.getTournamentDetails(tournamentId)
     if (!tournamentDetails.creator) {
@@ -71,14 +80,30 @@ class TournamentSDK {
     ]);
   }
 
-  async claimPrize({ account, tournamentId, prizeType }) {
-    return this.execute(account, [
-      {
+  async submitScores({ account, tournamentId, scores }) {
+    let txs = []
+    for (let i = 0; i < scores.length; i++) {
+      txs.push({
+        contractName: this.contractName,
+        entrypoint: "submit_score",
+        calldata: [tournamentId, scores[i], i + 1]
+      })
+    }
+    return this.execute(account, txs);
+  }
+
+  async distributePrizes({ account, tournamentId }) {
+    const leaderboard = await this.getTournamentLeaderboard(tournamentId)
+
+    let txs = []
+    for (let position = 1; position <= leaderboard.length; position++) {
+      txs.push({
         contractName: this.contractName,
         entrypoint: "claim_prize",
-        calldata: [tournamentId, prizeType]
-      }
-    ]);
+        calldata: [tournamentId, 0, 2, position]
+      })
+    }
+    return this.execute(account, txs);
   }
 }
 

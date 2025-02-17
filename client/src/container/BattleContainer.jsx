@@ -32,7 +32,7 @@ function BattleContainer() {
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', height: '30px', boxSizing: 'border-box', px: 2, mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', width: '100px' }}>
           <Typography variant="h5">
-            {gameSettings.draft_size - (battle.state.values?.deckIndex || 0)}
+            {battle.state.deck.length}
           </Typography>
 
           <img alt='' src={cards} height={21} />
@@ -105,7 +105,7 @@ function BattleContainer() {
               <Box sx={styles.deck}>
                 <Box sx={styles.cardCount}>
                   <Typography>
-                    {gameSettings.draft_size - (battle.state.values?.deckIndex || 0)}
+                    {battle.state.deck.length}
                   </Typography>
                 </Box>
               </Box>

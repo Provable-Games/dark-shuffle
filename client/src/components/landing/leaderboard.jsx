@@ -9,6 +9,7 @@ import { getActiveLeaderboard, getLeaderboard, getTournamentRegistrations, popul
 import { useReplay } from '../../contexts/replayContext';
 import { useTournament } from "../../contexts/tournamentContext";
 import { formatNumber } from '../../helpers/utilities';
+import CheckIcon from '@mui/icons-material/Check';
 
 function Leaderboard() {
   const tournamentProvider = useTournament()
@@ -53,7 +54,7 @@ function Leaderboard() {
         data = await getActiveLeaderboard(page - 1, registrations)
       }
 
-      let games = await populateGameTokens(data.map(game => game.game_id))
+      let games = (await populateGameTokens(data.map(game => game.game_id))).sort((a, b) => b.xp - a.xp)
       setLeaderboard(games ?? [])
       setLoading(false)
     }
@@ -64,8 +65,6 @@ function Leaderboard() {
   }, [page, tab, registrations])
 
   const seasonPool = Math.floor(season.rewardPool / 1e18)
-  // TODO: Add prize distribution from tournament model
-  const prizeDistribution = [0.35, 0.20, 0.15, 0.10, 0.08, 0.02, 0.02, 0.02, 0.02, 0.02]
 
   return (
     <Box sx={styles.container}>
@@ -90,7 +89,7 @@ function Leaderboard() {
           <Typography>Rank</Typography>
         </Box>
 
-        <Box width={isMobile ? '150px' : '250px'}>
+        <Box width={isMobile ? '135px' : '235px'}>
           <Typography>Player</Typography>
         </Box>
 
@@ -99,7 +98,7 @@ function Leaderboard() {
             {tab === 'one' ? 'Score' : 'XP'}
           </Typography>
         </Box>
-        <Box width='55px' textAlign={'center'}></Box>
+        <Box width='70px' textAlign={'center'}></Box>
       </Box>
 
       {loading && <Box />}
@@ -125,20 +124,21 @@ function Leaderboard() {
                   <Typography>{rank}</Typography>
                 </Box>
 
-                <Box width={isMobile ? '150px' : '250px'}>
-                  <Typography>{game.player_name}</Typography>
+                <Box width={isMobile ? '135px' : '235px'}>
+                  <Typography>{game.playerName}</Typography>
                 </Box>
 
                 <Box width='80px' textAlign={'center'}>
                   <Typography>{game.xp}</Typography>
                 </Box>
 
-                <Box width='55px' display={'flex'} gap={0.5} alignItems={'center'}>
-                  {tab === 'one' && rank < 11 && <>
+                <Box width='70px' display={'flex'} gap={0.5} alignItems={'center'}>
+                  {tab === 'one' && rank <= season.distribution?.length && <>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#FFE97F" height={12}><path d="M0 12v2h1v2h6V4h2v12h6v-2h1v-2h-2v2h-3V4h2V0h-2v2H9V0H7v2H5V0H3v4h2v10H2v-2z"></path></svg>
                     <Typography color={'primary'} sx={{ fontSize: '12px' }}>
-                      {formatNumber(seasonPool * prizeDistribution[i])}
+                      {formatNumber(seasonPool * season.distribution[rank - 1] / 100)}
                     </Typography>
+                    {season.leaderboard.includes(game.tokenId) && <CheckIcon sx={{ fontSize: '14px' }} color='primary' />}
                   </>}
                 </Box>
               </Box>
@@ -168,7 +168,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    p: 1,
+    px: 1,
     opacity: 0.9
   }
 }

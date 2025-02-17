@@ -11,13 +11,14 @@ import React, { useContext } from 'react';
 import { DojoContext } from '../../contexts/dojoContext';
 import { useTournament } from '../../contexts/tournamentContext';
 import { formatNumber } from '../../helpers/utilities';
+import { dojoConfig } from '../../../dojo.config';
 
 function ProfileMenu(props) {
   const { handleClose, anchorEl, openNameDialog } = props
   const { disconnect } = useDisconnect()
 
   const dojo = useContext(DojoContext)
-  const { season } = useTournament()
+  const { season, actions } = useTournament()
 
   return (
     <>
@@ -75,7 +76,7 @@ function ProfileMenu(props) {
 
         <Divider sx={{ my: 2 }} />
 
-        <MenuItem disabled={season.end >= new Date() / 1000} onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); handleClose; }}>
+        <MenuItem disabled={season.end >= new Date() / 1000} onClick={() => { actions.submitScores(dojoConfig.seasonTournamentId) }}>
           <ListItemIcon>
             <SportsScoreIcon fontSize="small" />
           </ListItemIcon>
@@ -84,7 +85,7 @@ function ProfileMenu(props) {
           </ListItemText>
         </MenuItem>
 
-        <MenuItem disabled={season.end + season.submissionPeriod >= new Date() / 1000} onClick={() => { window.open("https://x.com/darkshuffle_gg", "_blank"); handleClose; }}>
+        <MenuItem disabled={season.end + season.submissionPeriod >= new Date() / 1000} onClick={() => { actions.distributePrizes(dojoConfig.seasonTournamentId) }}>
           <ListItemIcon>
             <EmojiEventsIcon fontSize="small" />
           </ListItemIcon>

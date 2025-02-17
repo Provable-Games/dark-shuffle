@@ -33,6 +33,7 @@ export const BattleProvider = ({ children }) => {
 
   const [hand, setHand] = useState([])
   const [board, setBoard] = useState([])
+  const [deck, setDeck] = useState([])
   const [battleEffects, setBattleEffects] = useState()
   const [roundStats, setRoundStats] = useState({})
 
@@ -108,6 +109,7 @@ export const BattleProvider = ({ children }) => {
     setValues({})
     setBattleEffects()
     setHand([])
+    setDeck([])
     setBoard([])
     setActions([])
     setTurnEnded(false)
@@ -176,6 +178,7 @@ export const BattleProvider = ({ children }) => {
     })
     setBattleEffects({ ...battle.battleEffects })
     setHand(battle.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
+    setDeck(battle.deck)
     setBoard([])
     setActions([])
     setRoundStats({
@@ -240,6 +243,7 @@ export const BattleProvider = ({ children }) => {
     })
     setHand(updatedValues.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
     setBoard(prev => prev.map(creature => ({ ...creature, attacked: false })))
+    setDeck(updatedValues.deck)
 
     setActions([])
     setUpdatedValues()
@@ -465,6 +469,7 @@ export const BattleProvider = ({ children }) => {
     })
 
     setHand(data.battle.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
+    setDeck(data.battle.deck)
 
     if (data.board && Object.keys(data.board).length > 0) {
       let board = Object.entries(data.board).reduce((acc, [key, creature]) => {
@@ -506,6 +511,7 @@ export const BattleProvider = ({ children }) => {
           values,
           hand,
           board,
+          deck,
           battleEffects,
           resettingState,
         }

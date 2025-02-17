@@ -61,7 +61,7 @@ function GameTokens(props) {
 
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography color='primary' textTransform={'uppercase'} fontSize={'12px'}>
-            {game.player_name} - #{game.id}
+            {game.playerName} - #{game.id}
           </Typography>
 
           {game.xp ? <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

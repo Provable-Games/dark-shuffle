@@ -50,7 +50,7 @@ export const DraftProvider = ({ children }) => {
 
       game.setGameSettings(settings)
 
-      game.setGame(gameValues)
+      game.setGame({ ...gameValues, playerName: tokenData.playerName })
       setOptions(draftValues.options.map(option => CARD_DETAILS(option)))
     }
   }

@@ -77,7 +77,6 @@ export const components = {
 
     hand: 'array',
     deck: 'array',
-    deckIndex: Number(),
 
     battleEffects: 'BattleEffects',
   },

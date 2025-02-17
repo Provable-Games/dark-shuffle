@@ -28,6 +28,7 @@ export async function getTournament(tournament_id) {
           entry_fee {
             Some {
               amount
+              distribution
             }
           }
         }
@@ -40,12 +41,20 @@ export async function getTournament(tournament_id) {
         }
       }
     }
+    tournamentsLeaderboardModels(where:{tournament_id:"${tournament_id}"}) {
+      edges {
+        node {
+          token_ids
+        }
+      }
+    }
   }`
 
   const res = await request(dojoConfig.toriiUrl, document)
   return {
     tournament: res?.tournamentsTournamentModels?.edges[0]?.node,
-    entryCount: res?.tournamentsEntryCountModels?.edges[0]?.node?.count || 0
+    entryCount: res?.tournamentsEntryCountModels?.edges[0]?.node?.count || 0,
+    leaderboard: res?.tournamentsLeaderboardModels?.edges[0]?.node?.token_ids || []
   }
 }
 
@@ -419,7 +428,7 @@ export const populateGameTokens = async (tokenIds) => {
 
       return {
         id: tokenId,
-        player_name: hexToAscii(metaData.player_name),
+        playerName: hexToAscii(metaData.player_name),
         available_at: parseInt(metaData.available_at, 16) * 1000,
         expires_at,
         tokenId,
@@ -471,4 +480,30 @@ export async function getActiveTournaments() {
   const res = await request(dojoConfig.toriiUrl, document)
   let tournaments = res?.tournamentsTournamentModels?.edges.map(edge => edge.node)
   return tournaments.filter(tournament => tournament.game_config.address === GAME_ADDRESS.toLowerCase() && parseInt(tournament.schedule.game.end, 16) * 1000 > Date.now())
+}
+
+export async function getTournamentScores(tournament_id) {
+  const data = await getTournamentRegistrations(tournament_id)
+  let gameIds = data.map(tokenId => `"${tokenId.toString()}"`);
+  let leaderboardSize = 10;
+
+  try {
+    const document = gql`
+    {
+      ${NS_SHORT}GameModels (where: {game_idIN:[${gameIds}]}, order:{field:HERO_XP, direction:DESC}, limit:${leaderboardSize}) {
+        edges {
+          node {
+            game_id,
+            hero_xp
+          }
+        }
+      }
+    }
+  `
+    const res = await request(dojoConfig.toriiUrl, document);
+
+    return res?.[`${NS_SHORT}GameModels`]?.edges.map(edge => edge.node.game_id);
+  } catch (ex) {
+    console.log(ex)
+  }
 }

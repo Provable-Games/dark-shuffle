@@ -68,7 +68,7 @@ export const ReplayProvider = ({ children }) => {
     setTranslatedEvents(prev => ({ ...prev, [step]: events }))
   }
 
-  const startReplay = async (game) => {
+  const startReplay = async (_game) => {
     if (!account) {
       connect({ connector: cartridgeConnector })
       return
@@ -76,8 +76,8 @@ export const ReplayProvider = ({ children }) => {
 
     setLoadingReplay(true)
 
-    let txs = await getGameTxs(game.id)
-    let settings = await getSettings(game.settingsId)
+    let txs = await getGameTxs(_game.id)
+    let settings = await getSettings(_game.settingsId)
     game.setGameSettings(settings)
 
     if (txs.length > 0) {
