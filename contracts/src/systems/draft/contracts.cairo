@@ -15,11 +15,17 @@ mod draft_systems {
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
+    use tournaments::components::models::game::TokenMetadata;
+    use tournaments::components::models::lifecycle::Lifecycle;
 
     #[abi(embed_v0)]
     impl DraftSystemsImpl of super::IDraftSystems<ContractState> {
         fn pick_card(ref self: ContractState, game_id: u64, option_id: u8) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
+
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
 
             let mut game: Game = world.read_model(game_id);
             game.assert_owner(world);

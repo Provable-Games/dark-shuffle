@@ -22,6 +22,9 @@ mod battle_systems {
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
+    use tournaments::components::models::game::TokenMetadata;
+    use tournaments::components::models::lifecycle::Lifecycle;
 
     #[abi(embed_v0)]
     impl BattleSystemsImpl of super::IBattleSystems<ContractState> {
@@ -29,6 +32,9 @@ mod battle_systems {
             assert(*(*actions.at(actions.len() - 1)).at(0) == 1, 'Must end turn');
 
             let mut world: WorldStorage = self.world(DEFAULT_NS());
+
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
 
             let mut battle: Battle = world.read_model((battle_id, game_id));
             battle.assert_battle(world);
