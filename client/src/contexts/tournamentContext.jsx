@@ -1,7 +1,7 @@
 import { useAccount, useConnect } from '@starknet-react/core';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { dojoConfig } from '../../dojo.config';
-import { getActiveTournaments, getTournament } from '../api/indexer';
+import { getActiveTournaments, getTournament, getTournamentScores } from '../api/indexer';
 import TournamentSDK from '../sdk/tournaments';
 import { DojoContext } from './dojoContext';
 import { translateEvent } from '../helpers/events';
@@ -30,6 +30,9 @@ export const TournamentProvider = ({ children }) => {
       end: parseInt(data.tournament.schedule?.game?.end || 0, 16),
       entryFee: entryFee,
       rewardPool: entryFee * data.entryCount,
+      distribution: data.tournament.entry_fee?.Some?.distribution || [],
+      submissionPeriod: parseInt(data.tournament.schedule?.submission_period || 0, 16),
+      leaderboard: data.leaderboard.map(tokenId => Number(tokenId))
     })
   }
 
@@ -42,7 +45,8 @@ export const TournamentProvider = ({ children }) => {
       description: tournament.metadata?.description || "",
       start: parseInt(tournament.schedule?.game?.start || 0, 16),
       end: parseInt(tournament.schedule?.game?.end || 0, 16),
-      entryFee: parseInt(tournament.entry_fee?.Some?.amount || 0, 16)
+      entryFee: parseInt(tournament.entry_fee?.Some?.amount || 0, 16),
+      submissionPeriod: parseInt(tournament.schedule?.submission_period || 0, 16)
     })))
   }
 
@@ -64,6 +68,15 @@ export const TournamentProvider = ({ children }) => {
     return tokenMetadata
   }
 
+  const submitScores = async (tournamentId) => {
+    const scores = await getTournamentScores(tournamentId)
+    await tournamentSDK.submitScores({ account, tournamentId, scores })
+  }
+
+  const distributePrizes = async (tournamentId) => {
+    await tournamentSDK.distributePrizes({ account, tournamentId })
+  }
+
   return (
     <TournamentContext.Provider value={{
       season,
@@ -71,6 +84,8 @@ export const TournamentProvider = ({ children }) => {
 
       actions: {
         enterTournament,
+        submitScores,
+        distributePrizes
       }
     }}>
       {children}

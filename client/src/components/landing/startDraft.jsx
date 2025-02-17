@@ -121,6 +121,8 @@ function StartDraft() {
         gameId: data.game_id,
         state: data.state,
 
+        playerName: game.playerName,
+
         heroHealth: data.hero_health,
         heroXp: data.hero_xp,
         monstersSlain: data.monsters_slain,

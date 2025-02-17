@@ -32,6 +32,15 @@ class TournamentSDK {
     return tournamentDetails;
   }
 
+  async getTournamentLeaderboard(tournamentId) {
+    const leaderboard = await this.provider.call(this.namespace, {
+      contractName: this.contractName,
+      entrypoint: "get_leaderboard",
+      calldata: [tournamentId]
+    });
+    return leaderboard;
+  }
+
   async enterTournament({ account, tournamentId, playerName }) {
     const tournamentDetails = await this.getTournamentDetails(tournamentId)
     if (!tournamentDetails.creator) {
@@ -51,13 +60,49 @@ class TournamentSDK {
       contractName: this.contractName,
       entrypoint: "enter_tournament",
       calldata: [
-          tournamentId,
-          '0x' + playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
-          account.address,
-          1
-        ]
+        tournamentId,
+        '0x' + playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
+        account.address,
+        1
+      ]
     })
 
+    return this.execute(account, txs);
+  }
+
+  async submitScore({ account, tournamentId, tokenId, position }) {
+    return this.execute(account, [
+      {
+        contractName: this.contractName,
+        entrypoint: "submit_score",
+        calldata: [tournamentId, tokenId, position]
+      }
+    ]);
+  }
+
+  async submitScores({ account, tournamentId, scores }) {
+    let txs = []
+    for (let i = 0; i < scores.length; i++) {
+      txs.push({
+        contractName: this.contractName,
+        entrypoint: "submit_score",
+        calldata: [tournamentId, scores[i], i + 1]
+      })
+    }
+    return this.execute(account, txs);
+  }
+
+  async distributePrizes({ account, tournamentId }) {
+    const leaderboard = await this.getTournamentLeaderboard(tournamentId)
+
+    let txs = []
+    for (let position = 1; position <= leaderboard.length; position++) {
+      txs.push({
+        contractName: this.contractName,
+        entrypoint: "claim_prize",
+        calldata: [tournamentId, 0, 2, position]
+      })
+    }
     return this.execute(account, txs);
   }
 }

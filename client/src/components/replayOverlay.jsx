@@ -43,7 +43,7 @@ function ReplayOverlay(props) {
           <Typography color={'#FFF'} sx={{ fontSize: '10px', mt: '-2px' }}>(Left Arrow)</Typography>
         </Box>
       </Box> : <Box sx={{ pl: 1, width: '150px' }}>
-        <Typography>{replay.spectatingGame.player_name}</Typography>
+        <Typography>{replay.spectatingGame.playerName}</Typography>
         <Typography sx={{ fontSize: '12px' }}>#{replay.spectatingGame.id}</Typography>
       </Box>
       }
