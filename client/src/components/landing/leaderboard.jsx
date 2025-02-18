@@ -77,7 +77,7 @@ function Leaderboard() {
         <Tab value={'two'} label="Active" />
 
         <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <Pagination count={10} shape="rounded" color='primary' size='small' page={page} onChange={handleChange} />
+          <Pagination count={Math.max(1, Math.floor(registrations.length / 10))} shape="rounded" color='primary' size='small' page={page} onChange={handleChange} />
         </Box>
       </Tabs>
 
