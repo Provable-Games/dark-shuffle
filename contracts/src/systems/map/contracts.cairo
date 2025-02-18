@@ -8,9 +8,9 @@ trait IMapSystems<T> {
 mod map_systems {
     use achievement::store::{Store, StoreTrait};
     use darkshuffle::constants::{DEFAULT_NS};
-
     use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait};
     use darkshuffle::models::map::{Map, MonsterNode};
+    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
     use darkshuffle::utils::{map::MapUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;

@@ -34,14 +34,17 @@ mod game_systems {
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    
+
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
-    
+
     use openzeppelin_introspection::src5::SRC5Component;
     use openzeppelin_token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
     use starknet::{ContractAddress, get_caller_address, get_contract_address, get_tx_info};
-    use tournaments::components::game::{IGame, IGameDetails, ISettings, game_component};
+    use tournaments::components::game::game_component;
+    use tournaments::components::interfaces::{IGameDetails, IGameToken, ISettings};
+    use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
     use tournaments::components::models::game::{TokenMetadata};
+    use tournaments::components::models::lifecycle::{Lifecycle};
 
     component!(path: game_component, storage: game, event: GameEvent);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -269,8 +272,7 @@ mod game_systems {
         fn validate_start_conditions(self: @ContractState, token_id: u64, token_metadata: @TokenMetadata) {
             self.assert_token_ownership(token_id);
             self.assert_game_not_started(token_id);
-            self.assert_game_is_available(token_id, *token_metadata.available_at);
-            self.assert_game_not_expired(token_id, *token_metadata.expires_at);
+            token_metadata.lifecycle.assert_is_playable(token_id, starknet::get_block_timestamp());
         }
 
         #[inline(always)]
@@ -287,22 +289,6 @@ mod game_systems {
         fn assert_game_not_started(self: @ContractState, game_id: u64) {
             let game: Game = self.world(DEFAULT_NS()).read_model(game_id);
             assert!(game.hero_xp == 0, "Dark Shuffle: Game {} has already started", game_id);
-        }
-
-        #[inline(always)]
-        fn assert_game_not_expired(self: @ContractState, game_id: u64, expires_at: u64) {
-            let now = starknet::get_block_timestamp();
-            if expires_at != 0 {
-                assert!(now < expires_at, "Dark Shuffle: Game {} expired at {}", game_id, expires_at);
-            }
-        }
-
-        #[inline(always)]
-        fn assert_game_is_available(self: @ContractState, game_id: u64, available_at: u64) {
-            let now = starknet::get_block_timestamp();
-            if available_at != 0 {
-                assert!(now >= available_at, "Dark Shuffle: Game {} is not playable until {}", game_id, available_at);
-            }
         }
     }
 }
