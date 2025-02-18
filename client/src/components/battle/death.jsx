@@ -55,7 +55,7 @@ function DeathDialog(props) {
           </Typography>
 
           <Typography variant="h1" mt={1} color='primary'>
-            {game.values.heroXp}
+            {game.score}
           </Typography>
         </Box>
       </Box>

@@ -18,7 +18,7 @@ function SmallCard(props) {
         </Typography>
       </Box>
 
-      <Typography fontSize={isMobile && '11px'}>
+      <Typography fontSize={isMobile && '11px'} noWrap>
         {card.name}
       </Typography>
     </Box>

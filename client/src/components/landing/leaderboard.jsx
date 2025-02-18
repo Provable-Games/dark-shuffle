@@ -82,14 +82,14 @@ function Leaderboard() {
       </Tabs>
 
       <Box sx={styles.header}>
+        <Box width='25px' textAlign={'center'}>
+        </Box>
+
         <Box width='30px' textAlign={'center'}>
+          <Typography>#</Typography>
         </Box>
 
-        <Box width='50px' textAlign={'center'}>
-          <Typography>Rank</Typography>
-        </Box>
-
-        <Box width={isMobile ? '135px' : '235px'}>
+        <Box width={isMobile ? '150px' : '250px'}>
           <Typography>Player</Typography>
         </Box>
 
@@ -98,7 +98,7 @@ function Leaderboard() {
             {tab === 'one' ? 'Score' : 'XP'}
           </Typography>
         </Box>
-        <Box width='70px' textAlign={'center'}></Box>
+        <Box width='75px' textAlign={'center'}></Box>
       </Box>
 
       {loading && <Box />}
@@ -120,11 +120,11 @@ function Leaderboard() {
                   </IconButton>}
                 </Box>
 
-                <Box width='50px' textAlign={'center'}>
+                <Box width='30px' textAlign={'center'}>
                   <Typography>{rank}</Typography>
                 </Box>
 
-                <Box width={isMobile ? '135px' : '235px'}>
+                <Box width={isMobile ? '150px' : '250px'}>
                   <Typography>{game.playerName}</Typography>
                 </Box>
 
@@ -132,7 +132,7 @@ function Leaderboard() {
                   <Typography>{game.xp}</Typography>
                 </Box>
 
-                <Box width='70px' display={'flex'} gap={0.5} alignItems={'center'}>
+                <Box width='75px' display={'flex'} gap={0.5} alignItems={'center'}>
                   {tab === 'one' && rank <= season.distribution?.length && <>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#FFE97F" height={12}><path d="M0 12v2h1v2h6V4h2v12h6v-2h1v-2h-2v2h-3V4h2V0h-2v2H9V0H7v2H5V0H3v4h2v10H2v-2z"></path></svg>
                     <Typography color={'primary'} sx={{ fontSize: '12px' }}>
