@@ -8,20 +8,20 @@ x = "https://x.com/await_0x"
 github = "https://github.com/Await-0x/dark-shuffle"
 
 [init_call_args]
-"ds-game_systems" = [
+"ds_v1_1_0-game_systems" = [
     "0x03c0f67740e3fe298a52fe75dd24b4981217406f133e0835331379731b67dc92",
 ]
 
 [namespace]
-default = "ds"
+default = "ds_v1_1_0"
 
 [writers]
-"ds" = [
-    "ds-game_systems",
-    "ds-battle_systems",
-    "ds-draft_systems",
-    "ds-map_systems",
-    "ds-config_systems",
+"ds_v1_1_0" = [
+    "ds_v1_1_0-game_systems",
+    "ds_v1_1_0-battle_systems",
+    "ds_v1_1_0-draft_systems",
+    "ds_v1_1_0-map_systems",
+    "ds_v1_1_0-config_systems",
 ]
 
 [env]
