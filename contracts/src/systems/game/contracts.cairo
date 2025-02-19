@@ -15,6 +15,7 @@ trait IGameSystems<T> {
     fn monsters_slain(self: @T, game_id: u64) -> u16;
     fn player_name(self: @T, game_id: u64) -> felt252;
     fn xp(self: @T, game_id: u64) -> u16;
+    fn score_model_and_attribute(self: @T) -> (felt252, felt252);
 }
 
 #[dojo::contract]
@@ -230,6 +231,10 @@ mod game_systems {
             let world: WorldStorage = self.world(DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.action_count
+        }
+
+        fn score_model_and_attribute(self: @ContractState) -> (felt252, felt252) {
+            ('Game', 'hero_xp')
         }
     }
 
