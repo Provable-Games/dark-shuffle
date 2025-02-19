@@ -12,7 +12,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
 use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
 
-use starknet::{ContractAddress, contract_address_const};
+use starknet::{ContractAddress, contract_address_const, testing};
 
 fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
     let (mut world, game_systems_dispatcher) = spawn_darkshuffle();
@@ -32,12 +32,12 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
 
 #[test] // 93743705 gas
 fn gas_check() {
-    let (mut world, game_id, game_systems_dispatcher) = setup();
+    setup();
 }
 
-#[test]  // 1284384 with introspectpacked, 2593706 without
+#[test] // 1284384 with introspectpacked, 2593706 without
 fn gas_check_game_model() {
-    let (mut world, game_id, game_systems_dispatcher) = setup();
+    let (mut world, game_id, _) = setup();
 
     let game = Game {
         game_id,
@@ -66,4 +66,28 @@ fn game_test_start_game() {
     assert(game.exists(), 'Game not created');
     assert(game.state.into() == GameState::Draft, 'Game state not set to draft');
     assert(draft.options.len() > 0, 'Draft options not set');
+}
+
+#[test]
+#[should_panic(expected: ("Dark Shuffle: Game 1 has already started", 'ENTRYPOINT_FAILED'))]
+fn test_cannot_start_game_twice() {
+    let (_, game_id, game_systems_dispatcher) = setup();
+
+    // Start the game first time
+    game_systems_dispatcher.start_game(game_id);
+
+    // Attempt to start the same game again - should fail
+    game_systems_dispatcher.start_game(game_id);
+}
+
+#[test]
+#[should_panic(expected: ("Dark Shuffle: Caller is not owner of token 1", 'ENTRYPOINT_FAILED'))]
+fn test_only_owner_can_start_game() {
+    let (_, game_id, game_systems_dispatcher) = setup();
+
+    testing::set_contract_address(contract_address_const::<'not_owner'>());
+    testing::set_account_contract_address(contract_address_const::<'not_owner'>());
+
+    // Attempt to start someone else's game - should fail
+    game_systems_dispatcher.start_game(game_id);
 }
