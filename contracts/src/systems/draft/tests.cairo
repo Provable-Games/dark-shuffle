@@ -66,5 +66,5 @@ fn draft_test_draft_complete() {
 
     assert(draft.cards.len() == 20, 'Draft not complete');
     assert(*draft.options.at(0) == 1, 'Options should not be updated');
-    assert(game.state == GameState::Map, 'Game state not set to map');
+    assert(game.state.into() == GameState::Map, 'Game state not set to map');
 }

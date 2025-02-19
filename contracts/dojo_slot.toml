@@ -1,26 +1,32 @@
 [world]
-seed = "darkshuffle"
-name = "Dark Shuffle"
-description = "Enter the darkness"
-website = "https://darkshuffle.io/"
+name = "Provable Games"
+description = "PG Slot World"
+seed = "pg"
 
 [world.socials]
 x = "https://x.com/await_0x"
 github = "https://github.com/Await-0x/dark-shuffle"
 
+[init_call_args]
+"ds_v1_1_0-game_systems" = [
+    "0x03c0f67740e3fe298a52fe75dd24b4981217406f133e0835331379731b67dc92",
+]
+
 [namespace]
-default = "darkshuffle"
+default = "ds_v1_1_0"
 
 [writers]
-"darkshuffle" = [
-    "darkshuffle-game_systems",
-    "darkshuffle-battle_systems",
-    "darkshuffle-draft_systems",
-    "darkshuffle-map_systems",
-    "darkshuffle-config_systems",
+"ds_v1_1_0" = [
+    "ds_v1_1_0-game_systems",
+    "ds_v1_1_0-battle_systems",
+    "ds_v1_1_0-draft_systems",
+    "ds_v1_1_0-map_systems",
+    "ds_v1_1_0-config_systems",
 ]
 
 [env]
-rpc_url = "https://api.cartridge.gg/x/darkshuffle-slot/katana"
-account_address = "0x6677fe62ee39c7b07401f754138502bab7fac99d2d3c5d37df7d1c6fab10819"
-private_key = "0x3e3979c1ed728490308054fe357a9f49cf67f80f9721f44cc57235129e090f4"
+chain_id = "WP_PG"
+rpc_url = "https://api.cartridge.gg/x/pg/katana"
+account_address = "0x5b6b8189bb580f0df1e6d6bec509ff0d6c9be7365d10627e0cf222ec1b47a71"
+private_key = "0x33003003001800009900180300d206308b0070db00121318d17b5e6262150b"
+world_address = "0x04254b770ec69289dae26a6b488cc75689b3765171423cae8d648323ae4de44a"

@@ -34,7 +34,7 @@ fn create_game(ref world: WorldStorage, game_id: u64, state: GameState) {
         .write_model_test(
             @Game {
                 game_id,
-                state,
+                state: state.into(),
                 hero_health: 100,
                 hero_xp: 1,
                 monsters_slain: 0,

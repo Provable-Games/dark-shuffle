@@ -64,7 +64,7 @@ fn config_test_draft_size() {
     let game: Game = world.read_model(game_id);
 
     assert(draft.cards.len() == 5, 'Selected card is not set');
-    assert(game.state == GameState::Map, 'Game state not set to map');
+    assert(game.state.into() == GameState::Map, 'Game state not set to map');
 }
 
 #[test] // 108082996 gas
@@ -79,7 +79,7 @@ fn config_test_start_battle() {
     let mut game: Game = world.read_model(game_id);
     game.map_depth = 1;
     game.map_level = 1;
-    game.state = GameState::Map;
+    game.state = GameState::Map.into();
     world.write_model_test(@game);
 
     let node_id = 1;
