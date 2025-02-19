@@ -29,7 +29,32 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
     (world, game_id, game_systems_dispatcher)
 }
 
-#[test] // 83761896 gas
+
+#[test] // 93743705 gas
+fn gas_check() {
+    let (mut world, game_id, game_systems_dispatcher) = setup();
+}
+
+#[test]  // 1284384 with introspectpacked, 2593706 without
+fn gas_check_game_model() {
+    let (mut world, game_id, game_systems_dispatcher) = setup();
+
+    let game = Game {
+        game_id,
+        state: 1,
+        hero_health: 50,
+        hero_xp: 1,
+        monsters_slain: 0,
+        map_level: 0,
+        map_depth: 6,
+        last_node_id: 0,
+        action_count: 0,
+    };
+
+    world.write_model(@game);
+}
+
+#[test]
 fn game_test_start_game() {
     let (mut world, game_id, game_systems_dispatcher) = setup();
 
@@ -39,6 +64,6 @@ fn game_test_start_game() {
     let draft: Draft = world.read_model(game_id);
 
     assert(game.exists(), 'Game not created');
-    assert(game.state == GameState::Draft, 'Game state not set to draft');
+    assert(game.state.into() == GameState::Draft, 'Game state not set to draft');
     assert(draft.options.len() > 0, 'Draft options not set');
 }

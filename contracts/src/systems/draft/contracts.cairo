@@ -38,7 +38,7 @@ mod draft_systems {
             let current_draft_size = draft.cards.len();
 
             if current_draft_size == game_settings.draft_size.into() {
-                game.state = GameState::Map;
+                game.state = GameState::Map.into();
                 game.action_count = current_draft_size.try_into().unwrap();
                 world.write_model(@game);
             } else {

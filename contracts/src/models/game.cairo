@@ -7,7 +7,7 @@ use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721Dispatche
 use starknet::{get_caller_address};
 use tournaments::components::interfaces::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Game {
     #[key]
@@ -19,7 +19,7 @@ pub struct Game {
     map_depth: u8,
     last_node_id: u8,
     action_count: u16,
-    state: GameState,
+    state: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -63,6 +63,19 @@ impl GameStateIntoU8 of Into<GameState, u8> {
     }
 }
 
+impl IntoU8GameState of Into<u8, GameState> {
+    fn into(self: u8) -> GameState {
+        let state: felt252 = self.into();
+        match state {
+            0 => GameState::Draft,
+            1 => GameState::Battle,
+            2 => GameState::Map,
+            3 => GameState::Over,
+            _ => GameState::Over,
+        }
+    }
+}
+
 #[generate_trait]
 impl GameOwnerImpl of GameOwnerTrait {
     fn update_metadata(self: Game, world: WorldStorage) {
@@ -78,16 +91,16 @@ impl GameOwnerImpl of GameOwnerTrait {
     }
 
     fn assert_draft(self: Game) {
-        assert(self.state == GameState::Draft, 'Not Draft');
+        assert(self.state.into() == GameState::Draft, 'Not Draft');
     }
 
     fn assert_generate_tree(self: Game) {
-        assert(self.state == GameState::Map, 'Not Map');
+        assert(self.state.into() == GameState::Map, 'Not Map');
         assert(self.map_depth == LAST_NODE_DEPTH, 'Tree Not Completed');
     }
 
     fn assert_select_node(self: Game) {
-        assert(self.state == GameState::Map, 'Not Map');
+        assert(self.state.into() == GameState::Map, 'Not Map');
     }
 
     fn exists(self: Game) -> bool {

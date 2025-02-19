@@ -115,7 +115,7 @@ impl MapUtilsImpl of MapUtilsTrait {
         let game_effects: GameEffects = world.read_model(game.game_id);
         let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game.game_id);
 
-        game.state = GameState::Battle;
+        game.state = GameState::Battle.into();
 
         let mut battle = Battle {
             battle_id: game.monsters_slain + 1,

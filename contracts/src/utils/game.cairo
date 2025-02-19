@@ -55,7 +55,7 @@ impl GameUtilsImpl of GameUtilsTrait {
         Self::add_monster_reward(ref game_effects, ref battle);
 
         game.monsters_slain += 1;
-        game.state = GameState::Map;
+        game.state = GameState::Map.into();
         game.map_depth += 1;
         game.hero_health = battle.hero.health;
         game.hero_xp += monster_node.health.into();
@@ -65,7 +65,7 @@ impl GameUtilsImpl of GameUtilsTrait {
     }
 
     fn battle_lost(ref world: WorldStorage, ref battle: Battle, ref game: Game, monster_node: MonsterNode) {
-        game.state = GameState::Over;
+        game.state = GameState::Over.into();
 
         // TODO: health should already be zero so this is should either be removed or be an assertion
         game.hero_health = 0;

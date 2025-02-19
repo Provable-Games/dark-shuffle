@@ -75,7 +75,7 @@ fn map_test_select_node() {
     let battle: Battle = world.read_model((game.game_id, game.monsters_slain + 1));
 
     assert(game.last_node_id == node_id, 'Node id is not set');
-    assert(game.state == GameState::Battle, 'Game state not set to battle');
+    assert(game.state.into() == GameState::Battle, 'Game state not set to battle');
     assert(battle.hero.health > 0, 'Hero health is not set');
     assert(battle.monster.health > 0, 'Monster health is not set');
     assert(battle.hand.len() == 5, 'Hand size is not 5');
