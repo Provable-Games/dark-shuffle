@@ -1,8 +1,7 @@
 [world]
-seed = "darkshuffle_v1.1.0"
-name = "Dark Shuffle"
-description = "Enter the darkness"
-website = "https://darkshuffle.io/"
+name = "Provable Games"
+description = "PG Sepolia World"
+seed = "pg_sepolia"
 
 [namespace]
 default = "ds"
@@ -22,4 +21,5 @@ default = "ds"
 ]
 
 [env]
-world_address = "0x021cc11eab0001dade1751f7934596d67c6fd95b7659560520c620c82c8a537b"
+rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
+world_address = "0x01ae9655937bde6abec7a89152ec645bc9a4993ddbb7d58075852f3dc8c39099"

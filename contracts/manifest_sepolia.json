@@ -1,9 +1,9 @@
 {
   "world": {
     "class_hash": "0x45575a88cc5cef1e444c77ce60b7b4c9e73a01cbbe20926d5a4c72a94011410",
-    "address": "0x21cc11eab0001dade1751f7934596d67c6fd95b7659560520c620c82c8a537b",
-    "seed": "darkshuffle_v1.1.0",
-    "name": "Dark Shuffle",
+    "address": "0x1ae9655937bde6abec7a89152ec645bc9a4993ddbb7d58075852f3dc8c39099",
+    "seed": "pg_sepolia",
+    "name": "Provable Games",
     "entrypoints": [
       "uuid",
       "set_metadata",
@@ -1252,8 +1252,8 @@
   },
   "contracts": [
     {
-      "address": "0xe198072d27ce9c96cbacf845dcf694fa2c28171dbf66b2422245223de82de",
-      "class_hash": "0x54fa8c2794ca04064d70a2dca92b8454947798b95ebc268d7ad66d3052aa004",
+      "address": "0x68f6cfb6a58ef4fe0697c2af803f11a15a6bd0562c4b1d51e9da0ac7c8de70f",
+      "class_hash": "0x1373d6c62c14fad2a7af7c5ebc1d4f1b9570785b633d5dd7536a47e30884ed",
       "abi": [
         {
           "type": "impl",
@@ -1480,8 +1480,8 @@
       ]
     },
     {
-      "address": "0x1da781e3d6420f23b6072b1a4064dfc9896cd47f33ab5f849cf651c1c730e6c",
-      "class_hash": "0x56d94562b104fa3441704b1b4f79072bdeaefa71437b3deb336bddf392e48d4",
+      "address": "0x213fe12f8fca32c8a52b134f36137c22b2434c774e34fd423318bd3e1d3831b",
+      "class_hash": "0x25fe2f3d6cf3b9079eb7af2843cce33f409919230f24d4a838f841b0375754e",
       "abi": [
         {
           "type": "impl",
@@ -1815,8 +1815,8 @@
       ]
     },
     {
-      "address": "0x5e6dc86245d78b0721a031ac5a7a65f9427c94d45b742f2588469acbf6b70e4",
-      "class_hash": "0x4a693033f05ab4f94348b69c16245d5fdfd493bdd884efea292cf8f99dcbb14",
+      "address": "0x4de32661f8659b4344548d27b9e7dd5bf214795189a73e443bc628276563d43",
+      "class_hash": "0x794a0064e92bc1fa46e6797d9d0e3556ab0de5597d791e5b838ce41d1821031",
       "abi": [
         {
           "type": "impl",
@@ -2019,8 +2019,8 @@
       ]
     },
     {
-      "address": "0x711a2ed50ba5442259950cf741b81f66f17b9b751e44d0368a87926a3233e3e",
-      "class_hash": "0x75006737f0ce65ae3090e0340be06cb491fb8183c60b472b4c7b6631446a30a",
+      "address": "0x7d287fa09f10aec70776cbfee96e229c9cdd9c13ba6dd0d74247a0b360f53b5",
+      "class_hash": "0x7aa4114df2b496540b3c743de38e3de2548fdf749fa09ac36cdcefd1b9cc2e0",
       "abi": [
         {
           "type": "impl",
@@ -2087,7 +2087,7 @@
         {
           "type": "impl",
           "name": "SettingsImpl",
-          "interface_name": "tournaments::components::game::ISettings"
+          "interface_name": "tournaments::components::interfaces::ISettings"
         },
         {
           "type": "enum",
@@ -2105,7 +2105,7 @@
         },
         {
           "type": "interface",
-          "name": "tournaments::components::game::ISettings",
+          "name": "tournaments::components::interfaces::ISettings",
           "items": [
             {
               "type": "function",
@@ -2128,11 +2128,11 @@
         {
           "type": "impl",
           "name": "GameDetailsImpl",
-          "interface_name": "tournaments::components::game::IGameDetails"
+          "interface_name": "tournaments::components::interfaces::IGameDetails"
         },
         {
           "type": "interface",
-          "name": "tournaments::components::game::IGameDetails",
+          "name": "tournaments::components::interfaces::IGameDetails",
           "items": [
             {
               "type": "function",
@@ -2488,7 +2488,21 @@
         {
           "type": "impl",
           "name": "GameImpl",
-          "interface_name": "tournaments::components::game::IGame"
+          "interface_name": "tournaments::components::interfaces::IGameToken"
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::integer::u64>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::integer::u64"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
         },
         {
           "type": "struct",
@@ -2530,6 +2544,24 @@
         },
         {
           "type": "struct",
+          "name": "tournaments::components::models::lifecycle::Lifecycle",
+          "members": [
+            {
+              "name": "mint",
+              "type": "core::integer::u64"
+            },
+            {
+              "name": "start",
+              "type": "core::option::Option::<core::integer::u64>"
+            },
+            {
+              "name": "end",
+              "type": "core::option::Option::<core::integer::u64>"
+            }
+          ]
+        },
+        {
+          "type": "struct",
           "name": "tournaments::components::models::game::TokenMetadata",
           "members": [
             {
@@ -2549,22 +2581,14 @@
               "type": "core::integer::u32"
             },
             {
-              "name": "minted_at",
-              "type": "core::integer::u64"
-            },
-            {
-              "name": "available_at",
-              "type": "core::integer::u64"
-            },
-            {
-              "name": "expires_at",
-              "type": "core::integer::u64"
+              "name": "lifecycle",
+              "type": "tournaments::components::models::lifecycle::Lifecycle"
             }
           ]
         },
         {
           "type": "interface",
-          "name": "tournaments::components::game::IGame",
+          "name": "tournaments::components::interfaces::IGameToken",
           "items": [
             {
               "type": "function",
@@ -2579,12 +2603,12 @@
                   "type": "core::integer::u32"
                 },
                 {
-                  "name": "available_at",
-                  "type": "core::integer::u64"
+                  "name": "start",
+                  "type": "core::option::Option::<core::integer::u64>"
                 },
                 {
-                  "name": "expires_at",
-                  "type": "core::integer::u64"
+                  "name": "end",
+                  "type": "core::option::Option::<core::integer::u64>"
                 },
                 {
                   "name": "to",
@@ -2596,6 +2620,18 @@
                   "type": "core::integer::u64"
                 }
               ],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "emit_metadata_update",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [],
               "state_mutability": "external"
             },
             {
@@ -3007,9 +3043,27 @@
         },
         {
           "type": "event",
+          "name": "tournaments::components::game::game_component::MetadataUpdateEvent",
+          "kind": "struct",
+          "members": [
+            {
+              "name": "token_id",
+              "type": "core::integer::u256",
+              "kind": "data"
+            }
+          ]
+        },
+        {
+          "type": "event",
           "name": "tournaments::components::game::game_component::Event",
           "kind": "enum",
-          "variants": []
+          "variants": [
+            {
+              "name": "MetadataUpdate",
+              "type": "tournaments::components::game::game_component::MetadataUpdateEvent",
+              "kind": "nested"
+            }
+          ]
         },
         {
           "type": "event",
@@ -3148,6 +3202,7 @@
         "start_game",
         "upgrade",
         "mint",
+        "emit_metadata_update",
         "safe_transfer_from",
         "transfer_from",
         "approve",
@@ -3158,8 +3213,8 @@
       ]
     },
     {
-      "address": "0x34682994270f6d1f0b80115f0f5174f5746add5df88822fc2c331e52dd08929",
-      "class_hash": "0x2b6aacb77ade0f4ef3cd9fc993fa88e8361ab1d6c414ea86fa077fb1e7f73a2",
+      "address": "0x1e545327414af1b0a489b5fb9db2cd89c4d9243d2ddb6b98214a2cc29694d4e",
+      "class_hash": "0x1e686ed670ffdfb9e9314140b7f172d1e81779676b4ccef63cf136ca9d90f07",
       "abi": [
         {
           "type": "impl",
@@ -3456,7 +3511,7 @@
     },
     {
       "members": [],
-      "class_hash": "0x1aa618f37d71b7e93ef8af5b7e9d99adf1f7e52ea9e2e62fc41fec78fe08f1d",
+      "class_hash": "0x4e2cb9df948d236db5e77096c6e73f94a1335713bfc3bc189bb0e08bf1c70ca",
       "tag": "ds-TokenMetadata",
       "selector": "0x3e00babfacbb8243323b127217b49ca4d8075785903d2503601e85103fd09ae"
     },
