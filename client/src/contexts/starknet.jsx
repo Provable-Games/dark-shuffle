@@ -27,12 +27,12 @@ const map_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace,
 const cartridge = new ControllerConnector({
   policies: [
     {
-      target: game_systems,
-      method: "mint",
+      target: "0x732e479711646fb6d36414eb69bb56ba397a789b0464612e63b08ad9d54912b",
+      method: "enter_tournament",
     },
     {
       target: game_systems,
-      method: "enter_season",
+      method: "mint",
     },
     {
       target: game_systems,
@@ -65,13 +65,14 @@ const cartridge = new ControllerConnector({
     },
   ],
   namespace: dojoConfig.namespace,
-  slot: "darkshuffle-sepolia",
+  slot: "pg-mainnet",
   preset: "dark-shuffle",
   rpc: dojoConfig.rpcUrl,
   colorMode: "dark",
-  indexerUrl: dojoConfig.toriiRawUrl,
+  indexerUrl: dojoConfig.tokenToriiUrl,
   tokens: {
-    erc20: [dojoConfig.lordsAddress]
+    erc20: [dojoConfig.lordsAddress],
+    erc721: [dojoConfig.gameTokenAddress],
   },
   chains: [{ rpcUrl: dojoConfig.rpcUrl }],
   defaultChainId: dojoConfig.chain === "mainnet" ? StarknetChainId.SN_MAIN : StarknetChainId.SN_SEPOLIA,

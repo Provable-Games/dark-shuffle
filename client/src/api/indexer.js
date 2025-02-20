@@ -7,11 +7,12 @@ import { getContractByName } from "@dojoengine/core";
 let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace();
 let GAME_ADDRESS = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
+let GQL_ENDPOINT = dojoConfig.toriiUrl + "/graphql"
 
 export async function getTournament(tournament_id) {
   const document = gql`
   {
-    tournamentsTournamentModels(where:{id:"${tournament_id}"}) {
+    budokanTournamentModels(where:{id:"${tournament_id}"}) {
       edges {
         node {
           id,
@@ -20,7 +21,7 @@ export async function getTournament(tournament_id) {
               start,
               end
             },
-            submission_period
+            submission_duration
           },
           game_config {
             settings_id
@@ -34,14 +35,14 @@ export async function getTournament(tournament_id) {
         }
       }
     }
-    tournamentsEntryCountModels(where:{tournament_id:"${tournament_id}"}) {
+    budokanEntryCountModels(where:{tournament_id:"${tournament_id}"}) {
       edges {
         node {
           count
         }
       }
     }
-    tournamentsLeaderboardModels(where:{tournament_id:"${tournament_id}"}) {
+    budokanLeaderboardModels(where:{tournament_id:"${tournament_id}"}) {
       edges {
         node {
           token_ids
@@ -50,11 +51,11 @@ export async function getTournament(tournament_id) {
     }
   }`
 
-  const res = await request(dojoConfig.toriiUrl, document)
+  const res = await request(GQL_ENDPOINT, document)
   return {
-    tournament: res?.tournamentsTournamentModels?.edges[0]?.node,
-    entryCount: res?.tournamentsEntryCountModels?.edges[0]?.node?.count || 0,
-    leaderboard: res?.tournamentsLeaderboardModels?.edges[0]?.node?.token_ids || []
+    tournament: res?.budokanTournamentModels?.edges[0]?.node,
+    entryCount: res?.budokanEntryCountModels?.edges[0]?.node?.count || 0,
+    leaderboard: res?.budokanLeaderboardModels?.edges[0]?.node?.token_ids || []
   }
 }
 
@@ -76,7 +77,7 @@ export async function getSettings(settings_id) {
     }
   }`
 
-  const res = await request(dojoConfig.toriiUrl, document)
+  const res = await request(GQL_ENDPOINT, document)
 
   return res?.[`${NS_SHORT}GameSettingsModels`]?.edges[0]?.node
 }
@@ -104,7 +105,7 @@ export async function getActiveGame(game_id) {
     }
   }`
 
-  const res = await request(dojoConfig.toriiUrl, document)
+  const res = await request(GQL_ENDPOINT, document)
 
   return res?.[`${NS_SHORT}GameModels`]?.edges[0]?.node;
 }
@@ -123,7 +124,7 @@ export async function getDraft(game_id) {
     }
   }`
 
-  const res = await request(dojoConfig.toriiUrl, document)
+  const res = await request(GQL_ENDPOINT, document)
 
   return res?.entity.models.find(x => x.game_id)
 }
@@ -155,7 +156,7 @@ export async function getGameEffects(game_id) {
     }
   }`
 
-  const res = await request(dojoConfig.toriiUrl, document);
+  const res = await request(GQL_ENDPOINT, document);
 
   return res?.[`${NS_SHORT}GameEffectsModels`]?.edges[0]?.node;
 }
@@ -174,7 +175,7 @@ export async function getMap(game_id, level) {
     }
   }`
 
-  const res = await request(dojoConfig.toriiUrl, document);
+  const res = await request(GQL_ENDPOINT, document);
 
   return res?.[`${NS_SHORT}MapModels`]?.edges[0]?.node;
 }
@@ -248,7 +249,7 @@ export async function getBattleState(battle_id, game_id) {
     }
   }`
 
-  const res = await request(dojoConfig.toriiUrl, document);
+  const res = await request(GQL_ENDPOINT, document);
 
   const result = {
     battle: res?.entity.models.find(model => model.hero),
@@ -261,7 +262,7 @@ export async function getBattleState(battle_id, game_id) {
 export async function getTournamentRegistrations(tournament_id) {
   const document = gql`
   {
-    tournamentsRegistrationModels(where:{tournament_id:"${tournament_id}"}) {
+    budokanRegistrationModels(where:{tournament_id:"${tournament_id}"}) {
       edges {
         node {
           game_token_id
@@ -270,9 +271,9 @@ export async function getTournamentRegistrations(tournament_id) {
     }
   }`
 
-  const res = await request(dojoConfig.toriiUrl, document)
+  const res = await request(GQL_ENDPOINT, document)
 
-  return res?.tournamentsRegistrationModels?.edges.map(edge => parseInt(edge.node.game_token_id, 16))
+  return res?.budokanRegistrationModels?.edges.map(edge => parseInt(edge.node.game_token_id, 16))
 }
 
 
@@ -293,7 +294,7 @@ export async function getLeaderboard(page, game_token_ids) {
       }
     }
   `
-    const res = await request(dojoConfig.toriiUrl, document);
+    const res = await request(GQL_ENDPOINT, document);
 
     return res?.[`${NS_SHORT}GameModels`]?.edges.map(edge => edge.node);
   } catch (ex) {
@@ -318,7 +319,7 @@ export async function getActiveLeaderboard(page, game_token_ids) {
       }
     }
   `
-    const res = await request(dojoConfig.toriiUrl, document);
+    const res = await request(GQL_ENDPOINT, document);
 
     return res?.[`${NS_SHORT}GameModels`]?.edges.map(edge => edge.node);
   } catch (ex) {
@@ -341,7 +342,7 @@ export async function getGameTxs(game_id) {
   }
   `
 
-  const res = await request(dojoConfig.toriiUrl, document);
+  const res = await request(GQL_ENDPOINT, document);
 
   return res?.[`${NS_SHORT}GameActionEventModels`]?.edges.map(edge => edge.node);
 }
@@ -364,7 +365,7 @@ export const getGameTokens = async (accountAddress) => {
   }
   `
 
-  const res = await request(dojoConfig.toriiUrl, document);
+  const res = await request(GQL_ENDPOINT, document);
 
   return res?.tokenBalances?.edges.map(edge => edge.node.tokenMetadata).filter(token => token.contractAddress === GAME_ADDRESS);
 }
@@ -382,8 +383,14 @@ export const populateGameTokens = async (tokenIds) => {
           token_id
           player_name
           settings_id
-          available_at
-          expires_at
+          lifecycle {
+            start {
+              Some
+            }
+            end {
+              Some
+            }
+          }
         }
       }
     }
@@ -400,7 +407,7 @@ export const populateGameTokens = async (tokenIds) => {
       }
     }
 
-    tournamentsRegistrationModels (limit:10000, where:{
+    budokanRegistrationModels (limit:10000, where:{
       game_token_idIN:[${tokenIds}]}
     ){
       edges {
@@ -414,24 +421,25 @@ export const populateGameTokens = async (tokenIds) => {
   `
 
   try {
-    const res = await request(dojoConfig.toriiUrl, document)
+    const res = await request(GQL_ENDPOINT, document)
     let tokenMetadata = res?.[`${NS_SHORT}TokenMetadataModels`]?.edges.map(edge => edge.node) ?? []
     let gameData = res?.[`${NS_SHORT}GameModels`]?.edges.map(edge => edge.node) ?? []
-    let tournaments = res?.tournamentsRegistrationModels?.edges.map(edge => edge.node) ?? []
+    let tournaments = res?.budokanRegistrationModels?.edges.map(edge => edge.node) ?? []
 
     let games = tokenMetadata.map(metaData => {
       let game = gameData.find(game => game.game_id === metaData.token_id)
       let tournament = tournaments.find(tournament => tournament.game_token_id === metaData.token_id)
 
       let tokenId = parseInt(metaData.token_id, 16)
-      let expires_at = parseInt(metaData.expires_at, 16) * 1000
+      let expires_at = parseInt(metaData.lifecycle.end.Some || 0, 16) * 1000
+      let available_at = parseInt(metaData.lifecycle.start.Some || 0, 16) * 1000
 
       return {
         id: tokenId,
-        playerName: hexToAscii(metaData.player_name),
-        available_at: parseInt(metaData.available_at, 16) * 1000,
-        expires_at,
         tokenId,
+        playerName: hexToAscii(metaData.player_name),
+        expires_at,
+        available_at,
         settingsId: parseInt(metaData.settings_id, 16),
         health: game?.hero_health,
         xp: game?.hero_xp,
@@ -449,7 +457,7 @@ export const populateGameTokens = async (tokenIds) => {
 export async function getActiveTournaments() {
   const document = gql`
   {
-    tournamentsTournamentModels(limit:10000) {
+    budokanTournamentModels(limit:10000) {
       edges {
         node {
           id,
@@ -477,8 +485,8 @@ export async function getActiveTournaments() {
     }
   }`
 
-  const res = await request(dojoConfig.toriiUrl, document)
-  let tournaments = res?.tournamentsTournamentModels?.edges.map(edge => edge.node)
+  const res = await request(GQL_ENDPOINT, document)
+  let tournaments = res?.budokanTournamentModels?.edges.map(edge => edge.node)
   return tournaments.filter(tournament => tournament.game_config.address === GAME_ADDRESS.toLowerCase() && parseInt(tournament.schedule.game.end, 16) * 1000 > Date.now())
 }
 
@@ -500,7 +508,7 @@ export async function getTournamentScores(tournament_id) {
       }
     }
   `
-    const res = await request(dojoConfig.toriiUrl, document);
+    const res = await request(GQL_ENDPOINT, document);
 
     return res?.[`${NS_SHORT}GameModels`]?.edges.map(edge => edge.node.game_id);
   } catch (ex) {

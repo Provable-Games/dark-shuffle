@@ -205,7 +205,7 @@ export const ReplayProvider = ({ children }) => {
   const setupToriiClient = async () => {
     const client = await createClient({
       rpcUrl: dojoConfig.rpcUrl,
-      toriiUrl: dojoConfig.toriiRawUrl,
+      toriiUrl: dojoConfig.toriiUrl,
       relayUrl: "",
       worldAddress: dojoConfig.manifest.world.address || "",
     });

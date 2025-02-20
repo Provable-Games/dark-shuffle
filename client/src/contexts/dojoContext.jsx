@@ -9,7 +9,6 @@ import Lords from "../abi/Lords.json";
 import { fetchBalances } from "../api/starknet";
 import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
 import { translateEvent } from "../helpers/events";
-import TournamentSDK from "../sdk/tournaments";
 
 export const DojoContext = createContext()
 

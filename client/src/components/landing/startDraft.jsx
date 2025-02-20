@@ -188,7 +188,7 @@ function StartDraft() {
           </Box>
 
           <Typography variant='h3' textAlign={'center'}>
-            Season 1: New beginnings
+            Season 1 Alpha: New beginnings
           </Typography>
 
           <LoadingButton variant='outlined'
@@ -278,7 +278,7 @@ function StartDraft() {
 
             <Box sx={{ maxWidth: '800px' }}>
               <Typography variant='h3'>
-                Season 1: Spellbound
+                Season 1 Alpha: Spellbound
               </Typography>
 
               <ul style={{ paddingLeft: '16px', color: '#FFE97F' }}>
@@ -321,7 +321,7 @@ function StartDraft() {
                   My Games
                 </Button>
 
-                <LoadingButton color='secondary' variant='outlined' loading={gameState.getState.startStatus}
+                <LoadingButton color='secondary' variant='outlined' loading={gameState.getState.startStatus} disabled={!address}
                   onClick={() => startFreeGame()} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
                   Play Demo
                 </LoadingButton>
