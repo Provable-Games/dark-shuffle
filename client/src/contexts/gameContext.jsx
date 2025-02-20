@@ -48,8 +48,8 @@ export const GameProvider = ({ children }) => {
     const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "mint", calldata: [
       '0x' + dojo.playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
       settingsId,
-      0,
-      0,
+      1,
+      1,
       dojo.address
     ] }])
 
