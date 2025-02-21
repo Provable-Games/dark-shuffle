@@ -1,17 +1,16 @@
 import { createClient } from "@dojoengine/torii-client";
-import { useAccount, useConnect } from '@starknet-react/core';
 import { useSnackbar } from 'notistack';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { RpcProvider } from "starknet";
+import { dojoConfig } from "../../dojo.config";
 import { getGameTxs, getSettings } from '../api/indexer';
 import { CARD_DETAILS, formatBoard } from '../helpers/cards';
+import { LAST_NODE_LEVEL } from "../helpers/constants";
 import { translateEvent } from '../helpers/events';
 import { generateMapNodes } from '../helpers/map';
 import { BattleContext } from './battleContext';
 import { DraftContext } from './draftContext';
 import { GAME_STATES, GameContext } from './gameContext';
-import { dojoConfig } from "../../dojo.config";
-import { useCallback } from "react";
-import { LAST_NODE_LEVEL } from "../helpers/constants";
 
 // Create a context
 const ReplayContext = createContext();
@@ -23,11 +22,9 @@ export const ReplayProvider = ({ children }) => {
   const battle = useContext(BattleContext)
 
   const { enqueueSnackbar } = useSnackbar()
-  const { account } = useAccount()
-  const { connect, connectors } = useConnect();
   const [toriiClient, setToriiClient] = useState(null)
 
-  let cartridgeConnector = connectors.find(conn => conn.id === "controller")
+  let provider = new RpcProvider({ nodeUrl: dojoConfig.rpcUrl });
 
   const [txHashes, setTxHashes] = useState([]);
   const [step, setStep] = useState(0)
@@ -53,7 +50,7 @@ export const ReplayProvider = ({ children }) => {
       return
     }
 
-    const receipt = await dojo.provider.waitForTransaction(txHash || txHashes[step], { retryInterval: 100 })
+    const receipt = await provider.waitForTransaction(txHash || txHashes[step], { retryInterval: 100 })
     if (!receipt) {
       enqueueSnackbar('Failed to load replay', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
       endReplay()
@@ -204,6 +201,7 @@ export const ReplayProvider = ({ children }) => {
         [],
         false,
         (_, data) => {
+          console.log('data', data)
           if (Boolean(data[`${dojoConfig.namespace}-GameActionEvent`])) {
             let gameId = data[`${dojoConfig.namespace}-GameActionEvent`]["game_id"].value
 

@@ -97,7 +97,6 @@ export const DojoProvider = ({ children }) => {
     <DojoContext.Provider
       value={{
         address: address,
-        provider: dojoprovider,
         connecting: isConnecting,
         network: chain.network,
         userName,
