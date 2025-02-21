@@ -13,7 +13,7 @@ openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", ta
 cartridge_vrf = { git = "https://github.com/loothero/vrf.git", branch = "feat/upgrade-starknet-2.8.5" }
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.9" }
 achievement = { git = "https://github.com/cartridge-gg/arcade", tag = "v1.0.9" }
-tournaments = { git = "https://github.com/Provable-Games/tournaments.git", tag = "v0.1.0" }
+tournaments = { git = "https://github.com/Provable-Games/tournaments.git", tag = "v0.1.1" }
 alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git", tag = "cairo-v2.6.0" }
 graffiti = { git = "https://github.com/ponderingdemocritus/graffiti", rev = "bc569531791dbc71c6cd8d9bc154c34eedad31fe" }
 

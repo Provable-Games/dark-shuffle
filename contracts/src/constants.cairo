@@ -24,11 +24,11 @@ const LCG_PRIME: u128 = 281474976710656;
 const VERSION: felt252 = '0.0.1';
 
 fn DEFAULT_NS() -> @ByteArray {
-    @"ds_v1_1_0"
+    @"ds_v1_1_1"
 }
 
 fn DEFAULT_NS_STR() -> ByteArray {
-    "ds_v1_1_0"
+    "ds_v1_1_1"
 }
 
 pub mod DEFAULT_SETTINGS {
