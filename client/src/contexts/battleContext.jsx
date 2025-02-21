@@ -153,6 +153,10 @@ export const BattleProvider = ({ children }) => {
   }
 
   const endTurn = async () => {
+    if (game.values.replay) {
+      return
+    }
+
     await submitBattleActions()
 
     if (gameEffects.heroCardHeal) {

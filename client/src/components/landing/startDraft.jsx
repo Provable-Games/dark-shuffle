@@ -9,7 +9,7 @@ import logo from '../../assets/images/logo.svg'
 import { BattleContext } from '../../contexts/battleContext'
 import { DojoContext } from '../../contexts/dojoContext'
 import { DraftContext } from '../../contexts/draftContext'
-import { GameContext } from '../../contexts/gameContext'
+import { GAME_STATES, GameContext } from '../../contexts/gameContext'
 import { useReplay } from '../../contexts/replayContext'
 import { useTournament } from '../../contexts/tournamentContext'
 import { generateMapNodes } from '../../helpers/map'
@@ -70,6 +70,8 @@ function StartDraft() {
 
     try {
       let data = await getActiveGame(game.id)
+      data.state = GAME_STATES[data.state]
+      
       let settings = await getSettings(game.settingsId)
 
       gameState.setGameSettings(settings)
