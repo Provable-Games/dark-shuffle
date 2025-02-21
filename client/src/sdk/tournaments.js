@@ -43,7 +43,7 @@ class TournamentSDK {
 
   async enterTournament({ account, tournamentId, playerName }) {
     const tournamentDetails = await this.getTournamentDetails(tournamentId)
-    if (!tournamentDetails.creator) {
+    if (!tournamentDetails.created_by) {
       throw new Error("Tournament not found");
     }
 

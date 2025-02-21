@@ -8,6 +8,7 @@ let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace();
 let GAME_ADDRESS = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
 let GQL_ENDPOINT = dojoConfig.toriiUrl + "/graphql"
+let TOKENS_GQL_ENDPOINT = dojoConfig.tokenToriiUrl + "/graphql"
 
 export async function getTournament(tournament_id) {
   const document = gql`
@@ -365,7 +366,7 @@ export const getGameTokens = async (accountAddress) => {
   }
   `
 
-  const res = await request(GQL_ENDPOINT, document);
+  const res = await request(TOKENS_GQL_ENDPOINT, document);
 
   return res?.tokenBalances?.edges.map(edge => edge.node.tokenMetadata).filter(token => token.contractAddress === GAME_ADDRESS);
 }

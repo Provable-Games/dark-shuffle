@@ -27,10 +27,6 @@ const map_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace,
 const cartridge = new ControllerConnector({
   policies: [
     {
-      target: "0x732e479711646fb6d36414eb69bb56ba397a789b0464612e63b08ad9d54912b",
-      method: "enter_tournament",
-    },
-    {
       target: game_systems,
       method: "mint",
     },
@@ -59,13 +55,9 @@ const cartridge = new ControllerConnector({
       method: "request_random",
       description: "Allows requesting random numbers from the VRF provider",
     },
-    {
-      target: dojoConfig.lordsAddress,
-      method: "approve",
-    },
   ],
   namespace: dojoConfig.namespace,
-  slot: "pg-mainnet",
+  slot: "pg-mainnet-tokens",
   preset: "dark-shuffle",
   rpc: dojoConfig.rpcUrl,
   colorMode: "dark",
