@@ -53,12 +53,7 @@ export const ReplayProvider = ({ children }) => {
       return
     }
 
-    if (!account) {
-      connect({ connector: cartridgeConnector })
-      return
-    }
-
-    const receipt = await account.waitForTransaction(txHash || txHashes[step], { retryInterval: 100 })
+    const receipt = await dojo.provider.waitForTransaction(txHash || txHashes[step], { retryInterval: 100 })
     if (!receipt) {
       enqueueSnackbar('Failed to load replay', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
       endReplay()
@@ -69,11 +64,6 @@ export const ReplayProvider = ({ children }) => {
   }
 
   const startReplay = async (_game) => {
-    if (!account) {
-      connect({ connector: cartridgeConnector })
-      return
-    }
-
     setLoadingReplay(true)
 
     let txs = await getGameTxs(_game.id)
@@ -117,12 +107,7 @@ export const ReplayProvider = ({ children }) => {
     }
   }
 
-  const spectateGame = (game) => {
-    if (!account) {
-      connect({ connector: cartridgeConnector })
-      return
-    }
-    
+  const spectateGame = (game) => {   
     setSpectatingGame(game)
   }
 

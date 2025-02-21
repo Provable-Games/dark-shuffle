@@ -1,7 +1,7 @@
 import { dojoConfig } from "../../dojo.config"
 
-export const get_short_namespace = () => {
-  let parts = dojoConfig.namespace.split('_');
+export const get_short_namespace = (namespace) => {
+  let parts = namespace.split('_');
   let short = parts[0] + parts.slice(1).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
   return short;
 }
