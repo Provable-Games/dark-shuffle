@@ -5,7 +5,8 @@ use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use starknet::{ContractAddress, get_caller_address};
 
-#[derive(Copy, Drop, Serde)]
+
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Battle {
     #[key]
@@ -15,10 +16,19 @@ pub struct Battle {
     round: u8,
     hero: Hero,
     monster: Monster,
+    battle_effects: BattleEffects
+}
+
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
+pub struct BattleResources {
+    #[key]
+    battle_id: u16,
+    #[key]
+    game_id: u64,
     hand: Span<u8>,
     deck: Span<u8>,
     board: Span<Creature>,
-    battle_effects: BattleEffects
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -78,7 +88,7 @@ impl BattleOwnerImpl of BattleOwnerTrait {
         assert(self.monster.health > 0, 'Battle over');
     }
 
-    fn card_in_hand(self: Battle, card_id: u8) -> bool {
+    fn card_in_hand(self: BattleResources, card_id: u8) -> bool {
         let mut is_in_hand = false;
 
         let mut i = 0;
