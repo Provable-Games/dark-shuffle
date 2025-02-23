@@ -1,21 +1,23 @@
 import TheatersIcon from '@mui/icons-material/Theaters';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Box, Tab, Tabs, Typography, Pagination, Button, IconButton } from '@mui/material'
-import React, { useState } from 'react'
-import { useEffect } from 'react';
-import { getActiveLeaderboard, getLeaderboard } from '../../api/indexer';
-import { hexToAscii } from '@dojoengine/utils';
+import { Box, IconButton, Pagination, Tab, Tabs, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { dojoConfig } from '../../../dojo.config';
 import { isMobile } from 'react-device-detect';
-import { formatNumber } from '../../helpers/utilities';
-import { useSeason } from "../../contexts/seasonContext";
+import { dojoConfig } from '../../../dojo.config';
+import { getActiveLeaderboard, getLeaderboard, getTournamentRegistrations, populateGameTokens } from '../../api/indexer';
 import { useReplay } from '../../contexts/replayContext';
+import { useTournament } from "../../contexts/tournamentContext";
+import { formatNumber } from '../../helpers/utilities';
+import CheckIcon from '@mui/icons-material/Check';
 
 function Leaderboard() {
-  const season = useSeason()
+  const tournamentProvider = useTournament()
+  const { season } = tournamentProvider
+
   const replay = useReplay()
 
+  const [registrations, setRegistrations] = useState([])
   const [leaderboard, setLeaderboard] = useState([]);
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -33,25 +35,36 @@ function Leaderboard() {
   };
 
   useEffect(() => {
+    async function fetchRegistrations() {
+      const data = await getTournamentRegistrations(dojoConfig.seasonTournamentId)
+      setRegistrations(data)
+    }
+
+    fetchRegistrations()
+  }, [])
+
+  useEffect(() => {
     async function fetchLeaderboard() {
       setLoading(true)
 
       let data = []
       if (tab === 'one') {
-        data = await getLeaderboard(dojoConfig.seasonId, page - 1)
+        data = await getLeaderboard(page - 1, registrations)
       } else {
-        data = await getActiveLeaderboard(dojoConfig.seasonId, page - 1)
+        data = await getActiveLeaderboard(page - 1, registrations)
       }
 
-      setLeaderboard(data ?? [])
+      let games = (await populateGameTokens(data.map(game => game.game_id))).sort((a, b) => b.xp - a.xp)
+      setLeaderboard(games ?? [])
       setLoading(false)
     }
 
-    fetchLeaderboard()
-  }, [page, tab])
+    if (registrations.length > 0) {
+      fetchLeaderboard()
+    }
+  }, [page, tab, registrations])
 
-  const seasonPool = Math.floor(season.values.rewardPool / 1e18)
-  const prizeDistribution = [0.35, 0.20, 0.15, 0.10, 0.08, 0.02, 0.02, 0.02, 0.02, 0.02]
+  const seasonPool = Math.floor(season.rewardPool / 1e18)
 
   return (
     <Box sx={styles.container}>
@@ -64,16 +77,16 @@ function Leaderboard() {
         <Tab value={'two'} label="Active" />
 
         <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <Pagination count={10} shape="rounded" color='primary' size='small' page={page} onChange={handleChange} />
+          <Pagination count={Math.max(1, Math.floor(registrations.length / 10))} shape="rounded" color='primary' size='small' page={page} onChange={handleChange} />
         </Box>
       </Tabs>
 
       <Box sx={styles.header}>
-        <Box width='30px' textAlign={'center'}>
+        <Box width='25px' textAlign={'center'}>
         </Box>
 
-        <Box width='50px' textAlign={'center'}>
-          <Typography>Rank</Typography>
+        <Box width='30px' textAlign={'center'}>
+          <Typography>#</Typography>
         </Box>
 
         <Box width={isMobile ? '150px' : '250px'}>
@@ -85,46 +98,47 @@ function Leaderboard() {
             {tab === 'one' ? 'Score' : 'XP'}
           </Typography>
         </Box>
-        <Box width='55px' textAlign={'center'}></Box>
+        <Box width='75px' textAlign={'center'}></Box>
       </Box>
 
       {loading && <Box />}
 
       <Scrollbars style={{ width: '100%', paddingBottom: '20px', height: '220px' }}>
         {!loading && React.Children.toArray(
-          leaderboard.map((player, i) => {
+          leaderboard.map((game, i) => {
             let rank = (page - 1) * 10 + i + 1
 
             return <>
               <Box sx={styles.row}>
                 <Box width='25px' textAlign={'center'}>
-                  {tab === 'one' && <IconButton onClick={() => replay.startReplay(player.game_id)}>
+                  {tab === 'one' && <IconButton onClick={() => replay.startReplay(game)}>
                     <TheatersIcon fontSize='small' color='primary' />
                   </IconButton>}
 
-                  {tab === 'two' && <IconButton onClick={() => replay.spectateGame(player.game_id)}>
+                  {tab === 'two' && <IconButton onClick={() => replay.spectateGame(game)}>
                     <VisibilityIcon fontSize='small' color='primary' />
                   </IconButton>}
                 </Box>
 
-                <Box width='50px' textAlign={'center'}>
+                <Box width='30px' textAlign={'center'}>
                   <Typography>{rank}</Typography>
                 </Box>
 
                 <Box width={isMobile ? '150px' : '250px'}>
-                  <Typography>{hexToAscii(player.player_name)}</Typography>
+                  <Typography>{game.playerName}</Typography>
                 </Box>
 
                 <Box width='80px' textAlign={'center'}>
-                  <Typography>{player.hero_xp}</Typography>
+                  <Typography>{game.xp}</Typography>
                 </Box>
 
-                <Box width='55px' display={'flex'} gap={0.5} alignItems={'center'}>
-                  {tab === 'one' && rank < 11 && <>
+                <Box width='75px' display={'flex'} gap={0.5} alignItems={'center'}>
+                  {tab === 'one' && rank <= season.distribution?.length && <>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#FFE97F" height={12}><path d="M0 12v2h1v2h6V4h2v12h6v-2h1v-2h-2v2h-3V4h2V0h-2v2H9V0H7v2H5V0H3v4h2v10H2v-2z"></path></svg>
                     <Typography color={'primary'} sx={{ fontSize: '12px' }}>
-                      {formatNumber(seasonPool * prizeDistribution[i])}
+                      {formatNumber(seasonPool * season.distribution[rank - 1] / 100)}
                     </Typography>
+                    {season.leaderboard[i] === game.tokenId && <CheckIcon sx={{ fontSize: '14px' }} color='primary' />}
                   </>}
                 </Box>
               </Box>
@@ -154,7 +168,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    p: 1,
+    px: 1,
     opacity: 0.9
   }
 }

@@ -1,5 +1,11 @@
 import { dojoConfig } from "../../dojo.config"
 
+export const get_short_namespace = (namespace) => {
+  let parts = namespace.split('_');
+  let short = parts[0] + parts.slice(1).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+  return short;
+}
+
 export const translateName = (selector) => {
   const model = dojoConfig.manifest.models.find(model => model.selector === selector);
   return model?.tag?.split('-')[1];
@@ -16,19 +22,14 @@ export const components = {
   // Game Models
   'Game': {
     gameId: Number(),
-    seasonId: Number(),
-    
     heroHealth: Number(),
     heroXp: Number(),
     monstersSlain: Number(),
-    
     mapLevel: Number(),
     mapDepth: Number(),
     lastNodeId: Number(),
-
     actionCount: Number(),
     state: Number(),
-    player_name: String(),
   },
   'GameEffects': {
     gameId: Number(),
@@ -47,6 +48,15 @@ export const components = {
     cardDraw: Number(),
     playCreatureHeal: Number(),
     startBonusEnergy: Number(),
+  },
+  'TokenMetadata': {
+    tokenId: Number(),
+    mintedBy: null,
+    playerName: String(),
+    settingsId: Number(),
+    mintedAt: Number(),
+    availableAt: Number(),
+    expiresAt: Number(),
   },
 
   // Draft Models
@@ -67,7 +77,6 @@ export const components = {
 
     hand: 'array',
     deck: 'array',
-    deckIndex: Number(),
 
     battleEffects: 'BattleEffects',
   },
@@ -87,13 +96,5 @@ export const components = {
     gameId: Number(),
     level: Number(),
     seed: Number(),
-  },
-
-  // Season Models
-  'Leaderboard': {
-    seasonId: Number(),
-    rank: Number(),
-    gameId: Number(),
-    score: Number(),
   },
 }

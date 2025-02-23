@@ -1,8 +1,9 @@
+use darkshuffle::models::config::GameSettings;
 use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IConfigSystems<T> {
-    fn create_game_settings(
+    fn add_settings(
         ref self: T,
         start_health: u8,
         start_energy: u8,
@@ -13,22 +14,23 @@ trait IConfigSystems<T> {
         include_spells: bool,
         card_ids_allowed: Span<u64>,
     );
-
-    fn set_game_token_address(ref self: T, game_token_address: ContractAddress);
-    fn get_game_token_address(self: @T) -> ContractAddress;
+    fn setting_details(self: @T, settings_id: u32) -> GameSettings;
+    fn settings_exists(self: @T, settings_id: u32) -> bool;
+    fn game_settings(self: @T, game_id: u64) -> GameSettings;
 }
 
 #[dojo::contract]
 mod config_systems {
     use achievement::components::achievable::AchievableComponent;
-    use darkshuffle::constants::{DEFAULT_NS, WORLD_CONFIG_ID};
-    use darkshuffle::models::config::{GameSettings, WorldConfig};
-    use darkshuffle::utils::trophies::index::{Trophy, TrophyTrait, TROPHY_COUNT};
+    use darkshuffle::constants::{DEFAULT_NS, DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS, VERSION, WORLD_CONFIG_ID};
+    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter, WorldConfig};
+    use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
     use starknet::{ContractAddress, get_caller_address};
+    use tournaments::components::models::game::{TokenMetadata};
 
     component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
     impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
@@ -71,12 +73,15 @@ mod config_systems {
                 );
 
             trophy_id -= 1;
-        }
+        };
+
+        // initialize game with default settings
+        world.write_model(GET_DEFAULT_SETTINGS());
     }
 
     #[abi(embed_v0)]
     impl ConfigSystemsImpl of super::IConfigSystems<ContractState> {
-        fn create_game_settings(
+        fn add_settings(
             ref self: ContractState,
             start_health: u8,
             start_energy: u8,
@@ -89,16 +94,22 @@ mod config_systems {
         ) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
+            // TODO: add upper bounds assertions
             assert(start_health > 0, 'Invalid start health');
             assert(draft_size > 0, 'Invalid draft size');
             assert(max_energy > 0, 'Invalid max energy');
             assert(max_hand_size > 0, 'Invalid max hand size');
             assert(card_ids_allowed.len() > 10, 'Minimum 10 card ids required');
 
+            // increment settings counter
+            let mut settings_count: SettingsCounter = world.read_model(VERSION);
+            settings_count.count += 1;
+            world.write_model(@settings_count);
+
             world
                 .write_model(
                     @GameSettings {
-                        settings_id: world.dispatcher.uuid() + 1,
+                        settings_id: settings_count.count,
                         start_health,
                         start_energy,
                         start_hand_size,
@@ -111,22 +122,23 @@ mod config_systems {
                 );
         }
 
-        fn set_game_token_address(ref self: ContractState, game_token_address: ContractAddress) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
-            assert(
-                world.dispatcher.is_owner(selector_from_tag!("darkshuffle_s1-game_systems"), get_caller_address()),
-                'Not Owner'
-            );
-
-            let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            world_config.game_token_address = game_token_address;
-            world.write_model(@world_config);
+        fn setting_details(self: @ContractState, settings_id: u32) -> GameSettings {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let settings: GameSettings = world.read_model(settings_id);
+            settings
         }
 
-        fn get_game_token_address(self: @ContractState) -> ContractAddress {
+        fn settings_exists(self: @ContractState, settings_id: u32) -> bool {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            world_config.game_token_address
+            let settings: GameSettings = world.read_model(settings_id);
+            settings.exists()
+        }
+
+        fn game_settings(self: @ContractState, game_id: u64) -> GameSettings {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            let game_settings: GameSettings = world.read_model(token_metadata.settings_id);
+            game_settings
         }
     }
 }

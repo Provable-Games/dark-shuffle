@@ -22,7 +22,7 @@ function HeroStats(props) {
 
     <Box display={'flex'} justifyContent={'space-between'}>
       <Typography color={'primary'} sx={{ width: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        {game.values.player_name}
+        {game.values.playerName || 'Hero'}
       </Typography>
 
       <Typography color='primary' sx={{ fontSize: '13px' }}>

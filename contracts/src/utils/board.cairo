@@ -5,7 +5,7 @@ use darkshuffle::utils::{attack::AttackUtilsImpl, death::DeathUtilsImpl, cards::
 #[generate_trait]
 impl BoardUtilsImpl of BoardUtilsTrait {
     fn no_creature() -> Creature {
-        Creature { card_id: 0, attack: 0, health: 0, }
+        Creature { card_id: 0, attack: 0, health: 0 }
     }
 
     fn get_board(board: Span<Creature>) -> Array<Creature> {

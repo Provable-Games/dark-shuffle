@@ -4,4 +4,3 @@ pub mod config;
 pub mod draft;
 pub mod game;
 pub mod map;
-pub mod season;

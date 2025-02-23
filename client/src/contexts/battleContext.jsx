@@ -20,7 +20,7 @@ export const BattleContext = createContext()
 export const BattleProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
-  const { gameEffects, gameSettings } = game.getState
+  const { gameEffects } = game.getState
 
   const animationHandler = useContext(AnimationContext)
 
@@ -29,10 +29,12 @@ export const BattleProvider = ({ children }) => {
 
   const [values, setValues] = useState({})
   const [updatedValues, setUpdatedValues] = useState()
-  const [updatedBoard, setUpdatedBoard] = useState()
 
   const [hand, setHand] = useState([])
+  const [newHandCards, setNewHandCards] = useState([])
+
   const [board, setBoard] = useState([])
+  const [deck, setDeck] = useState([])
   const [battleEffects, setBattleEffects] = useState()
   const [roundStats, setRoundStats] = useState({})
 
@@ -104,10 +106,18 @@ export const BattleProvider = ({ children }) => {
     }
   }, [values.monsterHealth, endState])
 
+  useEffect(() => {
+    if (values.monsterHealth < 1 && !endState) {
+      submitBattleActions()
+    }
+  }, [values.monsterHealth])
+
+
   const resetBattleState = () => {
     setValues({})
     setBattleEffects()
     setHand([])
+    setDeck([])
     setBoard([])
     setActions([])
     setTurnEnded(false)
@@ -132,13 +142,8 @@ export const BattleProvider = ({ children }) => {
     const gameEffects = res.find(e => e.componentName === 'GameEffects')
     const leaderboard = res.find(e => e.componentName === 'Leaderboard')
     const battleValues = res.find(e => e.componentName === 'Battle')
-    const board = res.find(e => e.componentName === 'Board')
 
     setUpdatedValues(battleValues)
-
-    if (board) {
-      setUpdatedBoard(formatBoard(board))
-    }
 
     if (gameValues) {
       setEndState({ gameValues, leaderboard, gameEffects })
@@ -148,6 +153,10 @@ export const BattleProvider = ({ children }) => {
   }
 
   const endTurn = async () => {
+    if (game.values.replay) {
+      return
+    }
+
     await submitBattleActions()
 
     if (gameEffects.heroCardHeal) {
@@ -176,6 +185,7 @@ export const BattleProvider = ({ children }) => {
     })
     setBattleEffects({ ...battle.battleEffects })
     setHand(battle.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
+    setDeck(battle.deck)
     setBoard([])
     setActions([])
     setRoundStats({
@@ -238,8 +248,16 @@ export const BattleProvider = ({ children }) => {
       ...updatedValues.monster,
       monsterType: GET_MONSTER(updatedValues.monster.monsterId).monsterType
     })
-    setHand(updatedValues.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
+
+    if (isMobile) {
+      setHand(updatedValues.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
+    } else {
+      setHand(updatedValues.hand.slice(0, hand.length).map((card, i) => CARD_DETAILS(card, i + 1)))
+      setNewHandCards(updatedValues.hand.slice(hand.length).map((card, i) => CARD_DETAILS(card, hand.length + i + 1)))
+    }
+
     setBoard(prev => prev.map(creature => ({ ...creature, attacked: false })))
+    setDeck(updatedValues.deck)
 
     setActions([])
     setUpdatedValues()
@@ -292,18 +310,18 @@ export const BattleProvider = ({ children }) => {
   }
 
   // MONSTER UTILS
-  const damageMonster = (amount, creatureType) => {
+  const damageMonster = (amount, cardType) => {
     amount += battleEffects.enemyMarks
 
     if (amount < 1) {
       return;
     }
 
-    if (values.monsterId == 75 && creatureType == tags.HUNTER) {
+    if (values.monsterId == 75 && cardType == tags.HUNTER) {
       amount -= 1;
-    } else if (values.monsterId == 70 && creatureType == tags.MAGICAL) {
+    } else if (values.monsterId == 70 && cardType == tags.MAGICAL) {
       amount -= 1;
-    } else if (values.monsterId == 65 && creatureType == tags.BRUTE) {
+    } else if (values.monsterId == 65 && cardType == tags.BRUTE) {
       amount -= 1;
     }
 
@@ -465,6 +483,7 @@ export const BattleProvider = ({ children }) => {
     })
 
     setHand(data.battle.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
+    setDeck(data.battle.deck)
 
     if (data.board && Object.keys(data.board).length > 0) {
       let board = Object.entries(data.board).reduce((acc, [key, creature]) => {
@@ -499,15 +518,19 @@ export const BattleProvider = ({ children }) => {
           resetBattleState,
           setBoard,
           getCardCost,
+          setHand,
+          setNewHandCards,
         },
 
         state: {
-          pendingTx,
+          pendingTx: pendingTx || endState,
           values,
           hand,
           board,
+          deck,
           battleEffects,
           resettingState,
+          newHandCards,
         }
       }}
     >

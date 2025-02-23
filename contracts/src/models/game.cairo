@@ -1,18 +1,17 @@
-use darkshuffle::constants::{LAST_NODE_DEPTH, WORLD_CONFIG_ID};
-use darkshuffle::models::config::{WorldConfig};
+use darkshuffle::constants::LAST_NODE_DEPTH;
 use dojo::event::EventStorage;
 use dojo::model::ModelStorage;
-use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo::world::{WorldStorage, WorldStorageTrait};
 use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
-use starknet::{ContractAddress, get_caller_address};
+use starknet::{get_caller_address};
+use tournaments::components::interfaces::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Game {
     #[key]
     game_id: u64,
-    season_id: u32,
     hero_health: u8,
     hero_xp: u16,
     monsters_slain: u16,
@@ -20,15 +19,7 @@ pub struct Game {
     map_depth: u8,
     last_node_id: u8,
     action_count: u16,
-    state: GameState,
-}
-
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
-#[dojo::model]
-pub struct GameFixedData {
-    #[key]
-    game_id: u64,
-    player_name: felt252,
+    state: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -50,7 +41,7 @@ pub struct GameEffects {
     hero_card_heal: bool,
     card_draw: u8,
     play_creature_heal: u8,
-    start_bonus_energy: u8
+    start_bonus_energy: u8,
 }
 
 #[derive(PartialEq, Introspect, Copy, Drop, Serde)]
@@ -72,25 +63,44 @@ impl GameStateIntoU8 of Into<GameState, u8> {
     }
 }
 
+impl IntoU8GameState of Into<u8, GameState> {
+    fn into(self: u8) -> GameState {
+        let state: felt252 = self.into();
+        match state {
+            0 => GameState::Draft,
+            1 => GameState::Battle,
+            2 => GameState::Map,
+            3 => GameState::Over,
+            _ => GameState::Over,
+        }
+    }
+}
+
 #[generate_trait]
 impl GameOwnerImpl of GameOwnerTrait {
+    fn update_metadata(self: Game, world: WorldStorage) {
+        let (contract_address, _) = world.dns(@"game_systems").unwrap();
+        let game_token_dispatcher = IGameTokenDispatcher { contract_address };
+        game_token_dispatcher.emit_metadata_update(self.game_id.into());
+    }
+
     fn assert_owner(self: Game, world: WorldStorage) {
-        let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-        let game_token = IERC721Dispatcher { contract_address: world_config.game_token_address };
+        let (contract_address, _) = world.dns(@"game_systems").unwrap();
+        let game_token = IERC721Dispatcher { contract_address };
         assert(game_token.owner_of(self.game_id.into()) == get_caller_address(), 'Not Owner');
     }
 
     fn assert_draft(self: Game) {
-        assert(self.state == GameState::Draft, 'Not Draft');
+        assert(self.state.into() == GameState::Draft, 'Not Draft');
     }
 
     fn assert_generate_tree(self: Game) {
-        assert(self.state == GameState::Map, 'Not Map');
+        assert(self.state.into() == GameState::Map, 'Not Map');
         assert(self.map_depth == LAST_NODE_DEPTH, 'Tree Not Completed');
     }
 
     fn assert_select_node(self: Game) {
-        assert(self.state == GameState::Map, 'Not Map');
+        assert(self.state.into() == GameState::Map, 'Not Map');
     }
 
     fn exists(self: Game) -> bool {
@@ -104,5 +114,5 @@ pub struct GameActionEvent {
     #[key]
     tx_hash: felt252,
     game_id: u64,
-    count: u16
+    count: u16,
 }

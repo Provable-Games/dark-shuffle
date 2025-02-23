@@ -1,19 +1,14 @@
-import { getContractByName } from "@dojoengine/core";
 import React, { createContext, useContext, useState } from "react";
-import { dojoConfig } from "../../dojo.config";
-import { getDraft } from "../api/indexer";
+import { getDraft, getSettings } from "../api/indexer";
 import { CARD_DETAILS } from "../helpers/cards";
+import { delay } from "../helpers/utilities";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
-import { useSeason } from "./seasonContext";
-import { delay } from "../helpers/utilities";
-import { fetchGameSettings } from "../api/starknet";
 
 export const DraftContext = createContext()
 
 export const DraftProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
-  const season = useSeason()
   const game = useContext(GameContext)
   const { gameSettings } = game.getState
 
@@ -22,64 +17,40 @@ export const DraftProvider = ({ children }) => {
   const [options, setOptions] = useState([])
   const [cards, setCards] = useState([])
 
-  const [status, setStatus] = useState()
-
   const initializeState = () => {
     setPendingCard()
     setOptions([])
     setCards([])
-    setStatus('Minting Game Token')
+    game.setStartStatus('Minting Game Token')
   }
 
-  const startDraft = async (isSeason, gameId) => {
+  const startDraft = async (tokenData) => {
     initializeState()
 
-    if (!gameId) {
-      gameId = await game.actions.mintGameToken()
-    }
-
-    setStatus('Shuffling Cards')
+    game.setStartStatus('Shuffling Cards')
 
     const txs = []
-    if (isSeason) {
-      txs.push({
-        contractAddress: dojoConfig.lordsAddress,
-        entrypoint: "approve",
-        calldata: [getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address, season.values.entryFee, "0"]
-      })
-
-      txs.push({
-        contractName: "game_systems",
-        entrypoint: "enter_season",
-        calldata: [gameId, dojoConfig.seasonId]
-      })
-    }
-
     txs.push({
       contractName: "game_systems",
       entrypoint: "start_game",
-      calldata: [gameId, '0x' + (dojo.customName || dojo.userName || 'Demo').split('').map(char => char.charCodeAt(0).toString(16)).join('')]
+      calldata: [tokenData.tokenId]
     })
 
     const res = await dojo.executeTx(txs, true)
-    setStatus()
+    game.setStartStatus()
 
     if (res) {
       const gameValues = res.find(e => e.componentName === 'Game')
       const draftValues = res.find(e => e.componentName === 'Draft')
 
-      if (isSeason) {
-        game.setGameSettings(season.settings)
-      } else {
-        let settings = await fetchGameSettings(gameId)
-        if (!settings) {
-          return
-        }
-
-        game.setGameSettings(settings)
+      let settings = await getSettings(tokenData.settingsId)
+      if (!settings) {
+        return
       }
 
-      game.setGame(gameValues)
+      game.setGameSettings(settings)
+
+      game.setGame({ ...gameValues, playerName: tokenData.playerName })
       setOptions(draftValues.options.map(option => CARD_DETAILS(option)))
     }
   }

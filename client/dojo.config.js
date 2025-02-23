@@ -1,11 +1,11 @@
 import manifest_sepolia from "./manifest_sepolia.json";
 import manifest_mainnet from "./manifest_mainnet.json";
+import manifest_tournaments from "./manifest_tournaments.json";
 
 const {
   VITE_PUBLIC_CHAIN,
   VITE_PUBLIC_NODE_URL,
   VITE_PUBLIC_TORII,
-  VITE_PUBLIC_TORII_RAW,
   VITE_PUBLIC_MASTER_ADDRESS,
   VITE_PUBLIC_MASTER_PRIVATE_KEY,
   VITE_PUBLIC_ACCOUNT_CLASS_HASH,
@@ -13,17 +13,18 @@ const {
   VITE_PUBLIC_ETH_ADDRESS,
   VITE_PUBLIC_LORDS_ADDRESS,
   VITE_PUBLIC_NAMESPACE,
+  VITE_PUBLIC_TOURNAMENT_NAMESPACE,
   VITE_PUBLIC_GAME_TOKEN_ADDRESS,
 } = import.meta.env;
 
 export const dojoConfig = {
-  seasonId: 5,
+  seasonTournamentId: 2,
   version: "1.1",
   chain: VITE_PUBLIC_CHAIN,
   namespace: VITE_PUBLIC_NAMESPACE,
+  tournamentNamespace: VITE_PUBLIC_TOURNAMENT_NAMESPACE,
   rpcUrl: VITE_PUBLIC_NODE_URL,
   toriiUrl: VITE_PUBLIC_TORII,
-  toriiRawUrl: VITE_PUBLIC_TORII_RAW,
   masterAddress: VITE_PUBLIC_MASTER_ADDRESS,
   masterPrivateKey: VITE_PUBLIC_MASTER_PRIVATE_KEY,
   accountClassHash: VITE_PUBLIC_ACCOUNT_CLASS_HASH || "0x05400e90f7e0ae78bd02c77cd75527280470e2fe19c54970dd79dc37a9d3645c",
@@ -32,4 +33,5 @@ export const dojoConfig = {
   lordsAddress: VITE_PUBLIC_LORDS_ADDRESS,
   gameTokenAddress: VITE_PUBLIC_GAME_TOKEN_ADDRESS,
   manifest: VITE_PUBLIC_CHAIN === "mainnet" ? manifest_mainnet : manifest_sepolia,
+  tournamentManifest: manifest_tournaments
 };

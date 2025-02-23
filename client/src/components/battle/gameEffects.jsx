@@ -159,6 +159,7 @@ const styles = {
   effectContainer: {
     width: '232px',
     display: 'flex',
+    justifyContent: 'center',
     gap: 1,
     flexWrap: 'wrap',
     mb: 1

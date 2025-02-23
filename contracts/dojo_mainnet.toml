@@ -1,20 +1,28 @@
 [world]
-seed = ""
-name = "Dark Shuffle"
-
-[namespace]
-default = "darkshuffle_s1"
-
-[writers]
-"darkshuffle_s1" = [
-    "darkshuffle_s1-game_systems",
-    "darkshuffle_s1-battle_systems",
-    "darkshuffle_s1-season_systems",
-    "darkshuffle_s1-draft_systems",
-    "darkshuffle_s1-map_systems",
-    "darkshuffle_s1-config_systems",
-]
+name = "Realms World"
+website = "https://realms.world/"
+description = "DNC"
+seed = "DNC"
 
 [env]
-world_address = "0x044c4ffdf401b1fe8c4b75eb8c8076d28dd91940ea31de93814dc82e1410b86e"
-world_block = 1014817
+chain_id = "SN_MAINNET"
+rpc_url = "https://api.cartridge.gg/x/starknet/mainnet"
+world_address = "0x06a9e4c6f0799160ea8ddc43ff982a5f83d7f633e9732ce42701de1288ff705f"
+world_block = 948010
+
+[namespace]
+default = "ds_v1_1_1"
+
+[writers]
+"ds_v1_1_1" = [
+    "ds_v1_1_1-game_systems",
+    "ds_v1_1_1-battle_systems",
+    "ds_v1_1_1-draft_systems",
+    "ds_v1_1_1-map_systems",
+    "ds_v1_1_1-config_systems",
+]
+
+[init_call_args]
+"ds_v1_1_1-game_systems" = [
+    "0x000B39b235b44c53a2E9F0c5D35939D9C8E8dAFDd0a2ba2E695b501Fc1e9fd2f",
+]

@@ -1,20 +1,21 @@
 use darkshuffle::models::config::{GameSettings};
-use darkshuffle::models::game::{Game};
+use darkshuffle::models::game::{Game, GameState};
 use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IGameSystems<T> {
-    fn mint(ref self: T, settings_id: u32);
-    fn enter_season(ref self: T, game_id: u64, season_id: u32);
-    fn start_game(ref self: T, game_id: u64, name: felt252);
-    fn abandon_game(ref self: T, game_id: u64);
-
-    fn score(self: @T, game_id: u64) -> u16;
-    fn get_settings(self: @T, settings_id: u32) -> GameSettings;
-    fn settings_exists(self: @T, settings_id: u32) -> bool;
-    fn get_game_settings(self: @T, game_id: u64) -> GameSettings;
-    fn get_game_data(self: @T, token_id: u128) -> (felt252, u8, u16, u32, u8, Span<felt252>);
-    fn get_player_games(self: @T, player_address: ContractAddress, limit: u256, page: u256, active: bool) -> Span<Game>;
+    fn start_game(ref self: T, game_id: u64);
+    fn action_count(self: @T, game_id: u64) -> u16;
+    fn cards(self: @T, game_id: u64) -> Span<felt252>;
+    fn game_state(self: @T, game_id: u64) -> GameState;
+    fn health(self: @T, game_id: u64) -> u8;
+    fn last_node_id(self: @T, game_id: u64) -> u8;
+    fn level(self: @T, game_id: u64) -> u8;
+    fn map_depth(self: @T, game_id: u64) -> u8;
+    fn monsters_slain(self: @T, game_id: u64) -> u16;
+    fn player_name(self: @T, game_id: u64) -> felt252;
+    fn xp(self: @T, game_id: u64) -> u16;
+    fn score_model_and_attribute(self: @T) -> (felt252, felt252);
 }
 
 #[dojo::contract]
@@ -26,178 +27,171 @@ mod game_systems {
     use darkshuffle::models::card::{Card};
     use darkshuffle::models::config::{WorldConfig, GameSettings, GameSettingsTrait};
     use darkshuffle::models::draft::{Draft};
-    use darkshuffle::models::game::{Game, GameState, GameOwnerTrait, GameActionEvent, GameFixedData};
-    use darkshuffle::models::season::{Season, SeasonOwnerTrait};
+    use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait, GameState};
+    use darkshuffle::utils::renderer::utils::create_metadata;
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-    use darkshuffle::utils::{season::SeasonUtilsImpl, draft::DraftUtilsImpl, cards::CardUtilsImpl, random};
+    use darkshuffle::utils::{cards::CardUtilsImpl, config::ConfigUtilsImpl, draft::DraftUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
-    use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
-    use starknet::{get_caller_address, get_tx_info, ContractAddress};
+    use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
+
+    use openzeppelin_introspection::src5::SRC5Component;
+    use openzeppelin_token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
+    use starknet::{ContractAddress, get_caller_address, get_contract_address, get_tx_info};
+    use tournaments::components::game::game_component;
+    use tournaments::components::interfaces::{IGameDetails, IGameToken, ISettings};
+    use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
+    use tournaments::components::models::game::{TokenMetadata};
+    use tournaments::components::models::lifecycle::{Lifecycle};
+
+    component!(path: game_component, storage: game, event: GameEvent);
+    component!(path: SRC5Component, storage: src5, event: SRC5Event);
+    component!(path: ERC721Component, storage: erc721, event: ERC721Event);
+
+    #[abi(embed_v0)]
+    impl GameImpl = game_component::GameImpl<ContractState>;
+    impl GameInternalImpl = game_component::InternalImpl<ContractState>;
+
+    #[abi(embed_v0)]
+    impl ERC721Impl = ERC721Component::ERC721Impl<ContractState>;
+    #[abi(embed_v0)]
+    impl ERC721CamelOnlyImpl = ERC721Component::ERC721CamelOnlyImpl<ContractState>;
+    impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
+
+    #[abi(embed_v0)]
+    impl SRC5Impl = SRC5Component::SRC5Impl<ContractState>;
+
+    #[storage]
+    struct Storage {
+        #[substorage(v0)]
+        game: game_component::Storage,
+        #[substorage(v0)]
+        erc721: ERC721Component::Storage,
+        #[substorage(v0)]
+        src5: SRC5Component::Storage,
+    }
+
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    enum Event {
+        #[flat]
+        GameEvent: game_component::Event,
+        #[flat]
+        ERC721Event: ERC721Component::Event,
+        #[flat]
+        SRC5Event: SRC5Component::Event,
+    }
+
+    fn dojo_init(ref self: ContractState, creator_address: ContractAddress) {
+        self.erc721.initializer("Dark Shuffle", "DARK", "darkshuffle.dev");
+        self
+            .game
+            .initializer(
+                creator_address,
+                'Dark Shuffle',
+                "A deck building game",
+                'Provable Games',
+                'Provable Games',
+                'Deck Building',
+                "https://github.com/Provable-Games/dark-shuffle/blob/feat/integrate-tournament/client/public/favicon.svg",
+                DEFAULT_NS_STR(),
+            );
+
+        // TODO: We shouldn't need to store this as the token address is the game system address which is already being
+        // stored
+        let mut world: WorldStorage = self.world(DEFAULT_NS());
+        let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
+        world_config.game_token_address = get_contract_address();
+        world.write_model(@world_config);
+    }
+
+    #[abi(embed_v0)]
+    impl SettingsImpl of ISettings<ContractState> {
+        fn setting_exists(self: @ContractState, settings_id: u32) -> bool {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let settings: GameSettings = world.read_model(settings_id);
+            settings.exists()
+        }
+    }
+
+    #[abi(embed_v0)]
+    impl GameDetailsImpl of IGameDetails<ContractState> {
+        fn score(self: @ContractState, game_id: u64) -> u32 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(game_id);
+            game.hero_xp.into()
+        }
+    }
 
     #[abi(embed_v0)]
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
-        fn mint(ref self: ContractState, settings_id: u32) {
+        fn start_game(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
-            let settings: GameSettings = world.read_model(settings_id);
-            assert(settings.exists(), 'Invalid settings');
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            self.validate_start_conditions(game_id, @token_metadata);
 
-            let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            world_config.game_count += 1;
-            world.write_model(@world_config);
-
-            let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
-            game_token.mint(get_caller_address(), world_config.game_count.into(), settings_id);
-        }
-
-        fn enter_season(ref self: ContractState, game_id: u64, season_id: u32) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
-
-            let mut season: Season = world.read_model(season_id);
-            assert(season.is_active(), 'Season not active');
-
-            let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
-
-            let settings_id = game_token.settings_id(game_id.into());
-            assert(settings_id == season.settings_id, 'Invalid settings');
-
-            let mut game: Game = world.read_model(game_id);
-            assert(!game.exists(), 'Game already started');
-
-            let fee_distribution = season.entry_amount / 100 * 5;
-            let season_distribution = season.entry_amount / 100 * 90;
-
-            let chain_id = get_tx_info().unbox().chain_id;
-            let payment_dispatcher = IERC20Dispatcher {
-                contract_address: SeasonUtilsImpl::get_lords_address(chain_id)
-            };
-            // veLORDS
-            payment_dispatcher
-                .transfer_from(get_caller_address(), SeasonUtilsImpl::get_velords_address(chain_id), fee_distribution);
-            // PG FEE
-            payment_dispatcher
-                .transfer_from(get_caller_address(), SeasonUtilsImpl::get_pg_address(chain_id), fee_distribution);
-            // SEASON POOL
-            payment_dispatcher.transfer_from(get_caller_address(), season.season_address, season_distribution);
-
-            season.reward_pool += season_distribution;
-            world.write_model(@season);
-
-            game_token.attach_season_pass(game_id.into(), season_id);
-
-            // [Achievement] Play a game
-            let player_id: felt252 = get_caller_address().into();
-            let task_id: felt252 = Task::Seasoned.identifier();
-            let time = starknet::get_block_timestamp();
-            let store = StoreTrait::new(world);
-            store.progress(player_id, task_id, count: 1, time: time);
-        }
-
-        fn start_game(ref self: ContractState, game_id: u64, name: felt252) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
-
-            let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
-            let game_settings: GameSettings = world.read_model(game_token.settings_id(game_id.into()));
-
+            let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let random_hash = random::get_random_hash();
             let seed: u128 = random::get_entropy(random_hash);
             let options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells);
-            let season_id = game_token.season_pass(game_id.into());
             let action_count = 0;
 
-            world.write_model(@GameFixedData { game_id, player_name: name, });
+            let game = Game {
+                game_id,
+                state: GameState::Draft.into(),
+                hero_health: game_settings.start_health,
+                hero_xp: 1,
+                monsters_slain: 0,
+                map_level: 0,
+                map_depth: LAST_NODE_DEPTH,
+                last_node_id: 0,
+                action_count,
+            };
 
-            world
-                .write_model(
-                    @Game {
-                        game_id,
-                        season_id,
-                        state: GameState::Draft,
-                        hero_health: game_settings.start_health,
-                        hero_xp: 1,
-                        monsters_slain: 0,
-                        map_level: 0,
-                        map_depth: LAST_NODE_DEPTH,
-                        last_node_id: 0,
-                        action_count,
-                    }
-                );
-
+            world.write_model(@game);
             world.write_model(@Draft { game_id, options, cards: array![].span() });
 
             world
                 .emit_event(
                     @GameActionEvent {
-                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count
-                    }
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count,
+                    },
                 );
+            game.update_metadata(world);
         }
 
-        fn abandon_game(ref self: ContractState, game_id: u64) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
-
-            let mut game: Game = world.read_model(game_id);
-            game.assert_owner(world);
-
-            game.state = GameState::Over;
-            game.hero_health = 0;
-            game.action_count += 1;
-
-            let mut season: Season = world.read_model(game.season_id);
-            if season.season_id != 0 && season.is_active() {
-                SeasonUtilsImpl::score_game(ref world, game);
-            }
-
-            world.write_model(@game);
-            world
-                .emit_event(
-                    @GameActionEvent {
-                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count
-                    }
-                );
+        fn player_name(self: @ContractState, game_id: u64) -> felt252 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            token_metadata.player_name
         }
 
-        fn score(self: @ContractState, game_id: u64) -> u16 {
+        fn health(self: @ContractState, game_id: u64) -> u8 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(game_id);
+            game.hero_health
+        }
+
+        fn game_state(self: @ContractState, game_id: u64) -> GameState {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(game_id);
+            game.state.into()
+        }
+
+        fn xp(self: @ContractState, game_id: u64) -> u16 {
             let world: WorldStorage = self.world(DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.hero_xp
         }
 
-        fn get_settings(self: @ContractState, settings_id: u32) -> GameSettings {
+        fn cards(self: @ContractState, game_id: u64) -> Span<felt252> {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let settings: GameSettings = world.read_model(settings_id);
-            settings
-        }
-
-        fn settings_exists(self: @ContractState, settings_id: u32) -> bool {
-            let world: WorldStorage = self.world(DEFAULT_NS());
-            let settings: GameSettings = world.read_model(settings_id);
-            settings.exists()
-        }
-
-        fn get_game_settings(self: @ContractState, game_id: u64) -> GameSettings {
-            let world: WorldStorage = self.world(DEFAULT_NS());
-
-            let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-            let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
-            let game_settings: GameSettings = world.read_model(game_token.settings_id(game_id.into()));
-
-            game_settings
-        }
-
-        fn get_game_data(self: @ContractState, token_id: u128) -> (felt252, u8, u16, u32, u8, Span<felt252>) {
-            let world: WorldStorage = self.world(DEFAULT_NS());
-
-            let game: Game = world.read_model(token_id);
-            let game_fixed_data: GameFixedData = world.read_model(game.game_id);
-            let draft: Draft = world.read_model(game.game_id);
+            let draft: Draft = world.read_model(game_id);
             let mut cards = array![];
 
             let mut i = 0;
@@ -207,47 +201,100 @@ mod game_systems {
                 i += 1;
             };
 
-            (
-                game_fixed_data.player_name,
-                game.hero_health,
-                game.hero_xp,
-                game.season_id,
-                game.state.into(),
-                cards.span()
-            )
+            cards.span()
         }
 
-        fn get_player_games(
-            self: @ContractState, player_address: ContractAddress, limit: u256, page: u256, active: bool
-        ) -> Span<Game> {
+        fn monsters_slain(self: @ContractState, game_id: u64) -> u16 {
             let world: WorldStorage = self.world(DEFAULT_NS());
-            let world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
+            let game: Game = world.read_model(game_id);
+            game.monsters_slain
+        }
 
-            let game_token = IGameTokenDispatcher { contract_address: world_config.game_token_address };
-            let game_token_dispatcher = IERC721Dispatcher { contract_address: world_config.game_token_address };
+        fn level(self: @ContractState, game_id: u64) -> u8 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(game_id);
+            game.map_level
+        }
 
-            let mut balance = game_token_dispatcher.balance_of(player_address);
-            let mut last_index = balance - (page * limit);
+        fn map_depth(self: @ContractState, game_id: u64) -> u8 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(game_id);
+            game.map_depth
+        }
 
-            let mut games = array![];
-            let mut i = last_index;
-            let mut game_count = 0;
+        fn last_node_id(self: @ContractState, game_id: u64) -> u8 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(game_id);
+            game.last_node_id
+        }
 
-            while i > 0 && game_count < limit {
-                i -= 1;
+        fn action_count(self: @ContractState, game_id: u64) -> u16 {
+            let world: WorldStorage = self.world(DEFAULT_NS());
+            let game: Game = world.read_model(game_id);
+            game.action_count
+        }
 
-                let token_id: u128 = game_token.get_token_of_owner_by_index(player_address, i).try_into().unwrap();
-                let game: Game = world.read_model(token_id);
+        fn score_model_and_attribute(self: @ContractState) -> (felt252, felt252) {
+            ('Game', 'hero_xp')
+        }
+    }
 
-                if (active && game.state == GameState::Over) || (!active && game.state != GameState::Over) {
-                    continue;
-                }
+    #[abi(embed_v0)]
+    impl ERC721Metadata of IERC721Metadata<ContractState> {
+        /// Returns the NFT name.
+        fn name(self: @ContractState) -> ByteArray {
+            self.erc721.ERC721_name.read()
+        }
 
-                games.append(game);
-                game_count += 1;
-            };
+        /// Returns the NFT symbol.
+        fn symbol(self: @ContractState) -> ByteArray {
+            self.erc721.ERC721_symbol.read()
+        }
 
-            games.span()
+        /// Returns the Uniform Resource Identifier (URI) for the `token_id` token.
+        /// If the URI is not set, the return value will be an empty ByteArray.
+        ///
+        /// Requirements:
+        ///
+        /// - `token_id` exists.
+        fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
+            self.erc721._require_owned(token_id);
+
+            let token_id_u64 = token_id.try_into().unwrap();
+
+            let hero_name = self.player_name(token_id_u64);
+            let hero_health = self.health(token_id_u64);
+            let hero_xp = self.xp(token_id_u64);
+            let game_state = self.game_state(token_id_u64);
+            let cards = self.cards(token_id_u64);
+
+            create_metadata(token_id_u64, hero_name, hero_health, hero_xp, game_state.into(), cards)
+        }
+    }
+
+    #[generate_trait]
+    impl InternalImpl of InternalTrait {
+        #[inline(always)]
+        fn validate_start_conditions(self: @ContractState, token_id: u64, token_metadata: @TokenMetadata) {
+            self.assert_token_ownership(token_id);
+            self.assert_game_not_started(token_id);
+            token_metadata.lifecycle.assert_is_playable(token_id, starknet::get_block_timestamp());
+        }
+
+        #[inline(always)]
+        fn assert_token_ownership(self: @ContractState, token_id: u64) {
+            let token_owner = ERC721Impl::owner_of(self, token_id.into());
+            assert!(
+                token_owner == starknet::get_caller_address(),
+                "Dark Shuffle: Caller is not owner of token {}",
+                token_id,
+            );
+        }
+
+        #[inline(always)]
+        fn assert_game_not_started(self: @ContractState, game_id: u64) {
+            let game: Game = self.world(DEFAULT_NS()).read_model(game_id);
+            assert!(game.hero_xp == 0, "Dark Shuffle: Game {} has already started", game_id);
         }
     }
 }

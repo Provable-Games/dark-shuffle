@@ -61,7 +61,7 @@ export const DojoProvider = ({ children }) => {
       return
     }
 
-    if (includeVRF) {
+    if (includeVRF && dojoConfig.chain === 'mainnet') {
       let contractAddress = getContractByName(dojoConfig.manifest, dojoConfig.namespace, txs[txs.length - 1].contractName)?.address
 
       txs.unshift({
@@ -101,6 +101,7 @@ export const DojoProvider = ({ children }) => {
         network: chain.network,
         userName,
         customName,
+        playerName: customName || userName,
         balances,
         executeTx,
         getBalances,

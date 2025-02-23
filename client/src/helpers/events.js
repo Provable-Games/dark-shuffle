@@ -53,13 +53,12 @@ export function translateEvent(event) {
         }
       }
     } else if (component[key] === 'Hero') {
-      let hero = values.splice(index + 1, 2)
+      let hero = values.splice(index + 1, 1)
 
       return {
         ...acc, [key]: {
           heroHealth: parseInt(values[index]),
-          heroMaxHealth: parseInt(hero[0]),
-          heroEnergy: parseInt(hero[1]),
+          heroEnergy: parseInt(hero[0]),
         }
       }
     } else if (component[key] === 'BattleEffects') {

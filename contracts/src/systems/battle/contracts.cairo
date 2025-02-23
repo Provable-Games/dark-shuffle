@@ -15,14 +15,17 @@ mod battle_systems {
     use darkshuffle::models::config::GameSettings;
     use darkshuffle::models::game::{Game, GameEffects, GameActionEvent};
     use darkshuffle::utils::{
-        achievements::AchievementsUtilsImpl, summon::SummonUtilsImpl, spell::SpellUtilsImpl, cards::CardUtilsImpl,
-        board::BoardUtilsImpl, battle::BattleUtilsImpl, game::GameUtilsImpl, monsters::MonsterUtilsImpl,
-        hand::HandUtilsImpl, config::ConfigUtilsImpl, random
+        achievements::AchievementsUtilsImpl, battle::BattleUtilsImpl, board::BoardUtilsImpl, cards::CardUtilsImpl,
+        config::ConfigUtilsImpl, game::GameUtilsImpl, hand::HandUtilsImpl, monsters::MonsterUtilsImpl, random,
+        spell::SpellUtilsImpl, summon::SummonUtilsImpl,
     };
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
+    use tournaments::components::models::game::TokenMetadata;
+    use tournaments::components::models::lifecycle::Lifecycle;
 
     #[abi(embed_v0)]
     impl BattleSystemsImpl of super::IBattleSystems<ContractState> {
@@ -30,6 +33,9 @@ mod battle_systems {
             assert(*(*actions.at(actions.len() - 1)).at(0) == 1, 'Must end turn');
 
             let mut world: WorldStorage = self.world(DEFAULT_NS());
+
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
 
             let mut battle: Battle = world.read_model((battle_id, game_id));
             battle.assert_battle(world);
@@ -41,7 +47,7 @@ mod battle_systems {
             let mut board_stats: BoardStats = BoardUtilsImpl::get_board_stats(ref board, battle.monster.monster_id);
 
             let mut round_stats: RoundStats = RoundStats {
-                monster_start_health: battle.monster.health, creatures_played: 0, creature_attack_count: 0
+                monster_start_health: battle.monster.health, creatures_played: 0, creature_attack_count: 0,
             };
 
             let mut action_index = 0;
@@ -76,11 +82,11 @@ mod battle_systems {
                         BoardUtilsImpl::remove_dead_creatures(ref battle, ref board, board_stats);
                         board_stats = BoardUtilsImpl::get_board_stats(ref board, battle.monster.monster_id);
 
-                        if game.season_id != 0 && battle.monster.health + 25 <= round_stats.monster_start_health {
+                        if battle.monster.health + 25 <= round_stats.monster_start_health {
                             AchievementsUtilsImpl::big_hit(ref world);
                         }
                     },
-                    _ => { assert(false, 'Invalid action'); }
+                    _ => { assert(false, 'Invalid action'); },
                 }
 
                 if GameUtilsImpl::is_battle_over(battle) {
@@ -95,8 +101,8 @@ mod battle_systems {
                     @GameActionEvent {
                         game_id,
                         tx_hash: starknet::get_tx_info().unbox().transaction_hash,
-                        count: game.action_count + battle.round.into()
-                    }
+                        count: game.action_count + battle.round.into(),
+                    },
                 );
 
             let random_hash = random::get_random_hash();
@@ -134,6 +140,8 @@ mod battle_systems {
 
                 world.write_model(@battle);
             }
+
+            game.update_metadata(world);
         }
     }
 }

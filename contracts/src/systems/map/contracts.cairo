@@ -8,20 +8,25 @@ trait IMapSystems<T> {
 mod map_systems {
     use achievement::store::{Store, StoreTrait};
     use darkshuffle::constants::{DEFAULT_NS};
-
-    use darkshuffle::models::game::{Game, GameOwnerTrait, GameActionEvent};
+    use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait};
     use darkshuffle::models::map::{Map, MonsterNode};
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-    use darkshuffle::utils::{random, map::MapUtilsImpl};
+    use darkshuffle::utils::{map::MapUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
+    use tournaments::components::models::game::{TokenMetadata};
+    use tournaments::components::models::lifecycle::{Lifecycle};
 
     #[abi(embed_v0)]
     impl MapSystemsImpl of super::IMapSystems<ContractState> {
         fn generate_tree(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
+
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
 
             let mut game: Game = world.read_model(game_id);
             game.assert_owner(world);
@@ -35,18 +40,18 @@ mod map_systems {
             game.last_node_id = 0;
             game.action_count += 1;
 
-            world.write_model(@Map { game_id, level: game.map_level, seed, });
+            world.write_model(@Map { game_id, level: game.map_level, seed });
 
             world.write_model(@game);
             world
                 .emit_event(
                     @GameActionEvent {
-                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count
-                    }
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
+                    },
                 );
 
             // [Achievement] Complete a map
-            if game.season_id != 0 && game.map_level > 1 {
+            if game.map_level > 1 {
                 let player_id: felt252 = starknet::get_caller_address().into();
                 let task_id: felt252 = Task::Explorer.identifier();
                 let time = starknet::get_block_timestamp();
@@ -57,6 +62,9 @@ mod map_systems {
 
         fn select_node(ref self: ContractState, game_id: u64, node_id: u8) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
+
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
 
             let mut game: Game = world.read_model(game_id);
             game.assert_owner(world);
@@ -79,9 +87,10 @@ mod map_systems {
             world
                 .emit_event(
                     @GameActionEvent {
-                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count
-                    }
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
+                    },
                 );
+            game.update_metadata(world);
         }
     }
 }

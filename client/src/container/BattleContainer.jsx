@@ -7,18 +7,15 @@ import { isMobile } from 'react-device-detect';
 import bolt from "../assets/images/bolt.png";
 import cards from "../assets/images/cards.png";
 import Battlefield from '../components/battle/battlefield';
+import Deck from '../components/battle/deck';
 import GameEffects from '../components/battle/gameEffects';
 import Hand from '../components/battle/hand';
 import RestoringBattleDialog from '../components/dialogs/restoringBattle';
 import { BattleContext } from '../contexts/battleContext';
-import { GameContext } from '../contexts/gameContext';
 import { CustomTooltip } from '../helpers/styles';
 import { fadeVariant } from "../helpers/variants";
 
 function BattleContainer() {
-  const game = useContext(GameContext)
-  const { gameSettings } = game.getState
-
   const battle = useContext(BattleContext)
 
   const anyActionsLeft = battle.state.hand.find(card => battle.utils.getCardCost(card) <= battle.state.values.heroEnergy)
@@ -32,7 +29,7 @@ function BattleContainer() {
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', height: '30px', boxSizing: 'border-box', px: 2, mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', width: '100px' }}>
           <Typography variant="h5">
-            {gameSettings.draft_size - (battle.state.values?.deckIndex || 0)}
+            {battle.state.deck.length}
           </Typography>
 
           <img alt='' src={cards} height={21} />
@@ -94,6 +91,14 @@ function BattleContainer() {
 
         <Box sx={[styles.playerContainer, { height: '144px' }]}>
 
+          <GameEffects />
+
+          <Box sx={[styles.hand, { width: '800px' }]}>
+
+            <Hand />
+
+          </Box>
+
           <Box width={'232px'} display={'flex'} justifyContent={'center'}>
 
             <CustomTooltip title={
@@ -102,24 +107,10 @@ function BattleContainer() {
                 <Typography mt={0.5}>You draw a random card at the start of each turn.</Typography>
               </Box>
             }>
-              <Box sx={styles.deck}>
-                <Box sx={styles.cardCount}>
-                  <Typography>
-                    {gameSettings.draft_size - (battle.state.values?.deckIndex || 0)}
-                  </Typography>
-                </Box>
-              </Box>
+              <Deck />
             </CustomTooltip>
 
           </Box>
-
-          <Box sx={[styles.hand, { width: '800px' }]}>
-
-            <Hand />
-
-          </Box>
-
-          <GameEffects />
 
         </Box>
 

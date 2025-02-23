@@ -1,79 +1,73 @@
-import { Box, Button, Dialog, Typography, Pagination, CircularProgress } from '@mui/material';
-import { motion } from "framer-motion";
-import { fadeVariant } from "../../helpers/variants";
-import logo from '../../assets/images/logo.svg';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import React, { useState } from 'react';
-import { fetchDarkShuffleGameTokens } from '../../api/starknet';
-import { useEffect } from 'react';
+import WatchIcon from '@mui/icons-material/Watch';
+import { Box, Button, CircularProgress, Dialog, Typography } from '@mui/material';
+import { motion } from "framer-motion";
+import React, { useEffect, useState } from 'react';
+import Scrollbars from 'react-custom-scrollbars';
+import { getGameTokens, populateGameTokens } from '../../api/indexer';
+import logo from '../../assets/images/logo.svg';
+import { useTournament } from '../../contexts/tournamentContext';
+import { fadeVariant } from "../../helpers/variants";
 
 function GameTokens(props) {
+  const { tournaments } = useTournament()
   const { open, close, address, resumeGame, startGame } = props
 
   const [games, setGames] = useState([])
-  const [selectedGames, setSelectedGames] = useState([])
+  const [selectedGame, setSelectedGame] = useState()
 
-  const [page, setPage] = useState(1)
   const [active, showActive] = useState(true)
   const [loading, setLoading] = useState(true)
-
-  const handleChange = (event, newValue) => {
-    setLoading(true)
-    setPage(newValue);
-  };
 
   useEffect(() => {
     async function fetchGames() {
       setLoading(true)
 
-      const data = await fetchDarkShuffleGameTokens(address, 5, page - 1, Number(active))
+      const gameTokens = await getGameTokens(address)
+      let games = await populateGameTokens(gameTokens.map(game => game.tokenId))
 
-      setSelectedGames([])
-      setGames(data ?? [])
+      games = games.map(game => ({
+        ...game,
+        tournament: tournaments.find(tournament => tournament.id === game.tournament_id)
+      }))
+
+      setSelectedGame()
+      setGames(games ?? [])
       setLoading(false)
     }
 
     fetchGames()
-  }, [page, address, active])
+  }, [address, active])
 
-  useEffect(() => {
-    setPage(1)
-  }, [active])
-
-  const selectGame = (id) => {
-    setSelectedGames([id])
-  }
-
-  const handleResumeGame = (game_id) => {
-    let game = games.find(game => game.id === game_id)
-
-    if (game.xp) {
-      resumeGame(game_id)
+  const handleResumeGame = () => {
+    if (selectedGame.xp) {
+      resumeGame(selectedGame)
     } else {
-      startGame(game.season, game_id)
+      startGame(selectedGame)
     }
 
     close(false)
   }
 
   function renderGame(game) {
-    return <Box sx={[styles.gameContainer, { opacity: selectedGames.includes(game.id) ? 1 : 0.8 }]}
-      border={selectedGames.includes(game.id) ? '1px solid #f59100' : '1px solid rgba(255, 255, 255, 0.3)'}
-      onClick={() => selectGame(game.id)}
+    return <Box sx={[styles.gameContainer, { opacity: selectedGame?.id === game.id ? 1 : 0.8 }]}
+      border={selectedGame?.id === game.id ? '1px solid #f59100' : '1px solid rgba(255, 255, 255, 0.3)'}
+      onClick={() => setSelectedGame(game)}
     >
 
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
         <img alt='' src={logo} height='42' />
 
-        {game.xp ? <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography color='primary'>
-            {game.name}
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography color='primary' textTransform={'uppercase'} fontSize={'12px'}>
+            {game.playerName} - #{game.id}
           </Typography>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {game.xp ? <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Box display={'flex'}>
-              <Typography>
-                {game.hp}
+              <Typography sx={{ fontSize: '13px' }}>
+                {game.health}
               </Typography>
 
               <FavoriteIcon htmlColor="red" sx={{ fontSize: '18px' }} />
@@ -83,23 +77,44 @@ function GameTokens(props) {
               {game.xp} XP
             </Typography>
           </Box>
-        </Box>
-          : <Box>
-            <Typography color='primary'>
-              New Game
+            : <Typography sx={{ fontSize: '13px' }}>
+              New
             </Typography>
-          </Box>
-        }
+          }
+        </Box>
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-        <Typography color='primary'>
-          #{game.id}
-        </Typography>
+        {active && game.available_at !== 0 && <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          {game.available_at < Date.now() ? <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <AccessTimeIcon color='primary' sx={{ fontSize: '16px', mr: '3px' }} />
 
-        <Typography color='primary' sx={{ color: '#f59100' }}>
-          {(game.season || !game.xp) ? 'Season' : ''}
-        </Typography>
+            <Typography color='primary' sx={{ fontSize: '13px' }}>
+              {Math.max(0, Math.floor((game.expires_at - Date.now()) / (1000 * 60 * 60)))}
+            </Typography>
+
+            <Typography color='primary' sx={{ fontSize: '13px', ml: '2px' }}>
+              h
+            </Typography>
+          </Box> : <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <WatchIcon color='primary' sx={{ fontSize: '16px', mr: '3px' }} />
+
+            <Typography color='primary' sx={{ fontSize: '13px' }}>
+              {Math.max(0, Math.floor((game.available_at - Date.now()) / (1000 * 60 * 60)))}
+            </Typography>
+
+            <Typography color='primary' sx={{ fontSize: '13px', ml: '2px' }}>
+              h
+            </Typography>
+          </Box>}
+
+        </Box>}
+
+        {game.tournament_id ? <Typography sx={{ color: '#f59100' }}>
+          {game.tournament?.name}
+        </Typography> : <Typography sx={{ color: '#fff', opacity: 0.8 }}>
+          Free
+        </Typography>}
       </Box>
     </Box >
   }
@@ -134,22 +149,24 @@ function GameTokens(props) {
                   </Button>
                 </Box>
 
-                <Pagination count={1000} siblingCount={0} boundaryCount={0} hideNextButton={games.length < 5} shape="rounded" color='primary' size='small' page={page} onChange={handleChange} />
+
               </Box>
 
-              {loading && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150px' }}>
+              {loading && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '340px' }}>
                 <CircularProgress />
               </Box>}
 
-              {!loading && React.Children.toArray(
-                games.map(game => renderGame(game))
-              )}
+              {!loading && <Scrollbars style={{ width: '100%', height: '340px' }}>
+                {React.Children.toArray(
+                  games.filter(game => game.active === active).map(game => renderGame(game))
+                )}
+              </Scrollbars>}
             </Box>
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
               <Button variant='outlined' size='large'
-                disabled={selectedGames.length !== 1 || games.find(game => game.id === selectedGames[0])?.state === 3}
-                onClick={() => handleResumeGame(selectedGames[0])}
+                disabled={!selectedGame || !selectedGame.active || selectedGame.available_at > Date.now()}
+                onClick={() => handleResumeGame()}
               >
                 Start Game
               </Button>
@@ -193,7 +210,8 @@ const styles = {
     pr: 1,
     gap: 1,
     cursor: 'pointer',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    mb: 1
   },
   gamesContainer: {
     width: '360px',

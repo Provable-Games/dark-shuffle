@@ -5,6 +5,7 @@ import { BattleContext } from '../../contexts/battleContext'
 import { CardSize, types } from '../../helpers/cards'
 import SmallCard from '../smallCard'
 import { useEffect } from 'react'
+import { GameContext } from '../../contexts/gameContext'
 
 function DraggableCard(props) {
   const { values, dragEnd } = props
@@ -18,6 +19,7 @@ function DraggableCard(props) {
   const controls = useAnimationControls()
   const ref = useRef()
 
+  const game = useContext(GameContext)
   const battle = useContext(BattleContext)
   const playable = battle.utils.getCardCost(values.card) <= battle.state.values.heroEnergy
 
@@ -31,7 +33,7 @@ function DraggableCard(props) {
     document.removeEventListener('mouseup', mouseUpHandler);
     event.preventDefault();
 
-    if (event.button !== 0 || event.pageY > play_threshold) {
+    if (event.button !== 0 || event.pageY > play_threshold || game.values.replay) {
       returnCard(event)
       return
     }

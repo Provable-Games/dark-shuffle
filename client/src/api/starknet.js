@@ -20,91 +20,40 @@ export const fetchBalances = async (account, ethContract, lordsContract) => {
   };
 };
 
-export const fetchDarkShuffleGameTokens = async (player_address, limit, page, active) => {
-  try {
-    const tokens_response = await fetch(dojoConfig.rpcUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "starknet_call",
-        params: [
-          {
-            contract_address: getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address,
-            entry_point_selector: "0x13237784c922d0ad2a5c12f4c37d461e65eacc9e208fe81986b1fef6cb916a",
-            calldata: [player_address, `0x${limit.toString(16)}`, '0x0', `0x${page.toString(16)}`, '0x0', `0x${active.toString(16)}`],
-          },
-          "pending",
-        ],
-        id: 0,
-      }),
-    });
+export const getGameTokens = async (owner) => {
+  const BLAST_URL = import.meta.env.VITE_PUBLIC_BLAST_API;
 
-    const data = await tokens_response.json();
+  const recursiveFetchTokens = async (tokenList, nextPageKey) => {
+    let url = `${BLAST_URL}/builder/getWalletNFTs?contractAddress=${dojoConfig.gameTokenAddress}&walletAddress=${owner}&pageSize=100`
 
-    let games = [];
+    if (nextPageKey) {
+      url += `&pageKey=${nextPageKey}`
+    }
 
-    for (let i = 1; i < data.result.length; i += 10) {
-      const game = data.result.slice(i, i + 10);
-
-      games.push({
-        id: parseInt(game[0], 16),
-        season: parseInt(game[1], 16),
-        hp: parseInt(game[2], 16),
-        xp: parseInt(game[3], 16),
-        state: parseInt(game[9], 16),
-        player_name: "test",
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+
+      const data = await response.json();
+      tokenList = tokenList.concat(data.nfts)
+
+      if (data.nextPageKey) {
+        return recursiveFetchTokens(tokenList, data.nextPageKey)
+      }
+    } catch (ex) {
+      console.log('error fetching tokens', ex)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return recursiveFetchTokens(tokenList, nextPageKey);
     }
 
-    console.log('games', games)
-    return games
-  } catch (error) {
-    console.log(error);
+    return tokenList
   }
-};
 
-export const fetchGameSettings = async (game_id) => {
-  try {
-    const settings_response = await fetch(dojoConfig.rpcUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "starknet_call",
-        params: [
-          {
-            contract_address: getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address,
-            entry_point_selector: "0x200edeb3a2866ed609c06da9c90fad20a0d4f3d36ecf7928a003a58188758a0",
-            calldata: [`0x${game_id.toString(16)}`],
-          },
-          "pending",
-        ],
-        id: 1,
-      }),
-    });
-
-    const data = await settings_response.json();
-
-    if (!data.result) {
-      return null
-    }
-
-    return {
-      settings_id: parseInt(data.result[0], 16),
-      start_health: parseInt(data.result[1], 16),
-      start_energy: parseInt(data.result[2], 16),
-      start_hand_size: parseInt(data.result[3], 16),
-      draft_size: parseInt(data.result[4], 16),
-      max_energy: parseInt(data.result[5], 16),
-      max_hand_size: parseInt(data.result[6], 16),
-      include_spells: parseInt(data.result[7], 16),
-    }
-  } catch (error) {
-    console.log(error);
-  }
+  let tokens = await recursiveFetchTokens([], null)
+  console.log('tokens', tokens)
+  return tokens.map(token => token.tokenId)
 };

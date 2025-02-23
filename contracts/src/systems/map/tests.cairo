@@ -1,27 +1,34 @@
 use darkshuffle::models::battle::{Battle};
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::models::map::{Map};
-use darkshuffle::systems::map::contracts::{map_systems, IMapSystemsDispatcher, IMapSystemsDispatcherTrait};
+use darkshuffle::systems::map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems};
 
 use darkshuffle::utils::testing::{
-    world::spawn_darkshuffle, systems::{deploy_system, deploy_map_systems},
-    general::{create_default_settings, mint_game_token, create_game, create_draft, create_map},
+    general::{create_default_settings, create_draft, create_game, create_map, mint_game_token},
+    systems::{deploy_map_systems, deploy_system}, world::spawn_darkshuffle,
 };
-use dojo::model::{ModelStorage, ModelValueStorage, ModelStorageTest};
+use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
-use dojo_cairo_test::{NamespaceDef, TestResource, ContractDefTrait};
+use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
 
 use starknet::{ContractAddress, contract_address_const};
 
 fn setup() -> (WorldStorage, u64, IMapSystemsDispatcher) {
-    let mut world = spawn_darkshuffle();
+    let (mut world, game_systems_dispatcher) = spawn_darkshuffle();
     let map_systems_dispatcher = deploy_map_systems(ref world);
 
-    let game_id = 1;
-    let settings_id = create_default_settings(ref world);
+    let settings_id = 0;
+    let game_id = mint_game_token(
+        world,
+        game_systems_dispatcher.contract_address,
+        'player1',
+        settings_id,
+        Option::None,
+        Option::None,
+        contract_address_const::<'player1'>(),
+    );
 
-    mint_game_token(ref world, game_id, settings_id);
     create_game(ref world, game_id, GameState::Map);
 
     (world, game_id, map_systems_dispatcher)
@@ -53,7 +60,7 @@ fn map_test_select_node() {
         ref world,
         game_id,
         array![].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
     let node_id = 1;
@@ -68,7 +75,7 @@ fn map_test_select_node() {
     let battle: Battle = world.read_model((game.game_id, game.monsters_slain + 1));
 
     assert(game.last_node_id == node_id, 'Node id is not set');
-    assert(game.state == GameState::Battle, 'Game state not set to battle');
+    assert(game.state.into() == GameState::Battle, 'Game state not set to battle');
     assert(battle.hero.health > 0, 'Hero health is not set');
     assert(battle.monster.health > 0, 'Monster health is not set');
     assert(battle.hand.len() == 5, 'Hand size is not 5');

@@ -1,4 +1,3 @@
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import InfoIcon from '@mui/icons-material/Info';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -30,20 +29,6 @@ function MobileHeader(props) {
   let cartridgeConnector = connectors.find(conn => conn.id === "controller")
 
   const [menu, toggleMenu] = useState(false)
-
-  const abandonGame = async () => {
-    if (game.values.replay) {
-      return
-    }
-
-    await dojo.executeTx([{
-      contractName: "game_systems",
-      entrypoint: "abandon_game",
-      calldata: [game.values.gameId]
-    }])
-
-    window.location.reload();
-  }
 
   return <Box sx={styles.mobileHeader}>
     <Box />
@@ -102,20 +87,6 @@ function MobileHeader(props) {
           </Box>
 
           <Divider sx={{ my: 2 }} />
-
-          {game.values.gameId && <>
-            <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} boxSizing={'borderBox'} px={2} onClick={abandonGame}>
-              <Box display={'flex'} alignItems={'center'} gap={1}>
-                <DeleteForeverIcon fontSize="small" htmlColor='#fb3a3a' />
-
-                <Typography sx={{ fontSize: '13px', color: '#fb3a3a' }}>
-                  ABANDON GAME
-                </Typography>
-              </Box>
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-          </>}
 
           <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} boxSizing={'borderBox'} px={2} onClick={disconnect}>
             <Box display={'flex'} alignItems={'center'} gap={1}>

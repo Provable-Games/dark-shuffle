@@ -20,11 +20,6 @@ const menuItems = [
     path: '/',
     icon: <InfoIcon />
   },
-  // {
-  //   name: 'Donations',
-  //   path: '/donations',
-  //   icon: <InfoIcon />
-  // },
 ]
 
 function Header(props) {

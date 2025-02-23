@@ -32,10 +32,6 @@ const cartridge = new ControllerConnector({
     },
     {
       target: game_systems,
-      method: "enter_season",
-    },
-    {
-      target: game_systems,
       method: "start_game",
     },
     {
@@ -59,19 +55,15 @@ const cartridge = new ControllerConnector({
       method: "request_random",
       description: "Allows requesting random numbers from the VRF provider",
     },
-    {
-      target: dojoConfig.lordsAddress,
-      method: "approve",
-    },
   ],
   namespace: dojoConfig.namespace,
-  slot: "darkshuffle-sepolia",
+  slot: "darkshuffle-mainnet",
   preset: "dark-shuffle",
   rpc: dojoConfig.rpcUrl,
   colorMode: "dark",
-  indexerUrl: dojoConfig.toriiRawUrl,
+  indexerUrl: dojoConfig.toriiUrl,
   tokens: {
-    erc20: [dojoConfig.lordsAddress]
+    erc20: [dojoConfig.lordsAddress],
   },
   chains: [{ rpcUrl: dojoConfig.rpcUrl }],
   defaultChainId: dojoConfig.chain === "mainnet" ? StarknetChainId.SN_MAIN : StarknetChainId.SN_SEPOLIA,
