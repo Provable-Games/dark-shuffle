@@ -1,9 +1,9 @@
 use achievement::store::{Store, StoreTrait};
 use darkshuffle::models::battle::{Battle, BattleEffects, Creature, BoardStats, RoundStats};
+use darkshuffle::models::card::{Card, CardDetails, CardType, CreatureCard};
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, cards::CardUtilsImpl};
-use darkshuffle::models::card::{Card, CardDetails, CardType, CreatureCard};
 
 #[generate_trait]
 impl SummonUtilsImpl of SummonUtilsTrait {
@@ -16,11 +16,7 @@ impl SummonUtilsImpl of SummonUtilsTrait {
         ref round_stats: RoundStats,
         game_effects: GameEffects
     ) {
-        let mut creature = Creature { 
-            card_id: 1,
-            attack: creature_details.attack,
-            health: creature_details.health
-        };
+        let mut creature = Creature { card_id: 1, attack: creature_details.attack, health: creature_details.health };
 
         if round_stats.creatures_played == 0 {
             creature.attack += game_effects.first_attack;
@@ -74,7 +70,9 @@ impl SummonUtilsImpl of SummonUtilsTrait {
 
         if let Option::Some(play_effect) = creature_details.play_effect {
             if CardUtilsImpl::_is_effect_applicable(play_effect, card.card_type, board_stats) {
-                CardUtilsImpl::apply_card_effect(card.card_type, play_effect, ref creature, ref battle, ref board, board_stats);
+                CardUtilsImpl::apply_card_effect(
+                    card.card_type, play_effect, ref creature, ref battle, ref board, board_stats
+                );
             }
         }
 

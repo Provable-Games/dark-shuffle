@@ -20,16 +20,18 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         new_board
     }
 
-    fn attack_monster(ref battle: Battle, ref board: Array<Creature>, board_stats: BoardStats, ref round_stats: RoundStats) {
+    fn attack_monster(
+        ref battle: Battle, ref board: Array<Creature>, board_stats: BoardStats, ref round_stats: RoundStats
+    ) {
         let mut i = 0;
-        
+
         while i < board.len() {
             let mut creature = board.pop_front().unwrap();
             AttackUtilsImpl::creature_attack(ref creature, ref battle, ref board, board_stats);
             board.append(creature);
             i += 1;
         };
-        
+
         round_stats.creature_attack_count += board.len().try_into().unwrap();
     }
 
@@ -68,7 +70,7 @@ impl BoardUtilsImpl of BoardUtilsTrait {
     }
 
     fn remove_dead_creatures(ref battle: Battle, ref board: Array<Creature>, board_stats: BoardStats) {
-        let mut new_board = array![]; 
+        let mut new_board = array![];
 
         let mut i = 0;
         while i < board.len() {

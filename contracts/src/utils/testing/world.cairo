@@ -22,8 +22,7 @@ use starknet::{ContractAddress, contract_address_const};
 
 fn namespace_def() -> NamespaceDef {
     let ndef = NamespaceDef {
-        namespace: DEFAULT_NS_STR(),
-        resources: [
+        namespace: DEFAULT_NS_STR(), resources: [
             TestResource::Model(m_Battle::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Board::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_WorldConfig::TEST_CLASS_HASH.try_into().unwrap()),
@@ -52,12 +51,12 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Event(darkshuffle::models::game::e_GameActionEvent::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyCreation::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyProgression::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Contract(game_systems::TEST_CLASS_HASH), TestResource::Contract(map_systems::TEST_CLASS_HASH),
+            TestResource::Contract(game_systems::TEST_CLASS_HASH),
+            TestResource::Contract(map_systems::TEST_CLASS_HASH),
             TestResource::Contract(draft_systems::TEST_CLASS_HASH),
             TestResource::Contract(config_systems::TEST_CLASS_HASH),
             TestResource::Contract(battle_systems::TEST_CLASS_HASH),
-        ]
-            .span(),
+        ].span(),
     };
 
     ndef
@@ -76,8 +75,7 @@ fn contract_defs() -> Span<ContractDef> {
             .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
         ContractDefTrait::new(DEFAULT_NS(), @"battle_systems")
             .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
-    ]
-        .span()
+    ].span()
 }
 
 

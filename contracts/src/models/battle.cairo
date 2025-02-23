@@ -1,5 +1,5 @@
-use darkshuffle::models::game::{Game, GameOwnerTrait};
 use darkshuffle::models::card::CardType;
+use darkshuffle::models::game::{Game, GameOwnerTrait};
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};

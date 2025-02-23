@@ -10,7 +10,9 @@ impl DeathUtilsImpl of DeathUtilsTrait {
         if let CardDetails::creature_card(creature_card) = card.card_details {
             if let Option::Some(death_effect) = creature_card.death_effect {
                 if CardUtilsImpl::_is_effect_applicable(death_effect, card.card_type, board_stats) {
-                    CardUtilsImpl::apply_card_effect(card.card_type, death_effect, ref creature, ref battle, ref board, board_stats);
+                    CardUtilsImpl::apply_card_effect(
+                        card.card_type, death_effect, ref creature, ref battle, ref board, board_stats
+                    );
                 }
             }
         }

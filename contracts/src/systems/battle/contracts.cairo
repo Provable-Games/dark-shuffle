@@ -8,9 +8,7 @@ mod battle_systems {
     use achievement::store::{Store, StoreTrait};
 
     use darkshuffle::constants::{DEFAULT_NS};
-    use darkshuffle::models::battle::{
-        Battle, BattleOwnerTrait, Creature, BoardStats, RoundStats
-    };
+    use darkshuffle::models::battle::{Battle, BattleOwnerTrait, Creature, BoardStats, RoundStats};
     use darkshuffle::models::card::{Card, CardDetails};
     use darkshuffle::models::config::GameSettings;
     use darkshuffle::models::game::{Game, GameEffects, GameActionEvent};
@@ -63,7 +61,13 @@ mod battle_systems {
                         match card.card_details {
                             CardDetails::creature_card(creature_details) => {
                                 SummonUtilsImpl::summon_creature(
-                                    card, creature_details, ref battle, ref board, ref board_stats, ref round_stats, game_effects
+                                    card,
+                                    creature_details,
+                                    ref battle,
+                                    ref board,
+                                    ref board_stats,
+                                    ref round_stats,
+                                    game_effects
                                 );
                                 if game.season_id != 0 {
                                     AchievementsUtilsImpl::play_creature(ref world, card);
