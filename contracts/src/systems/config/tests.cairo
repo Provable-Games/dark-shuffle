@@ -1,4 +1,4 @@
-use darkshuffle::models::battle::{Battle};
+use darkshuffle::models::battle::{Battle, BattleResources};
 use darkshuffle::models::draft::{Draft};
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
@@ -87,10 +87,11 @@ fn config_test_start_battle() {
 
     let game: Game = world.read_model(game_id);
     let battle: Battle = world.read_model((game.game_id, game.monsters_slain + 1));
+    let battle_resources: BattleResources = world.read_model((battle.battle_id, battle.game_id));
 
     assert(battle.hero.health == START_HEALTH, 'Hero health incorrect');
     assert(battle.hero.energy == START_ENERGY, 'Hero energy incorrect');
-    assert(battle.hand.len() == START_HAND_SIZE.into(), 'Hand size incorrect');
+    assert(battle_resources.hand.len() == START_HAND_SIZE.into(), 'Hand size incorrect');
 }
 
 #[test] // 106246647 gas
@@ -110,14 +111,15 @@ fn config_test_max_energy_and_hand_size() {
         75,
         monster_attack,
         10,
-        array![1, 2].span(),
-        array![1, 2, 3, 4, 5].span(),
     );
+
+    create_battle_resources(ref world, game_id, array![1, 2].span(), array![1, 2, 3, 4, 5].span());
 
     battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
 
     let battle: Battle = world.read_model((battle_id, game_id));
+    let battle_resources: BattleResources = world.read_model((battle_id, game_id));
 
     assert(battle.hero.energy == MAX_ENERGY, 'Energy not increased');
-    assert(battle.hand.len() == MAX_HAND_SIZE.into(), 'Hand size incorrect');
+    assert(battle_resources.hand.len() == MAX_HAND_SIZE.into(), 'Hand size incorrect');
 }

@@ -1,11 +1,10 @@
-use darkshuffle::models::battle::{Battle, Board, Card, Creature};
-use darkshuffle::models::draft::{Draft};
-use darkshuffle::models::game::{Game, GameOwnerTrait, GameState};
+use darkshuffle::models::battle::{Battle, Card, Creature, BattleResources};
+use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
 use darkshuffle::utils::cards::CardUtilsImpl;
 
 use darkshuffle::utils::testing::{
-    general::{create_battle, create_default_settings, create_game, mint_game_token},
+    general::{create_battle, create_default_settings, create_game, mint_game_token, create_battle_resources},
     systems::{deploy_battle_systems, deploy_system}, world::spawn_darkshuffle,
 };
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
@@ -50,17 +49,18 @@ fn battle_test_end_turn() {
         75,
         monster_attack,
         10,
-        array![1, 2, 3].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
+
+    create_battle_resources(ref world, game_id, array![1, 2, 3].span(), array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span());
 
     battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
 
     let battle: Battle = world.read_model((battle_id, game_id));
+    let battle_resources: BattleResources = world.read_model((battle_id, game_id));
 
     assert(battle.round == 2, 'Round not incremented');
     assert(battle.hero.energy == battle.round, 'Energy not increased');
-    assert(battle.hand.len() == 4, 'No cards drawn');
+    assert(battle_resources.hand.len() == 4, 'No cards drawn');
     assert(battle.hero.health == hero_health - monster_attack, 'Hero health not reduced');
 }
 
@@ -78,18 +78,17 @@ fn battle_test_summon_creature() {
         255,
         0,
         100,
-        array![card.card_id].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
+
+    create_battle_resources(ref world, game_id, array![card.card_id].span(), array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span());
 
     battle_systems_dispatcher
         .battle_actions(game_id, battle_id, array![array![0, card.card_id].span(), array![1].span()].span());
 
-    let board: Board = world.read_model((battle_id, game_id));
-    let battle: Battle = world.read_model((battle_id, game_id));
+    let battle_resources: BattleResources = world.read_model((battle_id, game_id));
 
-    assert(board.creature1.card_id == card.card_id, 'Creature card id not set');
-    assert(battle.hand.len() == 1, 'Card not removed from hand');
+    assert(*battle_resources.board.at(0).card_id == card.card_id, 'Creature card id not set');
+    assert(battle_resources.hand.len() == 1, 'Card not removed from hand');
 }
 
 #[test] // 125119600 gas
@@ -109,15 +108,20 @@ fn battle_test_attack_enemy() {
         array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
-    let mut board: Board = world.read_model((battle_id, game_id));
-    board.creature1 = Creature { card_id: 255, attack: 1, health: 1 };
-    world.write_model_test(@board);
+    create_battle_resources(ref world, game_id,
+        array![].span(),
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+    );
+
+    let mut battle_resources: BattleResources = world.read_model((battle_id, game_id));
+    battle_resources.board = array![Creature { card_id: 255, attack: 1, health: 1 }].span();
+    world.write_model_test(@battle_resources);
 
     battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
 
-    let board: Board = world.read_model((battle_id, game_id));
+    let battle_resources: BattleResources = world.read_model((battle_id, game_id));
     let battle: Battle = world.read_model((battle_id, game_id));
 
-    assert(board.creature1.health == 0, 'Creature health not reduced');
+    assert(*battle_resources.board.at(0).health == 0, 'Creature health not reduced');
     assert(battle.monster.health == 99, 'Monster health not reduced');
 }

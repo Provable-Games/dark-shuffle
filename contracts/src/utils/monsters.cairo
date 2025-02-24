@@ -1,4 +1,4 @@
-use darkshuffle::models::battle::{Battle, BattleEffects, RoundStats, BoardStats, Creature};
+use darkshuffle::models::battle::{Battle, BattleEffects, RoundStats, BoardStats, Creature, BattleResources};
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, hand::HandUtilsImpl, random};
 
@@ -6,6 +6,7 @@ use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, hand::H
 impl MonsterUtilsImpl of MonsterUtilsTrait {
     fn monster_ability(
         ref battle: Battle,
+        ref battle_resources: BattleResources,
         game_effects: GameEffects,
         ref board: Array<Creature>,
         board_stats: BoardStats,
@@ -13,14 +14,14 @@ impl MonsterUtilsImpl of MonsterUtilsTrait {
         seed: u128,
     ) {
         if battle.monster.monster_id == 1 {
-            if battle.hand.len() > 0 {
-                let random_card = random::get_random_number(seed, battle.hand.len().try_into().unwrap()) - 1;
-                HandUtilsImpl::remove_hand_card(ref battle, *battle.hand.at(random_card.into()));
+            if battle_resources.hand.len() > 0 {
+                let random_card = random::get_random_number(seed, battle_resources.hand.len().try_into().unwrap()) - 1;
+                HandUtilsImpl::remove_hand_card(ref battle_resources, *battle_resources.hand.at(random_card.into()));
             }
         } else if battle.monster.monster_id == 2 {
-            BattleUtilsImpl::damage_hero(ref battle, game_effects, battle.hand.len().try_into().unwrap());
+            BattleUtilsImpl::damage_hero(ref battle, game_effects, battle_resources.hand.len().try_into().unwrap());
         } else if battle.monster.monster_id == 14 {
-            battle.monster.attack += battle.hand.len().try_into().unwrap();
+            battle.monster.attack += battle_resources.hand.len().try_into().unwrap();
         } else if battle.monster.monster_id == 15 {
             battle.monster.attack += round_stats.creature_attack_count;
         } else if battle.monster.monster_id == 30 && battle.monster.health >= round_stats.monster_start_health {

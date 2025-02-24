@@ -112,8 +112,6 @@ fn create_battle(
     monster_id: u8,
     monster_attack: u8,
     monster_health: u8,
-    hand: Span<u8>,
-    deck: Span<u8>,
 ) -> u16 {
     let battle_id = 1;
 
@@ -125,9 +123,6 @@ fn create_battle(
                 round,
                 hero: Hero { health: hero_health, energy: hero_energy },
                 monster: Monster { monster_id, attack: monster_attack, health: monster_health },
-                hand,
-                deck,
-                board: array![].span(),
                 battle_effects: BattleEffects {
                     enemy_marks: 0,
                     hero_dmg_reduction: 0,
@@ -135,9 +130,22 @@ fn create_battle(
                     next_hunter_health_bonus: 0,
                     next_brute_attack_bonus: 0,
                     next_brute_health_bonus: 0,
+                    next_magical_attack_bonus: 0,
+                    next_magical_health_bonus: 0,
+                    
                 },
             },
         );
 
     battle_id
+}
+
+fn create_battle_resources(ref world: WorldStorage, game_id: u64, hand: Span<u8>, deck: Span<u8>) {
+    world.write_model_test(@BattleResources {
+        battle_id: 1,
+        game_id,
+        hand,
+        deck,
+        board: array![].span(),
+    });
 }

@@ -70,16 +70,14 @@ mod battle_systems {
                                     ref round_stats,
                                     game_effects
                                 );
-                                if game.season_id != 0 {
-                                    AchievementsUtilsImpl::play_creature(ref world, card);
-                                }
+                                AchievementsUtilsImpl::play_creature(ref world, card);
                             },
                             CardDetails::spell_card(spell_details) => {
                                 SpellUtilsImpl::cast_spell(card, spell_details, ref battle, ref board, board_stats);
                             }
                         }
 
-                        HandUtilsImpl::remove_hand_card(ref battle, *action.at(1));
+                        HandUtilsImpl::remove_hand_card(ref battle_resources, *action.at(1));
                     },
                     1 => {
                         assert(action_index == actions.len() - 1, 'Invalid action');
@@ -119,7 +117,7 @@ mod battle_systems {
             };
 
             if game_effects.hero_card_heal {
-                BattleUtilsImpl::heal_hero(ref battle, battle.hand.len().try_into().unwrap());
+                BattleUtilsImpl::heal_hero(ref battle, battle_resources.hand.len().try_into().unwrap());
             }
 
             MonsterUtilsImpl::monster_ability(ref battle, game_effects, ref board, board_stats, round_stats, seed);
@@ -132,7 +130,7 @@ mod battle_systems {
             if GameUtilsImpl::is_battle_over(battle) {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects);
             } else {
-                battle.board = board.span();
+                battle_resources.board = board.span();
                 battle.round += 1;
 
                 if battle.round > game_settings.max_energy {
@@ -141,9 +139,10 @@ mod battle_systems {
                     battle.hero.energy = battle.round;
                 }
 
-                HandUtilsImpl::draw_cards(ref battle, 1 + game_effects.card_draw, game_settings.max_hand_size, seed);
+                HandUtilsImpl::draw_cards(ref battle_resources, 1 + game_effects.card_draw, game_settings.max_hand_size, seed);
 
                 world.write_model(@battle);
+                world.write_model(@battle_resources);
             }
 
             game.update_metadata(world);

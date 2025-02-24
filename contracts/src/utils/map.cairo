@@ -1,4 +1,4 @@
-use darkshuffle::models::battle::{Battle, BattleEffects, Hero, Monster};
+use darkshuffle::models::battle::{Battle, BattleEffects, BattleResources, Hero, Monster};
 
 use darkshuffle::models::config::{GameSettings};
 use darkshuffle::models::draft::{Draft};
@@ -117,7 +117,7 @@ impl MapUtilsImpl of MapUtilsTrait {
 
         game.state = GameState::Battle.into();
 
-        let mut battle = Battle {
+        let battle = Battle {
             battle_id: game.monsters_slain + 1,
             game_id: game.game_id,
             round: 1,
@@ -125,9 +125,6 @@ impl MapUtilsImpl of MapUtilsTrait {
                 health: game.hero_health, energy: game_settings.start_energy + game_effects.start_bonus_energy,
             },
             monster: Monster { monster_id: monster.monster_id, attack: monster.attack, health: monster.health },
-            hand: array![].span(),
-            deck: draft.cards,
-            board: array![].span(),
             battle_effects: BattleEffects {
                 enemy_marks: 0,
                 hero_dmg_reduction: 0,
@@ -140,7 +137,17 @@ impl MapUtilsImpl of MapUtilsTrait {
             }
         };
 
-        HandUtilsImpl::draw_cards(ref battle, game_settings.start_hand_size, game_settings.max_hand_size, seed);
+        let battle_resources: BattleResources = BattleResources {
+            battle_id: battle.battle_id,
+            game_id: battle.game_id,
+            hand: array![].span(),
+            deck: draft.cards,
+            board: array![].span(),
+        };
+
+        HandUtilsImpl::draw_cards(ref battle_resources, game_settings.start_hand_size, game_settings.max_hand_size, seed);
+        
         world.write_model(@battle);
+        world.write_model(@battle_resources);
     }
 }

@@ -1,4 +1,4 @@
-use darkshuffle::models::battle::{Battle};
+use darkshuffle::models::battle::{Battle, BattleResources};
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::models::map::{Map};
 use darkshuffle::systems::map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems};
@@ -73,11 +73,12 @@ fn map_test_select_node() {
 
     let game: Game = world.read_model(game_id);
     let battle: Battle = world.read_model((game.game_id, game.monsters_slain + 1));
+    let battle_resources: BattleResources = world.read_model((battle.battle_id, battle.game_id));
 
     assert(game.last_node_id == node_id, 'Node id is not set');
     assert(game.state.into() == GameState::Battle, 'Game state not set to battle');
     assert(battle.hero.health > 0, 'Hero health is not set');
     assert(battle.monster.health > 0, 'Monster health is not set');
-    assert(battle.hand.len() == 5, 'Hand size is not 5');
-    assert(battle.deck.len() == 15, 'Deck size is not 15');
+    assert(battle_resources.hand.len() == 5, 'Hand size is not 5');
+    assert(battle_resources.deck.len() == 15, 'Deck size is not 15');
 }
