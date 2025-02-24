@@ -29,44 +29,47 @@ impl SummonUtilsImpl of SummonUtilsTrait {
 
         creature.attack += game_effects.all_attack;
 
-        if card.card_type == CardType::Hunter {
-            creature.attack += game_effects.hunter_attack;
-            creature.health += game_effects.hunter_health;
+        match card.card_type {
+            CardType::Hunter => {
+                creature.attack += game_effects.hunter_attack + battle.battle_effects.next_hunter_attack_bonus;
+                creature.health += game_effects.hunter_health + battle.battle_effects.next_hunter_health_bonus;
 
-            creature.attack += battle.battle_effects.next_hunter_attack_bonus;
-            creature.health += battle.battle_effects.next_hunter_health_bonus;
-            battle.battle_effects.next_hunter_attack_bonus = 0;
-            battle.battle_effects.next_hunter_health_bonus = 0;
+                battle.battle_effects.next_hunter_attack_bonus = 0;
+                battle.battle_effects.next_hunter_health_bonus = 0;
 
-            if battle.monster.monster_id == 73 {
-                battle.monster.attack += 1;
-            } else if battle.monster.monster_id == 72 {
-                battle.monster.health += 2;
+                if battle.monster.monster_id == 73 {
+                    battle.monster.attack += 1;
+                } else if battle.monster.monster_id == 72 {
+                    battle.monster.health += 2;
+                }
+            },
+            CardType::Brute => {
+                creature.attack += game_effects.brute_attack + battle.battle_effects.next_brute_attack_bonus;
+                creature.health += game_effects.brute_health + battle.battle_effects.next_brute_health_bonus;
+
+                battle.battle_effects.next_brute_attack_bonus = 0;
+                battle.battle_effects.next_brute_health_bonus = 0;
+
+                if battle.monster.monster_id == 63 {
+                    battle.monster.attack += 1;
+                } else if battle.monster.monster_id == 62 {
+                    battle.monster.health += 2;
+                }
+            },
+            CardType::Magical => {
+                creature.attack += game_effects.magical_attack + battle.battle_effects.next_magical_attack_bonus;
+                creature.health += game_effects.magical_health + battle.battle_effects.next_magical_health_bonus;
+
+                battle.battle_effects.next_magical_attack_bonus = 0;
+                battle.battle_effects.next_magical_health_bonus = 0;
+
+                if battle.monster.monster_id == 68 {
+                    battle.monster.attack += 1;
+                } else if battle.monster.monster_id == 67 {
+                    battle.monster.health += 2;
+                }
             }
-        } else if card.card_type == CardType::Brute {
-            creature.health += game_effects.brute_health;
-            creature.attack += game_effects.brute_attack;
-
-            creature.health += battle.battle_effects.next_brute_health_bonus;
-            creature.attack += battle.battle_effects.next_brute_attack_bonus;
-            battle.battle_effects.next_brute_health_bonus = 0;
-            battle.battle_effects.next_brute_attack_bonus = 0;
-
-            if battle.monster.monster_id == 63 {
-                battle.monster.attack += 1;
-            } else if battle.monster.monster_id == 62 {
-                battle.monster.health += 2;
-            }
-        } else if card.card_type == CardType::Magical {
-            creature.health += game_effects.magical_health;
-            creature.attack += game_effects.magical_attack;
-
-            if battle.monster.monster_id == 68 {
-                battle.monster.attack += 1;
-            } else if battle.monster.monster_id == 67 {
-                battle.monster.health += 2;
-            }
-        }
+        };
 
         if let Option::Some(play_effect) = creature_details.play_effect {
             if CardUtilsImpl::_is_effect_applicable(play_effect, card.card_type, board_stats) {
