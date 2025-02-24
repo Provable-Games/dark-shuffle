@@ -8,7 +8,7 @@ mod battle_systems {
     use achievement::store::{Store, StoreTrait};
 
     use darkshuffle::constants::{DEFAULT_NS};
-    use darkshuffle::models::battle::{Battle, BattleOwnerTrait, Creature, BoardStats, RoundStats};
+    use darkshuffle::models::battle::{Battle, BattleOwnerTrait, Creature, BoardStats, RoundStats, BattleResources};
     use darkshuffle::models::card::{Card, CardDetails};
     use darkshuffle::models::config::GameSettings;
     use darkshuffle::models::game::{Game, GameEffects, GameActionEvent};
@@ -38,10 +38,11 @@ mod battle_systems {
             let mut battle: Battle = world.read_model((battle_id, game_id));
             battle.assert_battle(world);
 
+            let mut battle_resources: BattleResources = world.read_model((battle_id, game_id));
             let mut game: Game = world.read_model(game_id);
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, battle.game_id);
             let mut game_effects: GameEffects = world.read_model(battle.game_id);
-            let mut board: Array<Creature> = BoardUtilsImpl::get_board(battle.board);
+            let mut board: Array<Creature> = BoardUtilsImpl::get_board(battle_resources.board);
             let mut board_stats: BoardStats = BoardUtilsImpl::get_board_stats(ref board, battle.monster.monster_id);
 
             let mut round_stats: RoundStats = RoundStats {
