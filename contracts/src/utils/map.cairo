@@ -137,7 +137,7 @@ impl MapUtilsImpl of MapUtilsTrait {
             }
         };
 
-        let battle_resources: BattleResources = BattleResources {
+        let mut battle_resources: BattleResources = BattleResources {
             battle_id: battle.battle_id,
             game_id: battle.game_id,
             hand: array![].span(),

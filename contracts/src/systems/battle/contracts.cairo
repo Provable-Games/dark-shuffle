@@ -120,7 +120,7 @@ mod battle_systems {
                 BattleUtilsImpl::heal_hero(ref battle, battle_resources.hand.len().try_into().unwrap());
             }
 
-            MonsterUtilsImpl::monster_ability(ref battle, game_effects, ref board, board_stats, round_stats, seed);
+            MonsterUtilsImpl::monster_ability(ref battle, ref battle_resources, game_effects, ref board, board_stats, round_stats, seed);
             BoardUtilsImpl::remove_dead_creatures(ref battle, ref board, board_stats);
 
             if battle.monster.health > 0 {

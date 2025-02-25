@@ -41,7 +41,7 @@ pub mod DEFAULT_SETTINGS {
     const MAX_ENERGY: u8 = 7;
     const MAX_HAND_SIZE: u8 = 10;
     const INCLUDE_SPELLS: bool = true;
-    const CARD_IDS_ALLOWED: Array<u8> = array![1,2,3].span();
+    const CARD_IDS_ALLOWED: Span<u8> = array![1,2,3].span();
 
     fn GET_DEFAULT_SETTINGS() -> @GameSettings {
         @GameSettings {
