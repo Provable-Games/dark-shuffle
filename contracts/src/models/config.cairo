@@ -2,17 +2,6 @@ use starknet::ContractAddress;
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
-pub struct WorldConfig {
-    #[key]
-    config_id: u8,
-    game_token_address: ContractAddress,
-    game_count: u64,
-    card_count: u64,
-    settings_count: u32,
-}
-
-#[derive(Copy, Drop, Serde)]
-#[dojo::model]
 pub struct GameSettings {
     #[key]
     settings_id: u32,
@@ -23,7 +12,7 @@ pub struct GameSettings {
     max_energy: u8,
     max_hand_size: u8,
     include_spells: bool,
-    card_ids_allowed: Span<u64>,
+    card_ids: Span<u64>,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -32,6 +21,14 @@ pub struct SettingsCounter {
     #[key]
     id: felt252,
     count: u32,
+}
+
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
+pub struct CardsCounter {
+    #[key]
+    id: felt252,
+    count: u64,
 }
 
 #[generate_trait]

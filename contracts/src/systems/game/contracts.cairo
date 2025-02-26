@@ -22,9 +22,9 @@ trait IGameSystems<T> {
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
 
-    use darkshuffle::constants::{WORLD_CONFIG_ID, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, DEFAULT_NS, DEFAULT_NS_STR, LAST_NODE_DEPTH};
+    use darkshuffle::constants::{MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, DEFAULT_NS, DEFAULT_NS_STR, LAST_NODE_DEPTH};
     use darkshuffle::models::card::{Card};
-    use darkshuffle::models::config::{WorldConfig, GameSettings, GameSettingsTrait};
+    use darkshuffle::models::config::{GameSettings, GameSettingsTrait};
     use darkshuffle::models::draft::{Draft};
     use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait, GameState};
     use darkshuffle::utils::renderer::utils::create_metadata;
@@ -99,13 +99,6 @@ mod game_systems {
                 "https://github.com/Provable-Games/dark-shuffle/blob/feat/integrate-tournament/client/public/favicon.svg",
                 DEFAULT_NS_STR(),
             );
-
-        // TODO: We shouldn't need to store this as the token address is the game system address which is already being
-        // stored
-        let mut world: WorldStorage = self.world(DEFAULT_NS());
-        let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-        world_config.game_token_address = get_contract_address();
-        world.write_model(@world_config);
     }
 
     #[abi(embed_v0)]
@@ -195,7 +188,7 @@ mod game_systems {
 
             let mut i = 0;
             while i < draft.cards.len() {
-                let card: Card = CardUtilsImpl::get_card(*draft.cards.at(i));
+                let card: Card = CardUtilsImpl::get_card(world, game_id, *draft.cards.at(i));
                 cards.append(card.name);
                 i += 1;
             };

@@ -308,7 +308,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 2,
         creatureType: tags.MAGICAL,
-        cost: 4,
+        cost: 3,
         attack: 3,
         health: 4,
         text: "When Played: Increase the hero's energy by 1 and grants +2 health to the hero if another Magical ally is in play"

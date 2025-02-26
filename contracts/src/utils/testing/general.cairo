@@ -1,6 +1,6 @@
-use darkshuffle::constants::{LAST_NODE_DEPTH, WORLD_CONFIG_ID};
+use darkshuffle::constants::{LAST_NODE_DEPTH};
 use darkshuffle::models::battle::{Battle, BattleEffects, Hero, Monster};
-use darkshuffle::models::config::{GameSettings, WorldConfig};
+use darkshuffle::models::config::{GameSettings};
 use darkshuffle::models::draft::Draft;
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::models::map::Map;
@@ -122,7 +122,7 @@ fn create_battle(
                 game_id,
                 round,
                 hero: Hero { health: hero_health, energy: hero_energy },
-                monster: Monster { monster_id, attack: monster_attack, health: monster_health },
+                monster: Monster { attack: monster_attack, health: monster_health },
                 battle_effects: BattleEffects {
                     enemy_marks: 0,
                     hero_dmg_reduction: 0,
@@ -132,7 +132,6 @@ fn create_battle(
                     next_brute_health_bonus: 0,
                     next_magical_attack_bonus: 0,
                     next_magical_health_bonus: 0,
-                    
                 },
             },
         );
@@ -141,11 +140,5 @@ fn create_battle(
 }
 
 fn create_battle_resources(ref world: WorldStorage, game_id: u64, hand: Span<u8>, deck: Span<u8>) {
-    world.write_model_test(@BattleResources {
-        battle_id: 1,
-        game_id,
-        hand,
-        deck,
-        board: array![].span(),
-    });
+    world.write_model_test(@BattleResources { battle_id: 1, game_id, hand, deck, board: array![].span(), });
 }

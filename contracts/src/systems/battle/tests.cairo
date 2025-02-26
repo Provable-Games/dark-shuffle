@@ -40,18 +40,14 @@ fn battle_test_end_turn() {
     let hero_health = 50;
     let monster_attack = 3;
 
-    let battle_id = create_battle(
+    let battle_id = create_battle(ref world, game_id, 1, hero_health, 255, 75, monster_attack, 10,);
+
+    create_battle_resources(
         ref world,
         game_id,
-        1,
-        hero_health,
-        255,
-        75,
-        monster_attack,
-        10,
+        array![1, 2, 3].span(),
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
     );
-
-    create_battle_resources(ref world, game_id, array![1, 2, 3].span(), array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span());
 
     battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
 
@@ -68,19 +64,15 @@ fn battle_test_end_turn() {
 fn battle_test_summon_creature() {
     let (mut world, game_id, battle_systems_dispatcher) = setup();
 
-    let card: Card = CardUtilsImpl::get_card(1);
-    let battle_id = create_battle(
+    let card: Card = CardUtilsImpl::get_card(world, game_id, 1);
+    let battle_id = create_battle(ref world, game_id, 1, 50, card.cost, 255, 0, 100,);
+
+    create_battle_resources(
         ref world,
         game_id,
-        1,
-        50,
-        card.cost,
-        255,
-        0,
-        100,
+        array![card.card_id].span(),
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
     );
-
-    create_battle_resources(ref world, game_id, array![card.card_id].span(), array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span());
 
     battle_systems_dispatcher
         .battle_actions(game_id, battle_id, array![array![0, card.card_id].span(), array![1].span()].span());
@@ -108,7 +100,9 @@ fn battle_test_attack_enemy() {
         array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
-    create_battle_resources(ref world, game_id,
+    create_battle_resources(
+        ref world,
+        game_id,
         array![].span(),
         array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
     );

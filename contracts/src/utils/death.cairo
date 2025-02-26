@@ -1,17 +1,17 @@
-use darkshuffle::models::battle::{Battle, Creature, BoardStats};
-use darkshuffle::models::card::{Card, CardDetails};
+use darkshuffle::models::battle::{Battle, CreatureDetails, BoardStats};
+use darkshuffle::models::card::{CardDetails};
 use darkshuffle::utils::{cards::CardUtilsImpl};
 
 #[generate_trait]
 impl DeathUtilsImpl of DeathUtilsTrait {
-    fn creature_death(ref creature: Creature, ref battle: Battle, ref board: Array<Creature>, board_stats: BoardStats) {
-        let card = CardUtilsImpl::get_card(creature.card_id);
-
-        if let CardDetails::creature_card(creature_card) = card.card_details {
+    fn creature_death(
+        ref creature: CreatureDetails, ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats
+    ) {
+        if let CardDetails::creature_card(creature_card) = creature.card.card_details {
             if let Option::Some(death_effect) = creature_card.death_effect {
-                if CardUtilsImpl::_is_effect_applicable(death_effect, card.card_type, board_stats) {
+                if CardUtilsImpl::_is_effect_applicable(death_effect, creature.card.card_type, board_stats) {
                     CardUtilsImpl::apply_card_effect(
-                        card.card_type, death_effect, ref creature, ref battle, ref board, board_stats
+                        creature.card.card_type, death_effect, ref creature, ref battle, ref board, board_stats
                     );
                 }
             }

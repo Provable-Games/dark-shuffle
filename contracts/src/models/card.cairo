@@ -27,7 +27,8 @@ pub struct CreatureCard {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct SpellCard {
-    play_effect: CardEffect,
+    effect: CardEffect,
+    extra_effect: Option<CardEffect>,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -64,6 +65,7 @@ pub enum Modifier {
     AllHealth,
     AllyAttack,
     AllyHealth,
+    AllyStats,
     SelfAttack,
     SelfHealth,
 }

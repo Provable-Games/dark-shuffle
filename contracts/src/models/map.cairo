@@ -1,3 +1,5 @@
+use darkshuffle::models::card::CardType;
+
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Map {
@@ -11,6 +13,7 @@ pub struct Map {
 #[derive(Copy, Drop, Serde)]
 pub struct MonsterNode {
     monster_id: u8,
+    monster_type: CardType,
     attack: u8,
     health: u8,
 }

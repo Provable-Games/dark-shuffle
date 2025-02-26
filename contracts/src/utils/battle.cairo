@@ -1,8 +1,7 @@
 use darkshuffle::constants::U8_MAX;
-use darkshuffle::models::battle::{Battle, BoardStats, Creature, RoundStats};
+use darkshuffle::models::battle::{Battle, BoardStats, CreatureDetails, RoundStats};
 use darkshuffle::models::card::{Card, CardDetails, CardType};
 use darkshuffle::models::game::GameEffects;
-use darkshuffle::utils::cards::CardUtilsImpl;
 
 #[generate_trait]
 impl BattleUtilsImpl of BattleUtilsTrait {
@@ -67,18 +66,18 @@ impl BattleUtilsImpl of BattleUtilsTrait {
         }
     }
 
-    fn damage_monster(ref battle: Battle, amount: u8, card_type: CardType) {
+    fn damage_monster(ref battle: Battle, amount: u8, card_type: CardType, board_stats: BoardStats) {
         let mut damage = amount + battle.battle_effects.enemy_marks;
 
         if damage == 0 {
             return;
         }
 
-        if battle.monster.monster_id == 75 && card_type == CardType::Hunter {
+        if board_stats.monster.monster_id == 75 && card_type == CardType::Hunter {
             damage -= 1;
-        } else if battle.monster.monster_id == 70 && card_type == CardType::Magical {
+        } else if board_stats.monster.monster_id == 70 && card_type == CardType::Magical {
             damage -= 1;
-        } else if battle.monster.monster_id == 65 && card_type == CardType::Brute {
+        } else if board_stats.monster.monster_id == 65 && card_type == CardType::Brute {
             damage -= 1;
         }
 
@@ -89,32 +88,14 @@ impl BattleUtilsImpl of BattleUtilsTrait {
         }
     }
 
-    fn damage_creature(ref creature: Creature, board_stats: BoardStats, mut amount: u8, monster_id: u8) {
-        let creature_type = CardUtilsImpl::get_card(creature.card_id).card_type;
-
-        if monster_id == 74 && creature_type == CardType::Hunter {
+    fn damage_creature(ref creature: CreatureDetails, mut amount: u8, monster_id: u8) {
+        if monster_id == 74 && creature.card.card_type == CardType::Hunter {
             amount += 1;
-        } else if monster_id == 69 && creature_type == CardType::Magical {
+        } else if monster_id == 69 && creature.card.card_type == CardType::Magical {
             amount += 1;
-        } else if monster_id == 64 && creature_type == CardType::Brute {
+        } else if monster_id == 64 && creature.card.card_type == CardType::Brute {
             amount += 1;
         }
-
-        let mut reduction = 0;
-
-        if creature.card_id == 27 {
-            reduction += 1;
-
-            if board_stats.brute_count > 1 {
-                reduction += 1;
-            }
-        }
-
-        if reduction >= amount {
-            return;
-        }
-
-        amount -= reduction;
 
         if creature.health < amount {
             creature.health = 0;

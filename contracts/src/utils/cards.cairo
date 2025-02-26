@@ -1,20 +1,22 @@
 use achievement::store::{Store, StoreTrait};
-use darkshuffle::models::battle::{Battle, BattleEffects, Creature, BoardStats, RoundStats};
+use darkshuffle::models::battle::{Battle, BattleEffects, Creature, CreatureDetails, BoardStats, RoundStats};
 use darkshuffle::models::card::{
     Card, CardRarity, CardDetails, CardType, CreatureCard, SpellCard, CardEffect, CardModifier, Modifier, Requirement,
     ValueType
 };
 use darkshuffle::models::game::GameEffects;
-use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl};
+use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, config::ConfigUtilsImpl};
+use dojo::model::ModelStorage;
+use dojo::world::WorldStorage;
 
 #[generate_trait]
 impl CardUtilsImpl of CardUtilsTrait {
     fn apply_card_effect(
         card_type: CardType,
         card_effect: CardEffect,
-        ref creature: Creature,
+        ref creature: CreatureDetails,
         ref battle: Battle,
-        ref board: Array<Creature>,
+        ref board: Array<CreatureDetails>,
         board_stats: BoardStats,
     ) {
         let mut modifier_value: u8 = match card_effect.modifier.value_type {
@@ -34,7 +36,7 @@ impl CardUtilsImpl of CardUtilsTrait {
             Modifier::HeroDamageReduction => battle.battle_effects.hero_dmg_reduction += modifier_value,
             Modifier::EnemyMarks => battle.battle_effects.enemy_marks += modifier_value,
             Modifier::EnemyAttack => BattleUtilsImpl::reduce_monster_attack(ref battle, modifier_value),
-            Modifier::EnemyHealth => BattleUtilsImpl::damage_monster(ref battle, modifier_value, card_type),
+            Modifier::EnemyHealth => BattleUtilsImpl::damage_monster(ref battle, modifier_value, card_type, board_stats),
             Modifier::NextAllyAttack => BattleUtilsImpl::next_ally_attack(ref battle, card_type, modifier_value),
             Modifier::NextAllyHealth => BattleUtilsImpl::next_ally_health(ref battle, card_type, modifier_value),
             Modifier::AllAttack => BoardUtilsImpl::update_creatures(ref board, Option::None, modifier_value, 0),
@@ -44,6 +46,9 @@ impl CardUtilsImpl of CardUtilsTrait {
             ),
             Modifier::AllyHealth => BoardUtilsImpl::update_creatures(
                 ref board, Option::Some(card_type), 0, modifier_value
+            ),
+            Modifier::AllyStats => BoardUtilsImpl::update_creatures(
+                ref board, Option::Some(card_type), modifier_value, modifier_value
             ),
             Modifier::SelfAttack => creature.attack += modifier_value,
             Modifier::SelfHealth => creature.health += modifier_value,
@@ -66,7 +71,7 @@ impl CardUtilsImpl of CardUtilsTrait {
 
     fn _requirement_met(requirement: Requirement, card_type: CardType, board_stats: BoardStats) -> bool {
         match requirement {
-            Requirement::EnemyWeak => Self::_is_enemy_weak(card_type, board_stats.monster_type),
+            Requirement::EnemyWeak => Self::_is_enemy_weak(card_type, board_stats.monster.monster_type),
             Requirement::HasAlly => Self::_has_ally(card_type, board_stats),
             Requirement::NoAlly => !Self::_has_ally(card_type, board_stats),
         }
@@ -92,43 +97,33 @@ impl CardUtilsImpl of CardUtilsTrait {
         }
     }
 
+    fn get_card(world: WorldStorage, game_id: u64, card_id: u8) -> Card {
+        let card_ids: Span<u64> = ConfigUtilsImpl::get_game_settings(world, game_id).card_ids;
+        let card: Card = world.read_model(*card_ids.at(card_id.into()));
+        card
+    }
 
-    fn get_card(id: u8) -> Card {
-        Card {
-            id: 1,
-            name: 'Warlock',
-            rarity: CardRarity::Legendary,
-            cost: 2,
-            card_type: CardType::Magical,
-            card_details: CardDetails::creature_card(
-                CreatureCard {
-                    attack: 3,
-                    health: 4,
-                    play_effect: Option::Some(
-                        CardEffect {
-                            modifier: CardModifier {
-                                _type: Modifier::AllAttack,
-                                value: 2,
-                                value_type: ValueType::Fixed,
-                                requirement: Option::None,
-                            },
-                            bonus: Option::None,
-                        }
-                    ),
-                    death_effect: Option::Some(
-                        CardEffect {
-                            modifier: CardModifier {
-                                _type: Modifier::EnemyAttack,
-                                value: 1,
-                                value_type: ValueType::Fixed,
-                                requirement: Option::None,
-                            },
-                            bonus: Option::None,
-                        }
-                    ),
-                    attack_effect: Option::None,
-                }
-            ),
+    fn no_creature_card() -> CreatureDetails {
+        CreatureDetails {
+            card: Card {
+                id: 0,
+                name: 'None',
+                rarity: CardRarity::Common,
+                cost: 0,
+                card_type: CardType::Hunter,
+                card_details: CardDetails::creature_card(
+                    CreatureCard {
+                        attack: 0,
+                        health: 0,
+                        play_effect: Option::None,
+                        death_effect: Option::None,
+                        attack_effect: Option::None,
+                    }
+                ),
+            },
+            card_id: 0,
+            attack: 0,
+            health: 0,
         }
     }
 }

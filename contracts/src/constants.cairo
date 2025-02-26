@@ -1,6 +1,3 @@
-const WORLD_CONFIG_ID: u8 = 1;
-const CARD_POOL_SIZE: u8 = 75;
-
 const LAST_NODE_DEPTH: u8 = 6;
 const PRIZES: u8 = 10;
 
@@ -41,7 +38,18 @@ pub mod DEFAULT_SETTINGS {
     const MAX_ENERGY: u8 = 7;
     const MAX_HAND_SIZE: u8 = 10;
     const INCLUDE_SPELLS: bool = true;
-    const CARD_IDS_ALLOWED: Span<u8> = array![1,2,3].span();
+
+    fn GET_DEFAULT_CARDS() -> Span<u64> {
+        let mut card_ids = array![];
+
+        let mut i = 1;
+        while i <= 90 {
+            card_ids.append(i);
+            i += 1;
+        };
+
+        card_ids.span()
+    }
 
     fn GET_DEFAULT_SETTINGS() -> @GameSettings {
         @GameSettings {
@@ -53,7 +61,7 @@ pub mod DEFAULT_SETTINGS {
             max_energy: MAX_ENERGY,
             max_hand_size: MAX_HAND_SIZE,
             include_spells: INCLUDE_SPELLS,
-            card_ids_allowed: CARD_IDS_ALLOWED,
+            card_ids: GET_DEFAULT_CARDS(),
         }
     }
 }

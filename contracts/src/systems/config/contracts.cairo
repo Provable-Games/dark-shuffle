@@ -12,7 +12,7 @@ trait IConfigSystems<T> {
         max_energy: u8,
         max_hand_size: u8,
         include_spells: bool,
-        card_ids_allowed: Span<u64>,
+        card_ids: Span<u64>,
     );
     fn setting_details(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
@@ -22,8 +22,8 @@ trait IConfigSystems<T> {
 #[dojo::contract]
 mod config_systems {
     use achievement::components::achievable::AchievableComponent;
-    use darkshuffle::constants::{DEFAULT_NS, DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS, VERSION, WORLD_CONFIG_ID};
-    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter, WorldConfig};
+    use darkshuffle::constants::{DEFAULT_NS, DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS, VERSION};
+    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter};
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
@@ -90,7 +90,7 @@ mod config_systems {
             max_energy: u8,
             max_hand_size: u8,
             include_spells: bool,
-            card_ids_allowed: Span<u64>,
+            card_ids: Span<u64>,
         ) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
@@ -99,7 +99,7 @@ mod config_systems {
             assert(draft_size > 0, 'Invalid draft size');
             assert(max_energy > 0, 'Invalid max energy');
             assert(max_hand_size > 0, 'Invalid max hand size');
-            assert(card_ids_allowed.len() > 10, 'Minimum 10 card ids required');
+            assert(card_ids.len() > 10, 'Minimum 10 card ids required');
 
             // increment settings counter
             let mut settings_count: SettingsCounter = world.read_model(VERSION);
@@ -117,7 +117,7 @@ mod config_systems {
                         max_energy,
                         max_hand_size,
                         include_spells,
-                        card_ids_allowed,
+                        card_ids,
                     }
                 );
         }

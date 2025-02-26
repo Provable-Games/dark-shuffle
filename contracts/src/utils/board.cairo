@@ -1,27 +1,49 @@
-use darkshuffle::models::battle::{Creature, Battle, BoardStats, RoundStats};
-use darkshuffle::models::card::CardType;
+use darkshuffle::models::battle::{Creature, Battle, BoardStats, RoundStats, CreatureDetails};
+use darkshuffle::models::card::{Card, CardType};
+use darkshuffle::models::map::MonsterNode;
 use darkshuffle::utils::{attack::AttackUtilsImpl, death::DeathUtilsImpl, cards::CardUtilsImpl};
+use dojo::world::WorldStorage;
 
 #[generate_trait]
 impl BoardUtilsImpl of BoardUtilsTrait {
-    fn no_creature() -> Creature {
-        Creature { card_id: 0, attack: 0, health: 0 }
-    }
-
-    fn get_board(board: Span<Creature>) -> Array<Creature> {
-        let mut new_board = array![];
+    fn get_packed_board(ref board: Array<CreatureDetails>) -> Span<Creature> {
+        let mut packed_board = array![];
 
         let mut i = 0;
         while i < board.len() {
-            new_board.append(*board.at(i));
+            packed_board
+                .append(
+                    Creature { card_id: *board.at(i).card_id, attack: *board.at(i).attack, health: *board.at(i).health }
+                );
             i += 1;
         };
 
-        new_board
+        packed_board.span()
+    }
+
+    fn unpack_board(world: WorldStorage, game_id: u64, board: Span<Creature>) -> Array<CreatureDetails> {
+        let mut unpacked_board = array![];
+
+        let mut i = 0;
+        while i < board.len() {
+            let card: Card = CardUtilsImpl::get_card(world, game_id, *board.at(i).card_id);
+            unpacked_board
+                .append(
+                    CreatureDetails {
+                        card: card,
+                        card_id: *board.at(i).card_id,
+                        attack: *board.at(i).attack,
+                        health: *board.at(i).health
+                    }
+                );
+            i += 1;
+        };
+
+        unpacked_board
     }
 
     fn attack_monster(
-        ref battle: Battle, ref board: Array<Creature>, board_stats: BoardStats, ref round_stats: RoundStats
+        ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats, ref round_stats: RoundStats
     ) {
         let mut i = 0;
 
@@ -35,17 +57,12 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         round_stats.creature_attack_count += board.len().try_into().unwrap();
     }
 
-    fn get_board_stats(ref board: Array<Creature>, monster_id: u8) -> BoardStats {
-        let mut stats: BoardStats = BoardStats {
-            magical_count: 0,
-            brute_count: 0,
-            hunter_count: 0,
-            monster_type: CardUtilsImpl::get_card(monster_id).card_type,
-        };
+    fn get_board_stats(ref board: Array<CreatureDetails>, monster: MonsterNode) -> BoardStats {
+        let mut stats: BoardStats = BoardStats { magical_count: 0, brute_count: 0, hunter_count: 0, monster, };
 
         let mut i = 0;
         while i < board.len() {
-            match CardUtilsImpl::get_card(*board.at(i).card_id).card_type {
+            match board.at(i).card.card_type {
                 CardType::Magical => stats.magical_count += 1,
                 CardType::Brute => stats.brute_count += 1,
                 CardType::Hunter => stats.hunter_count += 1,
@@ -56,10 +73,10 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         stats
     }
 
-    fn update_creatures(ref board: Array<Creature>, _type: Option<CardType>, attack: u8, health: u8) {
+    fn update_creatures(ref board: Array<CreatureDetails>, _type: Option<CardType>, attack: u8, health: u8) {
         let mut i = 0;
         while i < board.len() {
-            if _type == Option::None || _type == Option::Some(CardUtilsImpl::get_card(*board.at(i).card_id).card_type) {
+            if _type == Option::None || _type == Option::Some(*board.at(i).card.card_type) {
                 let mut creature = board.pop_front().unwrap();
                 creature.attack += attack;
                 creature.health += health;
@@ -69,7 +86,7 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         };
     }
 
-    fn remove_dead_creatures(ref battle: Battle, ref board: Array<Creature>, board_stats: BoardStats) {
+    fn remove_dead_creatures(ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats) {
         let mut new_board = array![];
 
         let mut i = 0;
@@ -86,8 +103,8 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         board = new_board;
     }
 
-    fn get_strongest_creature(ref board: Array<Creature>) -> Creature {
-        let mut strongest_creature = Self::no_creature();
+    fn get_strongest_creature(ref board: Array<CreatureDetails>) -> CreatureDetails {
+        let mut strongest_creature = CardUtilsImpl::no_creature_card();
 
         if board.len() == 0 {
             return strongest_creature;

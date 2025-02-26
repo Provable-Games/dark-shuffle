@@ -1,10 +1,10 @@
-use darkshuffle::models::card::CardType;
+use darkshuffle::models::card::Card;
 use darkshuffle::models::game::{Game, GameOwnerTrait};
+use darkshuffle::models::map::MonsterNode;
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use starknet::{ContractAddress, get_caller_address};
-
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
@@ -39,7 +39,6 @@ pub struct Hero {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Monster {
-    monster_id: u8,
     attack: u8,
     health: u8,
 }
@@ -64,11 +63,19 @@ pub struct BattleEffects {
 }
 
 #[derive(Copy, Drop, Serde)]
+pub struct CreatureDetails {
+    card: Card,
+    card_id: u8,
+    attack: u8,
+    health: u8,
+}
+
+#[derive(Copy, Drop, Serde)]
 pub struct BoardStats {
+    monster: MonsterNode,
     magical_count: u8,
     brute_count: u8,
     hunter_count: u8,
-    monster_type: CardType,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -80,10 +87,7 @@ pub struct RoundStats {
 
 #[generate_trait]
 impl BattleOwnerImpl of BattleOwnerTrait {
-    fn assert_battle(self: Battle, world: WorldStorage) {
-        let game: Game = world.read_model(self.game_id);
-        game.assert_owner(world);
-
+    fn assert_battle(self: Battle) {
         assert(self.hero.health > 0, 'Battle over');
         assert(self.monster.health > 0, 'Battle over');
     }

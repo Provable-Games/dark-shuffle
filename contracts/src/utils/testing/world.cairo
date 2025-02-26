@@ -1,8 +1,8 @@
 use core::array::{ArrayTrait, SpanTrait};
 use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR};
 use darkshuffle::models::{
-    battle::{m_Battle, m_Board}, config::{WorldConfig, m_GameSettings, m_WorldConfig}, draft::{m_Draft},
-    game::{m_Game, m_GameEffects}, map::{m_Map},
+    battle::{m_Battle, m_Board}, config::{m_GameSettings}, draft::{m_Draft}, game::{m_Game, m_GameEffects},
+    map::{m_Map},
 };
 use darkshuffle::systems::{
     battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems},
@@ -25,7 +25,6 @@ fn namespace_def() -> NamespaceDef {
         namespace: DEFAULT_NS_STR(), resources: [
             TestResource::Model(m_Battle::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Board::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_WorldConfig::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_GameSettings::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Draft::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Game::TEST_CLASS_HASH.try_into().unwrap()),
@@ -94,10 +93,6 @@ fn spawn_darkshuffle() -> (dojo::world::WorldStorage, IGameSystemsDispatcher) {
     starknet::testing::set_block_timestamp(300000);
 
     let game_systems_dispatcher = deploy_game_systems(ref world);
-    let world_config = WorldConfig {
-        config_id: 1, game_token_address: game_systems_dispatcher.contract_address, game_count: 0,
-    };
-    world.write_model_test(@world_config);
 
     (world, game_systems_dispatcher)
 }
