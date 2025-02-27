@@ -44,7 +44,8 @@ mod draft_systems {
             } else {
                 let random_hash = random::get_random_hash();
                 let seed: u128 = random::get_entropy(random_hash);
-                draft.options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells);
+                let card_pool = DraftUtilsImpl::get_weighted_draft_list(world, game_settings);
+                draft.options = DraftUtilsImpl::get_draft_options(seed, card_pool);
             }
 
             world.write_model(@draft);

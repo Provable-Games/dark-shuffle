@@ -51,9 +51,7 @@ mod battle_systems {
             let mut board: Array<CreatureDetails> = BoardUtilsImpl::unpack_board(
                 world, game_id, battle_resources.board
             );
-            let mut map: Map = world.read_model(game_id);
-            let mut monster_node: MonsterNode = MapUtilsImpl::get_monster_node(map, game.last_node_id);
-            let mut board_stats: BoardStats = BoardUtilsImpl::get_board_stats(ref board, monster_node);
+            let mut board_stats: BoardStats = BoardUtilsImpl::get_board_stats(ref board, battle.monster.monster_id);
 
             let mut round_stats: RoundStats = RoundStats {
                 monster_start_health: battle.monster.health, creatures_played: 0, creature_attack_count: 0,
@@ -94,7 +92,7 @@ mod battle_systems {
                         assert(action_index == actions.len() - 1, 'Invalid action');
                         BoardUtilsImpl::attack_monster(ref battle, ref board, board_stats, ref round_stats);
                         BoardUtilsImpl::remove_dead_creatures(ref battle, ref board, board_stats);
-                        board_stats = BoardUtilsImpl::get_board_stats(ref board, monster_node);
+                        board_stats = BoardUtilsImpl::get_board_stats(ref board, battle.monster.monster_id);
 
                         if battle.monster.health + 25 <= round_stats.monster_start_health {
                             AchievementsUtilsImpl::big_hit(ref world);
@@ -123,7 +121,7 @@ mod battle_systems {
             let seed: u128 = random::get_entropy(random_hash);
 
             if GameUtilsImpl::is_battle_over(battle) {
-                GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, monster_node);
+                GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects);
                 return;
             };
 
@@ -132,7 +130,7 @@ mod battle_systems {
             }
 
             MonsterUtilsImpl::monster_ability(
-                ref battle, ref battle_resources, game_effects, ref board, board_stats, round_stats, seed
+                ref battle, ref battle_resources, game_effects, ref board, round_stats, seed
             );
             BoardUtilsImpl::remove_dead_creatures(ref battle, ref board, board_stats);
 
@@ -141,7 +139,7 @@ mod battle_systems {
             }
 
             if GameUtilsImpl::is_battle_over(battle) {
-                GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, monster_node);
+                GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects);
             } else {
                 battle_resources.board = BoardUtilsImpl::get_packed_board(ref board);
                 battle.round += 1;

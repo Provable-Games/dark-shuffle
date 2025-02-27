@@ -73,11 +73,11 @@ impl BattleUtilsImpl of BattleUtilsTrait {
             return;
         }
 
-        if board_stats.monster.monster_id == 75 && card_type == CardType::Hunter {
+        if battle.monster.monster_id == 75 && card_type == CardType::Hunter {
             damage -= 1;
-        } else if board_stats.monster.monster_id == 70 && card_type == CardType::Magical {
+        } else if battle.monster.monster_id == 70 && card_type == CardType::Magical {
             damage -= 1;
-        } else if board_stats.monster.monster_id == 65 && card_type == CardType::Brute {
+        } else if battle.monster.monster_id == 65 && card_type == CardType::Brute {
             damage -= 1;
         }
 

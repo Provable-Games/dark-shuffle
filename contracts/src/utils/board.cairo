@@ -1,7 +1,6 @@
 use darkshuffle::models::battle::{Creature, Battle, BoardStats, RoundStats, CreatureDetails};
 use darkshuffle::models::card::{Card, CardType};
-use darkshuffle::models::map::MonsterNode;
-use darkshuffle::utils::{attack::AttackUtilsImpl, death::DeathUtilsImpl, cards::CardUtilsImpl};
+use darkshuffle::utils::{attack::AttackUtilsImpl, death::DeathUtilsImpl, cards::CardUtilsImpl, monsters::MonsterUtilsImpl};
 use dojo::world::WorldStorage;
 
 #[generate_trait]
@@ -57,8 +56,9 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         round_stats.creature_attack_count += board.len().try_into().unwrap();
     }
 
-    fn get_board_stats(ref board: Array<CreatureDetails>, monster: MonsterNode) -> BoardStats {
-        let mut stats: BoardStats = BoardStats { magical_count: 0, brute_count: 0, hunter_count: 0, monster, };
+    fn get_board_stats(ref board: Array<CreatureDetails>, monster_id: u8) -> BoardStats {
+        let monster_type = MonsterUtilsImpl::get_monster_type(monster_id);
+        let mut stats: BoardStats = BoardStats { magical_count: 0, brute_count: 0, hunter_count: 0, monster_type };
 
         let mut i = 0;
         while i < board.len() {

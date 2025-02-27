@@ -18,6 +18,6 @@ impl AttackUtilsImpl of AttackUtilsTrait {
         }
 
         BattleUtilsImpl::damage_monster(ref battle, creature.attack, creature.card.card_type, board_stats);
-        BattleUtilsImpl::damage_creature(ref creature, battle.monster.attack, board_stats.monster.monster_id);
+        BattleUtilsImpl::damage_creature(ref creature, battle.monster.attack, battle.monster.monster_id);
     }
 }

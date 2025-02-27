@@ -1,6 +1,5 @@
-use darkshuffle::models::card::Card;
+use darkshuffle::models::card::{Card, CardType};
 use darkshuffle::models::game::{Game, GameOwnerTrait};
-use darkshuffle::models::map::MonsterNode;
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -39,6 +38,7 @@ pub struct Hero {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Monster {
+    monster_id: u8,
     attack: u8,
     health: u8,
 }
@@ -72,10 +72,10 @@ pub struct CreatureDetails {
 
 #[derive(Copy, Drop, Serde)]
 pub struct BoardStats {
-    monster: MonsterNode,
     magical_count: u8,
     brute_count: u8,
     hunter_count: u8,
+    monster_type: CardType,
 }
 
 #[derive(Copy, Drop, Serde)]

@@ -71,7 +71,7 @@ impl CardUtilsImpl of CardUtilsTrait {
 
     fn _requirement_met(requirement: Requirement, card_type: CardType, board_stats: BoardStats) -> bool {
         match requirement {
-            Requirement::EnemyWeak => Self::_is_enemy_weak(card_type, board_stats.monster.monster_type),
+            Requirement::EnemyWeak => Self::_is_enemy_weak(card_type, board_stats.monster_type),
             Requirement::HasAlly => Self::_has_ally(card_type, board_stats),
             Requirement::NoAlly => !Self::_has_ally(card_type, board_stats),
         }

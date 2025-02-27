@@ -11,8 +11,8 @@ pub struct GameSettings {
     draft_size: u8,
     max_energy: u8,
     max_hand_size: u8,
-    include_spells: bool,
     card_ids: Span<u64>,
+    card_rarity_weights: Span<u8>,
 }
 
 #[derive(Copy, Drop, Serde)]

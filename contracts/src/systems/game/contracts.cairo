@@ -130,7 +130,8 @@ mod game_systems {
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let random_hash = random::get_random_hash();
             let seed: u128 = random::get_entropy(random_hash);
-            let options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells);
+            let card_pool = DraftUtilsImpl::get_weighted_draft_list(world, game_settings);
+            let options = DraftUtilsImpl::get_draft_options(seed, card_pool);
             let action_count = 0;
 
             let game = Game {

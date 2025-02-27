@@ -40,9 +40,9 @@ impl SummonUtilsImpl of SummonUtilsTrait {
                 battle.battle_effects.next_hunter_attack_bonus = 0;
                 battle.battle_effects.next_hunter_health_bonus = 0;
 
-                if board_stats.monster.monster_id == 73 {
+                if battle.monster.monster_id == 73 {
                     battle.monster.attack += 1;
-                } else if board_stats.monster.monster_id == 72 {
+                } else if battle.monster.monster_id == 72 {
                     battle.monster.health += 2;
                 }
             },
@@ -53,9 +53,9 @@ impl SummonUtilsImpl of SummonUtilsTrait {
                 battle.battle_effects.next_brute_attack_bonus = 0;
                 battle.battle_effects.next_brute_health_bonus = 0;
 
-                if board_stats.monster.monster_id == 63 {
+                if battle.monster.monster_id == 63 {
                     battle.monster.attack += 1;
-                } else if board_stats.monster.monster_id == 62 {
+                } else if battle.monster.monster_id == 62 {
                     battle.monster.health += 2;
                 }
             },
@@ -66,9 +66,9 @@ impl SummonUtilsImpl of SummonUtilsTrait {
                 battle.battle_effects.next_magical_attack_bonus = 0;
                 battle.battle_effects.next_magical_health_bonus = 0;
 
-                if board_stats.monster.monster_id == 68 {
+                if battle.monster.monster_id == 68 {
                     battle.monster.attack += 1;
-                } else if board_stats.monster.monster_id == 67 {
+                } else if battle.monster.monster_id == 67 {
                     battle.monster.health += 2;
                 }
             }
@@ -82,7 +82,7 @@ impl SummonUtilsImpl of SummonUtilsTrait {
             }
         }
 
-        if board_stats.monster.monster_id == 55 {
+        if battle.monster.monster_id == 55 {
             if creature.health > creature.attack {
                 BattleUtilsImpl::damage_hero(ref battle, game_effects, 2);
             }

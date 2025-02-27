@@ -1,8 +1,8 @@
 use achievement::store::{Store, StoreTrait};
 use darkshuffle::models::battle::Battle;
 use darkshuffle::models::card::{Card, CardType};
-use darkshuffle::models::map::MonsterNode;
 use darkshuffle::utils::cards::CardUtilsImpl;
+use darkshuffle::utils::monsters::MonsterUtilsImpl;
 use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
@@ -34,12 +34,13 @@ impl AchievementsUtilsImpl of AchievementsUtilsTrait {
         }
     }
 
-    fn defeat_enemy(ref world: WorldStorage, battle: Battle, monster_node: MonsterNode) {
+    fn defeat_enemy(ref world: WorldStorage, battle: Battle, monster_id: u8) {
         let store = StoreTrait::new(world);
         let player_id: felt252 = get_caller_address().into();
         let time = get_block_timestamp();
 
-        match monster_node.monster_type {
+        let monster_type = MonsterUtilsImpl::get_monster_type(monster_id);
+        match monster_type {
             CardType::Hunter => {
                 let task_id: felt252 = Task::HuntersProwess.identifier();
                 store.progress(player_id, task_id, count: 1, time: time);

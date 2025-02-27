@@ -21,11 +21,11 @@ const LCG_PRIME: u128 = 281474976710656;
 const VERSION: felt252 = '0.0.1';
 
 fn DEFAULT_NS() -> @ByteArray {
-    @"ds_v1_1_1"
+    @"ds_v1_2_0"
 }
 
 fn DEFAULT_NS_STR() -> ByteArray {
-    "ds_v1_1_1"
+    "ds_v1_2_0"
 }
 
 pub mod DEFAULT_SETTINGS {
@@ -37,9 +37,8 @@ pub mod DEFAULT_SETTINGS {
     const DRAFT_SIZE: u8 = 20;
     const MAX_ENERGY: u8 = 7;
     const MAX_HAND_SIZE: u8 = 10;
-    const INCLUDE_SPELLS: bool = true;
 
-    fn GET_DEFAULT_CARDS() -> Span<u64> {
+    fn GET_GENESIS_CARD_IDS() -> Span<u64> {
         let mut card_ids = array![];
 
         let mut i = 1;
@@ -51,6 +50,10 @@ pub mod DEFAULT_SETTINGS {
         card_ids.span()
     }
 
+    fn GET_DEFAULT_WEIGHTS() -> Span<u8> {
+        array![5, 4, 3, 2, 1].span()
+    }
+
     fn GET_DEFAULT_SETTINGS() -> @GameSettings {
         @GameSettings {
             settings_id: 0,
@@ -60,8 +63,8 @@ pub mod DEFAULT_SETTINGS {
             draft_size: DRAFT_SIZE,
             max_energy: MAX_ENERGY,
             max_hand_size: MAX_HAND_SIZE,
-            include_spells: INCLUDE_SPELLS,
-            card_ids: GET_DEFAULT_CARDS(),
+            card_ids: GET_GENESIS_CARD_IDS(),
+            card_rarity_weights: GET_DEFAULT_WEIGHTS(),
         }
     }
 }

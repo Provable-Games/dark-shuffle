@@ -11,8 +11,8 @@ trait IConfigSystems<T> {
         draft_size: u8,
         max_energy: u8,
         max_hand_size: u8,
-        include_spells: bool,
         card_ids: Span<u64>,
+        card_rarity_weights: Span<u8>,
     );
     fn setting_details(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
@@ -25,6 +25,7 @@ mod config_systems {
     use darkshuffle::constants::{DEFAULT_NS, DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS, VERSION};
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter};
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
+    use darkshuffle::utils::config::ConfigUtilsImpl;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -77,6 +78,7 @@ mod config_systems {
 
         // initialize game with default settings
         world.write_model(GET_DEFAULT_SETTINGS());
+        ConfigUtilsImpl::create_genesis_cards(ref world);
     }
 
     #[abi(embed_v0)]
@@ -89,8 +91,8 @@ mod config_systems {
             draft_size: u8,
             max_energy: u8,
             max_hand_size: u8,
-            include_spells: bool,
             card_ids: Span<u64>,
+            card_rarity_weights: Span<u8>,
         ) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
@@ -99,7 +101,8 @@ mod config_systems {
             assert(draft_size > 0, 'Invalid draft size');
             assert(max_energy > 0, 'Invalid max energy');
             assert(max_hand_size > 0, 'Invalid max hand size');
-            assert(card_ids.len() > 10, 'Minimum 10 card ids required');
+            assert(card_ids.len() > 10, 'Minimum 10 draftable cards');
+            assert(card_rarity_weights.len() == 5, 'Weight for each rarity required');
 
             // increment settings counter
             let mut settings_count: SettingsCounter = world.read_model(VERSION);
@@ -116,8 +119,8 @@ mod config_systems {
                         draft_size,
                         max_energy,
                         max_hand_size,
-                        include_spells,
                         card_ids,
+                        card_rarity_weights,
                     }
                 );
         }

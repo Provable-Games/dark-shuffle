@@ -67,7 +67,6 @@ fn create_default_settings(ref world: WorldStorage) -> u32 {
                 draft_size: 20,
                 max_energy: 7,
                 max_hand_size: 10,
-                include_spells: true,
             },
         );
 
@@ -82,7 +81,6 @@ fn create_custom_settings(
     draft_size: u8,
     max_energy: u8,
     max_hand_size: u8,
-    include_spells: bool,
 ) -> u32 {
     let settings_id = 99;
 
@@ -96,7 +94,6 @@ fn create_custom_settings(
                 draft_size,
                 max_energy,
                 max_hand_size,
-                include_spells,
             },
         );
 

@@ -104,12 +104,11 @@ impl MapUtilsImpl of MapUtilsTrait {
         }
 
         let monster_id = random::get_random_number(seed, 75 - monster_range) + monster_range;
-        let monster_type = MonsterUtilsImpl::get_monster_type(monster_id);
 
         let health = 35 + (map.level * 5);
         let attack = (map.level + 1);
 
-        MonsterNode { monster_id, monster_type, attack, health }
+        MonsterNode { monster_id, attack, health }
     }
 
     fn start_battle(ref world: WorldStorage, ref game: Game, monster: MonsterNode, seed: u128) {
@@ -126,7 +125,7 @@ impl MapUtilsImpl of MapUtilsTrait {
             hero: Hero {
                 health: game.hero_health, energy: game_settings.start_energy + game_effects.start_bonus_energy,
             },
-            monster: Monster { attack: monster.attack, health: monster.health },
+            monster: Monster { monster_id: monster.monster_id, attack: monster.attack, health: monster.health },
             battle_effects: BattleEffects {
                 enemy_marks: 0,
                 hero_dmg_reduction: 0,

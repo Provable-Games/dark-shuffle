@@ -16,7 +16,7 @@ pub enum CardDetails {
     spell_card: SpellCard,
 }
 
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[derive(Introspect, Copy, Drop, Serde)]
 pub struct CreatureCard {
     attack: u8,
     health: u8,
@@ -25,19 +25,19 @@ pub struct CreatureCard {
     attack_effect: Option<CardEffect>,
 }
 
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[derive(Introspect, Copy, Drop, Serde)]
 pub struct SpellCard {
     effect: CardEffect,
     extra_effect: Option<CardEffect>,
 }
 
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[derive(Introspect, Copy, Drop, Serde)]
 pub struct CardEffect {
     modifier: CardModifier,
     bonus: Option<EffectBonus>,
 }
 
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[derive(Introspect, Copy, Drop, Serde)]
 pub struct CardModifier {
     _type: Modifier,
     value_type: ValueType,
@@ -45,7 +45,7 @@ pub struct CardModifier {
     requirement: Option<Requirement>,
 }
 
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[derive(Introspect, Copy, Drop, Serde)]
 pub struct EffectBonus {
     value: u8,
     requirement: Requirement,
@@ -90,6 +90,18 @@ pub enum CardRarity {
     Rare,
     Epic,
     Legendary,
+}
+
+impl CardRarityIntoU8 of Into<CardRarity, u8> {
+    fn into(self: CardRarity) -> u8 {
+        match self {
+            CardRarity::Common => 0,
+            CardRarity::Uncommon => 1,
+            CardRarity::Rare => 2,
+            CardRarity::Epic => 3,
+            CardRarity::Legendary => 4,
+        }
+    }
 }
 
 #[derive(PartialEq, Introspect, Copy, Drop, Serde)]
