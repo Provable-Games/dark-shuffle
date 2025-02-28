@@ -23,14 +23,14 @@ function DraftStats() {
     }
 
     cards.forEach(card => {
-      copy[card.cardType][card.cost] += 1;
+      copy[card.category][card.cost] += 1;
     })
 
     setManaCurve(copy)
   }, [cards]);
 
   const typeCount = cards.reduce((acc, card) => {
-    acc[card.creatureType] = (acc[card.creatureType] || 0) + 1
+    acc[card.cardType] = (acc[card.cardType] || 0) + 1
     return acc
   }, {})
 

@@ -39,6 +39,12 @@ function StartDraft() {
   const [startingSeasonGame, setStartingSeasonGame] = useState(false)
   const [gamesDialog, openGamesDialog] = useState(false)
   const [reconnecting, setReconnecting] = useState(false)
+  const [previousGame, setPreviousGame] = useState()
+
+  const stopReconnecting = () => {
+    setReconnecting(false)
+    setPreviousGame()
+  }
 
   const startSeasonGame = async () => {
     if (dojo.balances.lords < season.entryFee) {
@@ -65,14 +71,17 @@ function StartDraft() {
     await draft.actions.startDraft(tokenData)
   }
 
-  const resumeGame = async (game) => {
+  const loadGameSettings = async (game) => {
     setReconnecting(true)
+    setPreviousGame(game)
+    gameState.utils.initializeGameSettings(game.settingsId)
+  }
 
+  const loadActiveGame = async () => {
     try {
-      let data = await getActiveGame(game.id)
+      let data = await getActiveGame(previousGame.id)
       data.state = GAME_STATES[data.state]
 
-      await gameState.utils.initializeGameSettings(game.settingsId)
       await draft.actions.fetchDraft(data.game_id)
 
       if (data.state !== 'Draft') {
@@ -120,7 +129,7 @@ function StartDraft() {
         gameId: data.game_id,
         state: data.state,
 
-        playerName: game.playerName,
+        playerName: previousGame.playerName,
 
         heroHealth: data.hero_health,
         heroXp: data.hero_xp,
@@ -133,10 +142,10 @@ function StartDraft() {
         replay: Boolean(replay.spectatingGame?.id)
       })
 
-      setReconnecting(false)
+      stopReconnecting()
     } catch (ex) {
       console.log(ex)
-      setReconnecting(false)
+      stopReconnecting()
       enqueueSnackbar('Failed To Reconnect', { variant: 'warning' })
     }
   }
@@ -145,9 +154,15 @@ function StartDraft() {
 
   useEffect(() => {
     if (replay.spectatingGame) {
-      resumeGame(replay.spectatingGame)
+      loadActiveGame(replay.spectatingGame)
     }
   }, [replay.spectatingGame])
+
+  useEffect(() => {
+    if (previousGame && gameState.getState.gameSettings?.start_health && gameState.getState.gameCards?.length > 0) {
+      loadActiveGame()
+    }
+  }, [previousGame, gameState.getState.gameSettings, gameState.getState.gameCards])
 
   return (
     <>
@@ -339,8 +354,8 @@ function StartDraft() {
       </BrowserView>
 
       {gameState.getState.startStatus && <StartGameDialog status={gameState.getState.startStatus} isSeason={startingSeasonGame} />}
-      {gamesDialog && <GameTokens open={gamesDialog} close={openGamesDialog} address={address} resumeGame={resumeGame} startGame={startMintedGame} />}
-      {reconnecting && <ReconnectDialog close={() => setReconnecting(false)} />}
+      {gamesDialog && <GameTokens open={gamesDialog} close={openGamesDialog} address={address} resumeGame={loadGameSettings} startGame={startMintedGame} />}
+      {reconnecting && <ReconnectDialog close={stopReconnecting} />}
       {(replay.loadingReplay && !replay.translatedEvents[0]) && <LoadingReplayDialog close={() => replay.endReplay()} />}
     </>
   )

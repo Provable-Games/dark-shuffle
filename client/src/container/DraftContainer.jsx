@@ -22,7 +22,7 @@ function DraftContainer() {
 
   const draft = useContext(DraftContext)
   const { pendingCard, options, cards } = draft.getState
-
+  
   const [cardOverview, setCardOverview] = useState(false)
 
   const selectCard = (index) => {

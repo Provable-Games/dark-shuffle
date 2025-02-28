@@ -382,17 +382,6 @@ export const populateGameTokens = async (tokenIds) => {
         }
       }
     }
-
-    ${TOURNAMENT_NS_SHORT}RegistrationModels (limit:10000, where:{
-      game_token_idIN:[${tokenIds}]}
-    ){
-      edges {
-        node {
-          tournament_id
-          game_token_id
-        }
-      }
-    }
   }
   `
 
@@ -493,9 +482,11 @@ export async function getTournamentScores(tournament_id) {
 }
 
 export async function getCardDetails(card_ids) {
+  let cardIds = card_ids.map(cardId => `"${cardId.toString()}"`);
+
   const document = gql`
   {
-    ${NS_SHORT}CardModels(limit:1000, where:{idIN:[${card_ids}]}) {
+    ${NS_SHORT}CardModels(limit:1000, where:{idIN:[${cardIds}]}) {
       edges {
         node {
           id
@@ -606,18 +597,18 @@ export async function getCardDetails(card_ids) {
     const cardDetails = node.card_details;
     let details = {};
 
-    if (cardDetails.creature_card) {
+    if (cardDetails.creature_card?.health) {
       details = {
-        category: 'creature',
+        category: 'Creature',
         attack: cardDetails.creature_card.attack,
         health: cardDetails.creature_card.health,
         playEffect: cardDetails.creature_card.play_effect?.Some,
         deathEffect: cardDetails.creature_card.death_effect?.Some,
         attackEffect: cardDetails.creature_card.attack_effect?.Some
       };
-    } else if (cardDetails.spell_card) {
+    } else if (cardDetails.spell_card?.effect) {
       details = {
-        category: 'spell',
+        category: 'Spell',
         effect: cardDetails.spell_card.effect,
         extraEffect: cardDetails.spell_card.extra_effect?.Some
       };

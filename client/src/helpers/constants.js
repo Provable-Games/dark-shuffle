@@ -11,9 +11,9 @@ export const GAME_COST = 20
 export const GAME_FEE = 2
 
 export const tierColors = {
-  5: '#90EE90',
-  4: '#FFFF00',
-  3: '#FFA500',
-  2: '#FF0000',
-  1: '#800080',
+  Common: '#90EE90',
+  Uncommon: '#FFFF00',
+  Rare: '#FFA500',
+  Epic: '#FF0000',
+  Legendary: '#800080',
 }

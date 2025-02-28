@@ -101,8 +101,6 @@ export const GameProvider = ({ children }) => {
     const settings = await getSettings(settingsId)
     const cardDetails = await getCardDetails(settings.card_ids)
 
-    console.log(cardDetails)
-
     setGameSettings(settings)
     setGameCards(cardDetails)
   }
@@ -110,7 +108,7 @@ export const GameProvider = ({ children }) => {
   const getCard = (cardIndex, id) => {
     return {
       id,
-      ...gameCards.find(card => card.cardId === gameSettings.card_ids[cardIndex]),
+      ...gameCards.find(card => Number(card.cardId) === Number(gameSettings.card_ids[cardIndex])),
     }
   }
 
@@ -122,6 +120,7 @@ export const GameProvider = ({ children }) => {
           gameEffects,
           gameSettings,
           startStatus,
+          gameCards,
         },
 
         values,

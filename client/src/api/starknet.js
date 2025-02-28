@@ -1,7 +1,5 @@
 import { CallData } from "starknet";
 import { dojoConfig } from "../../dojo.config";
-import { getContractByName } from "@dojoengine/core";
-import { hexToAscii } from "@dojoengine/utils";
 
 export const fetchBalances = async (account, ethContract, lordsContract) => {
   const ethResult = await ethContract?.call(

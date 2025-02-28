@@ -31,7 +31,7 @@ function Card(props) {
       </Typography>
 
       <Box sx={isMobile ? styles.mobileLevelContainer : styles.levelContainer}>
-        <BookmarkIcon htmlColor={tierColors[card.cardTier]} fontSize='large' />
+        <BookmarkIcon htmlColor={tierColors[card.rarity]} fontSize='large' />
       </Box>
     </Box>
 
@@ -40,17 +40,16 @@ function Card(props) {
     </Box>
 
     <Box sx={styles.textContainer} p={isMobile ? '2px' : '4px'}>
-      {card.cardType === types.CREATURE && <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
-        <span>{card.text.split(':')[0]}:</span>
-        <span style={{ opacity: 0.7, fontSize: '13px' }}>{card.text.split(':')[1]}</span>
+      {card.category === types.CREATURE && <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
+        <span>{card.text}</span>
       </Typography>}
 
-      {card.cardType === types.SPELL && <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
+      {card.category === types.SPELL && <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
         {card.text}
       </Typography>}
     </Box>
 
-    {card.cardType === types.CREATURE && <Box sx={styles.bottomContainer}>
+    {card.category === types.CREATURE && <Box sx={styles.bottomContainer}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Typography variant="h6" fontSize={isMobile && '14px'}>
           {card.attack}
@@ -64,7 +63,7 @@ function Card(props) {
 
       <Box>
         <Typography variant="subtitle1" fontSize={isMobile ? '13px' : '15px'}>
-          {card.creatureType}
+          {card.cardType}
         </Typography>
       </Box>
 
@@ -77,7 +76,7 @@ function Card(props) {
       </Box>
     </Box>}
 
-    {card.cardType === types.SPELL && <Box sx={[styles.bottomContainer, { justifyContent: 'center' }]}>
+    {card.category === types.SPELL && <Box sx={[styles.bottomContainer, { justifyContent: 'center' }]}>
       <Typography variant="subtitle1" fontSize={isMobile ? '13px' : '15px'}>
         Spell
       </Typography>
