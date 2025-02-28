@@ -32,15 +32,16 @@ export function translateEvent(event) {
       return { ...acc, [key]: values.splice(index + 1, parseInt(values[index])).map(x => parseInt(x)) }
     }
 
-    if (component[key] === 'Creature') {
-      let creature = values.splice(index + 1, 2)
+    if (component[key] === 'CreatureArray') {
+      let creatureCount = parseInt(values[index]);
+      let creatures = values.splice(index + 1, creatureCount);
 
       return {
-        ...acc, [key]: {
-          cardId: parseInt(values[index]),
-          attack: parseInt(creature[0]),
-          health: parseInt(creature[1]),
-        }
+        ...acc, [key]: Array.from({ length: creatureCount }, (_, i) => ({
+          cardId: parseInt(creatures[i * 3]),
+          attack: parseInt(creatures[i * 3 + 1]),
+          health: parseInt(creatures[i * 3 + 2]),
+        }))
       }
     } else if (component[key] === 'Monster') {
       let monster = values.splice(index + 1, 2)
@@ -72,6 +73,8 @@ export function translateEvent(event) {
           nextHunterHealthBonus: parseInt(battleEffects[2]),
           nextBruteAttackBonus: parseInt(battleEffects[3]),
           nextBruteHealthBonus: parseInt(battleEffects[4]),
+          nextMagicalAttackBonus: parseInt(battleEffects[5]),
+          nextMagicalHealthBonus: parseInt(battleEffects[6]),
         }
       }
     }

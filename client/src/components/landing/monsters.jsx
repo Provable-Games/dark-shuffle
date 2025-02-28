@@ -1,40 +1,36 @@
 import { Box } from '@mui/material'
 import React, { useState } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { fetchCardList, fetch_card_image } from '../../helpers/cards'
+import { MONSTER_LIST } from '../../battle/monsterUtils'
+import { fetch_card_image } from '../../helpers/cards'
 import { _styles } from '../../helpers/styles'
-import { shuffle } from '../../helpers/utilities'
+import { useEffect } from 'react'
 
-function PreloadBeastImages(beasts) {
-  return <>
-    {React.Children.toArray(
-      beasts.map(beast =>
-        <LazyLoadImage
-          style={{ position: 'fixed', top: '-1px', left: '-1px' }}
-          alt={""}
-          height={1}
-          src={fetch_card_image(beast.name)}
-          width={1}
-        />
-      ))}
-  </>
+function preloadImages(urls) {
+  urls.forEach(url => {
+    const img = new Image();
+    img.src = url;
+  });
 }
-
-const BANNER_COUNT = 13
 
 function Monsters() {
   const [isLoading, setIsLoading] = useState(0);
-  const [bannerBeasts] = useState([1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 13])
-  const [beasts] = useState(fetchCardList())
+  const bannerBeasts = ["Warlock", "Typhon", "Jiangshi", "Anansi", "Basilisk",
+    "Manticore", "Phoenix", "Dragon", "Minotaur", "Colossus", "Balrog"]
+
+  useEffect(() => {
+    const imageUrls = MONSTER_LIST().map(beast => fetch_card_image(beast.name));
+    preloadImages(imageUrls);
+  }, []);
 
   function PreloadBannerImages() {
     return <>
       {React.Children.toArray(
-        beasts.slice(0, BANNER_COUNT).map(beast =>
+        bannerBeasts.map(beast =>
           <LazyLoadImage
             alt={""}
             height={1}
-            src={fetch_card_image(beast.name)}
+            src={fetch_card_image(beast)}
             width={1}
             onLoad={() => { setIsLoading(prev => prev + 1) }}
           />
@@ -44,17 +40,15 @@ function Monsters() {
 
   return (
     <Box sx={[_styles.customBox, _styles.linearBg, styles.container]} width={'100%'} height={'150px'}>
-      {isLoading < BANNER_COUNT
+      {isLoading < bannerBeasts.length
         ? PreloadBannerImages()
 
         : <>
           {React.Children.toArray(
-            beasts.filter(beast => bannerBeasts.includes(beast.id)).map(beast => <Box sx={{ minWidth: '120px', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <img alt='' src={fetch_card_image(beast.name)} height={'85%'} />
+            bannerBeasts.map(beast => <Box sx={{ minWidth: '120px', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <img alt='' src={fetch_card_image(beast)} height={'85%'} />
             </Box>)
           )}
-
-          {PreloadBeastImages(beasts.slice(BANNER_COUNT))}
         </>}
     </Box>
   )

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { generateMapNodes } from "../helpers/map";
 import { DojoContext } from "./dojoContext";
+import { getCardDetails, getSettings } from "../api/indexer";
 
 export const GameContext = createContext()
 
@@ -23,6 +24,7 @@ export const GameProvider = ({ children }) => {
 
   const [values, setValues] = useState({ ...GAME_VALUES })
   const [gameSettings, setGameSettings] = useState({})
+  const [gameCards, setGameCards] = useState([])
   const [gameEffects, setGameEffects] = useState({})
 
   const [map, setMap] = useState(null)
@@ -39,19 +41,22 @@ export const GameProvider = ({ children }) => {
   const endGame = () => {
     setValues({ ...GAME_VALUES })
     setGameEffects({})
+    setGameCards([])
     setGameSettings({})
     setMap(null)
     setScore()
   }
 
   const mintFreeGame = async (settingsId = 0) => {
-    const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "mint", calldata: [
-      '0x' + dojo.playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
-      settingsId,
-      1,
-      1,
-      dojo.address
-    ] }])
+    const res = await dojo.executeTx([{
+      contractName: "game_systems", entrypoint: "mint", calldata: [
+        '0x' + dojo.playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
+        settingsId,
+        1,
+        1,
+        dojo.address
+      ]
+    }])
 
     const tokenMetadata = res.find(e => e.componentName === 'TokenMetadata')
     return tokenMetadata
@@ -92,6 +97,23 @@ export const GameProvider = ({ children }) => {
     }
   }
 
+  const initializeGameSettings = async (settingsId) => {
+    const settings = await getSettings(settingsId)
+    const cardDetails = await getCardDetails(settings.card_ids)
+
+    console.log(cardDetails)
+
+    setGameSettings(settings)
+    setGameCards(cardDetails)
+  }
+
+  const getCard = (cardIndex, id) => {
+    return {
+      id,
+      ...gameCards.find(card => card.cardId === gameSettings.card_ids[cardIndex]),
+    }
+  }
+
   return (
     <GameContext.Provider
       value={{
@@ -112,6 +134,11 @@ export const GameProvider = ({ children }) => {
         setGameEffects,
         setGameSettings,
         setMap,
+
+        utils: {
+          getCard,
+          initializeGameSettings,
+        },
 
         actions: {
           generateMap,

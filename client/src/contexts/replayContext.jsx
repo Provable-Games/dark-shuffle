@@ -3,8 +3,7 @@ import { useSnackbar } from 'notistack';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { RpcProvider } from "starknet";
 import { dojoConfig } from "../../dojo.config";
-import { getGameTxs, getSettings } from '../api/indexer';
-import { CARD_DETAILS, formatBoard } from '../helpers/cards';
+import { getGameTxs } from '../api/indexer';
 import { LAST_NODE_LEVEL } from "../helpers/constants";
 import { translateEvent } from '../helpers/events';
 import { generateMapNodes } from '../helpers/map';
@@ -64,8 +63,7 @@ export const ReplayProvider = ({ children }) => {
     setLoadingReplay(true)
 
     let txs = await getGameTxs(_game.id)
-    let settings = await getSettings(_game.settingsId)
-    game.setGameSettings(settings)
+    await game.utils.initializeGameSettings(_game.settingsId)
 
     if (txs.length > 0) {
       fetchEvents(0, txs[0].tx_hash)
@@ -104,7 +102,7 @@ export const ReplayProvider = ({ children }) => {
     }
   }
 
-  const spectateGame = (game) => {   
+  const spectateGame = (game) => {
     setSpectatingGame(game)
   }
 
@@ -128,8 +126,8 @@ export const ReplayProvider = ({ children }) => {
 
     const draftValues = events.find(e => e.componentName === 'Draft')
     if (draftValues) {
-      draft.update.setCards(draftValues.cards.map(card => CARD_DETAILS(card)))
-      draft.update.setOptions(draftValues.options.map(option => CARD_DETAILS(option)))
+      draft.update.setCards(draftValues.cards.map(card => game.utils.getCard(card)))
+      draft.update.setOptions(draftValues.options.map(option => game.utils.getCard(option)))
 
       if (draftValues.cards.length < game.getState.gameSettings.draft_size) {
         game.setGame({ state: 'Draft' })
@@ -143,17 +141,14 @@ export const ReplayProvider = ({ children }) => {
     }
 
     const battleValues = events.find(e => e.componentName === 'Battle')
+    const battleResourcesValues = events.find(e => e.componentName === 'BattleResources')
+
     if (battleValues) {
-      battle.actions.startBattle(battleValues)
+      battle.actions.startBattle(battleValues, battleResourcesValues)
 
       if (gameValues?.lastNodeId) {
         game.actions.updateMapStatus(gameValues.lastNodeId)
       }
-    }
-
-    const boardValues = events.find(e => e.componentName === 'Board')
-    if (boardValues) {
-      battle.utils.setBoard(formatBoard(boardValues))
     }
 
     setAppliedStep(step)

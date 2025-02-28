@@ -1,19 +1,19 @@
 import { useSnackbar } from "notistack";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { isMobile } from 'react-device-detect';
+import { getBattleState } from "../api/indexer";
 import { attackEffect } from "../battle/attackUtils";
 import { deathEffect } from "../battle/deathUtils";
-import { GET_MONSTER } from "../battle/monsterUtils";
 import { endOfTurnMonsterEffect } from "../battle/monsterAbility";
+import { GET_MONSTER } from "../battle/monsterUtils";
+import { spellEffect } from "../battle/spellUtils";
 import { summonEffect } from "../battle/summonUtils";
-import { CARD_DETAILS, formatBoard, tags } from "../helpers/cards";
+import { tags } from "../helpers/cards";
 import { ADVENTURER_ID } from "../helpers/constants";
+import { delay } from "../helpers/utilities";
 import { AnimationContext } from "./animationHandler";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
-import { delay } from "../helpers/utilities";
-import { getBattleState } from "../api/indexer";
-import { spellEffect } from "../battle/spellUtils";
 
 export const BattleContext = createContext()
 
@@ -142,8 +142,9 @@ export const BattleProvider = ({ children }) => {
     const gameEffects = res.find(e => e.componentName === 'GameEffects')
     const leaderboard = res.find(e => e.componentName === 'Leaderboard')
     const battleValues = res.find(e => e.componentName === 'Battle')
+    const battleResources = res.find(e => e.componentName === 'BattleResources')
 
-    setUpdatedValues(battleValues)
+    setUpdatedValues({ ...battleValues, ...battleResources })
 
     if (gameValues) {
       setEndState({ gameValues, leaderboard, gameEffects })
@@ -172,21 +173,25 @@ export const BattleProvider = ({ children }) => {
     setTurnEnded(true)
   }
 
-  const startBattle = async (battle) => {
+  const startBattle = async (battle, battleResources) => {
     animationHandler.resetAnimationHandler()
 
     setValues({
       battleId: battle.battleId,
       round: battle.round,
-      deckIndex: battle.deckIndex,
       ...battle.hero,
       ...battle.monster,
       monsterType: GET_MONSTER(battle.monster.monsterId).monsterType
     })
     setBattleEffects({ ...battle.battleEffects })
-    setHand(battle.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
-    setDeck(battle.deck)
-    setBoard([])
+    setHand(battleResources.hand.map((card, i) => game.utils.getCard(card, i + 1)))
+    setDeck(battleResources.deck)
+    setBoard(battleResources.board.map((creature, i) => ({
+      ...game.utils.getCard(creature.cardId, i),
+      attack: creature.attack,
+      health: creature.health,
+    })))
+
     setActions([])
     setRoundStats({
       monsterStartHealth: battle.monster.monsterHealth,
@@ -243,17 +248,16 @@ export const BattleProvider = ({ children }) => {
     setValues({
       battleId: updatedValues.battleId,
       round: updatedValues.round,
-      deckIndex: updatedValues.deckIndex,
       ...updatedValues.hero,
       ...updatedValues.monster,
       monsterType: GET_MONSTER(updatedValues.monster.monsterId).monsterType
     })
 
     if (isMobile) {
-      setHand(updatedValues.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
+      setHand(updatedValues.hand.map((card, i) => game.utils.getCard(card, i + 1)))
     } else {
-      setHand(updatedValues.hand.slice(0, hand.length).map((card, i) => CARD_DETAILS(card, i + 1)))
-      setNewHandCards(updatedValues.hand.slice(hand.length).map((card, i) => CARD_DETAILS(card, hand.length + i + 1)))
+      setHand(updatedValues.hand.slice(0, hand.length).map((card, i) => game.utils.getCard(card, i + 1)))
+      setNewHandCards(updatedValues.hand.slice(hand.length).map((card, i) => game.utils.getCard(card, hand.length + i + 1)))
     }
 
     setBoard(prev => prev.map(creature => ({ ...creature, attacked: false })))
@@ -480,22 +484,17 @@ export const BattleProvider = ({ children }) => {
       nextHunterHealthBonus: data.battle.battle_effects.next_hunter_health_bonus,
       nextBruteAttackBonus: data.battle.battle_effects.next_brute_attack_bonus,
       nextBruteHealthBonus: data.battle.battle_effects.next_brute_health_bonus,
+      nextMagicalAttackBonus: data.battle.battle_effects.next_magical_attack_bonus,
+      nextMagicalHealthBonus: data.battle.battle_effects.next_magical_health_bonus,
     })
 
-    setHand(data.battle.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
-    setDeck(data.battle.deck)
-
-    if (data.board && Object.keys(data.board).length > 0) {
-      let board = Object.entries(data.board).reduce((acc, [key, creature]) => {
-        acc[key] = {
-          ...creature,
-          cardId: creature.card_id,
-        };
-        return acc;
-      }, {});
-
-      setBoard(formatBoard(board))
-    }
+    setHand(data.battleResources.hand.map((card, i) => game.utils.getCard(card, i + 1)))
+    setDeck(data.battleResources.deck)
+    setBoard(data.battleResources.board.map((creature, i) => ({
+      ...game.utils.getCard(creature.cardId, i),
+      attack: creature.attack,
+      health: creature.health,
+    })))
 
     setResettingState(false)
   }

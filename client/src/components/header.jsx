@@ -11,7 +11,6 @@ import { DojoContext } from '../contexts/dojoContext';
 import { ellipseAddress } from '../helpers/utilities';
 import ChooseName from './dialogs/chooseName';
 import ConnectWallet from './dialogs/connectWallet';
-import TutorialDialog from './dialogs/tutorial';
 import ProfileMenu from './header/profileMenu';
 
 const menuItems = [
@@ -29,7 +28,6 @@ function Header(props) {
   const dojo = useContext(DojoContext)
 
   const [connectWallet, openConnectWallet] = useState(false)
-  const [tutorial, openTutorial] = useState(false)
   const [nameDialog, openNameDialog] = useState(false)
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -87,7 +85,6 @@ function Header(props) {
 
       <ProfileMenu handleClose={handleClose} anchorEl={anchorEl} openNameDialog={openNameDialog} />
       <ChooseName open={nameDialog} close={openNameDialog} />
-      <TutorialDialog open={tutorial} close={openTutorial} />
       <ConnectWallet open={connectWallet} close={openConnectWallet} />
     </Box>
   );

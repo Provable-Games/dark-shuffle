@@ -4,7 +4,7 @@ import { useAccount } from '@starknet-react/core'
 import { useSnackbar } from 'notistack'
 import React, { useContext, useEffect, useState } from 'react'
 import { BrowserView, MobileView } from 'react-device-detect'
-import { getActiveGame, getGameEffects, getMap, getSettings } from '../../api/indexer'
+import { getActiveGame, getGameEffects, getMap } from '../../api/indexer'
 import logo from '../../assets/images/logo.svg'
 import { BattleContext } from '../../contexts/battleContext'
 import { DojoContext } from '../../contexts/dojoContext'
@@ -71,11 +71,8 @@ function StartDraft() {
     try {
       let data = await getActiveGame(game.id)
       data.state = GAME_STATES[data.state]
-      
-      let settings = await getSettings(game.settingsId)
 
-      gameState.setGameSettings(settings)
-
+      await gameState.utils.initializeGameSettings(game.settingsId)
       await draft.actions.fetchDraft(data.game_id)
 
       if (data.state !== 'Draft') {

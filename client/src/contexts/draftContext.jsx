@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { getDraft, getSettings } from "../api/indexer";
-import { CARD_DETAILS } from "../helpers/cards";
+import { getDraft } from "../api/indexer";
 import { delay } from "../helpers/utilities";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
@@ -43,15 +42,9 @@ export const DraftProvider = ({ children }) => {
       const gameValues = res.find(e => e.componentName === 'Game')
       const draftValues = res.find(e => e.componentName === 'Draft')
 
-      let settings = await getSettings(tokenData.settingsId)
-      if (!settings) {
-        return
-      }
-
-      game.setGameSettings(settings)
-
+      await game.utils.initializeGameSettings(tokenData.settingsId)
       game.setGame({ ...gameValues, playerName: tokenData.playerName })
-      setOptions(draftValues.options.map(option => CARD_DETAILS(option)))
+      setOptions(draftValues.options.map(option => game.utils.getCard(option)))
     }
   }
 
@@ -72,8 +65,8 @@ export const DraftProvider = ({ children }) => {
       const gameValues = res.find(e => e.componentName === 'Game')
       const draftValues = res.find(e => e.componentName === 'Draft')
 
-      setCards(draftValues.cards.map(card => CARD_DETAILS(card)))
-      setOptions(draftValues.options.map(option => CARD_DETAILS(option)))
+      setCards(draftValues.cards.map(card => game.utils.getCard(card)))
+      setOptions(draftValues.options.map(option => game.utils.getCard(option)))
 
       if (gameValues) {
         game.setGame(gameValues)
@@ -86,8 +79,8 @@ export const DraftProvider = ({ children }) => {
   const fetchDraft = async (gameId) => {
     let data = await getDraft(gameId);
 
-    setCards(data.cards.map(card => CARD_DETAILS(card)));
-    setOptions(data.options.map(option => CARD_DETAILS(option)));
+    setCards(data.cards.map(card => game.utils.getCard(card)));
+    setOptions(data.options.map(option => game.utils.getCard(option)));
   }
 
   return (

@@ -75,6 +75,7 @@ export async function getSettings(settings_id) {
           draft_size,
           max_energy,
           max_hand_size,
+          card_ids
         }
       }
     }
@@ -203,9 +204,6 @@ export async function getBattleState(battle_id, game_id) {
             attack
             health
           }
-
-          hand
-          deck
           
           battle_effects { 
             enemy_marks
@@ -214,39 +212,14 @@ export async function getBattleState(battle_id, game_id) {
             next_hunter_health_bonus
             next_brute_attack_bonus
             next_brute_health_bonus
+            next_magical_attack_bonus
+            next_magical_health_bonus
           }
         }
-        ... on ${NS}_Board {
-          creature1 {
-            card_id,
-            attack,
-            health,
-          }
-          creature2 {
-            card_id,
-            attack,
-            health,
-          }
-          creature3 {
-            card_id,
-            attack,
-            health,
-          }
-          creature4 {
-            card_id,
-            attack,
-            health,
-          }
-          creature5 {
-            card_id,
-            attack,
-            health,
-          }
-          creature6 {
-            card_id,
-            attack,
-            health,
-          }
+        ... on ${NS}_BattleResources {
+          hand
+          deck
+          board
         }
       }
     }
@@ -256,7 +229,7 @@ export async function getBattleState(battle_id, game_id) {
 
   const result = {
     battle: res?.entity.models.find(model => model.hero),
-    board: res?.entity.models.find(model => model.creature1)
+    battleResources: res?.entity.models.find(model => model.hand)
   };
 
   return result;
@@ -517,4 +490,148 @@ export async function getTournamentScores(tournament_id) {
   } catch (ex) {
     console.log(ex)
   }
+}
+
+export async function getCardDetails(card_ids) {
+  const document = gql`
+  {
+    ${NS_SHORT}CardModels(limit:1000, where:{idIN:[${card_ids}]}) {
+      edges {
+        node {
+          id
+          name
+          rarity
+          cost
+          card_type
+          card_details {
+            creature_card {
+              attack
+              health
+              play_effect {
+                Some {
+                  modifier {
+                    _type
+                    value
+                    value_type
+                    requirement {
+                      Some
+                    }
+                  },
+                  bonus {
+                    Some {
+                      value
+                      requirement
+                    }
+                  }
+                }
+              }
+              attack_effect {
+                Some {
+                  modifier {
+                    _type
+                    value
+                    value_type
+                    requirement {
+                      Some
+                    }
+                  },
+                  bonus {
+                    Some {
+                      value
+                      requirement
+                    }
+                  }
+                }
+              }
+              death_effect {
+                Some {
+                  modifier {
+                    _type
+                    value
+                    value_type
+                    requirement {
+                      Some
+                    }
+                  },
+                  bonus {
+                    Some {
+                      value
+                      requirement
+                    }
+                  }
+                }
+              }
+            }
+            spell_card {
+              effect {
+                modifier {
+                  _type
+                  value_type
+                  value
+                  requirement {
+                    Some
+                  }
+                }
+              }
+              extra_effect {
+                Some {
+                  modifier {
+                    _type
+                    value_type
+                    value
+                    requirement {
+                      Some
+                    }
+                  }
+                  bonus {
+                    Some {
+                      value
+                      requirement
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  `
+
+  const res = await request(GQL_ENDPOINT, document);
+
+  const cardDetailsList = res?.[`${NS_SHORT}CardModels`]?.edges.map(edge => {
+    const node = edge.node;
+    const cardDetails = node.card_details;
+    let details = {};
+
+    if (cardDetails.creature_card) {
+      details = {
+        category: 'creature',
+        attack: cardDetails.creature_card.attack,
+        health: cardDetails.creature_card.health,
+        playEffect: cardDetails.creature_card.play_effect?.Some,
+        deathEffect: cardDetails.creature_card.death_effect?.Some,
+        attackEffect: cardDetails.creature_card.attack_effect?.Some
+      };
+    } else if (cardDetails.spell_card) {
+      details = {
+        category: 'spell',
+        effect: cardDetails.spell_card.effect,
+        extraEffect: cardDetails.spell_card.extra_effect?.Some
+      };
+    }
+
+    return {
+      cardId: parseInt(node.id, 16),
+      name: hexToAscii(node.name),
+      rarity: node.rarity,
+      cost: node.cost,
+      cardType: node.card_type,
+      ...details
+    };
+  });
+
+  return cardDetailsList;
 }

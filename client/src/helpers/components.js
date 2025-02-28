@@ -12,13 +12,6 @@ export const translateName = (selector) => {
 }
 
 export const components = {
-  // Config Models
-  'WorldConfig': {
-    configId: Number(),
-    gameTokenAddress: null,
-    gameCount: Number(),
-  },
-
   // Game Models
   'Game': {
     gameId: Number(),
@@ -75,20 +68,14 @@ export const components = {
     hero: 'Hero',
     monster: 'Monster',
 
-    hand: 'array',
-    deck: 'array',
-
     battleEffects: 'BattleEffects',
   },
-  'Board': {
+  'BattleResources': {
     battleId: Number(),
     gameId: Number(),
-    creature1: 'Creature',
-    creature2: 'Creature',
-    creature3: 'Creature',
-    creature4: 'Creature',
-    creature5: 'Creature',
-    creature6: 'Creature',
+    hand: 'array',
+    deck: 'array',
+    board: 'CreatureArray',
   },
 
   // Map models

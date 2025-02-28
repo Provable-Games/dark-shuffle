@@ -1,5 +1,4 @@
-import { BEAST_NAME_PREFIXES, BEAST_NAME_SUFFIXES } from "../battle/monsterUtils";
-import { CARD_DETAILS } from "./cards";
+import { BEAST_NAME_PREFIXES, BEAST_NAME_SUFFIXES, get_monster_details } from "../battle/monsterUtils";
 import { LCG, getRandomNumber } from "./random";
 
 export const generateMapNodes = (mapLevel, mapSeed) => {
@@ -66,7 +65,7 @@ export const getMonsterNode = (mapLevel, mapSeed, nodeId, section, parents) => {
     }
 
     let monsterId = getRandomNumber(seed, 75 - monsterRange) + monsterRange;
-    let details = CARD_DETAILS(monsterId);
+    let details = get_monster_details(monsterId);
 
     let health = 35 + (mapLevel * 5);
     let attack = (mapLevel + 1);
@@ -85,7 +84,7 @@ export const getMonsterNode = (mapLevel, mapSeed, nodeId, section, parents) => {
         active: nodeId === 1,
         attack,
         health,
-        monsterType: details.creatureType,
+        monsterType: details.monsterType,
         nodeType: 'monster',
         section,
         parents: parents.sort()
