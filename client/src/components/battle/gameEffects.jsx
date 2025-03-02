@@ -6,7 +6,7 @@ import bolt from "../../assets/images/bolt.png";
 import beast from "../../assets/images/beast.png";
 import hero from "../../assets/images/hero.png";
 import { GameContext } from '../../contexts/gameContext';
-import { fetchBeastTypeImage, tags } from '../../helpers/cards';
+import { fetchCardTypeImage, tags } from '../../helpers/cards';
 import { LargeCustomTooltip } from '../../helpers/styles';
 import { isMobile } from 'react-device-detect';
 
@@ -55,7 +55,7 @@ export default function GameEffects() {
       </Box>
     }>
       <Box sx={styles.effectCircle}>
-        {fetchBeastTypeImage(tags.MAGICAL, "#FFE97F")}
+        {fetchCardTypeImage(tags.MAGICAL, "#FFE97F")}
       </Box>
     </LargeCustomTooltip>}
 
@@ -69,7 +69,7 @@ export default function GameEffects() {
       </Box>
     }>
       <Box sx={styles.effectCircle}>
-        {fetchBeastTypeImage(tags.HUNTER, "#FFE97F")}
+        {fetchCardTypeImage(tags.HUNTER, "#FFE97F")}
       </Box>
     </LargeCustomTooltip>}
 
@@ -83,7 +83,7 @@ export default function GameEffects() {
       </Box>
     }>
       <Box sx={styles.effectCircle} pr={0.5}>
-        {fetchBeastTypeImage(tags.BRUTE, "#FFE97F")}
+        {fetchCardTypeImage(tags.BRUTE, "#FFE97F")}
       </Box>
     </LargeCustomTooltip>}
 

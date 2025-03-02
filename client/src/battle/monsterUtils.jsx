@@ -354,455 +354,460 @@ export const BEAST_NAME_SUFFIXES = {
 };
 
 export const get_monster_details = (monsterId) => {
-    switch (monsterId) {
-      case 1:
-        return {
-          name: 'Warlock',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 2:
-        return {
-          name: 'Typhon',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 3:
-        return {
-          name: 'Jiangshi',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 4:
-        return {
-          name: 'Anansi',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 5:
-        return {
-          name: 'Basilisk',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 6:
-        return {
-          name: 'Griffin',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 7:
-        return {
-          name: 'Manticore',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 8:
-        return {
-          name: 'Phoenix',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 9:
-        return {
-          name: 'Dragon',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 10:
-        return {
-          name: 'Minotaur',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 11:
-        return {
-          name: 'Kraken',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 12:
-        return {
-          name: 'Colossus',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 13:
-        return {
-          name: 'Balrog',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 14:
-        return {
-          name: 'Leviathan',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 15:
-        return {
-          name: 'Tarrasque',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 16:
-        return {
-          name: 'Gorgon',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 17:
-        return {
-          name: 'Kitsune',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 18:
-        return {
-          name: 'Lich',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 19:
-        return {
-          name: 'Chimera',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 20:
-        return {
-          name: 'Wendigo',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 21:
-        return {
-          name: 'Qilin',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 22:
-        return {
-          name: 'Ammit',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 23:
-        return {
-          name: 'Nue',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 24:
-        return {
-          name: 'Skinwalker',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 25:
-        return {
-          name: 'Chupacabra',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 26:
-        return {
-          name: 'Titan',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 27:
-        return {
-          name: 'Nephilim',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 28:
-        return {
-          name: 'Behemoth',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 29:
-        return {
-          name: 'Hydra',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 30:
-        return {
-          name: 'Juggernaut',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 31:
-        return {
-          name: 'Rakshasa',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 32:
-        return {
-          name: 'Werewolf',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 33:
-        return {
-          name: 'Banshee',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 34:
-        return {
-          name: 'Draugr',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 35:
-        return {
-          name: 'Vampire',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 36:
-        return {
-          name: 'Weretiger',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 37:
-        return {
-          name: 'Wyvern',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 38:
-        return {
-          name: 'Roc',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 39:
-        return {
-          name: 'Harpy',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 40:
-        return {
-          name: 'Pegasus',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 41:
-        return {
-          name: 'Oni',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 42:
-        return {
-          name: 'Jotunn',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 43:
-        return {
-          name: 'Ettin',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 44:
-        return {
-          name: 'Cyclops',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 45:
-        return {
-          name: 'Giant',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 46:
-        return {
-          name: 'Goblin',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 47:
-        return {
-          name: 'Ghoul',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 48:
-        return {
-          name: 'Wraith',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 49:
-        return {
-          name: 'Sprite',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 50:
-        return {
-          name: 'Kappa',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 51:
-        return {
-          name: 'Hippogriff',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 52:
-        return {
-          name: 'Fenrir',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 53:
-        return {
-          name: 'Jaguar',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 54:
-        return {
-          name: 'Satori',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 55:
-        return {
-          name: 'Direwolf',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 56:
-        return {
-          name: 'Nemeanlion',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 57:
-        return {
-          name: 'Berserker',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 58:
-        return {
-          name: 'Yeti',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 59:
-        return {
-          name: 'Golem',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 60:
-        return {
-          name: 'Ent',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 61:
-        return {
-          name: 'Fairy',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 62:
-        return {
-          name: 'Leprechaun',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 63:
-        return {
-          name: 'Kelpie',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 64:
-        return {
-          name: 'Pixie',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 65:
-        return {
-          name: 'Gnome',
-          monsterType: tags.MAGICAL,
-        };
-  
-      case 66:
-        return {
-          name: 'Bear',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 67:
-        return {
-          name: 'Wolf',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 68:
-        return {
-          name: 'Mantis',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 69:
-        return {
-          name: 'Spider',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 70:
-        return {
-          name: 'Rat',
-          monsterType: tags.HUNTER,
-        };
-  
-      case 71:
-        return {
-          name: 'Troll',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 72:
-        return {
-          name: 'Bigfoot',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 73:
-        return {
-          name: 'Ogre',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 74:
-        return {
-          name: 'Orc',
-          monsterType: tags.BRUTE,
-        };
-  
-      case 75:
-        return {
-          name: 'Skeleton',
-          monsterType: tags.BRUTE,
-        };
-    }
+  switch (monsterId) {
+    case 1:
+      return {
+        name: 'Warlock',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 2:
+      return {
+        name: 'Typhon',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 3:
+      return {
+        name: 'Jiangshi',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 4:
+      return {
+        name: 'Anansi',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 5:
+      return {
+        name: 'Basilisk',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 6:
+      return {
+        name: 'Griffin',
+        monsterType: tags.HUNTER,
+      };
+
+    case 7:
+      return {
+        name: 'Manticore',
+        monsterType: tags.HUNTER,
+      };
+
+    case 8:
+      return {
+        name: 'Phoenix',
+        monsterType: tags.HUNTER,
+      };
+
+    case 9:
+      return {
+        name: 'Dragon',
+        monsterType: tags.HUNTER,
+      };
+
+    case 10:
+      return {
+        name: 'Minotaur',
+        monsterType: tags.HUNTER,
+      };
+
+    case 11:
+      return {
+        name: 'Kraken',
+        monsterType: tags.BRUTE,
+      };
+
+    case 12:
+      return {
+        name: 'Colossus',
+        monsterType: tags.BRUTE,
+      };
+
+    case 13:
+      return {
+        name: 'Balrog',
+        monsterType: tags.BRUTE,
+      };
+
+    case 14:
+      return {
+        name: 'Leviathan',
+        monsterType: tags.BRUTE,
+      };
+
+    case 15:
+      return {
+        name: 'Tarrasque',
+        monsterType: tags.BRUTE,
+      };
+
+    case 16:
+      return {
+        name: 'Gorgon',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 17:
+      return {
+        name: 'Kitsune',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 18:
+      return {
+        name: 'Lich',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 19:
+      return {
+        name: 'Chimera',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 20:
+      return {
+        name: 'Wendigo',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 21:
+      return {
+        name: 'Qilin',
+        monsterType: tags.HUNTER,
+      };
+
+    case 22:
+      return {
+        name: 'Ammit',
+        monsterType: tags.HUNTER,
+      };
+
+    case 23:
+      return {
+        name: 'Nue',
+        monsterType: tags.HUNTER,
+      };
+
+    case 24:
+      return {
+        name: 'Skinwalker',
+        monsterType: tags.HUNTER,
+      };
+
+    case 25:
+      return {
+        name: 'Chupacabra',
+        monsterType: tags.HUNTER,
+      };
+
+    case 26:
+      return {
+        name: 'Titan',
+        monsterType: tags.BRUTE,
+      };
+
+    case 27:
+      return {
+        name: 'Nephilim',
+        monsterType: tags.BRUTE,
+      };
+
+    case 28:
+      return {
+        name: 'Behemoth',
+        monsterType: tags.BRUTE,
+      };
+
+    case 29:
+      return {
+        name: 'Hydra',
+        monsterType: tags.BRUTE,
+      };
+
+    case 30:
+      return {
+        name: 'Juggernaut',
+        monsterType: tags.BRUTE,
+      };
+
+    case 31:
+      return {
+        name: 'Rakshasa',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 32:
+      return {
+        name: 'Werewolf',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 33:
+      return {
+        name: 'Banshee',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 34:
+      return {
+        name: 'Draugr',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 35:
+      return {
+        name: 'Vampire',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 36:
+      return {
+        name: 'Weretiger',
+        monsterType: tags.HUNTER,
+      };
+
+    case 37:
+      return {
+        name: 'Wyvern',
+        monsterType: tags.HUNTER,
+      };
+
+    case 38:
+      return {
+        name: 'Roc',
+        monsterType: tags.HUNTER,
+      };
+
+    case 39:
+      return {
+        name: 'Harpy',
+        monsterType: tags.HUNTER,
+      };
+
+    case 40:
+      return {
+        name: 'Pegasus',
+        monsterType: tags.HUNTER,
+      };
+
+    case 41:
+      return {
+        name: 'Oni',
+        monsterType: tags.BRUTE,
+      };
+
+    case 42:
+      return {
+        name: 'Jotunn',
+        monsterType: tags.BRUTE,
+      };
+
+    case 43:
+      return {
+        name: 'Ettin',
+        monsterType: tags.BRUTE,
+      };
+
+    case 44:
+      return {
+        name: 'Cyclops',
+        monsterType: tags.BRUTE,
+      };
+
+    case 45:
+      return {
+        name: 'Giant',
+        monsterType: tags.BRUTE,
+      };
+
+    case 46:
+      return {
+        name: 'Goblin',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 47:
+      return {
+        name: 'Ghoul',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 48:
+      return {
+        name: 'Wraith',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 49:
+      return {
+        name: 'Sprite',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 50:
+      return {
+        name: 'Kappa',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 51:
+      return {
+        name: 'Hippogriff',
+        monsterType: tags.HUNTER,
+      };
+
+    case 52:
+      return {
+        name: 'Fenrir',
+        monsterType: tags.HUNTER,
+      };
+
+    case 53:
+      return {
+        name: 'Jaguar',
+        monsterType: tags.HUNTER,
+      };
+
+    case 54:
+      return {
+        name: 'Satori',
+        monsterType: tags.HUNTER,
+      };
+
+    case 55:
+      return {
+        name: 'Direwolf',
+        monsterType: tags.HUNTER,
+      };
+
+    case 56:
+      return {
+        name: 'Nemeanlion',
+        monsterType: tags.BRUTE,
+      };
+
+    case 57:
+      return {
+        name: 'Berserker',
+        monsterType: tags.BRUTE,
+      };
+
+    case 58:
+      return {
+        name: 'Yeti',
+        monsterType: tags.BRUTE,
+      };
+
+    case 59:
+      return {
+        name: 'Golem',
+        monsterType: tags.BRUTE,
+      };
+
+    case 60:
+      return {
+        name: 'Ent',
+        monsterType: tags.BRUTE,
+      };
+
+    case 61:
+      return {
+        name: 'Fairy',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 62:
+      return {
+        name: 'Leprechaun',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 63:
+      return {
+        name: 'Kelpie',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 64:
+      return {
+        name: 'Pixie',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 65:
+      return {
+        name: 'Gnome',
+        monsterType: tags.MAGICAL,
+      };
+
+    case 66:
+      return {
+        name: 'Bear',
+        monsterType: tags.HUNTER,
+      };
+
+    case 67:
+      return {
+        name: 'Wolf',
+        monsterType: tags.HUNTER,
+      };
+
+    case 68:
+      return {
+        name: 'Mantis',
+        monsterType: tags.HUNTER,
+      };
+
+    case 69:
+      return {
+        name: 'Spider',
+        monsterType: tags.HUNTER,
+      };
+
+    case 70:
+      return {
+        name: 'Rat',
+        monsterType: tags.HUNTER,
+      };
+
+    case 71:
+      return {
+        name: 'Troll',
+        monsterType: tags.BRUTE,
+      };
+
+    case 72:
+      return {
+        name: 'Bigfoot',
+        monsterType: tags.BRUTE,
+      };
+
+    case 73:
+      return {
+        name: 'Ogre',
+        monsterType: tags.BRUTE,
+      };
+
+    case 74:
+      return {
+        name: 'Orc',
+        monsterType: tags.BRUTE,
+      };
+
+    case 75:
+      return {
+        name: 'Skeleton',
+        monsterType: tags.BRUTE,
+      };
+    default:
+      return {
+        name: 'Unknown',
+        monsterType: 'None',
+      };
+  }
 }

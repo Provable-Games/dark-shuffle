@@ -38,7 +38,7 @@ export function translateEvent(event) {
 
       return {
         ...acc, [key]: Array.from({ length: creatureCount }, (_, i) => ({
-          cardId: parseInt(creatures[i * 3]),
+          cardIndex: parseInt(creatures[i * 3]),
           attack: parseInt(creatures[i * 3 + 1]),
           health: parseInt(creatures[i * 3 + 2]),
         }))

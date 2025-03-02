@@ -2,11 +2,8 @@ import { useSnackbar } from "notistack";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { isMobile } from 'react-device-detect';
 import { getBattleState } from "../api/indexer";
-import { attackEffect } from "../battle/attackUtils";
-import { deathEffect } from "../battle/deathUtils";
 import { endOfTurnMonsterEffect } from "../battle/monsterAbility";
 import { GET_MONSTER } from "../battle/monsterUtils";
-import { spellEffect } from "../battle/spellUtils";
 import { summonEffect } from "../battle/summonUtils";
 import { tags } from "../helpers/cards";
 import { ADVENTURER_ID } from "../helpers/constants";
@@ -187,7 +184,7 @@ export const BattleProvider = ({ children }) => {
     setHand(battleResources.hand.map((card, i) => game.utils.getCard(card, i + 1)))
     setDeck(battleResources.deck)
     setBoard(battleResources.board.map((creature, i) => ({
-      ...game.utils.getCard(creature.cardId, i),
+      ...game.utils.getCard(creature.cardIndex, i),
       attack: creature.attack,
       health: creature.health,
     })))
@@ -223,7 +220,7 @@ export const BattleProvider = ({ children }) => {
 
     setBoard(prev => [...prev, { ...creature, id: (prev[prev.length - 1]?.id || 0) + 1 }])
     setHand(prev => prev.filter(card => card.id !== creature.id))
-    setActions(prev => [...prev, [0, creature.cardId]])
+    setActions(prev => [...prev, [0, creature.cardIndex]])
   }
 
   const castSpell = (spell) => {
@@ -235,13 +232,16 @@ export const BattleProvider = ({ children }) => {
 
     setValues(prev => ({ ...prev, heroEnergy: prev.heroEnergy - cost }))
 
-    spellEffect({
-      spell, values, board, healHero, updateBoard, reduceMonsterAttack,
-      increaseEnergy, damageMonster, battleEffects, setBattleEffects
-    })
+    if (isEffectApplicable(spell.playEffect, spell.cardType, board, values.monsterType)) {
+      applyCardEffect({
+        values, cardEffect: spell.playEffect, spell, board, healHero,
+        increaseEnergy, battleEffects, setBattleEffects,
+        reduceMonsterAttack, damageMonster, updateBoard
+      })
+    }
 
     setHand(prev => prev.filter(card => card.id !== spell.id))
-    setActions(prev => [...prev, [0, spell.cardId]])
+    setActions(prev => [...prev, [0, spell.cardIndex]])
   }
 
   const startNewTurn = () => {
@@ -301,8 +301,8 @@ export const BattleProvider = ({ children }) => {
     setBoard(updatedBoard)
   }
 
-  const updateBoard = (creatureType, attack, health) => {
-    const updatedBoard = board.map(creature => (creature.creatureType === creatureType || creatureType === tags.ALL)
+  const updateBoard = (cardType, attack, health) => {
+    const updatedBoard = board.map(creature => (creature.cardType === cardType || cardType === tags.ALL)
       ? { ...creature, attack: creature.attack + attack, health: creature.health + health }
       : creature
     )
@@ -348,20 +348,12 @@ export const BattleProvider = ({ children }) => {
 
   // CREATURE UTILS
   const damageCreature = (creature, amount) => {
-    if (values.monsterId == 74 && creature.creatureType == tags.HUNTER) {
+    if (values.monsterId == 74 && creature.cardType == tags.HUNTER) {
       amount += 1;
-    } else if (values.monsterId == 69 && creature.creatureType == tags.MAGICAL) {
+    } else if (values.monsterId == 69 && creature.cardType == tags.MAGICAL) {
       amount += 1;
-    } else if (values.monsterId == 64 && creature.creatureType == tags.BRUTE) {
+    } else if (values.monsterId == 64 && creature.cardType == tags.BRUTE) {
       amount += 1;
-    }
-
-    if (creature.cardId == 27) {
-      amount -= 1;
-
-      if (board.filter(creature => creature.creatureType == tags.BRUTE).length > 1) {
-        amount -= 1;
-      }
     }
 
     creature.health -= amount;
@@ -371,25 +363,34 @@ export const BattleProvider = ({ children }) => {
   const creatureAttack = (creatureId) => {
     let creature = { ...board.find(creature => creature.id === creatureId) }
 
-    let extraDamage = attackEffect({ creature, values, board, setBattleEffects, reduceMonsterAttack, healHero })
-
-    damageMonster(creature.attack + extraDamage, creature.creatureType)
-
-    if (creature.cardId === 46) {
-      creature.attack += 1;
+    if (creature.attackEffect?.modifier?._type) {
+      if (isEffectApplicable(creature.attackEffect, creature.cardType, board, values.monsterType)) {
+        applyCardEffect({
+          values, cardEffect: creature.attackEffect, creature, board, healHero,
+          increaseEnergy, battleEffects, setBattleEffects,
+          reduceMonsterAttack, damageMonster, updateBoard
+        })
+      }
     }
 
-    creature.attacked = true;
+    damageMonster(creature.attack, creature.cardType)
 
+    creature.attacked = true;
     setRoundStats(prev => ({ ...prev, creatureAttackCount: prev.creatureAttackCount + 1 }))
+
     damageCreature(creature, values.monsterAttack)
   }
 
   const creatureDeathEffect = (creature) => {
-    deathEffect({
-      creature, values, board, battleEffects, setBattleEffects,
-      updateBoard, reduceMonsterAttack, healHero, damageMonster
-    })
+    if (creature.deathEffect?.modifier?._type) {
+      if (isEffectApplicable(creature.deathEffect, creature.cardType, board, values.monsterType)) {
+        applyCardEffect({
+          values, cardEffect: creature.deathEffect, creature, board, healHero,
+          increaseEnergy, battleEffects, setBattleEffects,
+          reduceMonsterAttack, damageMonster, updateBoard
+        })
+      }
+    }
   }
 
   // HERO UTILS
@@ -488,10 +489,10 @@ export const BattleProvider = ({ children }) => {
       nextMagicalHealthBonus: data.battle.battle_effects.next_magical_health_bonus,
     })
 
-    setHand(data.battleResources.hand.map((card, i) => game.utils.getCard(card, i + 1)))
+    setHand(data.battleResources.hand.map((cardIndex, i) => game.utils.getCard(cardIndex, i + 1)))
     setDeck(data.battleResources.deck)
     setBoard(data.battleResources.board.map((creature, i) => ({
-      ...game.utils.getCard(creature.cardId, i),
+      ...game.utils.getCard(creature.card_id, i),
       attack: creature.attack,
       health: creature.health,
     })))

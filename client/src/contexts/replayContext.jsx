@@ -159,7 +159,7 @@ export const ReplayProvider = ({ children }) => {
     const draftValues = event?.find(e => e.componentName === 'Draft')
     if (!draftValues) return null
 
-    return draft.getState.options.findIndex(option => option.cardId === draftValues.cards[draftValues.cards.length - 1])
+    return draft.getState.options.findIndex(option => option.cardIndex === draftValues.cards[draftValues.cards.length - 1])
   }
 
   const getMapSelection = () => {
@@ -176,7 +176,7 @@ export const ReplayProvider = ({ children }) => {
     const battleValues = translatedEvents[step]?.find(e => e.componentName === 'Battle')
     if (!battleValues || !nextBattleValues) return null
 
-    return battleValues.hand.filter(card => !nextBattleValues.hand.includes(card))
+    return battleValues.hand.filter(cardIndex => !nextBattleValues.hand.includes(cardIndex))
   }
 
   const setupToriiClient = async () => {

@@ -8,7 +8,7 @@ import skull from "../../assets/images/skull.png";
 import sword from "../../assets/images/sword.png";
 import { GET_MONSTER } from '../../battle/monsterUtils';
 import { GameContext } from '../../contexts/gameContext';
-import { CardSize, fetch_card_image, fetchBeastTypeImage } from '../../helpers/cards';
+import { CardSize, fetch_card_image, fetchCardTypeImage } from '../../helpers/cards';
 import { LargeCustomTooltip } from '../../helpers/styles';
 import { isMobile } from 'react-device-detect';
 import { useReplay } from '../../contexts/replayContext';
@@ -296,7 +296,7 @@ function Structure(props) {
         <Box sx={[styles.monsterCircle, nodeStyle(node), (selectedNode?.nodeId === node.nodeId && node.active) && { boxShadow: '0 0 5px 1px rgba(255, 255, 255, 0.7)' }]}
           onClick={(event) => handleClick(event, node)}>
           <Box sx={styles.typeContainer}>
-            {fetchBeastTypeImage(monster.monsterType)}
+            {fetchCardTypeImage(monster.monsterType)}
           </Box>
 
           <Box sx={{ pt: '4%', width: '100%', height: '70%', display: 'flex', justifyContent: 'center', opacity: node.status !== 0 ? 0.5 : 1 }}>

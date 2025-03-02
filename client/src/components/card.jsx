@@ -5,11 +5,44 @@ import React from "react";
 import { isMobile } from 'react-device-detect';
 import bolt from "../assets/images/bolt.png";
 import sword from '../assets/images/sword.png';
-import { fetch_card_image, types } from "../helpers/cards";
+import { fetch_card_image, types, buildEffectText } from "../helpers/cards";
 import { tierColors } from '../helpers/constants';
 
 function Card(props) {
   const { card, pendingCard, draftIndex, replaySelection } = props
+
+  const renderCardText = () => {
+    return <Box sx={styles.textContainer} p={isMobile ? '2px' : '4px'}>
+      <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
+        {card.playEffect?.modifier?._type && <>
+          <span>Play: </span>
+          <span style={styles.breadText}>
+            {buildEffectText(card.cardType, card.playEffect)}
+          </span>
+        </>}
+
+        {card.attackEffect?.modifier?._type && <>
+          <span>Attack: </span>
+          <span style={styles.breadText}>
+            {buildEffectText(card.cardType, card.attackEffect)}
+          </span>
+        </>}
+
+        {card.deathEffect?.modifier?._type && <>
+          <span>Death: </span>
+          <span style={styles.breadText}>
+            {buildEffectText(card.cardType, card.deathEffect)}
+          </span>
+        </>}
+
+        {card.effect?.modifier?._type && <>
+          <span>
+            {buildEffectText(card.cardType, card.effect)}
+          </span>
+        </>}
+      </Typography>
+    </Box>
+  }
 
   return <Box sx={[
     styles.container,
@@ -39,15 +72,7 @@ function Card(props) {
       <img alt='' src={fetch_card_image(card.name)} height={'100%'} />
     </Box>
 
-    <Box sx={styles.textContainer} p={isMobile ? '2px' : '4px'}>
-      {card.category === types.CREATURE && <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
-        <span>{card.text}</span>
-      </Typography>}
-
-      {card.category === types.SPELL && <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
-        {card.text}
-      </Typography>}
-    </Box>
+    {renderCardText()}
 
     {card.category === types.CREATURE && <Box sx={styles.bottomContainer}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -167,5 +192,9 @@ const styles = {
     marginTop: '-9px',
     marginRight: '-10px',
     position: 'relative'
+  },
+  breadText: {
+    fontSize: '13px',
+    opacity: 0.7
   }
 }

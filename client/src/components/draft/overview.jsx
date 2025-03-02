@@ -13,13 +13,13 @@ function Overview() {
 
   const [displayCard, setDisplayCard] = useState(null)
 
-  const uniqueCards = uniquefy(cards, "cardId")
+  const uniqueCards = uniquefy(cards, "cardIndex")
 
   return <Box sx={styles.container}>
 
     {React.Children.toArray(
       uniqueCards.sort((a, b) => a.cost - b.cost).map(card => {
-        const count = cards.filter(c => c.cardId === card.cardId).length
+        const count = cards.filter(c => c.cardIndex === card.cardIndex).length
 
         return <motion.div style={{ ...styles.card }}
           onHoverStart={() => setDisplayCard(card)}

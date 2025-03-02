@@ -1,8 +1,8 @@
+import { getContractByName } from "@dojoengine/core";
 import { getEntityIdFromKeys, hexToAscii } from "@dojoengine/utils";
 import { gql, request } from 'graphql-request';
 import { dojoConfig } from '../../dojo.config';
 import { get_short_namespace } from '../helpers/components';
-import { getContractByName } from "@dojoengine/core";
 
 let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace(NS);
@@ -219,7 +219,11 @@ export async function getBattleState(battle_id, game_id) {
         ... on ${NS}_BattleResources {
           hand
           deck
-          board
+          board {
+            card_id
+            attack
+            health
+          }
         }
       }
     }

@@ -108,6 +108,7 @@ export const GameProvider = ({ children }) => {
   const getCard = (cardIndex, id) => {
     return {
       id,
+      cardIndex,
       ...gameCards.find(card => Number(card.cardId) === Number(gameSettings.card_ids[cardIndex])),
     }
   }

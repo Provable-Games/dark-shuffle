@@ -5,7 +5,7 @@ import { isMobile } from 'react-device-detect';
 import sword from "../../assets/images/sword.png";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { AnimationContext } from '../../contexts/animationHandler';
-import { CardSize, fetch_card_image, fetchBeastTypeImage } from '../../helpers/cards';
+import { CardSize, fetch_card_image, fetchCardTypeImage } from '../../helpers/cards';
 import DamageAnimation from '../animations/damageAnimation';
 import SleepAnimation from '../animations/sleepAnimation';
 import skullAnim from "../../assets/animations/skull.json";
@@ -169,7 +169,7 @@ function Creature(props) {
         <DamageAnimation damage={damageTaken} small={true} />
 
         <Box sx={styles.typeContainer}>
-          {fetchBeastTypeImage(creature.creatureType)}
+          {fetchCardTypeImage(creature.cardType)}
         </Box>
 
         <Box sx={styles.imageContainer}>
