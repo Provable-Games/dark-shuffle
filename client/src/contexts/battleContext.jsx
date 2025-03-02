@@ -11,6 +11,7 @@ import { delay } from "../helpers/utilities";
 import { AnimationContext } from "./animationHandler";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
+import { applyCardEffect, isEffectApplicable } from "../battle/cardUtils";
 
 export const BattleContext = createContext()
 
@@ -232,12 +233,22 @@ export const BattleProvider = ({ children }) => {
 
     setValues(prev => ({ ...prev, heroEnergy: prev.heroEnergy - cost }))
 
-    if (isEffectApplicable(spell.playEffect, spell.cardType, board, values.monsterType)) {
+    if (isEffectApplicable(spell.effect, spell.cardType, board, values.monsterType)) {
       applyCardEffect({
-        values, cardEffect: spell.playEffect, spell, board, healHero,
+        values, cardEffect: spell.effect, creature: spell, board, healHero,
         increaseEnergy, battleEffects, setBattleEffects,
         reduceMonsterAttack, damageMonster, updateBoard
       })
+    }
+
+    if (spell.extraEffect?.modifier?._type) {
+      if (isEffectApplicable(spell.extraEffect, spell.cardType, board, values.monsterType)) {
+        applyCardEffect({
+          values, cardEffect: spell.extraEffect, creature: spell, board, healHero,
+          increaseEnergy, battleEffects, setBattleEffects,
+          reduceMonsterAttack, damageMonster, updateBoard
+        })
+      }
     }
 
     setHand(prev => prev.filter(card => card.id !== spell.id))

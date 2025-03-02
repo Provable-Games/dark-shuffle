@@ -34,7 +34,7 @@ export const CardSize = {
   small: { height: '110px', width: '84px' }
 }
 
-export const buildEffectText = (cardType, effect) => {
+export const buildEffectText = (cardType, effect, effectType) => {
   let text = ''
   let value = effect.modifier.value
 
@@ -44,10 +44,10 @@ export const buildEffectText = (cardType, effect) => {
 
   switch (effect.modifier._type) {
     case 'HeroHealth':
-      text += `Hero gains +${value} health`
+      text += `Hero gains ${value} health`
       break;
     case 'HeroEnergy':
-      text += `Hero gains +${value} energy`
+      text += `Hero gains ${value} energy`
       break;
     case 'HeroDamageReduction':
       text += `Hero gains +${value} armor`
@@ -59,7 +59,7 @@ export const buildEffectText = (cardType, effect) => {
       text += `Reduce enemy attack by ${value}`
       break;
     case 'EnemyHealth':
-      text += `Deal ${value} extra damage`
+      text += `Deal ${value} ${effectType === 'attack' ? 'extra' : ''} damage`
       break;
     case 'NextAllyAttack':
       text += `Next ${cardType} gains +${value} attack when played`

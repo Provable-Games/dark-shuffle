@@ -17,27 +17,33 @@ function Card(props) {
         {card.playEffect?.modifier?._type && <>
           <span>Play: </span>
           <span style={styles.breadText}>
-            {buildEffectText(card.cardType, card.playEffect)}
+            {buildEffectText(card.cardType, card.playEffect, 'play')}
           </span>
         </>}
 
         {card.attackEffect?.modifier?._type && <>
           <span>Attack: </span>
           <span style={styles.breadText}>
-            {buildEffectText(card.cardType, card.attackEffect)}
+            {buildEffectText(card.cardType, card.attackEffect, 'attack')}
           </span>
         </>}
 
         {card.deathEffect?.modifier?._type && <>
           <span>Death: </span>
           <span style={styles.breadText}>
-            {buildEffectText(card.cardType, card.deathEffect)}
+            {buildEffectText(card.cardType, card.deathEffect, 'death')}
           </span>
         </>}
 
         {card.effect?.modifier?._type && <>
           <span>
-            {buildEffectText(card.cardType, card.effect)}
+            {buildEffectText(card.cardType, card.effect, 'spell')}
+          </span>
+        </>}
+
+        {card.extraEffect?.modifier?._type && <>
+          <span style={{ marginLeft: '4px' }}>
+            and {buildEffectText(card.cardType, card.extraEffect, 'spell_extra')}
           </span>
         </>}
       </Typography>
