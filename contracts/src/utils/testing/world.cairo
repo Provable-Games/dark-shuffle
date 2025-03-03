@@ -22,7 +22,7 @@ use starknet::{ContractAddress, contract_address_const};
 
 fn namespace_def() -> NamespaceDef {
     let ndef = NamespaceDef {
-        namespace: @DEFAULT_NS(),
+        namespace: DEFAULT_NS(),
         resources: [
             TestResource::Model(m_Battle::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Board::TEST_CLASS_HASH.try_into().unwrap()),
