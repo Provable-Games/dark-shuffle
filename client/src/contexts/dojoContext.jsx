@@ -61,7 +61,7 @@ export const DojoProvider = ({ children }) => {
       return
     }
 
-    if (includeVRF && dojoConfig.chain === 'mainnet') {
+    if (includeVRF) {
       let contractAddress = getContractByName(dojoConfig.manifest, dojoConfig.namespace, txs[txs.length - 1].contractName)?.address
 
       txs.unshift({
