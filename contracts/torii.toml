@@ -5,8 +5,8 @@ contracts = [
     "erc721:0x0303d542dda5c55e8da6f3c4f7b4d0c9b6a6051dc4d97e62a75b3a92457e2ca1"
 ]
 
-namespaces = ["ds_v1_1_2", "budokan_v_1_0_1"]
+namespaces = ["ds_v1_1_3", "budokan_v_1_0_1"]
 
 [events]
 raw = true
-historical = ["ds_v1_1_2-TrophyCreation", "ds_v1_1_2-TrophyProgression"]
+historical = ["ds_v1_1_3-TrophyCreation", "ds_v1_1_3-TrophyProgression"]

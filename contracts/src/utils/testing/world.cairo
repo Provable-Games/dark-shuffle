@@ -1,5 +1,5 @@
 use core::array::{ArrayTrait, SpanTrait};
-use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR};
+use darkshuffle::constants::{DEFAULT_NS};
 use darkshuffle::models::{
     battle::{m_Battle, m_Board}, config::{WorldConfig, m_GameSettings, m_WorldConfig}, draft::{m_Draft},
     game::{m_Game, m_GameEffects}, map::{m_Map},
@@ -22,7 +22,7 @@ use starknet::{ContractAddress, contract_address_const};
 
 fn namespace_def() -> NamespaceDef {
     let ndef = NamespaceDef {
-        namespace: DEFAULT_NS_STR(),
+        namespace: @DEFAULT_NS(),
         resources: [
             TestResource::Model(m_Battle::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Board::TEST_CLASS_HASH.try_into().unwrap()),
@@ -65,17 +65,17 @@ fn namespace_def() -> NamespaceDef {
 
 fn contract_defs() -> Span<ContractDef> {
     [
-        ContractDefTrait::new(DEFAULT_NS(), @"game_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span())
+        ContractDefTrait::new(@DEFAULT_NS(), @"game_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span())
             .with_init_calldata(array![contract_address_const::<'player1'>().into()].span()),
-        ContractDefTrait::new(DEFAULT_NS(), @"map_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
-        ContractDefTrait::new(DEFAULT_NS(), @"draft_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
-        ContractDefTrait::new(DEFAULT_NS(), @"config_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
-        ContractDefTrait::new(DEFAULT_NS(), @"battle_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
+        ContractDefTrait::new(@DEFAULT_NS(), @"map_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
+        ContractDefTrait::new(@DEFAULT_NS(), @"draft_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
+        ContractDefTrait::new(@DEFAULT_NS(), @"config_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
+        ContractDefTrait::new(@DEFAULT_NS(), @"battle_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
     ]
         .span()
 }
@@ -87,7 +87,7 @@ fn spawn_darkshuffle() -> (dojo::world::WorldStorage, IGameSystemsDispatcher) {
     let mut world = spawn_test_world([ndef].span());
     world.sync_perms_and_inits(contract_defs());
 
-    world.dispatcher.grant_owner(dojo::utils::bytearray_hash(DEFAULT_NS()), contract_address_const::<'player1'>());
+    world.dispatcher.grant_owner(dojo::utils::bytearray_hash(@DEFAULT_NS()), contract_address_const::<'player1'>());
 
     world.dispatcher.uuid();
 

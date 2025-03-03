@@ -22,7 +22,7 @@ mod draft_systems {
     #[abi(embed_v0)]
     impl DraftSystemsImpl of super::IDraftSystems<ContractState> {
         fn pick_card(ref self: ContractState, game_id: u64, option_id: u8) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
             let token_metadata: TokenMetadata = world.read_model(game_id);
             token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
