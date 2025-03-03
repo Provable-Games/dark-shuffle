@@ -15,14 +15,13 @@ trait IGameSystems<T> {
     fn monsters_slain(self: @T, game_id: u64) -> u16;
     fn player_name(self: @T, game_id: u64) -> felt252;
     fn xp(self: @T, game_id: u64) -> u16;
-    fn score_model_and_attribute(self: @T) -> (felt252, felt252);
 }
 
 #[dojo::contract]
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
 
-    use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR, LAST_NODE_DEPTH, WORLD_CONFIG_ID};
+    use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR, LAST_NODE_DEPTH, WORLD_CONFIG_ID, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
     use darkshuffle::models::battle::{Card};
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
     use darkshuffle::models::draft::{Draft};
@@ -98,6 +97,9 @@ mod game_systems {
                 'Deck Building',
                 "https://github.com/Provable-Games/dark-shuffle/blob/feat/integrate-tournament/client/public/favicon.svg",
                 DEFAULT_NS_STR(),
+                SCORE_MODEL(),
+                SCORE_ATTRIBUTE(),
+                SETTINGS_MODEL(),
             );
 
         // TODO: We shouldn't need to store this as the token address is the game system address which is already being
@@ -231,10 +233,6 @@ mod game_systems {
             let world: WorldStorage = self.world(DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.action_count
-        }
-
-        fn score_model_and_attribute(self: @ContractState) -> (felt252, felt252) {
-            ('Game', 'hero_xp')
         }
     }
 

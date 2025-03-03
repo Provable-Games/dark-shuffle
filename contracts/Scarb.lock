@@ -221,7 +221,7 @@ source = "git+https://github.com/dojoengine/stark-vrf.git#96d6d2a88b1ef46c4a285d
 [[package]]
 name = "tournaments"
 version = "0.0.1"
-source = "git+https://github.com/Provable-Games/tournaments.git?tag=v0.1.1#800a53d5c5dcdf0302d21551a2cdb37e6894dacc"
+source = "git+https://github.com/Provable-Games/tournaments.git?tag=v0.1.2#cddfe17f9644359eef38e7c90622ac4ce6d23029"
 dependencies = [
  "dojo",
  "openzeppelin_introspection",
