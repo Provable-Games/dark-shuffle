@@ -21,7 +21,7 @@ trait IGameSystems<T> {
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
 
-    use darkshuffle::constants::{DEFAULT_NS, DEFAULT_NS_STR, LAST_NODE_DEPTH, WORLD_CONFIG_ID, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
+    use darkshuffle::constants::{DEFAULT_NS, LAST_NODE_DEPTH, WORLD_CONFIG_ID, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
     use darkshuffle::models::battle::{Card};
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
     use darkshuffle::models::draft::{Draft};
@@ -91,12 +91,12 @@ mod game_systems {
             .initializer(
                 creator_address,
                 'Dark Shuffle',
-                "A deck building game",
+                "Dark Shuffle is a turn-based, collectible card game. Build your deck, battle monsters, and explore a procedurally generated world.",
                 'Provable Games',
                 'Provable Games',
-                'Deck Building',
-                "https://github.com/Provable-Games/dark-shuffle/blob/feat/integrate-tournament/client/public/favicon.svg",
-                DEFAULT_NS_STR(),
+                'Digital TCG / Deck Building',
+                "https://github.com/Provable-Games/dark-shuffle/blob/main/client/public/favicon.svg",
+                DEFAULT_NS(),
                 SCORE_MODEL(),
                 SCORE_ATTRIBUTE(),
                 SETTINGS_MODEL(),
@@ -104,7 +104,7 @@ mod game_systems {
 
         // TODO: We shouldn't need to store this as the token address is the game system address which is already being
         // stored
-        let mut world: WorldStorage = self.world(DEFAULT_NS());
+        let mut world: WorldStorage = self.world(@DEFAULT_NS());
         let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
         world_config.game_token_address = get_contract_address();
         world.write_model(@world_config);
@@ -113,7 +113,7 @@ mod game_systems {
     #[abi(embed_v0)]
     impl SettingsImpl of ISettings<ContractState> {
         fn setting_exists(self: @ContractState, settings_id: u32) -> bool {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let settings: GameSettings = world.read_model(settings_id);
             settings.exists()
         }
@@ -122,7 +122,7 @@ mod game_systems {
     #[abi(embed_v0)]
     impl GameDetailsImpl of IGameDetails<ContractState> {
         fn score(self: @ContractState, game_id: u64) -> u32 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.hero_xp.into()
         }
@@ -131,7 +131,7 @@ mod game_systems {
     #[abi(embed_v0)]
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
         fn start_game(ref self: ContractState, game_id: u64) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
             let token_metadata: TokenMetadata = world.read_model(game_id);
             self.validate_start_conditions(game_id, @token_metadata);
@@ -167,31 +167,31 @@ mod game_systems {
         }
 
         fn player_name(self: @ContractState, game_id: u64) -> felt252 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let token_metadata: TokenMetadata = world.read_model(game_id);
             token_metadata.player_name
         }
 
         fn health(self: @ContractState, game_id: u64) -> u8 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.hero_health
         }
 
         fn game_state(self: @ContractState, game_id: u64) -> GameState {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.state.into()
         }
 
         fn xp(self: @ContractState, game_id: u64) -> u16 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.hero_xp
         }
 
         fn cards(self: @ContractState, game_id: u64) -> Span<felt252> {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let draft: Draft = world.read_model(game_id);
             let mut cards = array![];
 
@@ -206,31 +206,31 @@ mod game_systems {
         }
 
         fn monsters_slain(self: @ContractState, game_id: u64) -> u16 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.monsters_slain
         }
 
         fn level(self: @ContractState, game_id: u64) -> u8 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.map_level
         }
 
         fn map_depth(self: @ContractState, game_id: u64) -> u8 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.map_depth
         }
 
         fn last_node_id(self: @ContractState, game_id: u64) -> u8 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.last_node_id
         }
 
         fn action_count(self: @ContractState, game_id: u64) -> u16 {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(game_id);
             game.action_count
         }
@@ -290,7 +290,7 @@ mod game_systems {
 
         #[inline(always)]
         fn assert_game_not_started(self: @ContractState, game_id: u64) {
-            let game: Game = self.world(DEFAULT_NS()).read_model(game_id);
+            let game: Game = self.world(@DEFAULT_NS()).read_model(game_id);
             assert!(game.hero_xp == 0, "Dark Shuffle: Game {} has already started", game_id);
         }
     }

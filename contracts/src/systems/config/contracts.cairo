@@ -48,7 +48,7 @@ mod config_systems {
     }
 
     fn dojo_init(self: @ContractState) {
-        let mut world: WorldStorage = self.world(DEFAULT_NS());
+        let mut world: WorldStorage = self.world(@DEFAULT_NS());
         let mut trophy_id: u8 = TROPHY_COUNT;
 
         while trophy_id > 0 {
@@ -90,7 +90,7 @@ mod config_systems {
             max_hand_size: u8,
             include_spells: bool,
         ) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
             // TODO: add upper bounds assertions
             assert(start_health > 0, 'Invalid start health');
@@ -119,19 +119,19 @@ mod config_systems {
         }
 
         fn setting_details(self: @ContractState, settings_id: u32) -> GameSettings {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let settings: GameSettings = world.read_model(settings_id);
             settings
         }
 
         fn settings_exists(self: @ContractState, settings_id: u32) -> bool {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let settings: GameSettings = world.read_model(settings_id);
             settings.exists()
         }
 
         fn game_settings(self: @ContractState, game_id: u64) -> GameSettings {
-            let world: WorldStorage = self.world(DEFAULT_NS());
+            let world: WorldStorage = self.world(@DEFAULT_NS());
             let token_metadata: TokenMetadata = world.read_model(game_id);
             let game_settings: GameSettings = world.read_model(token_metadata.settings_id);
             game_settings

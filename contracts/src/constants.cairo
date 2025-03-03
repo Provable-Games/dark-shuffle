@@ -23,12 +23,8 @@ const U128_MAX: u128 = 340282366920938463463374607431768211455;
 const LCG_PRIME: u128 = 281474976710656;
 const VERSION: felt252 = '0.0.1';
 
-fn DEFAULT_NS() -> @ByteArray {
-    @"ds_v1_1_2"
-}
-
-fn DEFAULT_NS_STR() -> ByteArray {
-    "ds_v1_1_2"
+fn DEFAULT_NS() -> ByteArray {
+    "ds_v1_1_3"
 }
 
 fn SCORE_MODEL() -> ByteArray {
