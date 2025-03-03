@@ -64,7 +64,7 @@ function Leaderboard() {
     }
   }, [page, tab, registrations])
 
-  const seasonPool = Math.floor(season.rewardPool / 1e18)
+  const seasonPool = Math.floor(season.rewardPool / 1e18 * 0.98)
 
   return (
     <Box sx={styles.container}>

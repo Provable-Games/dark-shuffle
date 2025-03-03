@@ -175,9 +175,11 @@ function StartDraft() {
               Season Pool
             </Typography>
             <Typography variant='h5' color='primary'>
-              {Math.floor(season.rewardPool / 1e18)} $LORDS
+              {Math.floor(season.rewardPool / 1e18 * 0.98)} $LORDS
             </Typography>
-
+            <Typography variant='h6' color='#f59100'>
+              +300 $CASH
+            </Typography>
           </Box>
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mb: 1 }]}>
@@ -191,6 +193,10 @@ function StartDraft() {
 
           <Typography variant='h3' textAlign={'center'}>
             Season 1: Spellbound
+          </Typography>
+
+          <Typography variant='h6' color='#f59100' textAlign={'center'}>
+            Sponsored by <a href="https://www.opus.money/" target='_blank' className='underline' style={{ color: '#f59100' }}>OPUS</a>
           </Typography>
 
           <LoadingButton variant='outlined'
@@ -261,15 +267,18 @@ function StartDraft() {
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
               </Box>
 
-              <Box sx={styles.kpi}>
+              <Box sx={[styles.kpi, { position: 'relative' }]}>
                 <Box display={'flex'} justifyContent={'space-between'}>
                   <Typography>
                     Season Pool
                   </Typography>
                 </Box>
                 {season.rewardPool !== undefined ? <Typography variant={'h5'} color='primary'>
-                  {Math.floor(season.rewardPool / 1e18)} $LORDS
+                  {Math.floor(season.rewardPool / 1e18 * 0.98)} $LORDS
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
+                <Typography color='#f59100' sx={{ position: 'absolute', bottom: 2, left: '16px' }}>
+                  +300 $CASH
+                </Typography>
               </Box>
             </Box>
           </Box>
