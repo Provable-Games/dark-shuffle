@@ -1284,7 +1284,7 @@ export const CARD_DETAILS = (cardId, id) => {
       return {
         id,
         cardId: 88,
-        name: "Orgre Strength",
+        name: "Ogre Strength",
         cardType: types.SPELL,
         creatureType: tags.SPELL,
         cardTier: 5,
