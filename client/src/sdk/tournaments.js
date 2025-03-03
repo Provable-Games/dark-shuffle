@@ -4,7 +4,7 @@ import manifest from "../../manifest_tournaments.json";
 
 class TournamentSDK {
   constructor(rpcUrl) {
-    this.namespace = "budokan_v_1_0_0"
+    this.namespace = "budokan_v_1_0_1"
     this.contractName = "Budokan"
     this.contractAddress = "0x3d445b63c8653983b8a5b8c5c0e52f7b944f9ce3b3ecf2cb208921e400feec1"
     this.provider = new DojoProvider(manifest, rpcUrl);
