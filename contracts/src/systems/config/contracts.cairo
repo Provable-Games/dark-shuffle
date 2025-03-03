@@ -1,8 +1,17 @@
+use darkshuffle::models::card::{CardDetails, CardRarity, CardType};
 use darkshuffle::models::config::GameSettings;
 use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IConfigSystems<T> {
+    fn add_card(
+        ref self: T,
+        name: felt252,
+        rarity: CardRarity,
+        cost: u8,
+        card_type: CardType,
+        card_details: CardDetails
+    );
     fn add_settings(
         ref self: T,
         start_health: u8,
@@ -23,7 +32,8 @@ trait IConfigSystems<T> {
 mod config_systems {
     use achievement::components::achievable::AchievableComponent;
     use darkshuffle::constants::{DEFAULT_NS, DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS, VERSION};
-    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter};
+    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter, CardsCounter};
+    use darkshuffle::models::card::{CardDetails, CardRarity, CardType};
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use darkshuffle::utils::config::ConfigUtilsImpl;
     use dojo::model::ModelStorage;
@@ -83,6 +93,19 @@ mod config_systems {
 
     #[abi(embed_v0)]
     impl ConfigSystemsImpl of super::IConfigSystems<ContractState> {
+        fn add_card(
+            ref self: ContractState, 
+            name: felt252,
+            rarity: CardRarity,
+            cost: u8,
+            card_type: CardType,
+            card_details: CardDetails
+        ) {
+            let mut world: WorldStorage = self.world(DEFAULT_NS());
+
+            ConfigUtilsImpl::create_card(ref world, name, rarity, cost, card_type, card_details);
+        }
+
         fn add_settings(
             ref self: ContractState,
             start_health: u8,
@@ -96,33 +119,26 @@ mod config_systems {
         ) {
             let mut world: WorldStorage = self.world(DEFAULT_NS());
 
-            // TODO: add upper bounds assertions
-            assert(start_health > 0, 'Invalid start health');
-            assert(draft_size > 0, 'Invalid draft size');
-            assert(max_energy > 0, 'Invalid max energy');
-            assert(max_hand_size > 0, 'Invalid max hand size');
-            assert(card_ids.len() > 10, 'Minimum 10 draftable cards');
-            assert(card_rarity_weights.len() == 5, 'Weight for each rarity required');
-
             // increment settings counter
             let mut settings_count: SettingsCounter = world.read_model(VERSION);
             settings_count.count += 1;
+            
+            let settings: GameSettings = GameSettings { 
+                settings_id: settings_count.count,
+                start_health,
+                start_energy,
+                start_hand_size,
+                draft_size,
+                max_energy,
+                max_hand_size,
+                card_ids,
+                card_rarity_weights,
+            };
+            
+            self.validate_settings(settings);
+            
+            world.write_model(@settings);
             world.write_model(@settings_count);
-
-            world
-                .write_model(
-                    @GameSettings {
-                        settings_id: settings_count.count,
-                        start_health,
-                        start_energy,
-                        start_hand_size,
-                        draft_size,
-                        max_energy,
-                        max_hand_size,
-                        card_ids,
-                        card_rarity_weights,
-                    }
-                );
         }
 
         fn setting_details(self: @ContractState, settings_id: u32) -> GameSettings {
@@ -142,6 +158,41 @@ mod config_systems {
             let token_metadata: TokenMetadata = world.read_model(game_id);
             let game_settings: GameSettings = world.read_model(token_metadata.settings_id);
             game_settings
+        }
+    }
+
+    #[generate_trait]
+    impl InternalImpl of InternalTrait {
+        #[inline(always)]
+        fn validate_settings(self: @ContractState, settings: GameSettings) {
+            assert!(settings.start_health > 0, "Starting health must be greater than 0");
+            assert!(settings.start_health <= 200, "Maximum starting health cannot be greater than 200");
+
+            assert!(settings.draft_size > 0, "Draft size must be greater than 0 cards");
+            assert!(settings.draft_size <= 50, "Maximum draft size is 50 cards");
+
+            assert!(settings.max_energy > 0, "Maximum energy must be greater than 0");
+            assert!(settings.max_energy <= 50, "Maximum energy cannot be greater than 50");
+
+            assert!(settings.start_energy > 0, "Starting energy must be greater than 0");
+            assert!(settings.start_energy <= 50, "Maximum starting energy cannot be greater than 50");
+
+            assert!(settings.start_hand_size > 0, "Starting hand size must be greater than 0 cards");
+            assert!(settings.start_hand_size <= 10, "Maximum starting hand size cannot be greater than 10 cards");
+
+            assert!(settings.max_hand_size > 0, "Maximum hand size must be greater than 0 cards");
+            assert!(settings.max_hand_size <= 10, "Maximum hand size cannot be greater than 10 cards");
+
+            assert!(settings.card_ids.len() >= 3, "Minimum 3 draftable cards");
+            assert!(settings.card_rarity_weights.len() == 5, "Weight for each rarity required");
+
+            let mut i = 0;
+            while i < 5 {
+                let weight = *settings.card_rarity_weights.at(i);
+                assert!(weight > 0, "Rarity weight must be greater than 0");
+                assert!(weight <= 10, "Rarity weight cannot be greater than 10");
+                i += 1;
+            }
         }
     }
 }

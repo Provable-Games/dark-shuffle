@@ -15,7 +15,7 @@ pub struct GameSettings {
     card_rarity_weights: Span<u8>,
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct SettingsCounter {
     #[key]
@@ -23,7 +23,7 @@ pub struct SettingsCounter {
     count: u32,
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct CardsCounter {
     #[key]

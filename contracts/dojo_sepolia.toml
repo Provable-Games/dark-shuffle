@@ -1,7 +1,7 @@
 [world]
 name = "Provable Games"
 description = "PG Sepolia World"
-seed = "pg_sepolia_await_4"
+seed = "pg_sepolia_await_6"
 
 [namespace]
 default = "ds_v1_2_0"

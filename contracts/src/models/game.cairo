@@ -7,7 +7,7 @@ use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721Dispatche
 use starknet::{get_caller_address};
 use tournaments::components::interfaces::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Game {
     #[key]
@@ -22,7 +22,7 @@ pub struct Game {
     state: u8,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct GameEffects {
     #[key]
