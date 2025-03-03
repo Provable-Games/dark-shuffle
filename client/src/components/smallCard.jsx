@@ -28,7 +28,7 @@ function SmallCard(props) {
     </Box>
 
     <Box sx={styles.bottomContainer}>
-      {showStats &&
+      {showStats && card.cardType !== types.SPELL &&
         <>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant="h6">
