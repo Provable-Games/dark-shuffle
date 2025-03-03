@@ -1,8 +1,8 @@
 [indexing]
 world_address = "0x06a9e4c6f0799160ea8ddc43ff982a5f83d7f633e9732ce42701de1288ff705f"
-world_block = 1165580
+world_block = 1197343
 contracts = [
-    "erc721:0x2ffe2edea10d1622b9cc65ce18b441755f322253e24e6cd862518ab037009f5"
+    "erc721:0x0303d542dda5c55e8da6f3c4f7b4d0c9b6a6051dc4d97e62a75b3a92457e2ca1"
 ]
 
 namespaces = ["ds_v1_1_2", "budokan_v_1_0_1"]
