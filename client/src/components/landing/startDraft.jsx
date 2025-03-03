@@ -71,7 +71,7 @@ function StartDraft() {
     try {
       let data = await getActiveGame(game.id)
       data.state = GAME_STATES[data.state]
-      
+
       let settings = await getSettings(game.settingsId)
 
       gameState.setGameSettings(settings)
@@ -190,7 +190,7 @@ function StartDraft() {
           </Box>
 
           <Typography variant='h3' textAlign={'center'}>
-            Season 1: New beginnings
+            Season 1: Spellbound
           </Typography>
 
           <LoadingButton variant='outlined'
@@ -279,9 +279,15 @@ function StartDraft() {
           <Box sx={[_styles.customBox, _styles.linearBg, { display: 'flex', justifyContent: 'space-between', p: 2 }]} width={'100%'}>
 
             <Box sx={{ maxWidth: '800px' }}>
-              <Typography variant='h3'>
-                Season 1: Spellbound
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
+                <Typography variant='h3'>
+                  Season 1: Spellbound
+                </Typography>
+
+                <Typography variant='h6' color='#f59100'>
+                  Sponsored by <a href="https://www.opus.money/" target='_blank' className='underline' style={{ color: '#f59100' }}>OPUS</a>
+                </Typography>
+              </Box>
 
               <ul style={{ paddingLeft: '16px', color: '#FFE97F' }}>
                 <li>
