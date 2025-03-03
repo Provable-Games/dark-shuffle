@@ -190,7 +190,7 @@ function StartDraft() {
           </Box>
 
           <Typography variant='h3' textAlign={'center'}>
-            Season 1 Alpha: New beginnings
+            Season 1: New beginnings
           </Typography>
 
           <LoadingButton variant='outlined'
@@ -280,7 +280,7 @@ function StartDraft() {
 
             <Box sx={{ maxWidth: '800px' }}>
               <Typography variant='h3'>
-                Season 1 Alpha: Spellbound
+                Season 1: Spellbound
               </Typography>
 
               <ul style={{ paddingLeft: '16px', color: '#FFE97F' }}>
