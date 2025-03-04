@@ -11,6 +11,7 @@ import { generateMapNodes } from '../helpers/map';
 import { BattleContext } from './battleContext';
 import { DraftContext } from './draftContext';
 import { GAME_STATES, GameContext } from './gameContext';
+import { useNavigate } from "react-router-dom";
 
 // Create a context
 const ReplayContext = createContext();
@@ -22,6 +23,7 @@ export const ReplayProvider = ({ children }) => {
   const battle = useContext(BattleContext)
 
   const { enqueueSnackbar } = useSnackbar()
+  const navigate = useNavigate()
   const [toriiClient, setToriiClient] = useState(null)
 
   let provider = new RpcProvider({ nodeUrl: dojoConfig.rpcUrl });
@@ -87,6 +89,8 @@ export const ReplayProvider = ({ children }) => {
 
     battle.utils.resetBattleState()
     game.endGame()
+  
+    navigate('/')
   }
 
   const nextStep = async () => {
