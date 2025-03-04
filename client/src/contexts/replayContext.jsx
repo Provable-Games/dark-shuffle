@@ -89,7 +89,7 @@ export const ReplayProvider = ({ children }) => {
 
     battle.utils.resetBattleState()
     game.endGame()
-  
+
     navigate('/')
   }
 
@@ -109,7 +109,7 @@ export const ReplayProvider = ({ children }) => {
     }
   }
 
-  const spectateGame = (game) => {   
+  const spectateGame = (game) => {
     setSpectatingGame(game)
   }
 
@@ -129,6 +129,11 @@ export const ReplayProvider = ({ children }) => {
           setStep(prev => prev - 1)
         }
       }
+    }
+
+    const gameEffects = events.find(e => e.componentName === 'GameEffects')
+    if (gameEffects) {
+      game.setGameEffects(gameEffects)
     }
 
     const draftValues = events.find(e => e.componentName === 'Draft')

@@ -115,7 +115,7 @@ export const summonEffect = ({
   else if (creature.cardId === 18) {
     if (magicalCount > 0) {
       increaseEnergy(1);
-      healHero(1);
+      healHero(2);
     }
   }
 
