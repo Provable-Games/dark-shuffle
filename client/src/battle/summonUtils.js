@@ -63,7 +63,7 @@ export const summonEffect = ({
 
   if (creature.cardId === 1) {
     if (magicalCount === 0) {
-      reduceMonsterAttack(2)
+      reduceMonsterAttack(1)
     } else {
       updateBoard(tags.MAGICAL, 2, 0)
     }

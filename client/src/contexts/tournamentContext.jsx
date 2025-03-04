@@ -61,11 +61,15 @@ export const TournamentProvider = ({ children }) => {
       return
     }
 
-    const receipt = await tournamentSDK.enterTournament({ account, tournamentId, playerName: dojo.playerName })
+    try {
+      const receipt = await tournamentSDK.enterTournament({ account, tournamentId, playerName: dojo.playerName })
 
-    const translatedEvents = receipt.events.map(event => translateEvent(event)).filter(Boolean)
-    const tokenMetadata = translatedEvents.find(e => e.componentName === 'TokenMetadata')
-    return tokenMetadata
+      const translatedEvents = receipt.events.map(event => translateEvent(event)).filter(Boolean)
+      const tokenMetadata = translatedEvents.find(e => e.componentName === 'TokenMetadata')
+      return tokenMetadata
+    } catch (error) {
+      return null
+    }
   }
 
   const submitScores = async (tournamentId) => {

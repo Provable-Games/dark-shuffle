@@ -41,15 +41,17 @@ function StartDraft() {
   const [reconnecting, setReconnecting] = useState(false)
 
   const startSeasonGame = async () => {
-    if (dojo.balances.lords < season.entryFee) {
-      enqueueSnackbar('You do not have enough $LORDS to enter the season', { variant: 'warning' })
-      return
-    }
-
     setStartingSeasonGame(true)
     gameState.setStartStatus('Minting Game Token')
 
     let tokenData = await tournamentProvider.actions.enterTournament(season.tournamentId)
+
+    if (!tokenData) {
+      setStartingSeasonGame(false)
+      gameState.setStartStatus()
+      return
+    }
+
     startMintedGame(tokenData)
   }
 
