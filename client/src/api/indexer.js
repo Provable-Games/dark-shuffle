@@ -518,3 +518,40 @@ export async function getTournamentScores(tournament_id) {
     console.log(ex)
   }
 }
+
+export async function getTokenMetadata(game_id) {
+  const document = gql`
+  {
+    ${NS_SHORT}TokenMetadataModels(where:{token_id:"${game_id}"}) {
+      edges {
+        node {
+          token_id
+          player_name
+          settings_id
+          lifecycle {
+            start {
+              Some
+            }
+            end {
+              Some
+            }
+          }
+        }
+      }
+    }
+  }`
+
+  const res = await request(GQL_ENDPOINT, document);
+  const metadata = res?.[`${NS_SHORT}TokenMetadataModels`]?.edges[0]?.node;
+
+  if (!metadata) return null;
+
+  return {
+    id: parseInt(metadata.token_id, 16),
+    playerName: hexToAscii(metadata.player_name),
+    settingsId: parseInt(metadata.settings_id, 16),
+    expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
+    available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000
+  };
+}
+

@@ -72,7 +72,8 @@ export const ReplayProvider = ({ children }) => {
       fetchEvents(1, txs[1].tx_hash)
       setTxHashes(txs.map(tx => tx.tx_hash))
     } else {
-      enqueueSnackbar('Failed to load replay', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
+      endReplay()
+      enqueueSnackbar('Failed to load replay', { variant: 'error', anchorOrigin: { vertical: 'top', horizontal: 'center' } })
     }
   }
 

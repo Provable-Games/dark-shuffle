@@ -1,3 +1,4 @@
+import CheckIcon from '@mui/icons-material/Check';
 import TheatersIcon from '@mui/icons-material/Theaters';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Box, IconButton, Pagination, Tab, Tabs, Typography } from '@mui/material';
@@ -9,7 +10,6 @@ import { getActiveLeaderboard, getLeaderboard, getTournamentRegistrations, popul
 import { useReplay } from '../../contexts/replayContext';
 import { useTournament } from "../../contexts/tournamentContext";
 import { formatNumber } from '../../helpers/utilities';
-import CheckIcon from '@mui/icons-material/Check';
 
 function Leaderboard() {
   const tournamentProvider = useTournament()
@@ -65,6 +65,7 @@ function Leaderboard() {
   }, [page, tab, registrations])
 
   const seasonPool = Math.floor(season.rewardPool / 1e18 * 0.98)
+  const cashPrizes = [99, 60, 39, 30, 21, 15, 12, 9, 9, 6]
 
   return (
     <Box sx={styles.container}>
@@ -89,7 +90,7 @@ function Leaderboard() {
           <Typography>#</Typography>
         </Box>
 
-        <Box width={isMobile ? '150px' : '250px'}>
+        <Box width={isMobile ? '135px' : '235px'}>
           <Typography>Player</Typography>
         </Box>
 
@@ -98,7 +99,7 @@ function Leaderboard() {
             {tab === 'one' ? 'Score' : 'XP'}
           </Typography>
         </Box>
-        <Box width='75px' textAlign={'center'}></Box>
+        <Box width='90px' textAlign={'center'}></Box>
       </Box>
 
       {loading && <Box />}
@@ -124,7 +125,7 @@ function Leaderboard() {
                   <Typography>{rank}</Typography>
                 </Box>
 
-                <Box width={isMobile ? '150px' : '250px'}>
+                <Box width={isMobile ? '135px' : '235px'}>
                   <Typography>{game.playerName}</Typography>
                 </Box>
 
@@ -132,13 +133,19 @@ function Leaderboard() {
                   <Typography>{game.xp}</Typography>
                 </Box>
 
-                <Box width='75px' display={'flex'} gap={0.5} alignItems={'center'}>
+                <Box width='90px' display={'flex'} gap={0.5} alignItems={'center'}>
                   {tab === 'one' && rank <= season.distribution?.length && <>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#FFE97F" height={12}><path d="M0 12v2h1v2h6V4h2v12h6v-2h1v-2h-2v2h-3V4h2V0h-2v2H9V0H7v2H5V0H3v4h2v10H2v-2z"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#FFE97F" height={10}><path d="M0 12v2h1v2h6V4h2v12h6v-2h1v-2h-2v2h-3V4h2V0h-2v2H9V0H7v2H5V0H3v4h2v10H2v-2z"></path></svg>
+
                     <Typography color={'primary'} sx={{ fontSize: '12px' }}>
                       {formatNumber(seasonPool * season.distribution[rank - 1] / 100)}
                     </Typography>
+
                     {season.leaderboard[i] === game.tokenId && <CheckIcon sx={{ fontSize: '14px' }} color='primary' />}
+
+                    {!isMobile && cashPrizes[i] && <Typography color={'#f59100'} sx={{ fontSize: '12px' }}>
+                      +${cashPrizes[i]}
+                    </Typography>}
                   </>}
                 </Box>
               </Box>
