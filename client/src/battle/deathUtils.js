@@ -78,7 +78,7 @@ export const deathEffect = ({
 
   else if (creature.cardId === 33) {
     if (values.monsterType === tags.BRUTE) {
-      healHero(1);
+      healHero(2);
     }
 
     updateBoard(tags.MAGICAL, 1, 0);
@@ -110,7 +110,7 @@ export const deathEffect = ({
 
   else if (creature.cardId === 48) {
     if (board.magicalCount > 1) {
-      healHero(1);
+      healHero(2);
     }
   }
 
@@ -128,7 +128,7 @@ export const deathEffect = ({
 
   else if (creature.cardId === 60) {
     if (values.monsterType === tags.HUNTER) {
-      healHero(1);
+      healHero(2);
     }
   }
 
@@ -140,7 +140,7 @@ export const deathEffect = ({
 
   else if (creature.cardId === 64) {
     if (values.monsterType === tags.BRUTE) {
-      healHero(1);
+      healHero(2);
     }
   }
 
