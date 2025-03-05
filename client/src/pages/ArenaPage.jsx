@@ -15,30 +15,28 @@ function ArenaPage() {
   const { state } = gameState.values
 
   const replay = useReplay()
-  const { replayGameId, spectateGameId } = useParams()
+  const { watchGameId } = useParams()
   const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
     async function fetchGame() {
-      let game = await getTokenMetadata(replayGameId || spectateGameId)
+      let game = await getTokenMetadata(watchGameId)
 
       if (game) {
-        if (replayGameId) {
-          replay.startReplay(game)
-        }
-
-        if (spectateGameId) {
+        if (game.active) {
           replay.spectateGame(game)
+        } else {
+          replay.startReplay(game)
         }
       } else {
         enqueueSnackbar('Game not found', { variant: 'error', anchorOrigin: { vertical: 'top', horizontal: 'center' } })
       }
     }
 
-    if (replayGameId || spectateGameId) {
+    if (watchGameId) {
       fetchGame()
     }
-  }, [replayGameId, spectateGameId])
+  }, [watchGameId])
 
   return (
     <Scrollbars style={{ ...styles.container, border: gameState.values.replay ? '1px solid #f59100' : 'none' }}>

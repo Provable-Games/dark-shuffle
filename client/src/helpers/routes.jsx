@@ -7,11 +7,7 @@ export const routes = [
     content: <ArenaPage />
   },
   {
-    path: '/replay/:replayGameId',
-    content: <ArenaPage />
-  },
-  {
-    path: '/spectate/:spectateGameId',
+    path: '/watch/:watchGameId',
     content: <ArenaPage />
   },
   {

@@ -11,7 +11,7 @@ function DeathDialog(props) {
   const controls = useAnimationControls()
 
   const [text, showText] = useState(false)
-  const [tweetMsg] = useState(`I fell to the darkness in Dark Shuffle after slaying ${game.values.monstersSlain} beasts, with a final score of ${game.score}. Want to see how I did it? Watch my replay here: darkshuffle.io/replay/${game.id} 🕷️⚔️ @provablegames @darkshuffle_gg`);
+  const [tweetMsg] = useState(`I fell to the darkness in Dark Shuffle after slaying ${game.values.monstersSlain} beasts, with a final score of ${game.score}. Want to see how I did it? Watch my replay here: darkshuffle.io/watch/${game.values.gameId} 🕷️⚔️ @provablegames @darkshuffle_gg`);
 
   useEffect(() => {
     startAnimation()
