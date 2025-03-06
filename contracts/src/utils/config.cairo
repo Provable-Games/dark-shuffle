@@ -119,7 +119,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardType::Magical,
             CardDetails::creature_card(
                 CreatureCard {
-                    attack: 5,
+                    attack: 3,
                     health: 4,
                     play_effect: Option::Some(
                         CardEffect {
@@ -256,7 +256,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     play_effect: Option::Some(
                         CardEffect {
                             modifier: CardModifier {
-                                _type: Modifier::EnemyHealth,
+                                _type: Modifier::EnemyMarks,
                                 value: 2,
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
@@ -315,7 +315,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 _type: Modifier::EnemyHealth,
                                 value: 2,
                                 value_type: ValueType::Fixed,
-                                requirement: Option::Some(Requirement::EnemyWeak),
+                                requirement: Option::None,
                             },
                             bonus: Option::Some(EffectBonus { value: 2, requirement: Requirement::EnemyWeak, }),
                         }
@@ -529,7 +529,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     death_effect: Option::Some(
                         CardEffect {
                             modifier: CardModifier {
-                                _type: Modifier::AllAttack,
+                                _type: Modifier::AllyAttack,
                                 value: 1,
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
@@ -547,7 +547,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Kitsune',
             CardRarity::Epic,
-            4,
+            3,
             CardType::Magical,
             CardDetails::creature_card(
                 CreatureCard {
@@ -762,7 +762,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     play_effect: Option::Some(
                         CardEffect {
                             modifier: CardModifier {
-                                _type: Modifier::EnemyHealth,
+                                _type: Modifier::EnemyMarks,
                                 value: 1,
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
@@ -948,7 +948,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Rakshasa',
-            CardRarity::Epic,
+            CardRarity::Rare,
             3,
             CardType::Magical,
             CardDetails::creature_card(
@@ -969,10 +969,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     death_effect: Option::Some(
                         CardEffect {
                             modifier: CardModifier {
-                                _type: Modifier::AllHealth,
+                                _type: Modifier::AllyHealth,
                                 value: 1,
                                 value_type: ValueType::Fixed,
-                                requirement: Option::Some(Requirement::EnemyWeak),
+                                requirement: Option::None,
                             },
                             bonus: Option::None,
                         }
@@ -986,7 +986,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Werewolf',
-            CardRarity::Epic,
+            CardRarity::Rare,
             2,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1014,7 +1014,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Banshee',
-            CardRarity::Epic,
+            CardRarity::Rare,
             4,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1024,7 +1024,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     play_effect: Option::Some(
                         CardEffect {
                             modifier: CardModifier {
-                                _type: Modifier::AllAttack,
+                                _type: Modifier::AllyAttack,
                                 value: 1,
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
@@ -1052,7 +1052,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Draugr',
-            CardRarity::Epic,
+            CardRarity::Rare,
             1,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1080,7 +1080,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Vampire',
-            CardRarity::Epic,
+            CardRarity::Rare,
             4,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1118,7 +1118,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Weretiger',
-            CardRarity::Epic,
+            CardRarity::Rare,
             5,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1128,7 +1128,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     play_effect: Option::Some(
                         CardEffect {
                             modifier: CardModifier {
-                                _type: Modifier::EnemyHealth,
+                                _type: Modifier::EnemyMarks,
                                 value: 1,
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
@@ -1146,7 +1146,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Wyvern',
-            CardRarity::Epic,
+            CardRarity::Rare,
             1,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1161,7 +1161,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 _type: Modifier::EnemyHealth,
                                 value: 1,
                                 value_type: ValueType::Fixed,
-                                requirement: Option::Some(Requirement::HasAlly),
+                                requirement: Option::Some(Requirement::NoAlly),
                             },
                             bonus: Option::None,
                         }
@@ -1174,7 +1174,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Roc',
-            CardRarity::Epic,
+            CardRarity::Rare,
             4,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1202,7 +1202,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Harpy',
-            CardRarity::Epic,
+            CardRarity::Rare,
             2,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1212,12 +1212,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     play_effect: Option::Some(
                         CardEffect {
                             modifier: CardModifier {
-                                _type: Modifier::AllyAttack,
+                                _type: Modifier::SelfAttack,
                                 value: 1,
                                 value_type: ValueType::Fixed,
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
-                            bonus: Option::None,
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak, }),
                         }
                     ),
                     death_effect: Option::None,
@@ -1230,7 +1230,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Pegasus',
-            CardRarity::Epic,
+            CardRarity::Rare,
             3,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1243,7 +1243,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         CardEffect {
                             modifier: CardModifier {
                                 _type: Modifier::EnemyHealth,
-                                value: 1,
+                                value: 2,
                                 value_type: ValueType::Fixed,
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
@@ -1258,7 +1258,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Oni',
-            CardRarity::Epic,
+            CardRarity::Rare,
             3,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1286,7 +1286,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Jotunn',
-            CardRarity::Epic,
+            CardRarity::Rare,
             2,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1314,7 +1314,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Ettin',
-            CardRarity::Epic,
+            CardRarity::Rare,
             5,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1342,7 +1342,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Cyclops',
-            CardRarity::Epic,
+            CardRarity::Rare,
             4,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1370,7 +1370,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Giant',
-            CardRarity::Epic,
+            CardRarity::Rare,
             1,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1398,7 +1398,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Goblin',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             2,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1426,7 +1426,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Ghoul',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             1,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1454,7 +1454,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Wraith',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             3,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1482,7 +1482,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Sprite',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             2,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1510,7 +1510,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Kappa',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             4,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1538,7 +1538,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Hippogriff',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             1,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1566,7 +1566,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Fenrir',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             2,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1604,7 +1604,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Jaguar',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             3,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1632,7 +1632,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Satori',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             4,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1660,7 +1660,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Direwolf',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             2,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1688,7 +1688,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Nemeanlion',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             3,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1716,7 +1716,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Berserker',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             2,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1744,7 +1744,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Yeti',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             1,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1772,7 +1772,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Golem',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             4,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1800,7 +1800,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Ent',
-            CardRarity::Epic,
+            CardRarity::Uncommon,
             2,
             CardType::Brute,
             CardDetails::creature_card(
@@ -1828,7 +1828,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Fairy',
-            CardRarity::Epic,
+            CardRarity::Common,
             4,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1856,7 +1856,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Leprechaun',
-            CardRarity::Epic,
+            CardRarity::Common,
             2,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1884,7 +1884,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Kelpie',
-            CardRarity::Epic,
+            CardRarity::Common,
             1,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1912,7 +1912,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Pixie',
-            CardRarity::Epic,
+            CardRarity::Common,
             3,
             CardType::Magical,
             CardDetails::creature_card(
@@ -1968,7 +1968,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Bear',
-            CardRarity::Epic,
+            CardRarity::Common,
             4,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -1996,7 +1996,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Wolf',
-            CardRarity::Epic,
+            CardRarity::Common,
             2,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -2024,7 +2024,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Mantis',
-            CardRarity::Epic,
+            CardRarity::Common,
             1,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -2052,7 +2052,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Spider',
-            CardRarity::Epic,
+            CardRarity::Common,
             3,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -2080,7 +2080,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Rat',
-            CardRarity::Epic,
+            CardRarity::Common,
             5,
             CardType::Hunter,
             CardDetails::creature_card(
@@ -2108,7 +2108,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Troll',
-            CardRarity::Epic,
+            CardRarity::Common,
             4,
             CardType::Brute,
             CardDetails::creature_card(
@@ -2136,7 +2136,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Bigfoot',
-            CardRarity::Epic,
+            CardRarity::Common,
             2,
             CardType::Brute,
             CardDetails::creature_card(
@@ -2164,7 +2164,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Ogre',
-            CardRarity::Epic,
+            CardRarity::Common,
             1,
             CardType::Brute,
             CardDetails::creature_card(
@@ -2192,7 +2192,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Orc',
-            CardRarity::Epic,
+            CardRarity::Common,
             3,
             CardType::Brute,
             CardDetails::creature_card(
@@ -2220,7 +2220,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         Self::create_card(
             ref world,
             'Skeleton',
-            CardRarity::Epic,
+            CardRarity::Common,
             5,
             CardType::Brute,
             CardDetails::creature_card(

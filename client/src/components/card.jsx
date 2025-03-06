@@ -12,41 +12,42 @@ function Card(props) {
   const { card, pendingCard, draftIndex, replaySelection } = props
 
   const renderCardText = () => {
+    let effectCount = (card.playEffect?.modifier?._type ? 1 : 0) + (card.attackEffect?.modifier?._type ? 1 : 0) + (card.deathEffect?.modifier?._type ? 1 : 0)
+    let fontSize = effectCount > 1 ? '12px' : '13px'
+
     return <Box sx={styles.textContainer} p={isMobile ? '2px' : '4px'}>
-      <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
-        {card.playEffect?.modifier?._type && <>
-          <span>Play: </span>
-          <span style={styles.breadText}>
-            {buildEffectText(card.cardType, card.playEffect, 'play')}
-          </span>
-        </>}
+      {card.playEffect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span>Play:</span>
+        <span style={styles.breadText}>
+          {buildEffectText(card.cardType, card.playEffect, 'play')}
+        </span>
+      </Typography>}
 
-        {card.attackEffect?.modifier?._type && <>
-          <span>Attack: </span>
-          <span style={styles.breadText}>
-            {buildEffectText(card.cardType, card.attackEffect, 'attack')}
-          </span>
-        </>}
+      {card.attackEffect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span>Attack:</span>
+        <span style={styles.breadText}>
+          {buildEffectText(card.cardType, card.attackEffect, 'attack')}
+        </span>
+      </Typography>}
 
-        {card.deathEffect?.modifier?._type && <>
-          <span>Death: </span>
-          <span style={styles.breadText}>
-            {buildEffectText(card.cardType, card.deathEffect, 'death')}
-          </span>
-        </>}
+      {card.deathEffect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span>Death:</span>
+        <span style={styles.breadText}>
+          {buildEffectText(card.cardType, card.deathEffect, 'death')}
+        </span>
+      </Typography>}
 
-        {card.effect?.modifier?._type && <>
-          <span>
-            {buildEffectText(card.cardType, card.effect, 'spell')}
-          </span>
-        </>}
+      {card.effect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span>
+          {buildEffectText(card.cardType, card.effect, 'spell')}
+        </span>
+      </Typography>}
 
-        {card.extraEffect?.modifier?._type && <>
-          <span style={{ marginLeft: '4px' }}>
-            and {buildEffectText(card.cardType, card.extraEffect, 'spell_extra')}
-          </span>
-        </>}
-      </Typography>
+      {card.extraEffect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span style={{ marginLeft: '4px' }}>
+          and {buildEffectText(card.cardType, card.extraEffect, 'spell_extra').toLowerCase()}
+        </span>
+      </Typography>}
     </Box>
   }
 
@@ -147,13 +148,15 @@ const styles = {
   },
   textContainer: {
     width: '100%',
-    height: '33%',
+    height: '35%',
     border: '1px solid #FFE97F70',
     borderRadius: '4px',
     boxSizing: 'border-box',
     display: 'flex',
+    flexDirection: 'column',
     gap: 0.5,
-    background: 'rgba(0, 0, 0, 0.3)'
+    background: 'rgba(0, 0, 0, 0.3)',
+    overflow: 'hidden'
   },
   title: {
     fontSize: '18px',
@@ -200,7 +203,12 @@ const styles = {
     position: 'relative'
   },
   breadText: {
-    fontSize: '13px',
     opacity: 0.7
+  },
+  breadTextContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    textAlign: 'center',
+    lineHeight: '1.25'
   }
 }
