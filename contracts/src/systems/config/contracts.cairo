@@ -101,7 +101,7 @@ mod config_systems {
             card_type: CardType,
             card_details: CardDetails
         ) {
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
             ConfigUtilsImpl::create_card(ref world, name, rarity, cost, card_type, card_details);
         }
