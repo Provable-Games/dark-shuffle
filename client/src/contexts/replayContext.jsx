@@ -10,6 +10,7 @@ import { generateMapNodes } from '../helpers/map';
 import { BattleContext } from './battleContext';
 import { DraftContext } from './draftContext';
 import { GAME_STATES, GameContext } from './gameContext';
+import { useNavigate } from "react-router-dom";
 
 // Create a context
 const ReplayContext = createContext();
@@ -21,6 +22,7 @@ export const ReplayProvider = ({ children }) => {
   const battle = useContext(BattleContext)
 
   const { enqueueSnackbar } = useSnackbar()
+  const navigate = useNavigate()
   const [toriiClient, setToriiClient] = useState(null)
 
   let provider = new RpcProvider({ nodeUrl: dojoConfig.rpcUrl });
@@ -70,7 +72,8 @@ export const ReplayProvider = ({ children }) => {
       fetchEvents(1, txs[1].tx_hash)
       setTxHashes(txs.map(tx => tx.tx_hash))
     } else {
-      enqueueSnackbar('Failed to load replay', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
+      endReplay()
+      enqueueSnackbar('Failed to load replay', { variant: 'error', anchorOrigin: { vertical: 'top', horizontal: 'center' } })
     }
   }
 
@@ -84,6 +87,8 @@ export const ReplayProvider = ({ children }) => {
 
     battle.utils.resetBattleState()
     game.endGame()
+
+    navigate('/')
   }
 
   const nextStep = async () => {
@@ -122,6 +127,11 @@ export const ReplayProvider = ({ children }) => {
           setStep(prev => prev - 1)
         }
       }
+    }
+
+    const gameEffects = events.find(e => e.componentName === 'GameEffects')
+    if (gameEffects) {
+      game.setGameEffects(gameEffects)
     }
 
     const draftValues = events.find(e => e.componentName === 'Draft')

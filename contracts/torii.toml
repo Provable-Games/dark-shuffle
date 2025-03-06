@@ -1,12 +1,12 @@
 [indexing]
 world_address = "0x06a9e4c6f0799160ea8ddc43ff982a5f83d7f633e9732ce42701de1288ff705f"
-world_block = 1165580
+world_block = 1197343
 contracts = [
-    "erc721:0x2ffe2edea10d1622b9cc65ce18b441755f322253e24e6cd862518ab037009f5"
+    "erc721:0x020fc3c9efd0dde5f53642dac7f53638aeaae98ff9af5f1642546f389ce9dec5"
 ]
 
-namespaces = ["ds_v1_1_1", "budokan_v_1_0_0"]
+namespaces = ["ds_v1_1_3", "budokan_v_1_0_2"]
 
 [events]
 raw = true
-historical = ["ds_v1_1_1-TrophyCreation", "ds_v1_1_1-TrophyProgression"]
+historical = ["ds_v1_1_3-TrophyCreation", "ds_v1_1_3-TrophyProgression"]

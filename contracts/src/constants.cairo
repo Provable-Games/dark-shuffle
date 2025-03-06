@@ -28,6 +28,18 @@ fn DEFAULT_NS_STR() -> ByteArray {
     "ds_v1_2_0"
 }
 
+fn SCORE_MODEL() -> ByteArray {
+    "Game"
+}
+
+fn SCORE_ATTRIBUTE() -> ByteArray {
+    "hero_xp"
+}
+
+fn SETTINGS_MODEL() -> ByteArray {
+    "GameSettings"
+}
+
 pub mod DEFAULT_SETTINGS {
     use darkshuffle::models::config::GameSettings;
 

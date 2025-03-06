@@ -1,9 +1,9 @@
 import { Box, Button, Typography } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import { GameContext } from "../../contexts/gameContext";
-import { BattleContext } from "../../contexts/battleContext";
 import { motion, useAnimationControls } from "framer-motion";
-import { isMobile, isBrowser } from 'react-device-detect'
+import React, { useContext, useEffect, useState } from "react";
+import { isBrowser, isMobile } from 'react-device-detect';
+import { BattleContext } from "../../contexts/battleContext";
+import { GameContext } from "../../contexts/gameContext";
 
 function DeathDialog(props) {
   const game = useContext(GameContext)
@@ -11,7 +11,7 @@ function DeathDialog(props) {
   const controls = useAnimationControls()
 
   const [text, showText] = useState(false)
-  const [tweetMsg] = useState(`I fell to the darkness in Dark Shuffle after slaying ${game.values.monstersSlain} beasts, with a final score of ${game.score}. Can you outlast me? Play now at darkshuffle.io 🕷️⚔️ @provablegames #DarkShuffle`);
+  const [tweetMsg] = useState(`I fell to the darkness in Dark Shuffle after slaying ${game.values.monstersSlain} beasts, with a final score of ${game.score}. Want to see how I did it? Watch my replay here: darkshuffle.io/watch/${game.values.gameId} 🕷️⚔️ @provablegames @darkshuffle_gg`);
 
   useEffect(() => {
     startAnimation()

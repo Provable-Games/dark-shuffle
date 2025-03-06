@@ -276,7 +276,7 @@ export const BattleProvider = ({ children }) => {
 
     setActions([])
     setUpdatedValues()
-    setRoundStats({})
+
   }
 
   const endBattle = async () => {
@@ -507,6 +507,12 @@ export const BattleProvider = ({ children }) => {
       attack: creature.attack,
       health: creature.health,
     })))
+
+    setRoundStats({
+      monsterStartHealth: data.battle.monster.health,
+      creaturesPlayed: 0,
+      creatureAttackCount: 0
+    })
 
     setResettingState(false)
   }

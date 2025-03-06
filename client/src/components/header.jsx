@@ -5,9 +5,11 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { useConnect } from "@starknet-react/core";
 import React, { useContext, useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from '../assets/images/logo.svg';
+import { BattleContext } from '../contexts/battleContext';
 import { DojoContext } from '../contexts/dojoContext';
+import { GameContext } from '../contexts/gameContext';
 import { ellipseAddress } from '../helpers/utilities';
 import ChooseName from './dialogs/chooseName';
 import ConnectWallet from './dialogs/connectWallet';
@@ -22,6 +24,10 @@ const menuItems = [
 ]
 
 function Header(props) {
+  const game = useContext(GameContext)
+  const battle = useContext(BattleContext)
+  const navigate = useNavigate()
+
   const { connect, connector, connectors } = useConnect();
   let cartridgeConnector = connectors.find(conn => conn.id === "controller")
 
@@ -40,11 +46,17 @@ function Header(props) {
     setAnchorEl(null);
   };
 
+  const backToMenu = () => {
+    navigate('/')
+    battle.utils.resetBattleState()
+    game.endGame()
+  }
+
   return (
     <Box sx={styles.header}>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-        <Box height={32} sx={{ opacity: 1 }}>
+        <Box height={32} sx={{ opacity: 1, cursor: 'pointer' }} onClick={backToMenu}>
           <img alt='' src={logo} height='32' />
         </Box>
 

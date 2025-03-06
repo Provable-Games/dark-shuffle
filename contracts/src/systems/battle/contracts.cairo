@@ -33,7 +33,7 @@ mod battle_systems {
         fn battle_actions(ref self: ContractState, game_id: u64, battle_id: u16, actions: Span<Span<u8>>) {
             assert(*(*actions.at(actions.len() - 1)).at(0) == 1, 'Must end turn');
 
-            let mut world: WorldStorage = self.world(DEFAULT_NS());
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
             let token_metadata: TokenMetadata = world.read_model(game_id);
             token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());

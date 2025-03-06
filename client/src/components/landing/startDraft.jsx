@@ -4,7 +4,7 @@ import { useAccount } from '@starknet-react/core'
 import { useSnackbar } from 'notistack'
 import React, { useContext, useEffect, useState } from 'react'
 import { BrowserView, MobileView } from 'react-device-detect'
-import { getActiveGame, getGameEffects, getMap } from '../../api/indexer'
+import { getActiveGame, getGameEffects, getMap, getSettings } from '../../api/indexer'
 import logo from '../../assets/images/logo.svg'
 import { BattleContext } from '../../contexts/battleContext'
 import { DojoContext } from '../../contexts/dojoContext'
@@ -56,6 +56,13 @@ function StartDraft() {
     gameState.setStartStatus('Minting Game Token')
 
     let tokenData = await tournamentProvider.actions.enterTournament(season.tournamentId)
+
+    if (!tokenData) {
+      setStartingSeasonGame(false)
+      gameState.setStartStatus()
+      return
+    }
+
     startMintedGame(tokenData)
   }
 
@@ -81,6 +88,10 @@ function StartDraft() {
     try {
       let data = await getActiveGame(previousGame.id)
       data.state = GAME_STATES[data.state]
+
+      let settings = await getSettings(previousGame.settingsId)
+
+      gameState.setGameSettings(settings)
 
       await draft.actions.fetchDraft(data.game_id)
 
@@ -187,9 +198,11 @@ function StartDraft() {
               Season Pool
             </Typography>
             <Typography variant='h5' color='primary'>
-              {Math.floor(season.rewardPool / 1e18)} $LORDS
+              {Math.floor(season.rewardPool / 1e18 * 0.98)} $LORDS
             </Typography>
-
+            <Typography variant='h6' color='#f59100'>
+              +300 $CASH
+            </Typography>
           </Box>
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mb: 1 }]}>
@@ -202,7 +215,11 @@ function StartDraft() {
           </Box>
 
           <Typography variant='h3' textAlign={'center'}>
-            Season 1 Alpha: New beginnings
+            Season 1: Spellbound
+          </Typography>
+
+          <Typography variant='h6' color='#f59100' textAlign={'center'}>
+            Sponsored by <a href="https://www.opus.money/" target='_blank' className='underline' style={{ color: '#f59100' }}>OPUS</a>
           </Typography>
 
           <LoadingButton variant='outlined'
@@ -273,15 +290,18 @@ function StartDraft() {
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
               </Box>
 
-              <Box sx={styles.kpi}>
+              <Box sx={[styles.kpi, { position: 'relative' }]}>
                 <Box display={'flex'} justifyContent={'space-between'}>
                   <Typography>
                     Season Pool
                   </Typography>
                 </Box>
                 {season.rewardPool !== undefined ? <Typography variant={'h5'} color='primary'>
-                  {Math.floor(season.rewardPool / 1e18)} $LORDS
+                  {Math.floor(season.rewardPool / 1e18 * 0.98)} $LORDS
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
+                <Typography color='#f59100' sx={{ position: 'absolute', bottom: 2, left: '16px' }}>
+                  +300 $CASH
+                </Typography>
               </Box>
             </Box>
           </Box>
@@ -291,9 +311,15 @@ function StartDraft() {
           <Box sx={[_styles.customBox, _styles.linearBg, { display: 'flex', justifyContent: 'space-between', p: 2 }]} width={'100%'}>
 
             <Box sx={{ maxWidth: '800px' }}>
-              <Typography variant='h3'>
-                Season 1 Alpha: Spellbound
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
+                <Typography variant='h3'>
+                  Season 1: Spellbound
+                </Typography>
+
+                <Typography variant='h6' color='#f59100'>
+                  Sponsored by <a href="https://www.opus.money/" target='_blank' className='underline' style={{ color: '#f59100' }}>OPUS</a>
+                </Typography>
+              </Box>
 
               <ul style={{ paddingLeft: '16px', color: '#FFE97F' }}>
                 <li>

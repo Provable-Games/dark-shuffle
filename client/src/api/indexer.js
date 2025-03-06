@@ -242,7 +242,7 @@ export async function getBattleState(battle_id, game_id) {
 export async function getTournamentRegistrations(tournament_id) {
   const document = gql`
   {
-    ${TOURNAMENT_NS_SHORT}RegistrationModels(where:{tournament_id:"${tournament_id}"}) {
+    ${TOURNAMENT_NS_SHORT}RegistrationModels(where:{tournament_id:"${tournament_id}"}, limit: 10000) {
       edges {
         node {
           game_token_id
