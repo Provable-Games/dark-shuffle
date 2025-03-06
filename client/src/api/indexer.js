@@ -630,3 +630,59 @@ export async function getCardDetails(card_ids) {
 
   return cardDetailsList;
 }
+
+export async function getTokenMetadata(game_id) {
+  const document = gql`
+  {
+    ${NS_SHORT}TokenMetadataModels(where:{token_id:"${game_id}"}) {
+      edges {
+        node {
+          token_id
+          player_name
+          settings_id
+          lifecycle {
+            start {
+              Some
+            }
+            end {
+              Some
+            }
+          }
+        }
+      }
+    }
+    ${NS_SHORT}GameModels (where:{
+      game_id:"${game_id}"
+    }) {
+      edges {
+        node {
+          game_id,
+          state,
+
+          hero_health,
+          hero_xp,
+          monsters_slain,
+          
+          map_level,
+          map_depth,
+          last_node_id
+        }
+      }
+    }
+  }`
+
+  const res = await request(GQL_ENDPOINT, document);
+  const metadata = res?.[`${NS_SHORT}TokenMetadataModels`]?.edges[0]?.node;
+  const game = res?.[`${NS_SHORT}GameModels`]?.edges[0]?.node;
+
+  if (!metadata) return null;
+
+  return {
+    id: parseInt(metadata.token_id, 16),
+    playerName: hexToAscii(metadata.player_name),
+    settingsId: parseInt(metadata.settings_id, 16),
+    expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
+    available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000,
+    active: game?.hero_health !== 0
+  };
+}
