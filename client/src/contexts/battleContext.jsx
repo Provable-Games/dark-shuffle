@@ -23,7 +23,6 @@ export const BattleProvider = ({ children }) => {
   const animationHandler = useContext(AnimationContext)
 
   const { enqueueSnackbar } = useSnackbar()
-  const [resettingState, setResettingState] = useState(false)
 
   const [values, setValues] = useState({})
   const [updatedValues, setUpdatedValues] = useState()
@@ -473,7 +472,6 @@ export const BattleProvider = ({ children }) => {
   }
 
   const fetchBattleState = async (battleId, gameId) => {
-    setResettingState(true)
     let data = await getBattleState(parseInt(battleId), parseInt(gameId))
 
     setValues({
@@ -513,8 +511,6 @@ export const BattleProvider = ({ children }) => {
       creaturesPlayed: 0,
       creatureAttackCount: 0
     })
-
-    setResettingState(false)
   }
 
   return (
@@ -546,7 +542,6 @@ export const BattleProvider = ({ children }) => {
           board,
           deck,
           battleEffects,
-          resettingState,
           newHandCards,
         }
       }}

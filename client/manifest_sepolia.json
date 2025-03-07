@@ -1481,7 +1481,7 @@
     },
     {
       "address": "0x50889985dcf8411f84729f5207704aa660a381d101b21c95840f1a47abdd071",
-      "class_hash": "0x2fc800204cf109655e1d8da2e5cfda1650b0bc8aa82a5f5dbfd62c8248ccf8a",
+      "class_hash": "0x2aaf8a7c2e71368f382bd43457e457a15f639d81f49f924c4f9b25cb86ab2d3",
       "abi": [
         {
           "type": "impl",
@@ -2365,7 +2365,7 @@
     },
     {
       "address": "0x233d2905880ba2fe5cb699c3fb1f75b3529b487e64b090cb0e22d6a41129f0b",
-      "class_hash": "0xe0e65a2b388d31ee4de1f8bf4185ea4303f952c0602ea192d36f4581ff45da",
+      "class_hash": "0x4212b65e614c5643c8bdbfcf6103865df4a006b2a09e4feca3451cbedd557ae",
       "abi": [
         {
           "type": "impl",
@@ -2709,17 +2709,6 @@
                 }
               ],
               "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "score_model_and_attribute",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "(core::felt252, core::felt252)"
-                }
-              ],
-              "state_mutability": "view"
             }
           ]
         },
@@ -3031,6 +3020,39 @@
             {
               "type": "function",
               "name": "namespace",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "score_model",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "score_attribute",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "settings_model",
               "inputs": [],
               "outputs": [
                 {

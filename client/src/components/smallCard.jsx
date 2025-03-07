@@ -28,7 +28,7 @@ function SmallCard(props) {
     </Box>
 
     <Box sx={styles.bottomContainer}>
-      {showStats && card.cardType !== types.SPELL &&
+      {showStats && card.category !== types.SPELL &&
         <>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant="h6">
@@ -47,7 +47,7 @@ function SmallCard(props) {
           </Box>
         </>}
 
-      {isBrowser && card.cardType === types.SPELL &&
+      {isBrowser && card.category === types.SPELL &&
         <Typography textAlign={'center'} width={'100%'} color='primary'>
           Spell
         </Typography>
