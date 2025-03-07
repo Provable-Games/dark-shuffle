@@ -21,7 +21,7 @@ trait IGameSystems<T> {
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
 
-    use darkshuffle::constants::{MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, DEFAULT_NS, DEFAULT_NS_STR, LAST_NODE_DEPTH};
+    use darkshuffle::constants::{DEFAULT_NS, LAST_NODE_DEPTH, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
     use darkshuffle::models::card::{Card};
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait};
     use darkshuffle::models::draft::{Draft};
