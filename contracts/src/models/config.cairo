@@ -15,6 +15,7 @@ pub struct GameSettings {
     card_ids: Span<u64>,
     card_rarity_weights: Span<u8>,
     auto_draft: bool,
+    persistent_health: bool,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]

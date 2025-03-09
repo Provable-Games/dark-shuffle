@@ -121,7 +121,7 @@ mod battle_systems {
             let seed: u128 = random::get_entropy(random_hash);
 
             if GameUtilsImpl::is_battle_over(battle) {
-                GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects);
+                GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
                 return;
             };
 
@@ -139,7 +139,7 @@ mod battle_systems {
             }
 
             if GameUtilsImpl::is_battle_over(battle) {
-                GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects);
+                GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
             } else {
                 battle_resources.board = BoardUtilsImpl::get_packed_board(ref board);
                 battle.round += 1;

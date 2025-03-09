@@ -67,7 +67,9 @@ fn create_default_settings(ref world: WorldStorage) -> u32 {
                 draft_size: 20,
                 max_energy: 7,
                 max_hand_size: 10,
+                draw_amount: 1,
                 auto_draft: false,
+                persistent_health: true,
             },
         );
 
@@ -82,6 +84,9 @@ fn create_custom_settings(
     draft_size: u8,
     max_energy: u8,
     max_hand_size: u8,
+    draw_amount: u8,
+    persistent_health: bool,
+    auto_draft: bool,
 ) -> u32 {
     let settings_id = 99;
 
@@ -95,7 +100,9 @@ fn create_custom_settings(
                 draft_size,
                 max_energy,
                 max_hand_size,
-                auto_draft: false,
+                draw_amount,
+                auto_draft,
+                persistent_health,
             },
         );
 

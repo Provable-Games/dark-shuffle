@@ -1,5 +1,5 @@
 use darkshuffle::models::battle::{Battle};
-
+use darkshuffle::models::config::{GameSettings};
 use darkshuffle::models::game::{Game, GameEffects, GameState};
 use darkshuffle::models::map::{Map, MonsterNode};
 
@@ -18,7 +18,9 @@ impl GameUtilsImpl of GameUtilsTrait {
         true
     }
 
-    fn end_battle(ref world: WorldStorage, ref battle: Battle, ref game_effects: GameEffects) {
+    fn end_battle(
+        ref world: WorldStorage, ref battle: Battle, ref game_effects: GameEffects, game_settings: GameSettings
+    ) {
         let mut game: Game = world.read_model((battle.game_id));
         let map: Map = world.read_model((game.game_id, game.map_level));
         let monster_node: MonsterNode = MapUtilsImpl::get_monster_node(map, game.last_node_id);
@@ -28,7 +30,7 @@ impl GameUtilsImpl of GameUtilsTrait {
         if battle.hero.health == 0 {
             Self::battle_lost(ref world, ref battle, ref game, monster_node);
         } else if battle.monster.health == 0 {
-            Self::battle_won(ref world, ref battle, ref game_effects, ref game, monster_node);
+            Self::battle_won(ref world, ref battle, ref game_effects, ref game, monster_node, game_settings);
         }
 
         world.write_model(@battle);
@@ -40,6 +42,7 @@ impl GameUtilsImpl of GameUtilsTrait {
         ref game_effects: GameEffects,
         ref game: Game,
         monster_node: MonsterNode,
+        game_settings: GameSettings,
     ) {
         // [Achievement] Defeat enemy
         AchievementsUtilsImpl::defeat_enemy(ref world, battle, monster_node.monster_id);
@@ -57,8 +60,10 @@ impl GameUtilsImpl of GameUtilsTrait {
         game.monsters_slain += 1;
         game.state = GameState::Map.into();
         game.map_depth += 1;
-        game.hero_health = battle.hero.health;
         game.hero_xp += monster_node.health.into();
+        if game_settings.persistent_health {
+            game.hero_health = battle.hero.health;
+        }
 
         world.write_model(@game);
         world.write_model(@game_effects);
@@ -67,7 +72,6 @@ impl GameUtilsImpl of GameUtilsTrait {
     fn battle_lost(ref world: WorldStorage, ref battle: Battle, ref game: Game, monster_node: MonsterNode) {
         game.state = GameState::Over.into();
 
-        // TODO: health should already be zero so this is should either be removed or be an assertion
         game.hero_health = 0;
 
         if monster_node.health > battle.monster.health {

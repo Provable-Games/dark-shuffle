@@ -19,6 +19,7 @@ trait IConfigSystems<T> {
         card_ids: Span<u64>,
         card_rarity_weights: Span<u8>,
         auto_draft: bool,
+        persistent_health: bool,
     ) -> u32;
     fn setting_details(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
@@ -115,6 +116,7 @@ mod config_systems {
             card_ids: Span<u64>,
             card_rarity_weights: Span<u8>,
             auto_draft: bool,
+            persistent_health: bool,
         ) -> u32 {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
@@ -134,6 +136,7 @@ mod config_systems {
                 card_ids,
                 card_rarity_weights,
                 auto_draft,
+                persistent_health,
             };
 
             self.validate_settings(settings);
@@ -187,6 +190,9 @@ mod config_systems {
 
             assert!(settings.card_ids.len() >= 3, "Minimum 3 draftable cards");
             assert!(settings.card_rarity_weights.len() == 5, "Weight for each rarity required");
+
+            assert!(settings.draw_amount > 0, "Draw amount must be greater than 0");
+            assert!(settings.draw_amount <= 5, "Maximum draw amount cannot be greater than 5");
 
             let mut i = 0;
             while i < 5 {
