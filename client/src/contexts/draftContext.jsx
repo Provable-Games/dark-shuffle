@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { getDraft } from "../api/indexer";
 import { delay } from "../helpers/utilities";
 import { DojoContext } from "./dojoContext";
@@ -9,12 +9,19 @@ export const DraftContext = createContext()
 export const DraftProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
-  const { gameSettings } = game.getState
+  const { gameSettings, gameCards } = game.getState
 
+  const [gameData, setGameData] = useState()
   const [pendingCard, setPendingCard] = useState()
 
   const [options, setOptions] = useState([])
   const [cards, setCards] = useState([])
+
+  useEffect(() => {
+    if (gameData && gameSettings?.start_health && gameCards?.length > 0) {
+      startDraft()
+    }
+  }, [gameData, gameSettings, gameCards])
 
   const initializeState = () => {
     setPendingCard()
@@ -23,7 +30,12 @@ export const DraftProvider = ({ children }) => {
     game.setStartStatus('Minting Game Token')
   }
 
-  const startDraft = async (tokenData) => {
+  const prepareStartingGame = async (tokenData) => {
+    setGameData(tokenData)
+    await game.utils.initializeGameSettings(tokenData.settingsId)
+  }
+
+  const startDraft = async () => {
     initializeState()
 
     game.setStartStatus('Shuffling Cards')
@@ -32,7 +44,7 @@ export const DraftProvider = ({ children }) => {
     txs.push({
       contractName: "game_systems",
       entrypoint: "start_game",
-      calldata: [tokenData.tokenId]
+      calldata: [gameData.tokenId]
     })
 
     const res = await dojo.executeTx(txs, true)
@@ -42,9 +54,9 @@ export const DraftProvider = ({ children }) => {
       const gameValues = res.find(e => e.componentName === 'Game')
       const draftValues = res.find(e => e.componentName === 'Draft')
 
-      await game.utils.initializeGameSettings(tokenData.settingsId)
-      game.setGame({ ...gameValues, playerName: tokenData.playerName })
+      game.setGame({ ...gameValues, playerName: gameData.playerName })
       setOptions(draftValues.options.map(option => game.utils.getCard(option)))
+      setCards(draftValues.cards.map(card => game.utils.getCard(card)))
     }
   }
 
@@ -87,7 +99,7 @@ export const DraftProvider = ({ children }) => {
     <DraftContext.Provider
       value={{
         actions: {
-          startDraft,
+          prepareStartingGame,
           selectCard,
           fetchDraft
         },
@@ -101,7 +113,6 @@ export const DraftProvider = ({ children }) => {
           cards,
           options,
           pendingCard,
-          status
         },
       }}
     >

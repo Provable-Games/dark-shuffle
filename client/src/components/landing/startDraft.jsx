@@ -75,7 +75,7 @@ function StartDraft() {
   }
 
   const startMintedGame = async (tokenData) => {
-    await draft.actions.startDraft(tokenData)
+    await draft.actions.prepareStartingGame(tokenData)
   }
 
   const loadGameSettings = async (game) => {

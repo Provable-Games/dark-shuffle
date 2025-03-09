@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x45575a88cc5cef1e444c77ce60b7b4c9e73a01cbbe20926d5a4c72a94011410",
-    "address": "0x5541c2e291ff729d9300438b81e3c9cedf3a1bc5a4b90762f0e340c1a41e0a",
-    "seed": "pg_sepolia_await_6",
+    "address": "0x6d5c070f1bead659a390f225306211c33c6448aaf69aa051bfbc4139a1c9ed7",
+    "seed": "pg_sepolia_await_7",
     "name": "Provable Games",
     "entrypoints": [
       "uuid",
@@ -1252,8 +1252,8 @@
   },
   "contracts": [
     {
-      "address": "0x3d8eb1929e1395d4700a0c30a78c285620ed099a17a2d59ea3b6d7c61550346",
-      "class_hash": "0x774f92d057ebaf3c89618fb4937fa1a87958d458991cd10acbd1f445a33e1a6",
+      "address": "0x248b2efb7e09c66dc72bdce2fe9a12b311a8d6835d041981932b8878371c3b8",
+      "class_hash": "0x517020944bee80f15ab78ab847f3e834cfb65863d872eecc6f2fb4b6b8f9939",
       "abi": [
         {
           "type": "impl",
@@ -1480,8 +1480,8 @@
       ]
     },
     {
-      "address": "0x50889985dcf8411f84729f5207704aa660a381d101b21c95840f1a47abdd071",
-      "class_hash": "0x2aaf8a7c2e71368f382bd43457e457a15f639d81f49f924c4f9b25cb86ab2d3",
+      "address": "0x50ff85c72aa86bcfda42a7a37a167665700179853198da8277b3163d5164886",
+      "class_hash": "0x69ee7b7ef4ddeb1d7aa4af4e208afee1e3d7b41e369ce5daf7cdc172b953e32",
       "abi": [
         {
           "type": "impl",
@@ -1854,6 +1854,20 @@
           ]
         },
         {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
           "type": "struct",
           "name": "darkshuffle::models::config::GameSettings",
           "members": [
@@ -1886,26 +1900,24 @@
               "type": "core::integer::u8"
             },
             {
+              "name": "draw_amount",
+              "type": "core::integer::u8"
+            },
+            {
               "name": "card_ids",
               "type": "core::array::Span::<core::integer::u64>"
             },
             {
               "name": "card_rarity_weights",
               "type": "core::array::Span::<core::integer::u8>"
-            }
-          ]
-        },
-        {
-          "type": "enum",
-          "name": "core::bool",
-          "variants": [
-            {
-              "name": "False",
-              "type": "()"
             },
             {
-              "name": "True",
-              "type": "()"
+              "name": "auto_draft",
+              "type": "core::bool"
+            },
+            {
+              "name": "persistent_health",
+              "type": "core::bool"
             }
           ]
         },
@@ -1970,15 +1982,31 @@
                   "type": "core::integer::u8"
                 },
                 {
+                  "name": "draw_amount",
+                  "type": "core::integer::u8"
+                },
+                {
                   "name": "card_ids",
                   "type": "core::array::Span::<core::integer::u64>"
                 },
                 {
                   "name": "card_rarity_weights",
                   "type": "core::array::Span::<core::integer::u8>"
+                },
+                {
+                  "name": "auto_draft",
+                  "type": "core::bool"
+                },
+                {
+                  "name": "persistent_health",
+                  "type": "core::bool"
                 }
               ],
-              "outputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
               "state_mutability": "external"
             },
             {
@@ -2160,8 +2188,8 @@
       ]
     },
     {
-      "address": "0x17ee696560ba0fc6c744ab93d020d1779b1674ab5f1ae5887fd785591242653",
-      "class_hash": "0x875bde543d18a48af1564f4821ad8a5329b92dc54352b5eaf0a402f19021e9",
+      "address": "0x15acd68ecae9647ab15e17dc4b70ab165a19d34a40e52408990925190bab3a7",
+      "class_hash": "0x72803f2bedf2ef601f349a1763a3a35b4a40f49fff71cc7c178071b233a760",
       "abi": [
         {
           "type": "impl",
@@ -2364,8 +2392,8 @@
       ]
     },
     {
-      "address": "0x233d2905880ba2fe5cb699c3fb1f75b3529b487e64b090cb0e22d6a41129f0b",
-      "class_hash": "0x4212b65e614c5643c8bdbfcf6103865df4a006b2a09e4feca3451cbedd557ae",
+      "address": "0x22d68e71da1b60365adcfe80e34408962e666cd36a46cb14bd4008517e4ebc7",
+      "class_hash": "0x793fb3143d2219a64f37edd871e5b5dd6d4729b3ced01218669c6f866c347d7",
       "abi": [
         {
           "type": "impl",
@@ -3591,8 +3619,8 @@
       ]
     },
     {
-      "address": "0x15f50f950158651d035c691967a18bbd7fe9b64ad50d5b39c315e519ecdfd87",
-      "class_hash": "0x32304c6c81cd9641dd166845838f1655c58c7681be3d5decd9455142a034bfa",
+      "address": "0x2a43ff4e0902cc860ad163c66e01959810a59cc676f2ba2bdbdb144ca71f988",
+      "class_hash": "0x1edcc318289a7080279ad7069f9cc4fe82fa6d2e52c5fe2e89ceb95c91ac15d",
       "abi": [
         {
           "type": "impl",
@@ -3865,7 +3893,7 @@
     },
     {
       "members": [],
-      "class_hash": "0x6006850517e3ea86757d54766e73c69bd5d059dfc95ce45257968b9e4c68ad1",
+      "class_hash": "0x79ca04fabb4dac8a9d9439b6b66c0726f73cd930be2d5a20d21462c5e9d4881",
       "tag": "ds_v1_2_0-GameSettings",
       "selector": "0x40f76893af52af25c2dda8662449d83f52ad15151e90c7645bed03144f7b154"
     },
