@@ -132,11 +132,9 @@ mod game_systems {
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let random_hash = random::get_random_hash();
             let seed: u128 = random::get_entropy(random_hash);
-            let card_pool = DraftUtilsImpl::get_weighted_draft_list(world, game_settings);
-            let options = DraftUtilsImpl::get_draft_options(seed, card_pool);
             let action_count = 0;
 
-            let game = Game {
+            let mut game = Game {
                 game_id,
                 state: GameState::Draft.into(),
                 hero_health: game_settings.start_health,
@@ -148,9 +146,17 @@ mod game_systems {
                 action_count,
             };
 
-            world.write_model(@game);
-            world.write_model(@Draft { game_id, options, cards: array![].span() });
+            let card_pool = DraftUtilsImpl::get_weighted_draft_list(world, game_settings);
+            if game_settings.auto_draft {
+                game.state = GameState::Map.into();
+                let draft_list = DraftUtilsImpl::auto_draft(seed, card_pool, game_settings.draft_size);
+                world.write_model(@Draft { game_id, options: array![].span(), cards: draft_list });
+            } else {
+                let options = DraftUtilsImpl::get_draft_options(seed, card_pool);
+                world.write_model(@Draft { game_id, options, cards: array![].span() });
+            }
 
+            world.write_model(@game);
             world
                 .emit_event(
                     @GameActionEvent {

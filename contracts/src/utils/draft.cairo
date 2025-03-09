@@ -1,8 +1,8 @@
-use dojo::world::WorldStorage;
-use dojo::model::ModelStorage;
 use darkshuffle::models::card::Card;
-use darkshuffle::utils::random;
 use darkshuffle::models::config::GameSettings;
+use darkshuffle::utils::random;
+use dojo::model::ModelStorage;
+use dojo::world::WorldStorage;
 
 #[generate_trait]
 impl DraftUtilsImpl of DraftUtilsTrait {
@@ -61,5 +61,19 @@ impl DraftUtilsImpl of DraftUtilsTrait {
         };
 
         array![card_1, card_2, card_3].span()
+    }
+
+    fn auto_draft(mut entropy: u128, card_pool: Span<u8>, draft_size: u8) -> Span<u8> {
+        let mut draft_list = array![];
+
+        let mut i = 0;
+        while i < draft_size {
+            let card_id = random::get_random_card_id(entropy, card_pool);
+            draft_list.append(card_id);
+            entropy = random::LCG(entropy);
+            i += 1;
+        };
+
+        draft_list.span()
     }
 }

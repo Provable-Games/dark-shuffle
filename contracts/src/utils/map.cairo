@@ -135,7 +135,7 @@ impl MapUtilsImpl of MapUtilsTrait {
                 next_brute_health_bonus: 0,
                 next_magical_attack_bonus: 0,
                 next_magical_health_bonus: 0,
-            }
+            },
         };
 
         let mut battle_resources: BattleResources = BattleResources {
@@ -147,7 +147,7 @@ impl MapUtilsImpl of MapUtilsTrait {
         };
 
         HandUtilsImpl::draw_cards(
-            ref battle_resources, game_settings.start_hand_size, game_settings.max_hand_size, seed
+            ref battle_resources, game_settings.start_hand_size, game_settings.max_hand_size, seed,
         );
 
         world.write_model(@battle);

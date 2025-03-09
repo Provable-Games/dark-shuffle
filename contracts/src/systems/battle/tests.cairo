@@ -1,10 +1,10 @@
-use darkshuffle::models::battle::{Battle, Card, Creature, BattleResources};
+use darkshuffle::models::battle::{Battle, BattleResources, Card, Creature};
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
 use darkshuffle::utils::cards::CardUtilsImpl;
 
 use darkshuffle::utils::testing::{
-    general::{create_battle, create_default_settings, create_game, mint_game_token, create_battle_resources},
+    general::{create_battle, create_battle_resources, create_default_settings, create_game, mint_game_token},
     systems::{deploy_battle_systems, deploy_system}, world::spawn_darkshuffle,
 };
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
@@ -40,13 +40,13 @@ fn battle_test_end_turn() {
     let hero_health = 50;
     let monster_attack = 3;
 
-    let battle_id = create_battle(ref world, game_id, 1, hero_health, 255, 75, monster_attack, 10,);
+    let battle_id = create_battle(ref world, game_id, 1, hero_health, 255, 75, monster_attack, 10);
 
     create_battle_resources(
         ref world,
         game_id,
         array![1, 2, 3].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
     battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
@@ -65,13 +65,13 @@ fn battle_test_summon_creature() {
     let (mut world, game_id, battle_systems_dispatcher) = setup();
 
     let card: Card = CardUtilsImpl::get_card(world, game_id, 1);
-    let battle_id = create_battle(ref world, game_id, 1, 50, card.cost, 255, 0, 100,);
+    let battle_id = create_battle(ref world, game_id, 1, 50, card.cost, 255, 0, 100);
 
     create_battle_resources(
         ref world,
         game_id,
         array![card.card_id].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
     battle_systems_dispatcher
@@ -104,7 +104,7 @@ fn battle_test_attack_enemy() {
         ref world,
         game_id,
         array![].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span()
+        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
     let mut battle_resources: BattleResources = world.read_model((battle_id, game_id));

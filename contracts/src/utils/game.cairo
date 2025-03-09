@@ -18,9 +18,7 @@ impl GameUtilsImpl of GameUtilsTrait {
         true
     }
 
-    fn end_battle(
-        ref world: WorldStorage, ref battle: Battle, ref game_effects: GameEffects
-    ) {
+    fn end_battle(ref world: WorldStorage, ref battle: Battle, ref game_effects: GameEffects) {
         let mut game: Game = world.read_model((battle.game_id));
         let map: Map = world.read_model((game.game_id, game.map_level));
         let monster_node: MonsterNode = MapUtilsImpl::get_monster_node(map, game.last_node_id);

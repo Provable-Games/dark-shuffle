@@ -102,7 +102,7 @@ fn config_test_max_energy_and_hand_size() {
     let hero_health = 50;
     let monster_attack = 3;
 
-    let battle_id = create_battle(ref world, game_id, MAX_ENERGY - 1, hero_health, 255, 75, monster_attack, 10,);
+    let battle_id = create_battle(ref world, game_id, MAX_ENERGY - 1, hero_health, 255, 75, monster_attack, 10);
 
     create_battle_resources(ref world, game_id, array![1, 2].span(), array![1, 2, 3, 4, 5].span());
 

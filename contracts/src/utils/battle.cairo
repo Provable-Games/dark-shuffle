@@ -1,3 +1,4 @@
+use core::num::traits::OverflowingAdd;
 use darkshuffle::constants::U8_MAX;
 use darkshuffle::models::battle::{Battle, BoardStats, CreatureDetails, RoundStats};
 use darkshuffle::models::card::{Card, CardDetails, CardType};
@@ -35,15 +36,23 @@ impl BattleUtilsImpl of BattleUtilsTrait {
     }
 
     fn heal_hero(ref battle: Battle, amount: u8) {
-        if battle.hero.health + amount >= U8_MAX {
+        let (result, overflow) = OverflowingAdd::overflowing_add(battle.hero.health, amount);
+
+        if overflow {
             battle.hero.health = U8_MAX;
         } else {
-            battle.hero.health += amount;
+            battle.hero.health = result;
         }
     }
 
     fn increase_hero_energy(ref battle: Battle, amount: u8) {
-        battle.hero.energy += amount;
+        let (result, overflow) = OverflowingAdd::overflowing_add(battle.hero.energy, amount);
+
+        if overflow {
+            battle.hero.energy = U8_MAX;
+        } else {
+            battle.hero.energy = result;
+        }
     }
 
     fn damage_hero(ref battle: Battle, game_effects: GameEffects, amount: u8) {
@@ -67,7 +76,12 @@ impl BattleUtilsImpl of BattleUtilsTrait {
     }
 
     fn damage_monster(ref battle: Battle, amount: u8, card_type: CardType, board_stats: BoardStats) {
-        let mut damage = amount + battle.battle_effects.enemy_marks;
+        let (result, overflow) = OverflowingAdd::overflowing_add(amount, battle.battle_effects.enemy_marks);
+        let mut damage = if overflow {
+            U8_MAX
+        } else {
+            result
+        };
 
         if damage == 0 {
             return;

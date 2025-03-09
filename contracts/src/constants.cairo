@@ -45,6 +45,7 @@ pub mod DEFAULT_SETTINGS {
     const DRAFT_SIZE: u8 = 20;
     const MAX_ENERGY: u8 = 7;
     const MAX_HAND_SIZE: u8 = 10;
+    const DRAW_AMOUNT: u8 = 1;
 
     fn GET_GENESIS_CARD_IDS() -> Span<u64> {
         let mut card_ids = array![];
@@ -71,8 +72,10 @@ pub mod DEFAULT_SETTINGS {
             draft_size: DRAFT_SIZE,
             max_energy: MAX_ENERGY,
             max_hand_size: MAX_HAND_SIZE,
+            draw_amount: DRAW_AMOUNT,
             card_ids: GET_GENESIS_CARD_IDS(),
             card_rarity_weights: GET_DEFAULT_WEIGHTS(),
+            auto_draft: false,
         }
     }
 }

@@ -15,7 +15,7 @@ pub struct Battle {
     round: u8,
     hero: Hero,
     monster: Monster,
-    battle_effects: BattleEffects
+    battle_effects: BattleEffects,
 }
 
 #[derive(Copy, Drop, Serde)]

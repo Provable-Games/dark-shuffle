@@ -206,10 +206,6 @@ export const BattleProvider = ({ children }) => {
       return enqueueSnackbar('Not enough energy', { variant: 'warning' })
     }
 
-    if (board.length > 5) {
-      return enqueueSnackbar('Board is full', { variant: 'warning' })
-    }
-
     setValues(prev => ({ ...prev, heroEnergy: prev.heroEnergy - cost }))
 
     summonEffect({

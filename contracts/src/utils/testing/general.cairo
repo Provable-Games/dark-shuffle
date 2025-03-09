@@ -67,6 +67,7 @@ fn create_default_settings(ref world: WorldStorage) -> u32 {
                 draft_size: 20,
                 max_energy: 7,
                 max_hand_size: 10,
+                auto_draft: false,
             },
         );
 
@@ -94,6 +95,7 @@ fn create_custom_settings(
                 draft_size,
                 max_energy,
                 max_hand_size,
+                auto_draft: false,
             },
         );
 
@@ -137,5 +139,5 @@ fn create_battle(
 }
 
 fn create_battle_resources(ref world: WorldStorage, game_id: u64, hand: Span<u8>, deck: Span<u8>) {
-    world.write_model_test(@BattleResources { battle_id: 1, game_id, hand, deck, board: array![].span(), });
+    world.write_model_test(@BattleResources { battle_id: 1, game_id, hand, deck, board: array![].span() });
 }

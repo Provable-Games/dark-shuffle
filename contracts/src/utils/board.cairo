@@ -1,6 +1,10 @@
-use darkshuffle::models::battle::{Creature, Battle, BoardStats, RoundStats, CreatureDetails};
+use core::num::traits::OverflowingAdd;
+use darkshuffle::constants::U8_MAX;
+use darkshuffle::models::battle::{Battle, BoardStats, Creature, CreatureDetails, RoundStats};
 use darkshuffle::models::card::{Card, CardType};
-use darkshuffle::utils::{attack::AttackUtilsImpl, death::DeathUtilsImpl, cards::CardUtilsImpl, monsters::MonsterUtilsImpl};
+use darkshuffle::utils::{
+    attack::AttackUtilsImpl, cards::CardUtilsImpl, death::DeathUtilsImpl, monsters::MonsterUtilsImpl,
+};
 use dojo::world::WorldStorage;
 
 #[generate_trait]
@@ -12,7 +16,9 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         while i < board.len() {
             packed_board
                 .append(
-                    Creature { card_id: *board.at(i).card_id, attack: *board.at(i).attack, health: *board.at(i).health }
+                    Creature {
+                        card_id: *board.at(i).card_id, attack: *board.at(i).attack, health: *board.at(i).health,
+                    },
                 );
             i += 1;
         };
@@ -32,8 +38,8 @@ impl BoardUtilsImpl of BoardUtilsTrait {
                         card: card,
                         card_id: *board.at(i).card_id,
                         attack: *board.at(i).attack,
-                        health: *board.at(i).health
-                    }
+                        health: *board.at(i).health,
+                    },
                 );
             i += 1;
         };
@@ -42,7 +48,7 @@ impl BoardUtilsImpl of BoardUtilsTrait {
     }
 
     fn attack_monster(
-        ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats, ref round_stats: RoundStats
+        ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats, ref round_stats: RoundStats,
     ) {
         let mut i = 0;
 
@@ -78,8 +84,8 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         while i < board.len() {
             if _type == Option::None || _type == Option::Some(*board.at(i).card.card_type) {
                 let mut creature = board.pop_front().unwrap();
-                creature.attack += attack;
-                creature.health += health;
+                Self::increase_creature_attack(ref creature, attack);
+                Self::increase_creature_health(ref creature, health);
                 board.append(creature);
             }
             i += 1;
@@ -119,5 +125,23 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         };
 
         strongest_creature
+    }
+
+    fn increase_creature_attack(ref creature: CreatureDetails, amount: u8) {
+        let (result, overflow) = OverflowingAdd::overflowing_add(creature.attack, amount);
+        creature.attack = if overflow {
+            U8_MAX
+        } else {
+            result
+        };
+    }
+
+    fn increase_creature_health(ref creature: CreatureDetails, amount: u8) {
+        let (result, overflow) = OverflowingAdd::overflowing_add(creature.health, amount);
+        creature.health = if overflow {
+            U8_MAX
+        } else {
+            result
+        };
     }
 }

@@ -1,9 +1,9 @@
 use darkshuffle::constants::{VERSION};
 use darkshuffle::models::card::{
-    Card, CardRarity, CardDetails, CardType, CreatureCard, SpellCard, CardEffect, CardModifier, Modifier, Requirement,
-    ValueType, EffectBonus
+    Card, CardDetails, CardEffect, CardModifier, CardRarity, CardType, CreatureCard, EffectBonus, Modifier, Requirement,
+    SpellCard, ValueType,
 };
-use darkshuffle::models::config::{GameSettings, CardsCounter};
+use darkshuffle::models::config::{CardsCounter, GameSettings};
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
@@ -23,14 +23,14 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         rarity: CardRarity,
         cost: u8,
         card_type: CardType,
-        card_details: CardDetails
+        card_details: CardDetails,
     ) {
         // increment cards counter
         let mut cards_count: CardsCounter = world.read_model(VERSION);
         cards_count.count += 1;
         world.write_model(@cards_count);
 
-        world.write_model(@Card { id: cards_count.count, name, rarity, cost, card_type, card_details, });
+        world.write_model(@Card { id: cards_count.count, name, rarity, cost, card_type, card_details });
     }
 
     fn create_genesis_cards(ref world: WorldStorage) {
@@ -54,7 +54,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::Some(
                         CardEffect {
@@ -65,11 +65,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::NoAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 2: Typhon
@@ -92,7 +92,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::Some(
@@ -104,10 +104,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 3: Jiangshi
@@ -130,7 +130,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::Some(
                         CardEffect {
@@ -141,11 +141,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 4: Anansi
@@ -168,7 +168,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::Some(
                         CardEffect {
@@ -179,11 +179,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 5: Basilisk
@@ -208,10 +208,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 6: Griffin
@@ -236,10 +236,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 7: Manticore
@@ -261,13 +261,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak }),
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 8: Phoenix
@@ -292,10 +292,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 9: Dragon
@@ -317,13 +317,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
                             },
-                            bonus: Option::Some(EffectBonus { value: 2, requirement: Requirement::EnemyWeak, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 2, requirement: Requirement::EnemyWeak }),
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 10: Minotaur
@@ -346,12 +346,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
                             },
-                            bonus: Option::Some(EffectBonus { value: 2, requirement: Requirement::EnemyWeak, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 2, requirement: Requirement::EnemyWeak }),
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 11: Kraken
@@ -374,7 +374,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::Some(
                         CardEffect {
@@ -385,11 +385,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 12: Colossus
@@ -412,12 +412,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 13: Balrog
@@ -441,11 +441,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::HasAlly, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::HasAlly }),
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 14: Leviathan
@@ -468,12 +468,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 15: Tarrasque
@@ -496,12 +496,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
                             },
-                            bonus: Option::Some(EffectBonus { value: 2, requirement: Requirement::EnemyWeak, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 2, requirement: Requirement::EnemyWeak }),
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 16: Gorgon
@@ -524,7 +524,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::Some(
                         CardEffect {
@@ -535,11 +535,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 17: Kitsune
@@ -561,13 +561,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::HasAlly, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::HasAlly }),
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 18: Lich
@@ -590,12 +590,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 19: Chimera
@@ -618,7 +618,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::Some(
                         CardEffect {
@@ -629,11 +629,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 20: Wendigo
@@ -658,10 +658,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 21: Qilin
@@ -686,10 +686,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 22: Ammit
@@ -712,12 +712,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::NoAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 23: Nue
@@ -741,11 +741,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::HasAlly, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::HasAlly }),
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 24: Skinwalker
@@ -767,13 +767,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak }),
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 25: Chupacabra
@@ -796,12 +796,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak }),
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 26: Titan
@@ -825,11 +825,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 27: Nephilim
@@ -854,10 +854,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 28: Behemoth
@@ -882,10 +882,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 29: Hydra
@@ -909,11 +909,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 30: Juggernaut
@@ -937,11 +937,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 31: Rakshasa
@@ -964,7 +964,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::Some(
                         CardEffect {
@@ -975,11 +975,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 32: Werewolf
@@ -1004,10 +1004,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 33: Banshee
@@ -1030,7 +1030,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::Some(
                         CardEffect {
@@ -1041,11 +1041,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 34: Draugr
@@ -1068,12 +1068,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 35: Vampire
@@ -1096,7 +1096,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::NoAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::Some(
@@ -1108,10 +1108,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 36: Weretiger
@@ -1134,12 +1134,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 37: Wyvern
@@ -1164,10 +1164,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::NoAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 38: Roc
@@ -1190,12 +1190,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::None,
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak }),
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 39: Harpy
@@ -1217,13 +1217,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak }),
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 40: Pegasus
@@ -1248,10 +1248,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 41: Oni
@@ -1275,11 +1275,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 42: Jotunn
@@ -1301,13 +1301,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::EnemyWeak }),
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 43: Ettin
@@ -1332,10 +1332,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 44: Cyclops
@@ -1358,12 +1358,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 45: Giant
@@ -1386,12 +1386,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 value_type: ValueType::Fixed,
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
-                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::NoAlly, }),
-                        }
+                            bonus: Option::Some(EffectBonus { value: 1, requirement: Requirement::NoAlly }),
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 46: Goblin
@@ -1416,10 +1416,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 47: Ghoul
@@ -1442,12 +1442,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 48: Wraith
@@ -1471,11 +1471,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 49: Sprite
@@ -1498,12 +1498,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 50: Kappa
@@ -1528,10 +1528,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 51: Hippogriff
@@ -1554,12 +1554,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 52: Fenrir
@@ -1583,7 +1583,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::NoAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::Some(
                         CardEffect {
@@ -1594,10 +1594,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 53: Jaguar
@@ -1621,11 +1621,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 54: Satori
@@ -1648,12 +1648,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 55: Direwolf
@@ -1678,10 +1678,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 56: Nemeanlion
@@ -1705,11 +1705,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 57: Berserker
@@ -1734,10 +1734,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 58: Yeti
@@ -1760,12 +1760,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 59: Golem
@@ -1788,12 +1788,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 60: Ent
@@ -1817,11 +1817,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 61: Fairy
@@ -1845,11 +1845,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 62: Leprechaun
@@ -1874,10 +1874,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 63: Kelpie
@@ -1900,12 +1900,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 64: Pixie
@@ -1929,11 +1929,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 65: Gnome
@@ -1958,10 +1958,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 66: Bear
@@ -1984,12 +1984,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 67: Wolf
@@ -2014,10 +2014,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 68: Mantis
@@ -2041,11 +2041,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 69: Spider
@@ -2070,10 +2070,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 70: Rat
@@ -2096,12 +2096,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 71: Troll
@@ -2125,11 +2125,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 72: Bigfoot
@@ -2152,12 +2152,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 73: Ogre
@@ -2181,11 +2181,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 74: Orc
@@ -2208,12 +2208,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::EnemyWeak),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
                     death_effect: Option::None,
                     attack_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 75: Skeleton
@@ -2238,10 +2238,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::Some(Requirement::HasAlly),
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 76: Warlock Pact
@@ -2263,8 +2263,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 77: Dragon Breath
@@ -2283,11 +2283,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                             value_type: ValueType::Fixed,
                             requirement: Option::Some(Requirement::EnemyWeak),
                         },
-                        bonus: Option::Some(EffectBonus { value: 4, requirement: Requirement::EnemyWeak, }),
+                        bonus: Option::Some(EffectBonus { value: 4, requirement: Requirement::EnemyWeak }),
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 78: Jiangshi Curse
@@ -2309,8 +2309,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 79: Gorgon Gaze
@@ -2332,8 +2332,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 80: Titan Call
@@ -2355,8 +2355,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 81: Wendigo Frenzy
@@ -2378,8 +2378,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 82: Giant Shoulders
@@ -2401,8 +2401,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 83: Werewolf Howl
@@ -2424,8 +2424,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 84: Vampire Bite
@@ -2455,10 +2455,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                                 requirement: Option::None,
                             },
                             bonus: Option::None,
-                        }
+                        },
                     ),
-                }
-            )
+                },
+            ),
         );
 
         // Card 85: Wraith Shadow
@@ -2480,8 +2480,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 86: Sprite Favor
@@ -2503,8 +2503,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 87: Kappa Gift
@@ -2526,8 +2526,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 88: Ogre Strength
@@ -2549,8 +2549,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 89: Kitsune Blessing
@@ -2572,8 +2572,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
 
         // Card 90: Bear Foot
@@ -2595,8 +2595,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                         bonus: Option::None,
                     },
                     extra_effect: Option::None,
-                }
-            )
+                },
+            ),
         );
     }
 }

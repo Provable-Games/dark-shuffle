@@ -9,16 +9,16 @@ mod battle_systems {
 
     use darkshuffle::constants::{DEFAULT_NS};
     use darkshuffle::models::battle::{
-        Battle, BattleOwnerTrait, Creature, CreatureDetails, BoardStats, RoundStats, BattleResources
+        Battle, BattleOwnerTrait, BattleResources, BoardStats, Creature, CreatureDetails, RoundStats,
     };
-    use darkshuffle::models::map::{Map, MonsterNode};
     use darkshuffle::models::card::{Card, CardDetails};
     use darkshuffle::models::config::GameSettings;
-    use darkshuffle::models::game::{Game, GameEffects, GameActionEvent, GameOwnerTrait};
+    use darkshuffle::models::game::{Game, GameActionEvent, GameEffects, GameOwnerTrait};
+    use darkshuffle::models::map::{Map, MonsterNode};
     use darkshuffle::utils::{
         achievements::AchievementsUtilsImpl, battle::BattleUtilsImpl, board::BoardUtilsImpl, cards::CardUtilsImpl,
-        config::ConfigUtilsImpl, game::GameUtilsImpl, hand::HandUtilsImpl, monsters::MonsterUtilsImpl, random,
-        map::MapUtilsImpl, spell::SpellUtilsImpl, summon::SummonUtilsImpl,
+        config::ConfigUtilsImpl, game::GameUtilsImpl, hand::HandUtilsImpl, map::MapUtilsImpl,
+        monsters::MonsterUtilsImpl, random, spell::SpellUtilsImpl, summon::SummonUtilsImpl,
     };
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
@@ -49,7 +49,7 @@ mod battle_systems {
             let mut battle_resources: BattleResources = world.read_model((battle_id, game_id));
             let mut game_effects: GameEffects = world.read_model(battle.game_id);
             let mut board: Array<CreatureDetails> = BoardUtilsImpl::unpack_board(
-                world, game_id, battle_resources.board
+                world, game_id, battle_resources.board,
             );
             let mut board_stats: BoardStats = BoardUtilsImpl::get_board_stats(ref board, battle.monster.monster_id);
 
@@ -77,13 +77,13 @@ mod battle_systems {
                                     ref board,
                                     ref board_stats,
                                     ref round_stats,
-                                    game_effects
+                                    game_effects,
                                 );
                                 AchievementsUtilsImpl::play_creature(ref world, card);
                             },
                             CardDetails::spell_card(spell_details) => {
                                 SpellUtilsImpl::cast_spell(card, spell_details, ref battle, ref board, board_stats);
-                            }
+                            },
                         }
 
                         HandUtilsImpl::remove_hand_card(ref battle_resources, *action.at(1));
@@ -130,7 +130,7 @@ mod battle_systems {
             }
 
             MonsterUtilsImpl::monster_ability(
-                ref battle, ref battle_resources, game_effects, ref board, round_stats, seed
+                ref battle, ref battle_resources, game_effects, ref board, round_stats, seed,
             );
             BoardUtilsImpl::remove_dead_creatures(ref battle, ref board, board_stats);
 
@@ -151,7 +151,10 @@ mod battle_systems {
                 }
 
                 HandUtilsImpl::draw_cards(
-                    ref battle_resources, 1 + game_effects.card_draw, game_settings.max_hand_size, seed
+                    ref battle_resources,
+                    game_settings.draw_amount + game_effects.card_draw,
+                    game_settings.max_hand_size,
+                    seed,
                 );
 
                 world.write_model(@battle);
