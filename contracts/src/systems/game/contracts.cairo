@@ -21,7 +21,9 @@ trait IGameSystems<T> {
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
 
-    use darkshuffle::constants::{DEFAULT_NS, LAST_NODE_DEPTH, WORLD_CONFIG_ID, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
+    use darkshuffle::constants::{
+        DEFAULT_NS, LAST_NODE_DEPTH, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL, WORLD_CONFIG_ID,
+    };
     use darkshuffle::models::battle::{Card};
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
     use darkshuffle::models::draft::{Draft};
@@ -33,11 +35,11 @@ mod game_systems {
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-    use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-
-    use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
 
     use openzeppelin_introspection::src5::SRC5Component;
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+
+    use openzeppelin_token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
     use openzeppelin_token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
     use starknet::{ContractAddress, get_caller_address, get_contract_address, get_tx_info};
     use tournaments::components::game::game_component;

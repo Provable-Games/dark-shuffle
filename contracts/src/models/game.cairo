@@ -3,7 +3,7 @@ use dojo::event::EventStorage;
 use dojo::model::ModelStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo::world::{WorldStorage, WorldStorageTrait};
-use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
+use openzeppelin_token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
 use starknet::{get_caller_address};
 use tournaments::components::interfaces::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
 

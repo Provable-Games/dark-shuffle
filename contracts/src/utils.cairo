@@ -3,6 +3,7 @@ pub mod attack;
 pub mod battle;
 pub mod board;
 pub mod cards;
+pub mod cartridge;
 pub mod config;
 pub mod death;
 pub mod draft;
