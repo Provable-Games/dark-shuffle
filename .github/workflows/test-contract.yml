@@ -39,6 +39,10 @@ jobs:
           sudo mv sozo /usr/local/bin/
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Setup Scarb
+        uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: ${{ env.SCARB_VERSION }}
       - name: Run Dojo Build
         run: |
           cd contracts && sozo build
