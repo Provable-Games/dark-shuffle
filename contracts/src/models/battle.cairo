@@ -1,8 +1,7 @@
-use darkshuffle::models::card::{Card, CardType};
+use darkshuffle::models::card::{Card, CardType, CreatureCard};
 use darkshuffle::models::game::{Game, GameOwnerTrait};
 use dojo::model::ModelStorage;
-use dojo::world::WorldStorage;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
 use starknet::{ContractAddress, get_caller_address};
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -45,7 +44,7 @@ pub struct Monster {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Creature {
-    card_id: u8,
+    card_index: u8,
     attack: u8,
     health: u8,
 }
@@ -64,10 +63,10 @@ pub struct BattleEffects {
 
 #[derive(Copy, Drop, Serde)]
 pub struct CreatureDetails {
-    card: Card,
-    card_id: u8,
+    card_index: u8,
     attack: u8,
     health: u8,
+    creature_card: CreatureCard,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -92,12 +91,12 @@ impl BattleOwnerImpl of BattleOwnerTrait {
         assert(self.monster.health > 0, 'Battle over');
     }
 
-    fn card_in_hand(self: BattleResources, card_id: u8) -> bool {
+    fn card_in_hand(self: BattleResources, card_index: u8) -> bool {
         let mut is_in_hand = false;
 
         let mut i = 0;
         while i < self.hand.len() {
-            if *self.hand.at(i) == card_id {
+            if *self.hand.at(i) == card_index {
                 is_in_hand = true;
                 break;
             }

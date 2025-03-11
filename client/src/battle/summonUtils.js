@@ -58,11 +58,12 @@ export const summonEffect = ({
   }
 
   if (creature.playEffect?.modifier?._type) {
-    if (isEffectApplicable(creature.playEffect, creature.cardType, board, values.monsterType)) {
+    if (isEffectApplicable(creature.playEffect, creature.cardType, board, values.monsterType, false)) {
       applyCardEffect({
         values, cardEffect: creature.playEffect, creature, board, healHero,
         increaseEnergy, battleEffects, setBattleEffects,
-        reduceMonsterAttack, damageMonster, updateBoard
+        reduceMonsterAttack, damageMonster, updateBoard,
+        onBoard: false
       })
     }
   }

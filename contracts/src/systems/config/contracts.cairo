@@ -1,11 +1,11 @@
-use darkshuffle::models::card::{CardDetails, CardRarity, CardType};
+use darkshuffle::models::card::{CardRarity, CardType};
 use darkshuffle::models::config::GameSettings;
 use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IConfigSystems<T> {
     fn add_card(
-        ref self: T, name: felt252, rarity: CardRarity, cost: u8, card_type: CardType, card_details: CardDetails,
+        ref self: T, name: felt252, rarity: CardRarity, cost: u8, card_type: CardType
     );
     fn add_settings(
         ref self: T,
@@ -29,17 +29,16 @@ trait IConfigSystems<T> {
 #[dojo::contract]
 mod config_systems {
     use achievement::components::achievable::AchievableComponent;
-    use darkshuffle::constants::{DEFAULT_NS, DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS, VERSION};
-    use darkshuffle::models::card::{CardDetails, CardRarity, CardType};
-    use darkshuffle::models::config::{CardsCounter, GameSettings, GameSettingsTrait, SettingsCounter};
+    use darkshuffle::constants::DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS;
+    use darkshuffle::constants::{DEFAULT_NS, VERSION};
+    use darkshuffle::models::card::{CardRarity, CardType};
+    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter};
     use darkshuffle::utils::config::ConfigUtilsImpl;
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
-    use dojo::world::WorldStorage;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
     use starknet::{ContractAddress, get_caller_address};
-    use tournaments::components::models::game::{TokenMetadata};
+    use tournaments::components::models::game::TokenMetadata;
 
     component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
     impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
@@ -97,11 +96,8 @@ mod config_systems {
             rarity: CardRarity,
             cost: u8,
             card_type: CardType,
-            card_details: CardDetails,
         ) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
-
-            ConfigUtilsImpl::create_card(ref world, name, rarity, cost, card_type, card_details);
         }
 
         fn add_settings(

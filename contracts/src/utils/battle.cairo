@@ -1,7 +1,7 @@
 use core::num::traits::OverflowingAdd;
 use darkshuffle::constants::U8_MAX;
-use darkshuffle::models::battle::{Battle, BoardStats, CreatureDetails, RoundStats};
-use darkshuffle::models::card::{Card, CardDetails, CardType};
+use darkshuffle::models::battle::{Battle, BoardStats, CreatureDetails};
+use darkshuffle::models::card::{Card, CardType};
 use darkshuffle::models::game::GameEffects;
 
 #[generate_trait]
@@ -18,21 +18,9 @@ impl BattleUtilsImpl of BattleUtilsTrait {
         }
     }
 
-    fn deduct_energy_cost(ref battle: Battle, round_stats: RoundStats, game_effects: GameEffects, card: Card) {
-        let mut cost = card.cost;
-
-        if let CardDetails::creature_card(_) = card.card_details {
-            if round_stats.creatures_played == 0 && game_effects.first_creature_cost > 0 {
-                if game_effects.first_creature_cost >= cost {
-                    return;
-                }
-
-                cost -= game_effects.first_creature_cost;
-            }
-        }
-
-        assert(battle.hero.energy >= cost, 'Not enough energy');
-        battle.hero.energy -= cost;
+    fn deduct_energy_cost(ref battle: Battle, card: Card) {
+        assert(battle.hero.energy >= card.cost, 'Not enough energy');
+        battle.hero.energy -= card.cost;
     }
 
     fn heal_hero(ref battle: Battle, amount: u8) {
@@ -103,11 +91,12 @@ impl BattleUtilsImpl of BattleUtilsTrait {
     }
 
     fn damage_creature(ref creature: CreatureDetails, mut amount: u8, monster_id: u8) {
-        if monster_id == 74 && creature.card.card_type == CardType::Hunter {
+        let card_type: CardType = creature.creature_card.card_type.into();
+        if monster_id == 74 && card_type == CardType::Hunter {
             amount += 1;
-        } else if monster_id == 69 && creature.card.card_type == CardType::Magical {
+        } else if monster_id == 69 && card_type == CardType::Magical {
             amount += 1;
-        } else if monster_id == 64 && creature.card.card_type == CardType::Brute {
+        } else if monster_id == 64 && card_type == CardType::Brute {
             amount += 1;
         }
 
@@ -123,6 +112,7 @@ impl BattleUtilsImpl of BattleUtilsTrait {
             CardType::Hunter => battle.battle_effects.next_hunter_attack_bonus += amount,
             CardType::Brute => battle.battle_effects.next_brute_attack_bonus += amount,
             CardType::Magical => battle.battle_effects.next_magical_attack_bonus += amount,
+            _ => {},
         };
     }
 
@@ -131,6 +121,7 @@ impl BattleUtilsImpl of BattleUtilsTrait {
             CardType::Hunter => battle.battle_effects.next_hunter_health_bonus += amount,
             CardType::Brute => battle.battle_effects.next_brute_health_bonus += amount,
             CardType::Magical => battle.battle_effects.next_magical_health_bonus += amount,
+            _ => {},
         };
     }
 }

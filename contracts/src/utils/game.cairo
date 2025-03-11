@@ -1,12 +1,12 @@
-use darkshuffle::models::battle::{Battle};
-use darkshuffle::models::config::{GameSettings};
+use darkshuffle::models::battle::Battle;
+use darkshuffle::models::config::GameSettings;
 use darkshuffle::models::game::{Game, GameEffects, GameState};
 use darkshuffle::models::map::{Map, MonsterNode};
-
-use darkshuffle::utils::{achievements::AchievementsUtilsImpl, battle::BattleUtilsImpl, map::MapUtilsImpl};
+use darkshuffle::utils::achievements::AchievementsUtilsImpl;
+use darkshuffle::utils::battle::BattleUtilsImpl;
+use darkshuffle::utils::map::MapUtilsImpl;
 use dojo::model::ModelStorage;
-use dojo::world::WorldStorage;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
 
 #[generate_trait]
 impl GameUtilsImpl of GameUtilsTrait {
@@ -19,7 +19,7 @@ impl GameUtilsImpl of GameUtilsTrait {
     }
 
     fn end_battle(
-        ref world: WorldStorage, ref battle: Battle, ref game_effects: GameEffects, game_settings: GameSettings
+        ref world: WorldStorage, ref battle: Battle, ref game_effects: GameEffects, game_settings: GameSettings,
     ) {
         let mut game: Game = world.read_model((battle.game_id));
         let map: Map = world.read_model((game.game_id, game.map_level));
@@ -94,7 +94,7 @@ impl GameUtilsImpl of GameUtilsTrait {
         } else if monster_id == 20 {
             game_effects.all_attack += 1;
         } else if monster_id == 30 {
-            game_effects.first_creature_cost += 1;
+            game_effects.first_attack += 1;
         } else if monster_id == 55 {
             game_effects.first_attack += 1;
         } else if monster_id == 57 {

@@ -3,7 +3,8 @@ import { tags } from "../helpers/cards";
 export const applyCardEffect = ({
   values, cardEffect, creature, board, healHero,
   increaseEnergy, battleEffects, setBattleEffects,
-  reduceMonsterAttack, damageMonster, updateBoard
+  reduceMonsterAttack, damageMonster, updateBoard,
+  onBoard
 }) => {
   let cardType = creature.cardType;
 
@@ -11,8 +12,12 @@ export const applyCardEffect = ({
     ? cardEffect.modifier.value
     : cardEffect.modifier.value * allyCount(cardType, board);
 
-  if (cardEffect.bonus && requirementMet(cardEffect.bonus.requirement, cardType, board, values.monsterType)) {
-    modifierValue += cardEffect.bonus.value;
+  if (cardEffect.bonus && requirementMet(cardEffect.bonus.requirement, cardType, board, values.monsterType, onBoard)) {
+    if (cardEffect.bonus.value_type === 'Fixed') {
+      modifierValue += cardEffect.bonus.value;
+    } else {
+      modifierValue += cardEffect.bonus.value * allyCount(cardType, board);
+    }
   }
 
   let updatedBattleEffects = {};
@@ -68,8 +73,8 @@ export const applyCardEffect = ({
   setBattleEffects(prev => ({ ...prev, ...updatedBattleEffects }));
 }
 
-export function isEffectApplicable(cardEffect, cardType, board, monsterType) {
-  if (cardEffect.modifier.requirement?.Some && !requirementMet(cardEffect.modifier.requirement.Some, cardType, board, monsterType)) {
+export function isEffectApplicable(cardEffect, cardType, board, monsterType, onBoard) {
+  if (cardEffect.modifier.requirement?.Some && !requirementMet(cardEffect.modifier.requirement.Some, cardType, board, monsterType, onBoard)) {
     return false;
   }
 
@@ -80,14 +85,14 @@ export function isEffectApplicable(cardEffect, cardType, board, monsterType) {
   return true;
 }
 
-function requirementMet(requirement, cardType, board, monsterType) {
+function requirementMet(requirement, cardType, board, monsterType, onBoard) {
   switch (requirement) {
     case 'EnemyWeak':
       return isEnemyWeak(cardType, monsterType);
     case 'HasAlly':
-      return hasAlly(cardType, board);
+      return hasAlly(cardType, board, onBoard);
     case 'NoAlly':
-      return !hasAlly(cardType, board);
+      return !hasAlly(cardType, board, onBoard);
     default:
       return false;
   }
@@ -99,10 +104,9 @@ function isEnemyWeak(cardType, enemyType) {
     (cardType === tags.MAGICAL && enemyType === tags.BRUTE);
 }
 
-function hasAlly(cardType, board) {
-  return (cardType === tags.HUNTER && board.filter(creature => creature.cardType === tags.HUNTER).length > 0) ||
-    (cardType === tags.BRUTE && board.filter(creature => creature.cardType === tags.BRUTE).length > 0) ||
-    (cardType === tags.MAGICAL && board.filter(creature => creature.cardType === tags.MAGICAL).length > 0);
+function hasAlly(cardType, board, onBoard) {
+  let alliesRequired = onBoard ? 2 : 1
+  return allyCount(cardType, board) >= alliesRequired;
 }
 
 function allyCount(cardType, board) {

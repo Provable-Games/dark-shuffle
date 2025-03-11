@@ -135,6 +135,7 @@ fn encode_bytes(mut bytes: ByteArray, base64_chars: Span<u8>) -> ByteArray {
 
         i += 3;
     };
+
     result
 }
 

@@ -1,15 +1,13 @@
-use darkshuffle::constants::{LAST_NODE_DEPTH};
+use darkshuffle::constants::LAST_NODE_DEPTH;
 use darkshuffle::models::battle::{Battle, BattleEffects, Hero, Monster};
-use darkshuffle::models::config::{GameSettings};
+use darkshuffle::models::config::GameSettings;
 use darkshuffle::models::draft::Draft;
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::models::map::Map;
 use darkshuffle::utils::testing::mock::gameTokenMock::{IGameTokenMockDispatcher, IGameTokenMockDispatcherTrait};
-
-use darkshuffle::utils::testing::systems::{deploy_game_token_mock};
+use darkshuffle::utils::testing::systems::deploy_game_token_mock;
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo::world::{WorldStorage, WorldStorageTrait};
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
 use starknet::{ContractAddress, contract_address_const, get_caller_address};
 use tournaments::components::game::game_component;
 use tournaments::components::interfaces::{
@@ -54,61 +52,6 @@ fn create_map(ref world: WorldStorage, game_id: u64, level: u8, seed: u128) {
     world.write_model_test(@Map { game_id, level, seed });
 }
 
-fn create_default_settings(ref world: WorldStorage) -> u32 {
-    let settings_id = 1;
-
-    world
-        .write_model_test(
-            @GameSettings {
-                settings_id,
-                start_health: 50,
-                start_energy: 1,
-                start_hand_size: 5,
-                draft_size: 20,
-                max_energy: 7,
-                max_hand_size: 10,
-                draw_amount: 1,
-                auto_draft: false,
-                persistent_health: true,
-            },
-        );
-
-    settings_id
-}
-
-fn create_custom_settings(
-    ref world: WorldStorage,
-    start_health: u8,
-    start_energy: u8,
-    start_hand_size: u8,
-    draft_size: u8,
-    max_energy: u8,
-    max_hand_size: u8,
-    draw_amount: u8,
-    persistent_health: bool,
-    auto_draft: bool,
-) -> u32 {
-    let settings_id = 99;
-
-    world
-        .write_model_test(
-            @GameSettings {
-                settings_id,
-                start_health,
-                start_energy,
-                start_hand_size,
-                draft_size,
-                max_energy,
-                max_hand_size,
-                draw_amount,
-                auto_draft,
-                persistent_health,
-            },
-        );
-
-    settings_id
-}
-
 fn create_battle(
     ref world: WorldStorage,
     game_id: u64,
@@ -128,7 +71,7 @@ fn create_battle(
                 game_id,
                 round,
                 hero: Hero { health: hero_health, energy: hero_energy },
-                monster: Monster { attack: monster_attack, health: monster_health },
+                monster: Monster { monster_id, attack: monster_attack, health: monster_health },
                 battle_effects: BattleEffects {
                     enemy_marks: 0,
                     hero_dmg_reduction: 0,
@@ -144,7 +87,7 @@ fn create_battle(
 
     battle_id
 }
+// fn create_battle_resources(ref world: WorldStorage, game_id: u64, hand: Span<u8>, deck: Span<u8>) {
+//     world.write_model_test(@BattleResources { battle_id: 1, game_id, hand, deck, board: array![].span() });
+// }
 
-fn create_battle_resources(ref world: WorldStorage, game_id: u64, hand: Span<u8>, deck: Span<u8>) {
-    world.write_model_test(@BattleResources { battle_id: 1, game_id, hand, deck, board: array![].span() });
-}

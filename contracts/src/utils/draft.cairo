@@ -12,8 +12,7 @@ impl DraftUtilsImpl of DraftUtilsTrait {
         let mut i: u8 = 0;
         while i.into() < game_settings.card_ids.len() {
             let card: Card = world.read_model(*game_settings.card_ids.at(i.into()));
-            let card_rarity: u8 = card.rarity.into();
-            let weight = *game_settings.card_rarity_weights.at(card_rarity.into());
+            let weight = *game_settings.card_rarity_weights.at(card.rarity.into());
 
             let mut j = 0;
             while j < weight {
@@ -32,28 +31,28 @@ impl DraftUtilsImpl of DraftUtilsTrait {
         let mut card_2 = 0;
         let mut card_3 = 0;
 
-        card_1 = random::get_random_card_id(entropy, card_pool);
+        card_1 = random::get_random_card_index(entropy, card_pool);
         entropy = random::LCG(entropy);
-        card_2 = random::get_random_card_id(entropy, card_pool);
+        card_2 = random::get_random_card_index(entropy, card_pool);
         entropy = random::LCG(entropy);
-        card_3 = random::get_random_card_id(entropy, card_pool);
+        card_3 = random::get_random_card_index(entropy, card_pool);
 
         loop {
             if card_1 == card_2 {
                 entropy = random::LCG(entropy);
-                card_2 = random::get_random_card_id(entropy, card_pool);
+                card_2 = random::get_random_card_index(entropy, card_pool);
                 continue;
             }
 
             if card_1 == card_3 {
                 entropy = random::LCG(entropy);
-                card_3 = random::get_random_card_id(entropy, card_pool);
+                card_3 = random::get_random_card_index(entropy, card_pool);
                 continue;
             }
 
             if card_2 == card_3 {
                 entropy = random::LCG(entropy);
-                card_3 = random::get_random_card_id(entropy, card_pool);
+                card_3 = random::get_random_card_index(entropy, card_pool);
                 continue;
             }
 
@@ -68,8 +67,8 @@ impl DraftUtilsImpl of DraftUtilsTrait {
 
         let mut i = 0;
         while i < draft_size {
-            let card_id = random::get_random_card_id(entropy, card_pool);
-            draft_list.append(card_id);
+            let card_index = random::get_random_card_index(entropy, card_pool);
+            draft_list.append(card_index);
             entropy = random::LCG(entropy);
             i += 1;
         };

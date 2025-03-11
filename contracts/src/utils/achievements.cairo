@@ -1,23 +1,21 @@
 use achievement::store::{Store, StoreTrait};
 use darkshuffle::models::battle::Battle;
-use darkshuffle::models::card::{Card, CardType};
-use darkshuffle::utils::cards::CardUtilsImpl;
+use darkshuffle::models::card::{CardType, CreatureCard};
 use darkshuffle::utils::monsters::MonsterUtilsImpl;
 use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 use dojo::model::ModelStorage;
-use dojo::world::WorldStorage;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
 use starknet::{get_block_timestamp, get_caller_address};
 
 #[generate_trait]
 impl AchievementsUtilsImpl of AchievementsUtilsTrait {
-    fn play_creature(ref world: WorldStorage, card: Card) {
+    fn play_creature(ref world: WorldStorage, creature_card: CreatureCard) {
         let store = StoreTrait::new(world);
         let player_id: felt252 = get_caller_address().into();
         let time = get_block_timestamp();
 
-        match card.card_type {
+        let card_type: CardType = creature_card.card_type.into();
+        match card_type {
             CardType::Hunter => {
                 let task_id: felt252 = Task::HuntersGathering.identifier();
                 store.progress(player_id, task_id, count: 1, time: time);

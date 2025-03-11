@@ -1,17 +1,14 @@
-use darkshuffle::models::battle::{Battle};
-use darkshuffle::models::draft::{Draft};
+use darkshuffle::models::battle::Battle;
+use darkshuffle::models::card::{Card, CreatureCard};
+use darkshuffle::models::draft::Draft;
 use darkshuffle::models::game::{Game, GameOwnerTrait, GameState};
 use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
-
-use darkshuffle::utils::testing::{
-    general::{create_default_settings, mint_game_token}, systems::{deploy_game_systems, deploy_system},
-    world::spawn_darkshuffle,
-};
+use darkshuffle::utils::testing::general::mint_game_token;
+use darkshuffle::utils::testing::systems::{deploy_game_systems, deploy_system};
+use darkshuffle::utils::testing::world::spawn_darkshuffle;
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo::world::{WorldStorage, WorldStorageTrait};
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
 use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
-
 use starknet::{ContractAddress, contract_address_const, testing};
 
 fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
@@ -30,12 +27,12 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
 }
 
 
-#[test] // 93743705 gas
+#[test] // 1276286585 gas
 fn gas_check() {
     setup();
 }
 
-#[test] // 1284384 with introspectpacked, 2593706 without
+#[test] // 1277570969 with introspectpacked
 fn gas_check_game_model() {
     let (mut world, game_id, _) = setup();
 
@@ -52,6 +49,15 @@ fn gas_check_game_model() {
     };
 
     world.write_model(@game);
+}
+
+#[test]
+fn gas_check_read_card() {
+    let (mut world, game_id, _) = setup();
+
+    let card_id = 1;
+    let card: Card = world.read_model(card_id);
+    let creature_card: CreatureCard = world.read_model(card_id);
 }
 
 #[test]

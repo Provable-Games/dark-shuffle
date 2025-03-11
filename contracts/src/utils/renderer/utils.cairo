@@ -1,5 +1,7 @@
 use alexandria_encoding::base64::Base64Encoder;
-use core::{array::{ArrayTrait, SpanTrait}, clone::Clone, traits::Into};
+use core::array::{ArrayTrait, SpanTrait};
+use core::clone::Clone;
+use core::traits::Into;
 use darkshuffle::utils::renderer::encoding::{U256BytesUsedTraitImpl, bytes_base64_encode};
 use graffiti::json::JsonImpl;
 
@@ -47,7 +49,7 @@ fn combine_elements(ref elements: Span<ByteArray>) -> ByteArray {
                 count += 1;
             },
             Option::None(()) => { break; },
-        }
+        };
     };
 
     combined
@@ -141,7 +143,7 @@ fn create_metadata(
 #[cfg(test)]
 mod tests {
     use core::array::ArrayTrait;
-    use super::{create_metadata};
+    use super::create_metadata;
 
     #[test]
     fn test_metadata() {

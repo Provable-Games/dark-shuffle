@@ -1,10 +1,11 @@
 use core::num::traits::OverflowingAdd;
 use darkshuffle::constants::U8_MAX;
 use darkshuffle::models::battle::{Battle, BoardStats, Creature, CreatureDetails, RoundStats};
-use darkshuffle::models::card::{Card, CardType};
-use darkshuffle::utils::{
-    attack::AttackUtilsImpl, cards::CardUtilsImpl, death::DeathUtilsImpl, monsters::MonsterUtilsImpl,
-};
+use darkshuffle::models::card::{Card, CardType, CreatureCard};
+use darkshuffle::utils::attack::AttackUtilsImpl;
+use darkshuffle::utils::cards::CardUtilsImpl;
+use darkshuffle::utils::death::DeathUtilsImpl;
+use darkshuffle::utils::monsters::MonsterUtilsImpl;
 use dojo::world::WorldStorage;
 
 #[generate_trait]
@@ -17,7 +18,7 @@ impl BoardUtilsImpl of BoardUtilsTrait {
             packed_board
                 .append(
                     Creature {
-                        card_id: *board.at(i).card_id, attack: *board.at(i).attack, health: *board.at(i).health,
+                        card_index: *board.at(i).card_index, attack: *board.at(i).attack, health: *board.at(i).health,
                     },
                 );
             i += 1;
@@ -31,14 +32,15 @@ impl BoardUtilsImpl of BoardUtilsTrait {
 
         let mut i = 0;
         while i < board.len() {
-            let card: Card = CardUtilsImpl::get_card(world, game_id, *board.at(i).card_id);
+            let card: Card = CardUtilsImpl::get_card(world, game_id, *board.at(i).card_index);
+            let creature_card: CreatureCard = CardUtilsImpl::get_creature_card(world, card.id);
             unpacked_board
                 .append(
                     CreatureDetails {
-                        card: card,
-                        card_id: *board.at(i).card_id,
+                        card_index: *board.at(i).card_index,
                         attack: *board.at(i).attack,
                         health: *board.at(i).health,
+                        creature_card: creature_card,
                     },
                 );
             i += 1;
@@ -68,11 +70,14 @@ impl BoardUtilsImpl of BoardUtilsTrait {
 
         let mut i = 0;
         while i < board.len() {
-            match board.at(i).card.card_type {
+            let creature: CreatureDetails = *board.at(i);
+            let card_type: CardType = creature.creature_card.card_type.into();
+            match card_type {
                 CardType::Magical => stats.magical_count += 1,
                 CardType::Brute => stats.brute_count += 1,
                 CardType::Hunter => stats.hunter_count += 1,
-            };
+                _ => {},
+            }
             i += 1;
         };
 
@@ -82,7 +87,9 @@ impl BoardUtilsImpl of BoardUtilsTrait {
     fn update_creatures(ref board: Array<CreatureDetails>, _type: Option<CardType>, attack: u8, health: u8) {
         let mut i = 0;
         while i < board.len() {
-            if _type == Option::None || _type == Option::Some(*board.at(i).card.card_type) {
+            let creature: CreatureDetails = *board.at(i);
+            let card_type: CardType = creature.creature_card.card_type.into();
+            if _type == Option::None || _type == Option::Some(card_type) {
                 let mut creature = board.pop_front().unwrap();
                 Self::increase_creature_attack(ref creature, attack);
                 Self::increase_creature_health(ref creature, health);
@@ -93,20 +100,16 @@ impl BoardUtilsImpl of BoardUtilsTrait {
     }
 
     fn remove_dead_creatures(ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats) {
-        let mut new_board = array![];
-
         let mut i = 0;
         while i < board.len() {
             let mut creature = board.pop_front().unwrap();
             if creature.health == 0 {
                 DeathUtilsImpl::creature_death(ref creature, ref battle, ref board, board_stats);
             } else {
-                new_board.append(creature);
+                board.append(creature);
             }
             i += 1;
         };
-
-        board = new_board;
     }
 
     fn get_strongest_creature(ref board: Array<CreatureDetails>) -> CreatureDetails {
@@ -119,7 +122,7 @@ impl BoardUtilsImpl of BoardUtilsTrait {
         let mut i = 0;
         while i < board.len() {
             if *board.at(i).attack > strongest_creature.attack {
-                strongest_creature = *board.at(i);
+                strongest_creature.attack = *board.at(i).attack;
             }
             i += 1;
         };

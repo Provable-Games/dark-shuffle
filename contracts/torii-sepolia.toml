@@ -1,6 +1,6 @@
 [indexing]
 contracts = [
-    "erc721:0x22d68e71da1b60365adcfe80e34408962e666cd36a46cb14bd4008517e4ebc7"
+    "erc721:0x3ad19e90042f6840e36a1ae87cee1762572d40c6f137f63429e28d3fa79c672"
 ]
 
 [events]

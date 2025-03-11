@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x45575a88cc5cef1e444c77ce60b7b4c9e73a01cbbe20926d5a4c72a94011410",
-    "address": "0x6d5c070f1bead659a390f225306211c33c6448aaf69aa051bfbc4139a1c9ed7",
-    "seed": "pg_sepolia_await_7",
+    "address": "0x1e19878740285208a6c5db4c174db99f6ea59388a1219075d7e9c7e0eb797d9",
+    "seed": "pg_sepolia_await_8",
     "name": "Provable Games",
     "entrypoints": [
       "uuid",
@@ -1252,8 +1252,8 @@
   },
   "contracts": [
     {
-      "address": "0x248b2efb7e09c66dc72bdce2fe9a12b311a8d6835d041981932b8878371c3b8",
-      "class_hash": "0x517020944bee80f15ab78ab847f3e834cfb65863d872eecc6f2fb4b6b8f9939",
+      "address": "0x4ce24869a96583a259c1fdf2f685a0a865aefcd139c10d5a3844107159f823c",
+      "class_hash": "0x21b0f9c04fd30117a37870f71e40f7614f417dc70a8585ef1dba553f9fbb50f",
       "abi": [
         {
           "type": "impl",
@@ -1480,8 +1480,8 @@
       ]
     },
     {
-      "address": "0x50ff85c72aa86bcfda42a7a37a167665700179853198da8277b3163d5164886",
-      "class_hash": "0x69ee7b7ef4ddeb1d7aa4af4e208afee1e3d7b41e369ce5daf7cdc172b953e32",
+      "address": "0x3fa9930818f4637e53e504b11ce73e5926e988487ca95972b826a1467af9fca",
+      "class_hash": "0x17fc7ae07bdda6d92a7823b8d8fd5a10716e94aff81ebbf42b4db5b7ea8e61b",
       "abi": [
         {
           "type": "impl",
@@ -2188,8 +2188,8 @@
       ]
     },
     {
-      "address": "0x15acd68ecae9647ab15e17dc4b70ab165a19d34a40e52408990925190bab3a7",
-      "class_hash": "0x72803f2bedf2ef601f349a1763a3a35b4a40f49fff71cc7c178071b233a760",
+      "address": "0xc285fe66d8042aead42d514fa9ad02af4f2a91354ddb9d6ca1d6cc0b59c72",
+      "class_hash": "0x410441c4eced34a971febfcbfbf181572c4c402cf8e0114ddbf6dd42f886454",
       "abi": [
         {
           "type": "impl",
@@ -2392,8 +2392,8 @@
       ]
     },
     {
-      "address": "0x22d68e71da1b60365adcfe80e34408962e666cd36a46cb14bd4008517e4ebc7",
-      "class_hash": "0x793fb3143d2219a64f37edd871e5b5dd6d4729b3ced01218669c6f866c347d7",
+      "address": "0x3ad19e90042f6840e36a1ae87cee1762572d40c6f137f63429e28d3fa79c672",
+      "class_hash": "0x218bf2a2e13e9fe5645e13f6f2465b9b2428c4f049ccd1b93aac5a297a9c389",
       "abi": [
         {
           "type": "impl",
@@ -3619,7 +3619,7 @@
       ]
     },
     {
-      "address": "0x2a43ff4e0902cc860ad163c66e01959810a59cc676f2ba2bdbdb144ca71f988",
+      "address": "0x17ceb42e01b58ec94ab77ee2118f09cdbeaaf397c098d6f0ed310b1ae438bf8",
       "class_hash": "0x1edcc318289a7080279ad7069f9cc4fe82fa6d2e52c5fe2e89ceb95c91ac15d",
       "abi": [
         {
@@ -3851,7 +3851,7 @@
     },
     {
       "members": [],
-      "class_hash": "0x6ff04d2b7a1c3b476fbdc19158290ad5a25f4a765f3607daa77b8033a71ef56",
+      "class_hash": "0x264e1f4d00ea72510c6b76de7980153bb1ce2a2550448abcd59bb523edc1771",
       "tag": "ds_v1_2_0-Card",
       "selector": "0x3563b64c9849ebf240d13129a73401f121733afe85f32d2eb7ded1c192240a7"
     },

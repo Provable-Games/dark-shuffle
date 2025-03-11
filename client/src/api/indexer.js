@@ -142,7 +142,6 @@ export async function getGameEffects(game_id) {
           game_id,
           first_attack,
           first_health,
-          first_creature_cost,
           all_attack,
           hunter_attack,
           hunter_health,

@@ -228,20 +228,22 @@ export const BattleProvider = ({ children }) => {
 
     setValues(prev => ({ ...prev, heroEnergy: prev.heroEnergy - cost }))
 
-    if (isEffectApplicable(spell.effect, spell.cardType, board, values.monsterType)) {
+    if (isEffectApplicable(spell.effect, spell.cardType, board, values.monsterType, false)) {
       applyCardEffect({
         values, cardEffect: spell.effect, creature: spell, board, healHero,
         increaseEnergy, battleEffects, setBattleEffects,
-        reduceMonsterAttack, damageMonster, updateBoard
+        reduceMonsterAttack, damageMonster, updateBoard,
+        onBoard: false
       })
     }
 
     if (spell.extraEffect?.modifier?._type) {
-      if (isEffectApplicable(spell.extraEffect, spell.cardType, board, values.monsterType)) {
+      if (isEffectApplicable(spell.extraEffect, spell.cardType, board, values.monsterType, false)) {
         applyCardEffect({
           values, cardEffect: spell.extraEffect, creature: spell, board, healHero,
           increaseEnergy, battleEffects, setBattleEffects,
-          reduceMonsterAttack, damageMonster, updateBoard
+          reduceMonsterAttack, damageMonster, updateBoard,
+          onBoard: false
         })
       }
     }
@@ -370,11 +372,12 @@ export const BattleProvider = ({ children }) => {
     let creature = { ...board.find(creature => creature.id === creatureId) }
 
     if (creature.attackEffect?.modifier?._type) {
-      if (isEffectApplicable(creature.attackEffect, creature.cardType, board, values.monsterType)) {
+      if (isEffectApplicable(creature.attackEffect, creature.cardType, board, values.monsterType, true)) {
         applyCardEffect({
           values, cardEffect: creature.attackEffect, creature, board, healHero,
           increaseEnergy, battleEffects, setBattleEffects,
-          reduceMonsterAttack, damageMonster, updateBoard
+          reduceMonsterAttack, damageMonster, updateBoard,
+          onBoard: true
         })
       }
     }
@@ -389,11 +392,12 @@ export const BattleProvider = ({ children }) => {
 
   const creatureDeathEffect = (creature) => {
     if (creature.deathEffect?.modifier?._type) {
-      if (isEffectApplicable(creature.deathEffect, creature.cardType, board, values.monsterType)) {
+      if (isEffectApplicable(creature.deathEffect, creature.cardType, board, values.monsterType, true)) {
         applyCardEffect({
           values, cardEffect: creature.deathEffect, creature, board, healHero,
           increaseEnergy, battleEffects, setBattleEffects,
-          reduceMonsterAttack, damageMonster, updateBoard
+          reduceMonsterAttack, damageMonster, updateBoard,
+          onBoard: true
         })
       }
     }

@@ -1,4 +1,4 @@
-use darkshuffle::models::config::{GameSettings};
+use darkshuffle::models::config::GameSettings;
 use darkshuffle::models::game::{Game, GameState};
 use starknet::ContractAddress;
 
@@ -20,31 +20,30 @@ trait IGameSystems<T> {
 #[dojo::contract]
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
-
     use darkshuffle::constants::{DEFAULT_NS, LAST_NODE_DEPTH, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
-    use darkshuffle::models::card::{Card};
+    use darkshuffle::models::card::Card;
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait};
-    use darkshuffle::models::draft::{Draft};
+    use darkshuffle::models::draft::Draft;
     use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait, GameState};
+    use darkshuffle::utils::cards::CardUtilsImpl;
+    use darkshuffle::utils::config::ConfigUtilsImpl;
+    use darkshuffle::utils::draft::DraftUtilsImpl;
+    use darkshuffle::utils::random;
     use darkshuffle::utils::renderer::utils::create_metadata;
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-    use darkshuffle::utils::{cards::CardUtilsImpl, config::ConfigUtilsImpl, draft::DraftUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
-    use dojo::world::WorldStorage;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
-
     use openzeppelin_introspection::src5::SRC5Component;
     use openzeppelin_token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
     use starknet::{ContractAddress, get_caller_address, get_contract_address, get_tx_info};
     use tournaments::components::game::game_component;
     use tournaments::components::interfaces::{IGameDetails, IGameToken, ISettings};
     use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
-    use tournaments::components::models::game::{TokenMetadata};
-    use tournaments::components::models::lifecycle::{Lifecycle};
+    use tournaments::components::models::game::TokenMetadata;
+    use tournaments::components::models::lifecycle::Lifecycle;
 
     component!(path: game_component, storage: game, event: GameEvent);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);

@@ -75,7 +75,7 @@ pub mod DEFAULT_SETTINGS {
             draw_amount: DRAW_AMOUNT,
             card_ids: GET_GENESIS_CARD_IDS(),
             card_rarity_weights: GET_DEFAULT_WEIGHTS(),
-            auto_draft: false,
+            auto_draft: true,
             persistent_health: true,
         }
     }

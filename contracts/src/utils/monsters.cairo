@@ -1,7 +1,10 @@
 use darkshuffle::models::battle::{Battle, BattleEffects, BattleResources, CreatureDetails, RoundStats};
-use darkshuffle::models::card::CardType;
+use darkshuffle::models::card::{CardType, CreatureCard};
 use darkshuffle::models::game::GameEffects;
-use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, hand::HandUtilsImpl, random};
+use darkshuffle::utils::battle::BattleUtilsImpl;
+use darkshuffle::utils::board::BoardUtilsImpl;
+use darkshuffle::utils::hand::HandUtilsImpl;
+use darkshuffle::utils::random;
 
 #[generate_trait]
 impl MonsterUtilsImpl of MonsterUtilsTrait {

@@ -35,13 +35,14 @@ export const CardSize = {
 }
 
 export const buildEffectText = (cardType, effect, effectType) => {
-  let text = ''
+  let isSpell = effectType === 'spell' || effectType === 'spell_extra'
+  
   let value = effect.modifier.value
-
   if (effect.bonus?.Some?.requirement === effect.modifier.requirement?.Some) {
     value += effect.bonus.Some.value
   }
-
+  
+  let text = ''
   switch (effect.modifier._type) {
     case 'HeroHealth':
       text += `Hero gains ${value} health`
@@ -68,19 +69,19 @@ export const buildEffectText = (cardType, effect, effectType) => {
       text += `Next ${cardType} gains +${value} health when played`
       break;
     case 'AllAttack':
-      text += `All creatures gain +${value} attack`
+      text += `All ${isSpell ? '' : 'other '}creatures gain +${value} attack`
       break;
     case 'AllHealth':
-      text += `All creatures gain +${value} health`
+      text += `All ${isSpell ? '' : 'other '}creatures gain +${value} health`
       break;
     case 'AllyAttack':
-      text += `Your ${cardType} creatures gain +${value} attack`
+      text += `Your ${isSpell ? '' : 'other '}${cardType} creatures gain +${value} attack`
       break;
     case 'AllyHealth':
-      text += `Your ${cardType} creatures gain +${value} health`
+      text += `Your ${isSpell ? '' : 'other '}${cardType} creatures gain +${value} health`
       break;
     case 'AllyStats':
-      text += `Your ${cardType} creatures gain +${value} attack and +${value} health`
+      text += `Your ${isSpell ? '' : 'other '}${cardType} creatures gain +${value}/+${value}`
       break;
     case 'SelfAttack':
       text += `Gains +${value} attack`
@@ -102,10 +103,10 @@ export const buildEffectText = (cardType, effect, effectType) => {
         text += ` if the enemy is ${getWeakType(cardType)}`
         break;
       case 'HasAlly':
-        text += ` if you have another ${cardType}`
+        text += ` if you have ${isSpell ? 'a' : 'another'} ${cardType}`
         break;
       case 'NoAlly':
-        text += ` if you have no other ${cardType}`
+        text += ` if you have no ${isSpell ? '' : 'other '}${cardType}`
         break;
       default:
         break;
@@ -118,10 +119,10 @@ export const buildEffectText = (cardType, effect, effectType) => {
         text += `. Increase this to ${value + effect.bonus.Some.value} if the enemy is a ${getWeakType(cardType)}`
         break;
       case 'HasAlly':
-        text += `. Increase this to ${value + effect.bonus.Some.value} if you have another ${cardType}`
+        text += `. Increase this to ${value + effect.bonus.Some.value} if you have ${isSpell ? 'a' : 'another'} ${cardType}`
         break;
       case 'NoAlly':
-        text += `. Increase this to ${value + effect.bonus.Some.value} if you have no other ${cardType}`
+        text += `. Increase this to ${value + effect.bonus.Some.value} if you have no ${isSpell ? '' : 'other '}${cardType}`
         break;
       default:
         break;

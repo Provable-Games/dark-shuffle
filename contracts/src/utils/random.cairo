@@ -1,7 +1,5 @@
 use cartridge_vrf::{IVrfProviderDispatcher, IVrfProviderDispatcherTrait, Source};
-
-use core::{integer::{U256DivRem, u256_try_as_non_zero}};
-
+use core::integer::{U256DivRem, u256_try_as_non_zero};
 use darkshuffle::constants::{LCG_PRIME, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, U128_MAX};
 use starknet::{ContractAddress, contract_address_const, get_block_timestamp, get_caller_address, get_tx_info};
 
@@ -34,7 +32,7 @@ fn LCG(seed: u128) -> u128 {
     (a * seed + c) % m
 }
 
-fn get_random_card_id(seed: u128, card_pool: Span<u8>) -> u8 {
+fn get_random_card_index(seed: u128, card_pool: Span<u8>) -> u8 {
     let index: u32 = (seed % card_pool.len().into()).try_into().unwrap();
 
     *card_pool.at(index)

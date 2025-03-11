@@ -1,16 +1,17 @@
 use achievement::store::{Store, StoreTrait};
 use darkshuffle::models::battle::{Battle, BoardStats, Creature, CreatureDetails, RoundStats};
-use darkshuffle::models::card::{Card, CardDetails, CardType, CreatureCard};
+use darkshuffle::models::card::{CardType, CreatureCard, Modifier};
 use darkshuffle::models::game::GameEffects;
+use darkshuffle::utils::battle::BattleUtilsImpl;
+use darkshuffle::utils::board::BoardUtilsImpl;
+use darkshuffle::utils::cards::CardUtilsImpl;
 use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, cards::CardUtilsImpl};
 
 #[generate_trait]
 impl SummonUtilsImpl of SummonUtilsTrait {
     fn summon_creature(
-        card: Card,
-        card_id: u8,
-        creature_details: CreatureCard,
+        card_index: u8,
+        creature_card: CreatureCard,
         ref battle: Battle,
         ref board: Array<CreatureDetails>,
         ref board_stats: BoardStats,
@@ -18,7 +19,7 @@ impl SummonUtilsImpl of SummonUtilsTrait {
         game_effects: GameEffects,
     ) {
         let mut creature = CreatureDetails {
-            card, card_id, attack: creature_details.attack, health: creature_details.health,
+            card_index, attack: creature_card.attack, health: creature_card.health, creature_card,
         };
 
         if round_stats.creatures_played == 0 {
@@ -32,7 +33,8 @@ impl SummonUtilsImpl of SummonUtilsTrait {
 
         BoardUtilsImpl::increase_creature_attack(ref creature, game_effects.all_attack);
 
-        match card.card_type {
+        let card_type: CardType = creature_card.card_type.into();
+        match card_type {
             CardType::Hunter => {
                 BoardUtilsImpl::increase_creature_attack(
                     ref creature, game_effects.hunter_attack + battle.battle_effects.next_hunter_attack_bonus,
@@ -84,12 +86,21 @@ impl SummonUtilsImpl of SummonUtilsTrait {
                     battle.monster.health += 2;
                 }
             },
-        };
+            _ => {},
+        }
 
-        if let Option::Some(play_effect) = creature_details.play_effect {
-            if CardUtilsImpl::_is_effect_applicable(play_effect, card.card_type, board_stats) {
+        if creature_card.play_effect.modifier._type.into() != Modifier::None {
+            if CardUtilsImpl::_is_requirement_met(
+                creature_card.play_effect.modifier.requirement.into(), card_type, board_stats, false,
+            ) {
                 CardUtilsImpl::apply_card_effect(
-                    card.card_type, play_effect, ref creature, ref battle, ref board, board_stats,
+                    card_type,
+                    creature_card.play_effect,
+                    ref creature,
+                    ref battle,
+                    ref board,
+                    board_stats,
+                    false,
                 );
             }
         }
@@ -100,11 +111,13 @@ impl SummonUtilsImpl of SummonUtilsTrait {
             }
         }
 
-        match card.card_type {
+        match card_type {
             CardType::Magical => board_stats.magical_count += 1,
             CardType::Brute => board_stats.brute_count += 1,
             CardType::Hunter => board_stats.hunter_count += 1,
-        };
+            _ => {},
+        }
+
         round_stats.creatures_played += 1;
         board.append(creature);
     }

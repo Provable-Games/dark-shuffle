@@ -10,8 +10,7 @@ trait IGameTokenMock<TState> {
 #[starknet::contract]
 pub mod GameTokenMock {
     use openzeppelin::introspection::src5::SRC5Component;
-    use openzeppelin::token::erc721::ERC721Component;
-    use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
+    use openzeppelin::token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
     use starknet::ContractAddress;
     use starknet::storage::{Map, StoragePathEntry, StoragePointerReadAccess, StoragePointerWriteAccess};
 

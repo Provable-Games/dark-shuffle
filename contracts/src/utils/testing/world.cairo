@@ -1,35 +1,40 @@
 use core::array::{ArrayTrait, SpanTrait};
-use darkshuffle::constants::{DEFAULT_NS};
-use darkshuffle::models::{
-    battle::{m_Battle, m_Board}, config::{m_GameSettings}, draft::{m_Draft}, game::{m_Game, m_GameEffects},
-    map::{m_Map},
-};
-use darkshuffle::systems::{
-    battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems},
-    config::contracts::{IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait, config_systems},
-    draft::contracts::{IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait, draft_systems},
-    game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems},
-    map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems},
-};
-use darkshuffle::utils::testing::systems::{deploy_game_systems};
+use darkshuffle::constants::DEFAULT_NS;
+use darkshuffle::models::battle::{m_Battle, m_BattleResources};
+use darkshuffle::models::card::{m_Card, m_CreatureCard, m_SpellCard};
+use darkshuffle::models::config::{m_CardsCounter, m_GameSettings};
+use darkshuffle::models::draft::m_Draft;
+use darkshuffle::models::game::{m_Game, m_GameEffects};
+use darkshuffle::models::map::m_Map;
+use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
+use darkshuffle::systems::config::contracts::{IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait, config_systems};
+use darkshuffle::systems::draft::contracts::{IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait, draft_systems};
+use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
+use darkshuffle::systems::map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems};
+use darkshuffle::utils::testing::systems::deploy_game_systems;
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
 use dojo_cairo_test::{
     ContractDef, ContractDefTrait, NamespaceDef, TestResource, WorldStorageTestTrait, spawn_test_world,
 };
-
 use starknet::{ContractAddress, contract_address_const};
 
 fn namespace_def() -> NamespaceDef {
     let ndef = NamespaceDef {
-        namespace: DEFAULT_NS(), resources: [
+        namespace: DEFAULT_NS(),
+        resources: [
             TestResource::Model(m_Battle::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(m_Board::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_BattleResources::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_GameSettings::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Draft::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Game::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_GameEffects::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Map::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_Card::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_CreatureCard::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_SpellCard::TEST_CLASS_HASH.try_into().unwrap()),
+
+            TestResource::Model(m_CardsCounter::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(
                 tournaments::components::models::game::m_GameMetadata::TEST_CLASS_HASH.try_into().unwrap(),
             ),
@@ -50,12 +55,12 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Event(darkshuffle::models::game::e_GameActionEvent::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyCreation::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyProgression::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Contract(game_systems::TEST_CLASS_HASH),
-            TestResource::Contract(map_systems::TEST_CLASS_HASH),
+            TestResource::Contract(game_systems::TEST_CLASS_HASH), TestResource::Contract(map_systems::TEST_CLASS_HASH),
             TestResource::Contract(draft_systems::TEST_CLASS_HASH),
             TestResource::Contract(config_systems::TEST_CLASS_HASH),
             TestResource::Contract(battle_systems::TEST_CLASS_HASH),
-        ].span(),
+        ]
+            .span(),
     };
 
     ndef
@@ -66,15 +71,16 @@ fn contract_defs() -> Span<ContractDef> {
         ContractDefTrait::new(@DEFAULT_NS(), @"game_systems")
             .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span())
             .with_init_calldata(array![contract_address_const::<'player1'>().into()].span()),
-        ContractDefTrait::new(DEFAULT_NS(), @"map_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
-        ContractDefTrait::new(DEFAULT_NS(), @"draft_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
-        ContractDefTrait::new(DEFAULT_NS(), @"config_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
-        ContractDefTrait::new(DEFAULT_NS(), @"battle_systems")
-            .with_writer_of([dojo::utils::bytearray_hash(DEFAULT_NS())].span()),
-    ].span()
+        ContractDefTrait::new(@DEFAULT_NS(), @"map_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
+        ContractDefTrait::new(@DEFAULT_NS(), @"draft_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
+        ContractDefTrait::new(@DEFAULT_NS(), @"config_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
+        ContractDefTrait::new(@DEFAULT_NS(), @"battle_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
+    ]
+        .span()
 }
 
 

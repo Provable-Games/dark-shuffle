@@ -7,18 +7,18 @@ trait IMapSystems<T> {
 #[dojo::contract]
 mod map_systems {
     use achievement::store::{Store, StoreTrait};
-    use darkshuffle::constants::{DEFAULT_NS};
+    use darkshuffle::constants::DEFAULT_NS;
     use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait};
     use darkshuffle::models::map::{Map, MonsterNode};
+    use darkshuffle::utils::map::MapUtilsImpl;
+    use darkshuffle::utils::random;
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-    use darkshuffle::utils::{map::MapUtilsImpl, random};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
-    use dojo::world::WorldStorage;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
     use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
-    use tournaments::components::models::game::{TokenMetadata};
-    use tournaments::components::models::lifecycle::{Lifecycle};
+    use tournaments::components::models::game::TokenMetadata;
+    use tournaments::components::models::lifecycle::Lifecycle;
 
     #[abi(embed_v0)]
     impl MapSystemsImpl of super::IMapSystems<ContractState> {

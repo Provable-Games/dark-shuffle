@@ -1,15 +1,15 @@
-use darkshuffle::models::battle::{BattleResources};
+use darkshuffle::models::battle::BattleResources;
 use darkshuffle::utils::random;
 
 #[generate_trait]
 impl HandUtilsImpl of HandUtilsTrait {
-    fn remove_hand_card(ref battle_resources: BattleResources, card_id: u8) {
+    fn remove_hand_card(ref battle_resources: BattleResources, card_index: u8) {
         let mut card_removed = false;
         let mut new_hand = array![];
 
         let mut i = 0;
         while i < battle_resources.hand.len() {
-            if *battle_resources.hand.at(i) == card_id && !card_removed {
+            if *battle_resources.hand.at(i) == card_index && !card_removed {
                 card_removed = true;
             } else {
                 new_hand.append(*battle_resources.hand.at(i));

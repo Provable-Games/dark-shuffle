@@ -6,24 +6,29 @@ trait IBattleSystems<T> {
 #[dojo::contract]
 mod battle_systems {
     use achievement::store::{Store, StoreTrait};
-
-    use darkshuffle::constants::{DEFAULT_NS};
+    use darkshuffle::constants::DEFAULT_NS;
     use darkshuffle::models::battle::{
         Battle, BattleOwnerTrait, BattleResources, BoardStats, Creature, CreatureDetails, RoundStats,
     };
-    use darkshuffle::models::card::{Card, CardDetails};
+    use darkshuffle::models::card::{Card, CardCategory, CreatureCard, SpellCard};
     use darkshuffle::models::config::GameSettings;
     use darkshuffle::models::game::{Game, GameActionEvent, GameEffects, GameOwnerTrait};
     use darkshuffle::models::map::{Map, MonsterNode};
-    use darkshuffle::utils::{
-        achievements::AchievementsUtilsImpl, battle::BattleUtilsImpl, board::BoardUtilsImpl, cards::CardUtilsImpl,
-        config::ConfigUtilsImpl, game::GameUtilsImpl, hand::HandUtilsImpl, map::MapUtilsImpl,
-        monsters::MonsterUtilsImpl, random, spell::SpellUtilsImpl, summon::SummonUtilsImpl,
-    };
+    use darkshuffle::utils::achievements::AchievementsUtilsImpl;
+    use darkshuffle::utils::battle::BattleUtilsImpl;
+    use darkshuffle::utils::board::BoardUtilsImpl;
+    use darkshuffle::utils::cards::CardUtilsImpl;
+    use darkshuffle::utils::config::ConfigUtilsImpl;
+    use darkshuffle::utils::game::GameUtilsImpl;
+    use darkshuffle::utils::hand::HandUtilsImpl;
+    use darkshuffle::utils::map::MapUtilsImpl;
+    use darkshuffle::utils::monsters::MonsterUtilsImpl;
+    use darkshuffle::utils::random;
+    use darkshuffle::utils::spell::SpellUtilsImpl;
+    use darkshuffle::utils::summon::SummonUtilsImpl;
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
-    use dojo::world::WorldStorage;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
     use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
     use tournaments::components::models::game::TokenMetadata;
     use tournaments::components::models::lifecycle::Lifecycle;
@@ -63,27 +68,31 @@ mod battle_systems {
 
                 match *action.at(0) {
                     0 => {
-                        assert(battle_resources.card_in_hand(*action.at(1)), 'Card not in hand');
-                        let card: Card = CardUtilsImpl::get_card(world, game_id, *action.at(1));
-                        BattleUtilsImpl::deduct_energy_cost(ref battle, round_stats, game_effects, card);
+                        let card_index: u8 = *action.at(1);
+                        assert(battle_resources.card_in_hand(card_index), 'Card not in hand');
+                        let card: Card = CardUtilsImpl::get_card(world, game_id, card_index);
+                        BattleUtilsImpl::deduct_energy_cost(ref battle, card);
 
-                        match card.card_details {
-                            CardDetails::creature_card(creature_details) => {
+                        let card_category: CardCategory = card.category.into();
+                        match card_category {
+                            CardCategory::Creature => {
+                                let creature_card: CreatureCard = CardUtilsImpl::get_creature_card(world, card.id);
                                 SummonUtilsImpl::summon_creature(
-                                    card,
-                                    *action.at(1),
-                                    creature_details,
+                                    card_index,
+                                    creature_card,
                                     ref battle,
                                     ref board,
                                     ref board_stats,
                                     ref round_stats,
                                     game_effects,
                                 );
-                                AchievementsUtilsImpl::play_creature(ref world, card);
+                                AchievementsUtilsImpl::play_creature(ref world, creature_card);
                             },
-                            CardDetails::spell_card(spell_details) => {
-                                SpellUtilsImpl::cast_spell(card, spell_details, ref battle, ref board, board_stats);
+                            CardCategory::Spell => {
+                                let spell_card: SpellCard = CardUtilsImpl::get_spell_card(world, card.id);
+                                SpellUtilsImpl::cast_spell(spell_card, ref battle, ref board, board_stats);
                             },
+                            _ => {},
                         }
 
                         HandUtilsImpl::remove_hand_card(ref battle_resources, *action.at(1));
@@ -123,7 +132,7 @@ mod battle_systems {
             if GameUtilsImpl::is_battle_over(battle) {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
                 return;
-            };
+            }
 
             if game_effects.hero_card_heal {
                 BattleUtilsImpl::heal_hero(ref battle, battle_resources.hand.len().try_into().unwrap());

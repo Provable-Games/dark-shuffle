@@ -167,7 +167,7 @@ const getMonsterAbilities = (monsterId) => {
     case 30:
       return formatAbility({
         ability: "Deals 3 damage to your hero if you didn't deal damage this turn.",
-        reward: "Reduce the cost of the first beast you play each turn by 1."
+        reward: "The first beast you play each turn gets +1 attack."
       })
     case 29:
     case 28:

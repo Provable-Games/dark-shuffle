@@ -119,7 +119,6 @@ function StartDraft() {
           gameState.setGameEffects({
             firstAttack: effects.first_attack,
             firstHealth: effects.first_health,
-            firstCreatureCost: effects.first_creature_cost,
             allAttack: effects.all_attack,
             hunterAttack: effects.hunter_attack,
             hunterHealth: effects.hunter_health,

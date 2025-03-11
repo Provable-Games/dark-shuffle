@@ -9,7 +9,7 @@ pub struct Draft {
 
 #[generate_trait]
 impl DraftOwnerImpl of DraftOwnerTrait {
-    fn add_card(ref self: Draft, card_id: u8) {
+    fn add_card(ref self: Draft, card_index: u8) {
         let mut new_cards = array![];
 
         let mut i = 0;
@@ -18,7 +18,7 @@ impl DraftOwnerImpl of DraftOwnerTrait {
             i += 1;
         };
 
-        new_cards.append(card_id);
+        new_cards.append(card_index);
         self.cards = new_cards.span();
     }
 }

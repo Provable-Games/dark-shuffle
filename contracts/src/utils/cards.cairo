@@ -1,11 +1,13 @@
 use achievement::store::{Store, StoreTrait};
 use darkshuffle::models::battle::{Battle, BattleEffects, BoardStats, Creature, CreatureDetails, RoundStats};
 use darkshuffle::models::card::{
-    Card, CardDetails, CardEffect, CardModifier, CardRarity, CardType, CreatureCard, Modifier, Requirement, SpellCard,
-    ValueType,
+    Card, CardEffect, CardModifier, CardType, CreatureCard, Modifier, Requirement, SpellCard,
+    ValueType, EffectBonus
 };
 use darkshuffle::models::game::GameEffects;
-use darkshuffle::utils::{battle::BattleUtilsImpl, board::BoardUtilsImpl, config::ConfigUtilsImpl};
+use darkshuffle::utils::battle::BattleUtilsImpl;
+use darkshuffle::utils::board::BoardUtilsImpl;
+use darkshuffle::utils::config::ConfigUtilsImpl;
 use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 
@@ -18,19 +20,27 @@ impl CardUtilsImpl of CardUtilsTrait {
         ref battle: Battle,
         ref board: Array<CreatureDetails>,
         board_stats: BoardStats,
+        on_board: bool,
     ) {
-        let mut modifier_value: u8 = match card_effect.modifier.value_type {
+        let mut value_type: ValueType = card_effect.modifier.value_type.into();
+        let mut modifier_value: u8 = match value_type {
             ValueType::Fixed => card_effect.modifier.value,
             ValueType::PerAlly => card_effect.modifier.value * Self::_ally_count(card_type, board_stats),
+            _ => 0,
         };
 
-        if let Option::Some(bonus) = card_effect.bonus {
-            if Self::_requirement_met(bonus.requirement, card_type, board_stats) {
-                modifier_value += bonus.value;
+        if card_effect.bonus.value != 0 {
+            if Self::_is_requirement_met(card_effect.bonus.requirement.into(), card_type, board_stats, on_board) {
+                match value_type {
+                    ValueType::Fixed => modifier_value += card_effect.bonus.value,
+                    ValueType::PerAlly => modifier_value += card_effect.bonus.value * Self::_ally_count(card_type, board_stats),
+                    _ => {},
+                }
             }
         }
 
-        match card_effect.modifier._type {
+        let modifier_type: Modifier = card_effect.modifier._type.into();
+        match modifier_type {
             Modifier::HeroHealth => BattleUtilsImpl::heal_hero(ref battle, modifier_value),
             Modifier::HeroEnergy => BattleUtilsImpl::increase_hero_energy(ref battle, modifier_value),
             Modifier::HeroDamageReduction => battle.battle_effects.hero_dmg_reduction += modifier_value,
@@ -54,28 +64,24 @@ impl CardUtilsImpl of CardUtilsTrait {
             ),
             Modifier::SelfAttack => BoardUtilsImpl::increase_creature_attack(ref creature, modifier_value),
             Modifier::SelfHealth => BoardUtilsImpl::increase_creature_health(ref creature, modifier_value),
+            _ => {},
         }
     }
 
-    fn _is_effect_applicable(card_effect: CardEffect, card_type: CardType, board_stats: BoardStats) -> bool {
-        if let Option::Some(requirement) = card_effect.modifier.requirement {
-            if !Self::_requirement_met(requirement, card_type, board_stats) {
-                return false;
-            }
-        }
+    fn _is_requirement_met(
+        requirement: Requirement, card_type: CardType, board_stats: BoardStats, on_board: bool,
+    ) -> bool {
+        let ally_count: u8 = if on_board {
+            1
+        } else {
+            0
+        };
 
-        if card_effect.modifier.value_type == ValueType::PerAlly && Self::_ally_count(card_type, board_stats) == 0 {
-            return false;
-        }
-
-        true
-    }
-
-    fn _requirement_met(requirement: Requirement, card_type: CardType, board_stats: BoardStats) -> bool {
         match requirement {
+            Requirement::None => true,
             Requirement::EnemyWeak => Self::_is_enemy_weak(card_type, board_stats.monster_type),
-            Requirement::HasAlly => Self::_has_ally(card_type, board_stats),
-            Requirement::NoAlly => !Self::_has_ally(card_type, board_stats),
+            Requirement::HasAlly => Self::_ally_count(card_type, board_stats) > ally_count,
+            Requirement::NoAlly => Self::_ally_count(card_type, board_stats) == ally_count,
         }
     }
 
@@ -85,47 +91,54 @@ impl CardUtilsImpl of CardUtilsTrait {
             || (card_type == CardType::Magical && enemy_type == CardType::Brute)
     }
 
-    fn _has_ally(card_type: CardType, board_stats: BoardStats) -> bool {
-        (card_type == CardType::Hunter && board_stats.hunter_count > 0)
-            || (card_type == CardType::Brute && board_stats.brute_count > 0)
-            || (card_type == CardType::Magical && board_stats.magical_count > 0)
-    }
-
     fn _ally_count(card_type: CardType, board_stats: BoardStats) -> u8 {
         match card_type {
             CardType::Hunter => board_stats.hunter_count,
             CardType::Brute => board_stats.brute_count,
             CardType::Magical => board_stats.magical_count,
+            _ => 0,
         }
     }
 
-    fn get_card(world: WorldStorage, game_id: u64, card_id: u8) -> Card {
+    fn get_card(world: WorldStorage, game_id: u64, card_index: u8) -> Card {
         let card_ids: Span<u64> = ConfigUtilsImpl::get_game_settings(world, game_id).card_ids;
-        let card: Card = world.read_model(*card_ids.at(card_id.into()));
+        let card: Card = world.read_model(*card_ids.at(card_index.into()));
         card
+    }
+
+    fn get_creature_card(world: WorldStorage, card_id: u64) -> CreatureCard {
+        let creature_card: CreatureCard = world.read_model(card_id);
+        creature_card
+    }
+
+    fn get_spell_card(world: WorldStorage, card_id: u64) -> SpellCard {
+        let spell_card: SpellCard = world.read_model(card_id);
+        spell_card
     }
 
     fn no_creature_card() -> CreatureDetails {
         CreatureDetails {
-            card: Card {
-                id: 0,
-                name: 'None',
-                rarity: CardRarity::Common,
-                cost: 0,
-                card_type: CardType::Hunter,
-                card_details: CardDetails::creature_card(
-                    CreatureCard {
-                        attack: 0,
-                        health: 0,
-                        play_effect: Option::None,
-                        death_effect: Option::None,
-                        attack_effect: Option::None,
-                    },
-                ),
-            },
-            card_id: 0,
+            card_index: 0,
             attack: 0,
             health: 0,
+            creature_card: CreatureCard {
+                id: 0,
+                attack: 0,
+                health: 0,
+                card_type: 0,
+                play_effect: CardEffect {
+                    modifier: CardModifier { _type: 0, value_type: 0, value: 0, requirement: 0 },
+                    bonus: EffectBonus { value: 0, requirement: 0 },
+                },
+                death_effect: CardEffect {
+                    modifier: CardModifier { _type: 0, value_type: 0, value: 0, requirement: 0 },
+                    bonus: EffectBonus { value: 0, requirement: 0 },
+                },
+                attack_effect: CardEffect {
+                    modifier: CardModifier { _type: 0, value_type: 0, value: 0, requirement: 0 },
+                    bonus: EffectBonus { value: 0, requirement: 0 },
+                },
+            },
         }
     }
 }
