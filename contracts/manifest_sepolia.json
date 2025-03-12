@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x45575a88cc5cef1e444c77ce60b7b4c9e73a01cbbe20926d5a4c72a94011410",
-    "address": "0x1e19878740285208a6c5db4c174db99f6ea59388a1219075d7e9c7e0eb797d9",
-    "seed": "pg_sepolia_await_8",
+    "address": "0x58e1c82ea8a1d7fcb500313fb33fdb5c48bf38d84e8a2a696d09bd5f44f2a4f",
+    "seed": "pg_sepolia_await_12",
     "name": "Provable Games",
     "entrypoints": [
       "uuid",
@@ -1252,8 +1252,8 @@
   },
   "contracts": [
     {
-      "address": "0x4ce24869a96583a259c1fdf2f685a0a865aefcd139c10d5a3844107159f823c",
-      "class_hash": "0x21b0f9c04fd30117a37870f71e40f7614f417dc70a8585ef1dba553f9fbb50f",
+      "address": "0x28700e46ff2c2b974b60a2cd35517656f9a2bc0ffb169309b02cbfdf31b3e4e",
+      "class_hash": "0x505c59c3cc7544513b648a16c8917d030c39f949119c1860273a1d39f98deb2",
       "abi": [
         {
           "type": "impl",
@@ -1480,8 +1480,8 @@
       ]
     },
     {
-      "address": "0x3fa9930818f4637e53e504b11ce73e5926e988487ca95972b826a1467af9fca",
-      "class_hash": "0x17fc7ae07bdda6d92a7823b8d8fd5a10716e94aff81ebbf42b4db5b7ea8e61b",
+      "address": "0x7473b8cffc44e99be9908bededd2a540b0b266ec00b58e524905a09d3a54548",
+      "class_hash": "0xf5e53206ed23e5f2a0be24b93c0535f79cd24bb64583deb0a8a3bedbcbd412",
       "abi": [
         {
           "type": "impl",
@@ -1550,6 +1550,10 @@
           "name": "darkshuffle::models::card::CardRarity",
           "variants": [
             {
+              "name": "None",
+              "type": "()"
+            },
+            {
               "name": "Common",
               "type": "()"
             },
@@ -1576,6 +1580,10 @@
           "name": "darkshuffle::models::card::CardType",
           "variants": [
             {
+              "name": "None",
+              "type": "()"
+            },
+            {
               "name": "Hunter",
               "type": "()"
             },
@@ -1586,250 +1594,6 @@
             {
               "name": "Magical",
               "type": "()"
-            }
-          ]
-        },
-        {
-          "type": "enum",
-          "name": "darkshuffle::models::card::Modifier",
-          "variants": [
-            {
-              "name": "HeroHealth",
-              "type": "()"
-            },
-            {
-              "name": "HeroEnergy",
-              "type": "()"
-            },
-            {
-              "name": "HeroDamageReduction",
-              "type": "()"
-            },
-            {
-              "name": "EnemyMarks",
-              "type": "()"
-            },
-            {
-              "name": "EnemyAttack",
-              "type": "()"
-            },
-            {
-              "name": "EnemyHealth",
-              "type": "()"
-            },
-            {
-              "name": "NextAllyAttack",
-              "type": "()"
-            },
-            {
-              "name": "NextAllyHealth",
-              "type": "()"
-            },
-            {
-              "name": "AllAttack",
-              "type": "()"
-            },
-            {
-              "name": "AllHealth",
-              "type": "()"
-            },
-            {
-              "name": "AllyAttack",
-              "type": "()"
-            },
-            {
-              "name": "AllyHealth",
-              "type": "()"
-            },
-            {
-              "name": "AllyStats",
-              "type": "()"
-            },
-            {
-              "name": "SelfAttack",
-              "type": "()"
-            },
-            {
-              "name": "SelfHealth",
-              "type": "()"
-            }
-          ]
-        },
-        {
-          "type": "enum",
-          "name": "darkshuffle::models::card::ValueType",
-          "variants": [
-            {
-              "name": "Fixed",
-              "type": "()"
-            },
-            {
-              "name": "PerAlly",
-              "type": "()"
-            }
-          ]
-        },
-        {
-          "type": "enum",
-          "name": "darkshuffle::models::card::Requirement",
-          "variants": [
-            {
-              "name": "EnemyWeak",
-              "type": "()"
-            },
-            {
-              "name": "HasAlly",
-              "type": "()"
-            },
-            {
-              "name": "NoAlly",
-              "type": "()"
-            }
-          ]
-        },
-        {
-          "type": "enum",
-          "name": "core::option::Option::<darkshuffle::models::card::Requirement>",
-          "variants": [
-            {
-              "name": "Some",
-              "type": "darkshuffle::models::card::Requirement"
-            },
-            {
-              "name": "None",
-              "type": "()"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "darkshuffle::models::card::CardModifier",
-          "members": [
-            {
-              "name": "_type",
-              "type": "darkshuffle::models::card::Modifier"
-            },
-            {
-              "name": "value_type",
-              "type": "darkshuffle::models::card::ValueType"
-            },
-            {
-              "name": "value",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "requirement",
-              "type": "core::option::Option::<darkshuffle::models::card::Requirement>"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "darkshuffle::models::card::EffectBonus",
-          "members": [
-            {
-              "name": "value",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "requirement",
-              "type": "darkshuffle::models::card::Requirement"
-            }
-          ]
-        },
-        {
-          "type": "enum",
-          "name": "core::option::Option::<darkshuffle::models::card::EffectBonus>",
-          "variants": [
-            {
-              "name": "Some",
-              "type": "darkshuffle::models::card::EffectBonus"
-            },
-            {
-              "name": "None",
-              "type": "()"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "darkshuffle::models::card::CardEffect",
-          "members": [
-            {
-              "name": "modifier",
-              "type": "darkshuffle::models::card::CardModifier"
-            },
-            {
-              "name": "bonus",
-              "type": "core::option::Option::<darkshuffle::models::card::EffectBonus>"
-            }
-          ]
-        },
-        {
-          "type": "enum",
-          "name": "core::option::Option::<darkshuffle::models::card::CardEffect>",
-          "variants": [
-            {
-              "name": "Some",
-              "type": "darkshuffle::models::card::CardEffect"
-            },
-            {
-              "name": "None",
-              "type": "()"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "darkshuffle::models::card::CreatureCard",
-          "members": [
-            {
-              "name": "attack",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "health",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "play_effect",
-              "type": "core::option::Option::<darkshuffle::models::card::CardEffect>"
-            },
-            {
-              "name": "death_effect",
-              "type": "core::option::Option::<darkshuffle::models::card::CardEffect>"
-            },
-            {
-              "name": "attack_effect",
-              "type": "core::option::Option::<darkshuffle::models::card::CardEffect>"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "darkshuffle::models::card::SpellCard",
-          "members": [
-            {
-              "name": "effect",
-              "type": "darkshuffle::models::card::CardEffect"
-            },
-            {
-              "name": "extra_effect",
-              "type": "core::option::Option::<darkshuffle::models::card::CardEffect>"
-            }
-          ]
-        },
-        {
-          "type": "enum",
-          "name": "darkshuffle::models::card::CardDetails",
-          "variants": [
-            {
-              "name": "creature_card",
-              "type": "darkshuffle::models::card::CreatureCard"
-            },
-            {
-              "name": "spell_card",
-              "type": "darkshuffle::models::card::SpellCard"
             }
           ]
         },
@@ -1845,11 +1609,27 @@
         },
         {
           "type": "struct",
-          "name": "core::array::Span::<core::integer::u8>",
+          "name": "darkshuffle::models::config::CardRarityWeights",
           "members": [
             {
-              "name": "snapshot",
-              "type": "@core::array::Array::<core::integer::u8>"
+              "name": "common",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "uncommon",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "rare",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "epic",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "legendary",
+              "type": "core::integer::u8"
             }
           ]
         },
@@ -1909,7 +1689,7 @@
             },
             {
               "name": "card_rarity_weights",
-              "type": "core::array::Span::<core::integer::u8>"
+              "type": "darkshuffle::models::config::CardRarityWeights"
             },
             {
               "name": "auto_draft",
@@ -1944,10 +1724,6 @@
                 {
                   "name": "card_type",
                   "type": "darkshuffle::models::card::CardType"
-                },
-                {
-                  "name": "card_details",
-                  "type": "darkshuffle::models::card::CardDetails"
                 }
               ],
               "outputs": [],
@@ -1991,7 +1767,7 @@
                 },
                 {
                   "name": "card_rarity_weights",
-                  "type": "core::array::Span::<core::integer::u8>"
+                  "type": "darkshuffle::models::config::CardRarityWeights"
                 },
                 {
                   "name": "auto_draft",
@@ -2188,8 +1964,8 @@
       ]
     },
     {
-      "address": "0xc285fe66d8042aead42d514fa9ad02af4f2a91354ddb9d6ca1d6cc0b59c72",
-      "class_hash": "0x410441c4eced34a971febfcbfbf181572c4c402cf8e0114ddbf6dd42f886454",
+      "address": "0x47afa75a01d85452803f858d3f52eef50a514b56d118460a874779391f1cd75",
+      "class_hash": "0x1f37707a76021756e5c19b7a285709e3fba50f3b7cf6a30b8d084c561f61c71",
       "abi": [
         {
           "type": "impl",
@@ -2392,8 +2168,8 @@
       ]
     },
     {
-      "address": "0x3ad19e90042f6840e36a1ae87cee1762572d40c6f137f63429e28d3fa79c672",
-      "class_hash": "0x218bf2a2e13e9fe5645e13f6f2465b9b2428c4f049ccd1b93aac5a297a9c389",
+      "address": "0x49c0db18f11bfd05dcb57f2c4eec0a1f95f109f7861026bd960dfee360aecae",
+      "class_hash": "0x12f273c9816f897feca48e4d2a636fe47891b63966fdf8808e12276ce6dcbfb",
       "abi": [
         {
           "type": "impl",
@@ -3619,8 +3395,8 @@
       ]
     },
     {
-      "address": "0x17ceb42e01b58ec94ab77ee2118f09cdbeaaf397c098d6f0ed310b1ae438bf8",
-      "class_hash": "0x1edcc318289a7080279ad7069f9cc4fe82fa6d2e52c5fe2e89ceb95c91ac15d",
+      "address": "0x33e5954275cfa968a080a0def563c660bc61f38e488e1cac16d70689231f52b",
+      "class_hash": "0x2433574abdcaabc78e09a4daf06c43a1b17a5447f1712498b664648639aff4b",
       "abi": [
         {
           "type": "impl",
@@ -3845,13 +3621,13 @@
     },
     {
       "members": [],
-      "class_hash": "0x55c9a630d42e7e6aa07f61f3a4da3107a1a6aac04a76054a8fc21bc64ed0cb9",
+      "class_hash": "0x65169a21be636033f5b554b4b84a04e606277101024482de7df86767748bdd0",
       "tag": "ds_v1_2_0-BattleResources",
       "selector": "0x62eabd0b2825cba91cbe1e9ae4df89049b33d2a8766615326a1eaafc670c244"
     },
     {
       "members": [],
-      "class_hash": "0x264e1f4d00ea72510c6b76de7980153bb1ce2a2550448abcd59bb523edc1771",
+      "class_hash": "0x282b7979932ec2a0f36f0a9286bed67b1381a1a08f79b08b8878fba3f7ee49",
       "tag": "ds_v1_2_0-Card",
       "selector": "0x3563b64c9849ebf240d13129a73401f121733afe85f32d2eb7ded1c192240a7"
     },
@@ -3860,6 +3636,12 @@
       "class_hash": "0x4574991205358e7557ca37f35200e17acdb3d9f64ac3b45036a2d5dc55f8570",
       "tag": "ds_v1_2_0-CardsCounter",
       "selector": "0x3bb6ee0b48f7f07baa9bf9a47efdc32722366b9579e98cfb36a12605a0ddc7"
+    },
+    {
+      "members": [],
+      "class_hash": "0x2eccadffe4e8a701d1782211093f64a44482a8e028c0f063dd0872a534809d1",
+      "tag": "ds_v1_2_0-CreatureCard",
+      "selector": "0x1f6960b539a2d74a0e8d07261aea0e2bff6f89cd47a26243df33497582fbb9d"
     },
     {
       "members": [],
@@ -3881,7 +3663,7 @@
     },
     {
       "members": [],
-      "class_hash": "0x39fb487fdc07b653fedf5caeacf3e2f24311e178d82448257c61ff87d54909c",
+      "class_hash": "0x1aa2833967168f59040e49ee96a18560ce3ab93413613cf63074212694a7a9e",
       "tag": "ds_v1_2_0-GameEffects",
       "selector": "0x21ab79e9ecdaed6b16ff5c92763c14eb3bdd38916e67752662e376695a3156d"
     },
@@ -3893,7 +3675,7 @@
     },
     {
       "members": [],
-      "class_hash": "0x79ca04fabb4dac8a9d9439b6b66c0726f73cd930be2d5a20d21462c5e9d4881",
+      "class_hash": "0x2c2b80f1d894bdbafc6f8e461cd2d7702a5c346013bf435dd7e40d029a69bbf",
       "tag": "ds_v1_2_0-GameSettings",
       "selector": "0x40f76893af52af25c2dda8662449d83f52ad15151e90c7645bed03144f7b154"
     },
@@ -3926,6 +3708,12 @@
       "class_hash": "0x4f140e4e65a924bc2e492d8ece550b97c13e22f24f72cb741d8d8d0c5044dd8",
       "tag": "ds_v1_2_0-SettingsDetails",
       "selector": "0x127c1783c9a292361dc99114c80a3ee2df645829dd6f3ac9f9575ad3abd8ac2"
+    },
+    {
+      "members": [],
+      "class_hash": "0x5f8b932ff9d6d26950498c36a0ebc03d992ed21903a4294a647a7dc16ee4336",
+      "tag": "ds_v1_2_0-SpellCard",
+      "selector": "0x185b767087fffd938907d9790de909248fd7ced185ad1f02347968c0f94d696"
     },
     {
       "members": [],

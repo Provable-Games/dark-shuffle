@@ -1,5 +1,5 @@
 use darkshuffle::models::card::{CardRarity, CardType};
-use darkshuffle::models::config::GameSettings;
+use darkshuffle::models::config::{GameSettings, CardRarityWeights};
 use starknet::ContractAddress;
 
 #[starknet::interface]
@@ -17,7 +17,7 @@ trait IConfigSystems<T> {
         max_hand_size: u8,
         draw_amount: u8,
         card_ids: Span<u64>,
-        card_rarity_weights: Span<u8>,
+        card_rarity_weights: CardRarityWeights,
         auto_draft: bool,
         persistent_health: bool,
     ) -> u32;
@@ -32,7 +32,7 @@ mod config_systems {
     use darkshuffle::constants::DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS;
     use darkshuffle::constants::{DEFAULT_NS, VERSION};
     use darkshuffle::models::card::{CardRarity, CardType};
-    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter};
+    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter, CardRarityWeights};
     use darkshuffle::utils::config::ConfigUtilsImpl;
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
@@ -84,7 +84,8 @@ mod config_systems {
         };
 
         // initialize game with default settings
-        world.write_model(GET_DEFAULT_SETTINGS());
+        let settings: GameSettings = GET_DEFAULT_SETTINGS();
+        world.write_model(@settings);
         ConfigUtilsImpl::create_genesis_cards(ref world);
     }
 
@@ -110,7 +111,7 @@ mod config_systems {
             max_hand_size: u8,
             draw_amount: u8,
             card_ids: Span<u64>,
-            card_rarity_weights: Span<u8>,
+            card_rarity_weights: CardRarityWeights,
             auto_draft: bool,
             persistent_health: bool,
         ) -> u32 {
@@ -185,18 +186,15 @@ mod config_systems {
             assert!(settings.max_hand_size <= 10, "Maximum hand size cannot be greater than 10 cards");
 
             assert!(settings.card_ids.len() >= 3, "Minimum 3 draftable cards");
-            assert!(settings.card_rarity_weights.len() == 5, "Weight for each rarity required");
 
             assert!(settings.draw_amount > 0, "Draw amount must be greater than 0");
             assert!(settings.draw_amount <= 5, "Maximum draw amount cannot be greater than 5");
 
-            let mut i = 0;
-            while i < 5 {
-                let weight = *settings.card_rarity_weights.at(i);
-                assert!(weight > 0, "Rarity weight must be greater than 0");
-                assert!(weight <= 10, "Rarity weight cannot be greater than 10");
-                i += 1;
-            }
+            assert!(settings.card_rarity_weights.common <= 10, "Common rarity weight cannot be greater than 10");
+            assert!(settings.card_rarity_weights.uncommon <= 10, "Uncommon rarity weight cannot be greater than 10");
+            assert!(settings.card_rarity_weights.rare <= 10, "Rare rarity weight cannot be greater than 10");
+            assert!(settings.card_rarity_weights.epic <= 10, "Epic rarity weight cannot be greater than 10");
+            assert!(settings.card_rarity_weights.legendary <= 10, "Legendary rarity weight cannot be greater than 10");
         }
     }
 }

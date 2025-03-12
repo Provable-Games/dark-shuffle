@@ -1,4 +1,4 @@
-use darkshuffle::models::card::Card;
+use darkshuffle::models::card::{Card, CardRarity};
 use darkshuffle::models::config::GameSettings;
 use darkshuffle::utils::random;
 use dojo::model::ModelStorage;
@@ -12,7 +12,15 @@ impl DraftUtilsImpl of DraftUtilsTrait {
         let mut i: u8 = 0;
         while i.into() < game_settings.card_ids.len() {
             let card: Card = world.read_model(*game_settings.card_ids.at(i.into()));
-            let weight = *game_settings.card_rarity_weights.at(card.rarity.into());
+            let card_rarity: CardRarity = card.rarity.into();
+            let weight = match card_rarity {
+                CardRarity::Common => game_settings.card_rarity_weights.common,
+                CardRarity::Uncommon => game_settings.card_rarity_weights.uncommon,
+                CardRarity::Rare => game_settings.card_rarity_weights.rare,
+                CardRarity::Epic => game_settings.card_rarity_weights.epic,
+                CardRarity::Legendary => game_settings.card_rarity_weights.legendary,
+                _ => 0,
+            };
 
             let mut j = 0;
             while j < weight {

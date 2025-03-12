@@ -76,7 +76,10 @@ export async function getSettings(settings_id) {
           draft_size,
           max_energy,
           max_hand_size,
-          card_ids
+          card_ids,
+          draw_amount,
+          auto_draft,
+          persistent_health
         }
       }
     }

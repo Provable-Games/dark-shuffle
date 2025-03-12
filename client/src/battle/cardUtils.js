@@ -73,7 +73,7 @@ export const applyCardEffect = ({
   setBattleEffects(prev => ({ ...prev, ...updatedBattleEffects }));
 }
 
-function requirementMet(requirement, cardType, board, monsterType, onBoard) {
+export function requirementMet(requirement, cardType, board, monsterType, onBoard) {
   let alliesRequired = onBoard ? 1 : 0;
 
   switch (requirement) {

@@ -13,9 +13,19 @@ pub struct GameSettings {
     max_hand_size: u8,
     draw_amount: u8,
     card_ids: Span<u64>,
-    card_rarity_weights: Span<u8>,
+    card_rarity_weights: CardRarityWeights,
     auto_draft: bool,
     persistent_health: bool,
+    // Max branches
+}
+
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
+pub struct CardRarityWeights {
+    common: u8,
+    uncommon: u8,
+    rare: u8,
+    epic: u8,
+    legendary: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]

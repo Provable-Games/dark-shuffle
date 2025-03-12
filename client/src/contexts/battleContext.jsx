@@ -2,6 +2,7 @@ import { useSnackbar } from "notistack";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { isMobile } from 'react-device-detect';
 import { getBattleState } from "../api/indexer";
+import { applyCardEffect, requirementMet } from "../battle/cardUtils";
 import { endOfTurnMonsterEffect } from "../battle/monsterAbility";
 import { GET_MONSTER } from "../battle/monsterUtils";
 import { summonEffect } from "../battle/summonUtils";
@@ -11,7 +12,6 @@ import { delay } from "../helpers/utilities";
 import { AnimationContext } from "./animationHandler";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
-import { applyCardEffect, requirementMet } from "../battle/cardUtils";
 
 export const BattleContext = createContext()
 

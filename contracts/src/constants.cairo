@@ -37,7 +37,7 @@ fn SETTINGS_MODEL() -> ByteArray {
 }
 
 pub mod DEFAULT_SETTINGS {
-    use darkshuffle::models::config::GameSettings;
+    use darkshuffle::models::config::{GameSettings, CardRarityWeights};
 
     const START_HEALTH: u8 = 50;
     const START_ENERGY: u8 = 1;
@@ -59,12 +59,18 @@ pub mod DEFAULT_SETTINGS {
         card_ids.span()
     }
 
-    fn GET_DEFAULT_WEIGHTS() -> Span<u8> {
-        array![5, 4, 3, 2, 1].span()
+    fn GET_DEFAULT_WEIGHTS() -> CardRarityWeights {
+        CardRarityWeights {
+            common: 5,
+            uncommon: 4,
+            rare: 3,
+            epic: 2,
+            legendary: 1,
+        }
     }
 
-    fn GET_DEFAULT_SETTINGS() -> @GameSettings {
-        @GameSettings {
+    fn GET_DEFAULT_SETTINGS() -> GameSettings {
+        GameSettings {
             settings_id: 0,
             start_health: START_HEALTH,
             start_energy: START_ENERGY,
