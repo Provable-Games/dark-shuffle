@@ -28,7 +28,6 @@ export const components = {
     gameId: Number(),
     firstAttack: Number(),
     firstHealth: Number(),
-    firstCreatureCost: Number(),
     allAttack: Number(),
     hunterAttack: Number(),
     hunterHealth: Number(),

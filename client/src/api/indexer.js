@@ -3,6 +3,7 @@ import { getEntityIdFromKeys, hexToAscii } from "@dojoengine/utils";
 import { gql, request } from 'graphql-request';
 import { dojoConfig } from '../../dojo.config';
 import { get_short_namespace } from '../helpers/components';
+import { formatCardEffect, types, rarities } from "../helpers/cards";
 
 let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace(NS);
@@ -496,95 +497,83 @@ export async function getCardDetails(card_ids) {
           name
           rarity
           cost
+          category
+        }
+      }
+    }
+    ${NS_SHORT}CreatureCardModels(limit:1000, where:{idIN:[${cardIds}]}) {
+      edges {
+        node {
+          id
+          attack
+          health
           card_type
-          card_details {
-            creature_card {
-              attack
-              health
-              play_effect {
-                Some {
-                  modifier {
-                    _type
-                    value
-                    value_type
-                    requirement {
-                      Some
-                    }
-                  },
-                  bonus {
-                    Some {
-                      value
-                      requirement
-                    }
-                  }
-                }
-              }
-              attack_effect {
-                Some {
-                  modifier {
-                    _type
-                    value
-                    value_type
-                    requirement {
-                      Some
-                    }
-                  },
-                  bonus {
-                    Some {
-                      value
-                      requirement
-                    }
-                  }
-                }
-              }
-              death_effect {
-                Some {
-                  modifier {
-                    _type
-                    value
-                    value_type
-                    requirement {
-                      Some
-                    }
-                  },
-                  bonus {
-                    Some {
-                      value
-                      requirement
-                    }
-                  }
-                }
-              }
+          play_effect {
+            modifier {
+              _type
+              value
+              value_type
+              requirement
             }
-            spell_card {
-              effect {
-                modifier {
-                  _type
-                  value_type
-                  value
-                  requirement {
-                    Some
-                  }
-                }
-              }
-              extra_effect {
-                Some {
-                  modifier {
-                    _type
-                    value_type
-                    value
-                    requirement {
-                      Some
-                    }
-                  }
-                  bonus {
-                    Some {
-                      value
-                      requirement
-                    }
-                  }
-                }
-              }
+            bonus {
+              value
+              requirement
+            }
+          }
+          attack_effect {
+            modifier {
+              _type
+              value
+              value_type
+              requirement
+            }
+            bonus {
+              value
+              requirement
+            }
+          }
+          death_effect {
+            modifier {
+              _type
+              value
+              value_type
+              requirement
+            }
+            bonus {
+              value
+              requirement
+            }
+          }
+        }
+      }
+    }
+    ${NS_SHORT}SpellCardModels(limit:1000, where:{idIN:[${cardIds}]}) {
+      edges {
+        node {
+          id
+          card_type
+          effect {
+            modifier {
+              _type
+              value_type
+              value
+              requirement
+            }
+            bonus {
+              value
+              requirement
+            }
+          }
+          extra_effect {
+            modifier {
+              _type
+              value_type
+              value
+              requirement
+            }
+            bonus {
+              value
+              requirement
             }
           }
         }
@@ -595,34 +584,48 @@ export async function getCardDetails(card_ids) {
 
   const res = await request(GQL_ENDPOINT, document);
 
-  const cardDetailsList = res?.[`${NS_SHORT}CardModels`]?.edges.map(edge => {
-    const node = edge.node;
-    const cardDetails = node.card_details;
-    let details = {};
+  // Get base card data
+  const cards = res?.[`${NS_SHORT}CardModels`]?.edges.map(edge => edge.node) || [];
+  const creatureCards = res?.[`${NS_SHORT}CreatureCardModels`]?.edges.map(edge => edge.node) || [];
+  const spellCards = res?.[`${NS_SHORT}SpellCardModels`]?.edges.map(edge => edge.node) || [];
 
-    if (cardDetails.creature_card?.health) {
-      details = {
-        category: 'Creature',
-        attack: cardDetails.creature_card.attack,
-        health: cardDetails.creature_card.health,
-        playEffect: cardDetails.creature_card.play_effect?.Some,
-        deathEffect: cardDetails.creature_card.death_effect?.Some,
-        attackEffect: cardDetails.creature_card.attack_effect?.Some
-      };
-    } else if (cardDetails.spell_card?.effect) {
-      details = {
-        category: 'Spell',
-        effect: cardDetails.spell_card.effect,
-        extraEffect: cardDetails.spell_card.extra_effect?.Some
-      };
+  const cardDetailsList = cards.map(card => {
+    const cardId = parseInt(card.id, 16);
+    let details = {};
+    
+    // Check if this is a creature card
+    if (card.category === 1) {
+      const creature = creatureCards.find(c => c.id === card.id);
+      if (creature) {
+        details = {
+          category: types.CREATURE,
+          attack: creature.attack,
+          health: creature.health,
+          cardType: creature.card_type,
+          playEffect: formatCardEffect(creature.play_effect),
+          deathEffect: formatCardEffect(creature.death_effect),
+          attackEffect: formatCardEffect(creature.attack_effect)
+        };
+      }
+    } 
+    // Check if this is a spell card
+    else if (card.category === 2) {
+      const spell = spellCards.find(s => s.id === card.id);
+      if (spell) {
+        details = {
+          category: types.SPELL,
+          cardType: spell.card_type,
+          effect: formatCardEffect(spell.effect),
+          extraEffect: formatCardEffect(spell.extra_effect)
+        };
+      }
     }
 
     return {
-      cardId: parseInt(node.id, 16),
-      name: hexToAscii(node.name),
-      rarity: node.rarity,
-      cost: node.cost,
-      cardType: node.card_type,
+      cardId,
+      name: hexToAscii(card.name),
+      rarity: rarities[card.rarity],
+      cost: card.cost,
       ...details
     };
   });

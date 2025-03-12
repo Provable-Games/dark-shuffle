@@ -1,5 +1,5 @@
 import { tags } from "../helpers/cards";
-import { applyCardEffect, isEffectApplicable } from "./cardUtils";
+import { applyCardEffect, requirementMet } from "./cardUtils";
 
 export const summonEffect = ({
   creature, values, board, battleEffects, setBattleEffects, gameEffects,
@@ -57,8 +57,8 @@ export const summonEffect = ({
     }
   }
 
-  if (creature.playEffect?.modifier?._type) {
-    if (isEffectApplicable(creature.playEffect, creature.cardType, board, values.monsterType, false)) {
+  if (creature.playEffect?.modifier?._type !== 'None') {
+    if (requirementMet(creature.playEffect.modifier.requirement, creature.cardType, board, values.monsterType, false)) {
       applyCardEffect({
         values, cardEffect: creature.playEffect, creature, board, healHero,
         increaseEnergy, battleEffects, setBattleEffects,

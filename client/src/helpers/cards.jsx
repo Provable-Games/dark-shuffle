@@ -14,32 +14,20 @@ export const fetchCardTypeImage = (type, color = '#ffffffe6') => {
   if (type === tags.BRUTE) return <BruteIcon color={color} />
 }
 
-export const types = {
-  CREATURE: 'Creature',
-  SPELL: 'Spell'
-}
-
-export const tags = {
-  MAGICAL: 'Magical',
-  HUNTER: 'Hunter',
-  BRUTE: 'Brute',
-  ALL: 'All',
-  SPELL: 'Spell'
-}
-
-export const CardSize = {
-  big: { height: '330px', width: '252px' },
-  large: { height: '275px', width: '210px' },
-  medium: { height: '220px', width: '168px' },
-  small: { height: '110px', width: '84px' }
+export const tierColors = {
+  Common: '#90EE90',
+  Uncommon: '#FFFF00',
+  Rare: '#FFA500',
+  Epic: '#FF0000',
+  Legendary: '#800080',
 }
 
 export const buildEffectText = (cardType, effect, effectType) => {
   let isSpell = effectType === 'spell' || effectType === 'spell_extra'
   
   let value = effect.modifier.value
-  if (effect.bonus?.Some?.requirement === effect.modifier.requirement?.Some) {
-    value += effect.bonus.Some.value
+  if (effect.bonus.requirement === effect.modifier.requirement) {
+    value += effect.bonus.value
   }
   
   let text = ''
@@ -97,8 +85,8 @@ export const buildEffectText = (cardType, effect, effectType) => {
     text += ` for each ${cardType} ally`
   }
 
-  if (effect.modifier?.requirement?.Some) {
-    switch (effect.modifier.requirement.Some) {
+  if (effect.modifier?.requirement !== 'None') {
+    switch (effect.modifier.requirement) {
       case 'EnemyWeak':
         text += ` if the enemy is ${getWeakType(cardType)}`
         break;
@@ -113,16 +101,16 @@ export const buildEffectText = (cardType, effect, effectType) => {
     }
   }
 
-  if (effect.bonus?.Some?.value > 0 && effect.bonus?.Some?.requirement !== effect.modifier.requirement.Some) {
-    switch (effect.bonus.Some.requirement) {
+  if (effect.bonus.value > 0 && effect.bonus.requirement !== effect.modifier.requirement) {
+    switch (effect.bonus.requirement) {
       case 'EnemyWeak':
-        text += `. Increase this to ${value + effect.bonus.Some.value} if the enemy is a ${getWeakType(cardType)}`
+        text += `. Increase this to ${value + effect.bonus.value} if the enemy is a ${getWeakType(cardType)}`
         break;
       case 'HasAlly':
-        text += `. Increase this to ${value + effect.bonus.Some.value} if you have ${isSpell ? 'a' : 'another'} ${cardType}`
+        text += `. Increase this to ${value + effect.bonus.value} if you have ${isSpell ? 'a' : 'another'} ${cardType}`
         break;
       case 'NoAlly':
-        text += `. Increase this to ${value + effect.bonus.Some.value} if you have no ${isSpell ? '' : 'other '}${cardType}`
+        text += `. Increase this to ${value + effect.bonus.value} if you have no ${isSpell ? '' : 'other '}${cardType}`
         break;
       default:
         break;
@@ -136,4 +124,87 @@ export const getWeakType = (cardType) => {
   if (cardType === tags.MAGICAL) return tags.BRUTE
   if (cardType === tags.HUNTER) return tags.MAGICAL
   if (cardType === tags.BRUTE) return tags.HUNTER
+}
+
+export const formatCardEffect = (cardEffect) => {
+  if (!cardEffect || !cardEffect.modifier) return {};
+  
+  // Format the modifier
+  const formattedModifier = {
+    _type: modifiers[cardEffect.modifier._type],
+    value: cardEffect.modifier.value,
+    value_type: valueTypes[cardEffect.modifier.value_type],
+    requirement: requirements[cardEffect.modifier.requirement]
+  };
+  
+  const formattedBonus = {
+    value: cardEffect.bonus.value,
+    requirement: requirements[cardEffect.bonus.requirement]
+  };
+  
+  return {
+    modifier: formattedModifier,
+    bonus: formattedBonus
+  };
+}
+
+export const types = {
+  CREATURE: 'Creature',
+  SPELL: 'Spell'
+}
+
+export const tags = {
+  MAGICAL: 'Magical',
+  HUNTER: 'Hunter',
+  BRUTE: 'Brute',
+  ALL: 'All',
+  SPELL: 'Spell'
+}
+
+export const modifiers = {
+  0: 'None',
+  1: 'HeroHealth',
+  2: 'HeroEnergy',
+  3: 'HeroDamageReduction',
+  4: 'EnemyMarks',
+  5: 'EnemyAttack',
+  6: 'EnemyHealth',
+  7: 'NextAllyAttack',
+  8: 'NextAllyHealth',
+  9: 'AllAttack',
+  10: 'AllHealth',
+  11: 'AllyAttack',
+  12: 'AllyHealth',
+  13: 'AllyStats',
+  14: 'SelfAttack',
+  15: 'SelfHealth'
+}
+
+export const valueTypes = {
+  0: 'None',
+  1: 'Fixed',
+  2: 'PerAlly'
+}
+
+export const requirements = {
+  0: 'None',
+  1: 'EnemyWeak',
+  2: 'HasAlly',
+  3: 'NoAlly'
+}
+
+export const rarities = {
+  0: 'None',
+  1: 'Common',
+  2: 'Uncommon',
+  3: 'Rare',
+  4: 'Epic',
+  5: 'Legendary'
+}
+
+export const CardSize = {
+  big: { height: '330px', width: '252px' },
+  large: { height: '275px', width: '210px' },
+  medium: { height: '220px', width: '168px' },
+  small: { height: '110px', width: '84px' }
 }

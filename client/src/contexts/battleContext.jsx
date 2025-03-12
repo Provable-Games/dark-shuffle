@@ -11,7 +11,7 @@ import { delay } from "../helpers/utilities";
 import { AnimationContext } from "./animationHandler";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
-import { applyCardEffect, isEffectApplicable } from "../battle/cardUtils";
+import { applyCardEffect, requirementMet } from "../battle/cardUtils";
 
 export const BattleContext = createContext()
 
@@ -228,7 +228,7 @@ export const BattleProvider = ({ children }) => {
 
     setValues(prev => ({ ...prev, heroEnergy: prev.heroEnergy - cost }))
 
-    if (isEffectApplicable(spell.effect, spell.cardType, board, values.monsterType, false)) {
+    if (requirementMet(spell.effect.modifier.requirement, spell.cardType, board, values.monsterType, false)) {
       applyCardEffect({
         values, cardEffect: spell.effect, creature: spell, board, healHero,
         increaseEnergy, battleEffects, setBattleEffects,
@@ -237,8 +237,8 @@ export const BattleProvider = ({ children }) => {
       })
     }
 
-    if (spell.extraEffect?.modifier?._type) {
-      if (isEffectApplicable(spell.extraEffect, spell.cardType, board, values.monsterType, false)) {
+    if (spell.extraEffect?.modifier?._type !== 'None') {
+      if (requirementMet(spell.extraEffect.modifier.requirement, spell.cardType, board, values.monsterType, false)) {
         applyCardEffect({
           values, cardEffect: spell.extraEffect, creature: spell, board, healHero,
           increaseEnergy, battleEffects, setBattleEffects,
@@ -371,8 +371,8 @@ export const BattleProvider = ({ children }) => {
   const creatureAttack = (creatureId) => {
     let creature = { ...board.find(creature => creature.id === creatureId) }
 
-    if (creature.attackEffect?.modifier?._type) {
-      if (isEffectApplicable(creature.attackEffect, creature.cardType, board, values.monsterType, true)) {
+    if (creature.attackEffect?.modifier?._type !== 'None') {
+      if (requirementMet(creature.attackEffect.modifier.requirement, creature.cardType, board, values.monsterType, true)) {
         applyCardEffect({
           values, cardEffect: creature.attackEffect, creature, board, healHero,
           increaseEnergy, battleEffects, setBattleEffects,
@@ -391,8 +391,8 @@ export const BattleProvider = ({ children }) => {
   }
 
   const creatureDeathEffect = (creature) => {
-    if (creature.deathEffect?.modifier?._type) {
-      if (isEffectApplicable(creature.deathEffect, creature.cardType, board, values.monsterType, true)) {
+    if (creature.deathEffect?.modifier?._type !== 'None') {
+      if (requirementMet(creature.deathEffect.modifier.requirement, creature.cardType, board, values.monsterType, true)) {
         applyCardEffect({
           values, cardEffect: creature.deathEffect, creature, board, healHero,
           increaseEnergy, battleEffects, setBattleEffects,
@@ -431,11 +431,6 @@ export const BattleProvider = ({ children }) => {
   // HAND UTILS
   const getCardCost = (card) => {
     let cost = card.cost
-
-    if (roundStats.creaturesPlayed < 1) {
-      cost -= gameEffects.firstCreatureCost ?? 0;
-    }
-
     return cost
   }
 

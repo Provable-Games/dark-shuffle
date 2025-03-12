@@ -5,8 +5,7 @@ import React from "react";
 import { isMobile } from 'react-device-detect';
 import bolt from "../assets/images/bolt.png";
 import sword from '../assets/images/sword.png';
-import { fetch_card_image, types, buildEffectText } from "../helpers/cards";
-import { tierColors } from '../helpers/constants';
+import { fetch_card_image, types, buildEffectText, tierColors } from "../helpers/cards";
 
 function Card(props) {
   const { card, pendingCard, draftIndex, replaySelection } = props
