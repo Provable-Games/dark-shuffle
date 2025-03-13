@@ -3,7 +3,7 @@ import { getEntityIdFromKeys, hexToAscii } from "@dojoengine/utils";
 import { gql, request } from 'graphql-request';
 import { dojoConfig } from '../../dojo.config';
 import { get_short_namespace } from '../helpers/components';
-import { formatCardEffect, types, rarities } from "../helpers/cards";
+import { formatCardEffect, types, rarities, cardTypes } from "../helpers/cards";
 
 let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace(NS);
@@ -223,7 +223,7 @@ export async function getBattleState(battle_id, game_id) {
           hand
           deck
           board {
-            card_id
+            card_index
             attack
             health
           }
@@ -604,7 +604,7 @@ export async function getCardDetails(card_ids) {
           category: types.CREATURE,
           attack: creature.attack,
           health: creature.health,
-          cardType: creature.card_type,
+          cardType: cardTypes[creature.card_type],
           playEffect: formatCardEffect(creature.play_effect),
           deathEffect: formatCardEffect(creature.death_effect),
           attackEffect: formatCardEffect(creature.attack_effect)
@@ -617,7 +617,7 @@ export async function getCardDetails(card_ids) {
       if (spell) {
         details = {
           category: types.SPELL,
-          cardType: spell.card_type,
+          cardType: cardTypes[spell.card_type],
           effect: formatCardEffect(spell.effect),
           extraEffect: formatCardEffect(spell.extra_effect)
         };

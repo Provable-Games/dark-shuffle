@@ -8,12 +8,12 @@ export const applyCardEffect = ({
 }) => {
   let cardType = creature.cardType;
 
-  let modifierValue = cardEffect.modifier.value_type === valueTypes.Fixed
+  let modifierValue = cardEffect.modifier.value_type === 'Fixed'
     ? cardEffect.modifier.value
     : cardEffect.modifier.value * allyCount(cardType, board);
 
   if (cardEffect.bonus && requirementMet(cardEffect.bonus.requirement, cardType, board, values.monsterType, onBoard)) {
-    if (cardEffect.bonus.value_type === valueTypes.Fixed) {
+    if (cardEffect.bonus.value_type === 'Fixed') {
       modifierValue += cardEffect.bonus.value;
     } else {
       modifierValue += cardEffect.bonus.value * allyCount(cardType, board);

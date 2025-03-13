@@ -468,7 +468,7 @@ export const BattleProvider = ({ children }) => {
 
   const fetchBattleState = async (battleId, gameId) => {
     let data = await getBattleState(parseInt(battleId), parseInt(gameId))
-
+    console.log(data)
     setValues({
       battleId,
 
@@ -496,7 +496,7 @@ export const BattleProvider = ({ children }) => {
     setHand(data.battleResources.hand.map((cardIndex, i) => game.utils.getCard(cardIndex, i + 1)))
     setDeck(data.battleResources.deck)
     setBoard(data.battleResources.board.map((creature, i) => ({
-      ...game.utils.getCard(creature.card_id, i),
+      ...game.utils.getCard(creature.card_index, i),
       attack: creature.attack,
       health: creature.health,
     })))

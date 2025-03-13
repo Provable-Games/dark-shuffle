@@ -86,7 +86,7 @@ impl CardUtilsImpl of CardUtilsTrait {
     }
 
     fn _is_enemy_weak(card_type: CardType, enemy_type: CardType) -> bool {
-        (card_type == CardType::Hunter && enemy_type == CardType::Brute)
+        (card_type == CardType::Hunter && enemy_type == CardType::Magical)
             || (card_type == CardType::Brute && enemy_type == CardType::Hunter)
             || (card_type == CardType::Magical && enemy_type == CardType::Brute)
     }

@@ -202,6 +202,13 @@ export const rarities = {
   5: 'Legendary'
 }
 
+export const cardTypes = {
+  0: 'None',
+  1: 'Hunter',
+  2: 'Brute',
+  3: 'Magical'
+}
+
 export const CardSize = {
   big: { height: '330px', width: '252px' },
   large: { height: '275px', width: '210px' },

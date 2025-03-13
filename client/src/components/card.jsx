@@ -11,38 +11,38 @@ function Card(props) {
   const { card, pendingCard, draftIndex, replaySelection } = props
 
   const renderCardText = () => {
-    let effectCount = (card.playEffect?.modifier?._type ? 1 : 0) + (card.attackEffect?.modifier?._type ? 1 : 0) + (card.deathEffect?.modifier?._type ? 1 : 0)
+    let effectCount = (card.playEffect?.modifier?._type !== 'None' ? 1 : 0) + (card.attackEffect?.modifier?._type !== 'None' ? 1 : 0) + (card.deathEffect?.modifier?._type !== 'None' ? 1 : 0)
     let fontSize = effectCount > 1 ? '12px' : '13px'
 
     return <Box sx={styles.textContainer} p={isMobile ? '2px' : '4px'}>
-      {card.playEffect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+      {card.playEffect && card.playEffect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
         <span>Play:</span>
         <span style={styles.breadText}>
           {buildEffectText(card.cardType, card.playEffect, 'play')}
         </span>
       </Typography>}
 
-      {card.attackEffect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+      {card.attackEffect && card.attackEffect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
         <span>Attack:</span>
         <span style={styles.breadText}>
           {buildEffectText(card.cardType, card.attackEffect, 'attack')}
         </span>
       </Typography>}
 
-      {card.deathEffect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+      {card.deathEffect && card.deathEffect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
         <span>Death:</span>
         <span style={styles.breadText}>
           {buildEffectText(card.cardType, card.deathEffect, 'death')}
         </span>
       </Typography>}
 
-      {card.effect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+      {card.effect && card.effect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
         <span>
           {buildEffectText(card.cardType, card.effect, 'spell')}
         </span>
       </Typography>}
 
-      {card.extraEffect?.modifier?._type && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+      {card.extraEffect && card.extraEffect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
         <span style={{ marginLeft: '4px' }}>
           and {buildEffectText(card.cardType, card.extraEffect, 'spell_extra').toLowerCase()}
         </span>
