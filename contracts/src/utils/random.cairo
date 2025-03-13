@@ -1,6 +1,7 @@
-use cartridge_vrf::{IVrfProviderDispatcher, IVrfProviderDispatcherTrait, Source};
-use core::integer::{U256DivRem, u256_try_as_non_zero};
-use darkshuffle::constants::{LCG_PRIME, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, U128_MAX};
+use core::{integer::{U256DivRem, u256_try_as_non_zero}};
+use darkshuffle::constants::{CARD_POOL_SIZE, LCG_PRIME, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, U128_MAX};
+
+use darkshuffle::utils::cartridge::vrf::{IVrfProviderDispatcher, IVrfProviderDispatcherTrait, Source};
 use starknet::{ContractAddress, contract_address_const, get_block_timestamp, get_caller_address, get_tx_info};
 
 fn get_vrf_address() -> ContractAddress {

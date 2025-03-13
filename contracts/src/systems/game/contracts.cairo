@@ -33,10 +33,13 @@ mod game_systems {
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
-    use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
+    use dojo::world::WorldStorage;
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+
     use openzeppelin_introspection::src5::SRC5Component;
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+
+    use openzeppelin_token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
     use openzeppelin_token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
     use starknet::{ContractAddress, get_caller_address, get_contract_address, get_tx_info};
     use tournaments::components::game::game_component;

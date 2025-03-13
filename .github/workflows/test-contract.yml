@@ -1,8 +1,8 @@
 name: test-contracts
 
 env:
-  SCARB_VERSION: 2.8.4
-  DOJO_VERSION: 1.0.9
+  SCARB_VERSION: 2.9.2
+  DOJO_VERSION: 1.2.1
 
 on:
   pull_request:
@@ -39,6 +39,10 @@ jobs:
           sudo mv sozo /usr/local/bin/
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Setup Scarb
+        uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: ${{ env.SCARB_VERSION }}
       - name: Run Dojo Build
         run: |
           cd contracts && sozo build
