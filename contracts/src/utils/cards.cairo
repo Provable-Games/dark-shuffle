@@ -101,7 +101,7 @@ impl CardUtilsImpl of CardUtilsTrait {
     }
 
     fn get_card(world: WorldStorage, game_id: u64, card_index: u8) -> Card {
-        let card_ids: Span<u64> = ConfigUtilsImpl::get_game_settings(world, game_id).card_ids;
+        let card_ids: Span<u64> = ConfigUtilsImpl::get_game_settings(world, game_id).draft.card_ids;
         let card: Card = world.read_model(*card_ids.at(card_index.into()));
         card
     }

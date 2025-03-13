@@ -149,9 +149,9 @@ mod game_systems {
             };
 
             let card_pool = DraftUtilsImpl::get_weighted_draft_list(world, game_settings);
-            if game_settings.auto_draft {
+            if game_settings.draft.auto_draft {
                 game.state = GameState::Map.into();
-                let draft_list = DraftUtilsImpl::auto_draft(seed, card_pool, game_settings.draft_size);
+                let draft_list = DraftUtilsImpl::auto_draft(seed, card_pool, game_settings.draft.draft_size);
                 world.write_model(@Draft { game_id, options: array![].span(), cards: draft_list });
             } else {
                 let options = DraftUtilsImpl::get_draft_options(seed, card_pool);

@@ -1,6 +1,6 @@
 use darkshuffle::constants::LAST_NODE_DEPTH;
-use darkshuffle::models::battle::{Battle, BattleEffects, Hero, Monster};
-use darkshuffle::models::config::GameSettings;
+use darkshuffle::models::battle::{Battle, BattleEffects, BattleResources, Hero, Monster};
+use darkshuffle::models::config::{GameSettings, CardRarityWeights, MapSettings, BattleSettings, DraftSettings};
 use darkshuffle::models::draft::Draft;
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::models::map::Map;
@@ -87,7 +87,56 @@ fn create_battle(
 
     battle_id
 }
-// fn create_battle_resources(ref world: WorldStorage, game_id: u64, hand: Span<u8>, deck: Span<u8>) {
-//     world.write_model_test(@BattleResources { battle_id: 1, game_id, hand, deck, board: array![].span() });
-// }
 
+fn create_battle_resources(ref world: WorldStorage, game_id: u64, hand: Span<u8>, deck: Span<u8>) {
+    world.write_model_test(@BattleResources { battle_id: 1, game_id, hand, deck, board: array![].span() });
+}
+
+fn create_custom_settings(
+    ref world: WorldStorage,
+    start_health: u8,
+    start_energy: u8,
+    start_hand_size: u8,
+    draft_size: u8,
+    max_energy: u8,
+    max_hand_size: u8,
+    draw_amount: u8,
+    persistent_health: bool,
+    auto_draft: bool,
+    card_ids: Span<u64>,
+    card_rarity_weights: CardRarityWeights,
+    max_branches: u8,
+    enemy_attack: u8,
+    enemy_health: u8,
+) -> u32 {
+    let settings_id = 99;
+
+    world
+        .write_model_test(
+            @GameSettings {
+                settings_id,
+                start_health,
+                persistent_health,
+                map: MapSettings {
+                    max_branches,
+                    enemy_attack,
+                    enemy_health,
+                },
+                battle: BattleSettings {
+                    start_energy,
+                    start_hand_size,
+                    max_energy,
+                    max_hand_size,
+                    draw_amount,
+                },
+                draft: DraftSettings {
+                    draft_size,
+                    card_ids,
+                    card_rarity_weights,
+                    auto_draft,
+                },
+            },
+        );
+
+    settings_id
+}

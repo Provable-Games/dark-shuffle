@@ -37,7 +37,7 @@ fn SETTINGS_MODEL() -> ByteArray {
 }
 
 pub mod DEFAULT_SETTINGS {
-    use darkshuffle::models::config::{GameSettings, CardRarityWeights};
+    use darkshuffle::models::config::{GameSettings, CardRarityWeights, MapSettings, BattleSettings, DraftSettings};
 
     const START_HEALTH: u8 = 50;
     const START_ENERGY: u8 = 1;
@@ -73,16 +73,25 @@ pub mod DEFAULT_SETTINGS {
         GameSettings {
             settings_id: 0,
             start_health: START_HEALTH,
-            start_energy: START_ENERGY,
-            start_hand_size: START_HAND_SIZE,
-            draft_size: DRAFT_SIZE,
-            max_energy: MAX_ENERGY,
-            max_hand_size: MAX_HAND_SIZE,
-            draw_amount: DRAW_AMOUNT,
-            card_ids: GET_GENESIS_CARD_IDS(),
-            card_rarity_weights: GET_DEFAULT_WEIGHTS(),
-            auto_draft: true,
             persistent_health: true,
+            map: MapSettings {
+                max_branches: 3,
+                enemy_attack: 2,
+                enemy_health: 40,
+            },
+            battle: BattleSettings {
+                start_energy: START_ENERGY,
+                start_hand_size: START_HAND_SIZE,
+                max_energy: MAX_ENERGY,
+                max_hand_size: MAX_HAND_SIZE,
+                draw_amount: DRAW_AMOUNT,
+            },
+            draft: DraftSettings {
+                card_ids: GET_GENESIS_CARD_IDS(),
+                card_rarity_weights: GET_DEFAULT_WEIGHTS(),
+                auto_draft: false,
+                draft_size: DRAFT_SIZE,
+            },
         }
     }
 }

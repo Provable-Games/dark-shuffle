@@ -4,7 +4,7 @@ use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::systems::draft::contracts::{IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait, draft_systems};
 
 use darkshuffle::utils::testing::{
-    general::{create_default_settings, create_draft, create_game, mint_game_token},
+    general::{create_draft, create_game, mint_game_token},
     systems::{deploy_draft_systems, deploy_system}, world::spawn_darkshuffle,
 };
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};

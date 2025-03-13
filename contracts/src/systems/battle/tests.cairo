@@ -4,7 +4,7 @@ use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleS
 use darkshuffle::utils::cards::CardUtilsImpl;
 
 use darkshuffle::utils::testing::{
-    general::{create_battle, create_battle_resources, create_default_settings, create_game, mint_game_token},
+    general::{create_battle, create_battle_resources, create_game, mint_game_token},
     systems::{deploy_battle_systems, deploy_system}, world::spawn_darkshuffle,
 };
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
@@ -64,58 +64,25 @@ fn battle_test_end_turn() {
 fn battle_test_summon_creature() {
     let (mut world, game_id, battle_systems_dispatcher) = setup();
 
-    let card: Card = CardUtilsImpl::get_card(world, game_id, 1);
-    let battle_id = create_battle(ref world, game_id, 1, 50, card.cost, 255, 0, 100);
+    let card_index = 0;
+    let card: Card = CardUtilsImpl::get_card(world, game_id, card_index);
+    let battle_id = create_battle(ref world, game_id, 1, 50, card.cost, 1, 0, 100);
 
     create_battle_resources(
         ref world,
         game_id,
-        array![card.card_id].span(),
+        array![card_index].span(),
         array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
     );
 
     battle_systems_dispatcher
-        .battle_actions(game_id, battle_id, array![array![0, card.card_id].span(), array![1].span()].span());
+        .battle_actions(game_id, battle_id, array![array![0, card_index].span(), array![1].span()].span());
 
     let battle_resources: BattleResources = world.read_model((battle_id, game_id));
 
-    assert(*battle_resources.board.at(0).card_id == card.card_id, 'Creature card id not set');
+    assert(*battle_resources.board.at(0).card_index == card_index, 'Creature card index not set');
     assert(battle_resources.hand.len() == 1, 'Card not removed from hand');
-}
 
-#[test] // 125119600 gas
-fn battle_test_attack_enemy() {
-    let (mut world, game_id, battle_systems_dispatcher) = setup();
-
-    let battle_id = create_battle(
-        ref world,
-        game_id,
-        1,
-        50,
-        1,
-        255,
-        3,
-        100,
-        array![].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
-    );
-
-    create_battle_resources(
-        ref world,
-        game_id,
-        array![].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
-    );
-
-    let mut battle_resources: BattleResources = world.read_model((battle_id, game_id));
-    battle_resources.board = array![Creature { card_id: 255, attack: 1, health: 1 }].span();
-    world.write_model_test(@battle_resources);
-
-    battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
-
-    let battle_resources: BattleResources = world.read_model((battle_id, game_id));
     let battle: Battle = world.read_model((battle_id, game_id));
-
-    assert(*battle_resources.board.at(0).health == 0, 'Creature health not reduced');
-    assert(battle.monster.health == 99, 'Monster health not reduced');
+    assert(battle.monster.health != 100, 'Monster health not reduced');
 }

@@ -37,7 +37,7 @@ mod draft_systems {
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let current_draft_size = draft.cards.len();
 
-            if current_draft_size == game_settings.draft_size.into() {
+            if current_draft_size == game_settings.draft.draft_size.into() {
                 game.state = GameState::Map.into();
                 game.action_count = current_draft_size.try_into().unwrap();
                 world.write_model(@game);

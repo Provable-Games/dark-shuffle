@@ -4,7 +4,7 @@ use darkshuffle::models::map::{Map};
 use darkshuffle::systems::map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems};
 
 use darkshuffle::utils::testing::{
-    general::{create_default_settings, create_draft, create_game, create_map, mint_game_token},
+    general::{create_draft, create_game, create_map, mint_game_token},
     systems::{deploy_map_systems, deploy_system}, world::spawn_darkshuffle,
 };
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};

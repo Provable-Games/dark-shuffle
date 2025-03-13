@@ -8,8 +8,10 @@ trait IMapSystems<T> {
 mod map_systems {
     use achievement::store::{Store, StoreTrait};
     use darkshuffle::constants::DEFAULT_NS;
+    use darkshuffle::models::config::GameSettings;
     use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait};
     use darkshuffle::models::map::{Map, MonsterNode};
+    use darkshuffle::utils::config::ConfigUtilsImpl;
     use darkshuffle::utils::map::MapUtilsImpl;
     use darkshuffle::utils::random;
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
@@ -70,12 +72,13 @@ mod map_systems {
             game.assert_owner(world);
             game.assert_select_node();
 
+            let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let mut map: Map = world.read_model((game_id, game.map_level));
-            assert(MapUtilsImpl::node_available(game, map, node_id), 'Invalid node');
+            assert(MapUtilsImpl::node_available(game, map, node_id, game_settings.map), 'Invalid node');
 
             game.last_node_id = node_id;
 
-            let monster_node: MonsterNode = MapUtilsImpl::get_monster_node(map, node_id);
+            let monster_node: MonsterNode = MapUtilsImpl::get_monster_node(map, node_id, game_settings.map);
             let random_hash = random::get_random_hash();
             let seed: u128 = random::get_entropy(random_hash);
 

@@ -1,5 +1,5 @@
 use darkshuffle::models::battle::{Battle, BattleEffects, BattleResources, Hero, Monster};
-use darkshuffle::models::config::GameSettings;
+use darkshuffle::models::config::{GameSettings, MapSettings};
 use darkshuffle::models::draft::Draft;
 use darkshuffle::models::game::{Game, GameEffects, GameState};
 use darkshuffle::models::map::{Map, MonsterNode};
@@ -12,13 +12,13 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
 
 #[generate_trait]
 impl MapUtilsImpl of MapUtilsTrait {
-    fn node_available(game: Game, map: Map, node_id: u8) -> bool {
+    fn node_available(game: Game, map: Map, node_id: u8, map_settings: MapSettings) -> bool {
         if game.map_depth == 1 && node_id == 1 {
             return true;
         }
 
         let mut seed = random::LCG(map.seed);
-        let sections = random::get_random_number(seed, 3);
+        let sections = random::get_random_number(seed, map_settings.max_branches);
 
         let mut is_available = false;
         let mut current_node_id = 1;
@@ -41,7 +41,7 @@ impl MapUtilsImpl of MapUtilsTrait {
             }
 
             seed = random::LCG(seed);
-            if random::get_random_number(seed, 2) > 1 {
+            if random::get_random_number(seed, map_settings.max_branches) > 1 {
                 depth_3_count += 1;
                 current_node_id += 1;
                 if current_node_id == node_id && game.last_node_id == current_node_id - 2 {
@@ -52,7 +52,7 @@ impl MapUtilsImpl of MapUtilsTrait {
 
             // Depth 4
             seed = random::LCG(seed);
-            if random::get_random_number(seed, 2) > 1 {
+            if random::get_random_number(seed, map_settings.max_branches) > 1 {
                 current_node_id += 1;
                 if current_node_id == node_id && game.last_node_id == current_node_id - depth_3_count {
                     is_available = true;
@@ -87,7 +87,7 @@ impl MapUtilsImpl of MapUtilsTrait {
         }
     }
 
-    fn get_monster_node(map: Map, node_id: u8) -> MonsterNode {
+    fn get_monster_node(map: Map, node_id: u8, map_settings: MapSettings) -> MonsterNode {
         let mut seed = map.seed;
         let mut LCG_iterations = 0;
 
@@ -103,8 +103,9 @@ impl MapUtilsImpl of MapUtilsTrait {
 
         let monster_id = random::get_random_number(seed, 75 - monster_range) + monster_range;
 
-        let health = 35 + (map.level * 5);
-        let attack = (map.level + 1);
+        let map_scaling = map.level - 1;
+        let health = map_settings.enemy_health + (map_scaling * 5);
+        let attack = map_settings.enemy_attack + map_scaling;
 
         MonsterNode { monster_id, attack, health }
     }
@@ -121,7 +122,7 @@ impl MapUtilsImpl of MapUtilsTrait {
             game_id: game.game_id,
             round: 1,
             hero: Hero {
-                health: game.hero_health, energy: game_settings.start_energy + game_effects.start_bonus_energy,
+                health: game.hero_health, energy: game_settings.battle.start_energy + game_effects.start_bonus_energy,
             },
             monster: Monster { monster_id: monster.monster_id, attack: monster.attack, health: monster.health },
             battle_effects: BattleEffects {
@@ -145,7 +146,7 @@ impl MapUtilsImpl of MapUtilsTrait {
         };
 
         HandUtilsImpl::draw_cards(
-            ref battle_resources, game_settings.start_hand_size, game_settings.max_hand_size, seed,
+            ref battle_resources, game_settings.battle.start_hand_size, game_settings.battle.max_hand_size, seed,
         );
 
         world.write_model(@battle);

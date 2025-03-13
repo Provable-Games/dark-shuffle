@@ -10,15 +10,15 @@ impl DraftUtilsImpl of DraftUtilsTrait {
         let mut draft_list = array![];
 
         let mut i: u8 = 0;
-        while i.into() < game_settings.card_ids.len() {
-            let card: Card = world.read_model(*game_settings.card_ids.at(i.into()));
+        while i.into() < game_settings.draft.card_ids.len() {
+            let card: Card = world.read_model(*game_settings.draft.card_ids.at(i.into()));
             let card_rarity: CardRarity = card.rarity.into();
             let weight = match card_rarity {
-                CardRarity::Common => game_settings.card_rarity_weights.common,
-                CardRarity::Uncommon => game_settings.card_rarity_weights.uncommon,
-                CardRarity::Rare => game_settings.card_rarity_weights.rare,
-                CardRarity::Epic => game_settings.card_rarity_weights.epic,
-                CardRarity::Legendary => game_settings.card_rarity_weights.legendary,
+                CardRarity::Common => game_settings.draft.card_rarity_weights.common,
+                CardRarity::Uncommon => game_settings.draft.card_rarity_weights.uncommon,
+                CardRarity::Rare => game_settings.draft.card_rarity_weights.rare,
+                CardRarity::Epic => game_settings.draft.card_rarity_weights.epic,
+                CardRarity::Legendary => game_settings.draft.card_rarity_weights.legendary,
                 _ => 0,
             };
 

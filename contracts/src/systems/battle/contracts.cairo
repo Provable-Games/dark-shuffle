@@ -153,16 +153,16 @@ mod battle_systems {
                 battle_resources.board = BoardUtilsImpl::get_packed_board(ref board);
                 battle.round += 1;
 
-                if battle.round > game_settings.max_energy {
-                    battle.hero.energy = game_settings.max_energy;
+                if battle.round > game_settings.battle.max_energy {
+                    battle.hero.energy = game_settings.battle.max_energy;
                 } else {
                     battle.hero.energy = battle.round;
                 }
 
                 HandUtilsImpl::draw_cards(
                     ref battle_resources,
-                    game_settings.draw_amount + game_effects.card_draw,
-                    game_settings.max_hand_size,
+                    game_settings.battle.draw_amount + game_effects.card_draw,
+                    game_settings.battle.max_hand_size,
                     seed,
                 );
 

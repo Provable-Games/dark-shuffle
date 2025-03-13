@@ -138,7 +138,7 @@ source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.20.0#77
 [[package]]
 name = "tournaments"
 version = "0.0.1"
-source = "git+https://github.com/Provable-Games/tournaments.git?branch=update-dojo-1.2.1#044133bc0db0505798661348b21ac68d8d92ef35"
+source = "git+https://github.com/Provable-Games/tournaments.git#b574c74a518506fb6463a105c5d5bae08f74862b"
 dependencies = [
  "dojo",
  "openzeppelin_introspection",

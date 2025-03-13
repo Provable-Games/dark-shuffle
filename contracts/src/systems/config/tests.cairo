@@ -1,3 +1,4 @@
+
 use darkshuffle::models::battle::{Battle, BattleResources};
 use darkshuffle::models::draft::{Draft};
 use darkshuffle::models::game::{Game, GameState};
@@ -5,9 +6,10 @@ use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleS
 use darkshuffle::systems::draft::contracts::{IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait, draft_systems};
 use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
 use darkshuffle::systems::map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems};
+use darkshuffle::constants::DEFAULT_SETTINGS::{GET_GENESIS_CARD_IDS, GET_DEFAULT_WEIGHTS};
 
 use darkshuffle::utils::testing::{
-    general::{create_battle, create_custom_settings, create_draft, create_game, create_map, mint_game_token},
+    general::{create_battle, create_custom_settings, create_draft, create_game, create_map, mint_game_token, create_battle_resources},
     systems::{deploy_battle_systems, deploy_draft_systems, deploy_game_systems, deploy_map_systems, deploy_system},
     world::spawn_darkshuffle,
 };
@@ -23,14 +25,33 @@ const START_ENERGY: u8 = 5;
 const START_HAND_SIZE: u8 = 1;
 const MAX_ENERGY: u8 = 15;
 const MAX_HAND_SIZE: u8 = 2;
+const DRAFT_SIZE: u8 = 5;
+const DRAW_AMOUNT: u8 = 1;
+const AUTO_DRAFT: bool = true;
+const PERSISTENT_HEALTH: bool = true;
+const MAX_BRANCHES: u8 = 3;
+const ENEMY_ATTACK: u8 = 2;
+const ENEMY_HEALTH: u8 = 40;
 
 fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
     let (mut world, game_systems_dispatcher) = spawn_darkshuffle();
 
-    let draft_size = 5;
-
     let settings_id = create_custom_settings(
-        ref world, START_HEALTH, START_ENERGY, START_HAND_SIZE, draft_size, MAX_ENERGY, MAX_HAND_SIZE, true,
+        ref world,
+        START_HEALTH,
+        START_ENERGY,
+        START_HAND_SIZE,
+        DRAFT_SIZE,
+        MAX_ENERGY,
+        MAX_HAND_SIZE,
+        DRAW_AMOUNT,
+        PERSISTENT_HEALTH,
+        AUTO_DRAFT,
+        GET_GENESIS_CARD_IDS(),
+        GET_DEFAULT_WEIGHTS(),
+        MAX_BRANCHES,
+        ENEMY_ATTACK,
+        ENEMY_HEALTH,
     );
 
     let game_id = mint_game_token(
