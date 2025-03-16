@@ -1,12 +1,13 @@
-use darkshuffle::constants::VERSION;
+use darkshuffle::constants::{VERSION, DEFAULT_SETTINGS};
 use darkshuffle::models::card::{
     Card, CardCategory, CardEffect, CardModifier, CardRarity, CardType, CreatureCard, EffectBonus, Modifier,
     Requirement, SpellCard, ValueType,
 };
-use darkshuffle::models::config::{CardsCounter, GameSettings};
+use darkshuffle::models::config::{CardsCounter, GameSettings, MapSettings, BattleSettings, DraftSettings};
 use dojo::model::ModelStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
 use tournaments::components::models::game::TokenMetadata;
+use darkshuffle::utils::random::{get_random_number, LCG};
 
 #[generate_trait]
 impl ConfigUtilsImpl of ConfigUtilsTrait {
@@ -14,6 +15,73 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         let token_metadata: TokenMetadata = world.read_model(game_id);
         let game_settings: GameSettings = world.read_model(token_metadata.settings_id);
         game_settings
+    }
+
+    fn random_settings(settings_id: u32, mut seed: u128) -> GameSettings {
+        let PERSISTENT_HEALTH: bool = if get_random_number(seed, 2) == 1 { true } else { false };
+
+        seed = LCG(seed);
+        let AUTO_DRAFT: bool = if get_random_number(seed, 4) == 1 { true } else { false };
+
+        seed = LCG(seed);
+        let START_ENERGY: u8 = get_random_number(seed, 10);
+
+        seed = LCG(seed);
+        let MAX_ENERGY: u8 = get_random_number(seed, START_ENERGY) + 4;
+
+        seed = LCG(seed);
+        let START_HAND_SIZE: u8 = get_random_number(seed, 10);
+        
+        seed = LCG(seed);
+        let mut MAX_HAND_SIZE: u8 = get_random_number(seed, 6) + 4;
+        if MAX_HAND_SIZE < START_HAND_SIZE {
+            MAX_HAND_SIZE = START_HAND_SIZE;
+        }
+
+        seed = LCG(seed);
+        let DRAW_AMOUNT: u8 = if get_random_number(seed, 5) == 1 { 2 } else { 1 };
+
+        seed = LCG(seed);
+        let MAX_BRANCHES: u8 = get_random_number(seed, 3);
+
+        seed = LCG(seed);
+        let ENEMY_ATTACK: u8 = get_random_number(seed, 5);
+
+        seed = LCG(seed);
+        let START_HEALTH: u8 = get_random_number(seed, 20) + (ENEMY_ATTACK * 10);
+
+        seed = LCG(seed);
+        let DRAFT_SIZE: u8 = get_random_number(seed, 25) + 4;
+
+        seed = LCG(seed);
+        let mut ENEMY_HEALTH: u8 = get_random_number(seed, 40) + 20;
+        if ENEMY_HEALTH < DRAFT_SIZE * 2 {
+            ENEMY_HEALTH = DRAFT_SIZE * 2;
+        }
+
+        GameSettings {
+            settings_id: settings_id,
+            start_health: START_HEALTH,
+            persistent_health: PERSISTENT_HEALTH,
+            map: MapSettings {
+                max_branches: MAX_BRANCHES,
+                enemy_attack: ENEMY_ATTACK,
+                enemy_health: ENEMY_HEALTH,
+            },
+            battle: BattleSettings {
+                start_energy: START_ENERGY,
+                start_hand_size: START_HAND_SIZE,
+                max_energy: MAX_ENERGY,
+                max_hand_size: MAX_HAND_SIZE,
+                draw_amount: DRAW_AMOUNT,
+            },
+            draft: DraftSettings {
+                card_ids: DEFAULT_SETTINGS::GET_GENESIS_CARD_IDS(),
+                card_rarity_weights: DEFAULT_SETTINGS::GET_DEFAULT_WEIGHTS(),
+                auto_draft: AUTO_DRAFT,
+                draft_size: DRAFT_SIZE,
+            },
+        }
     }
 
     fn create_creature_card(

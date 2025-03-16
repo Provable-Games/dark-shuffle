@@ -1,12 +1,9 @@
-use darkshuffle::models::card::{CardRarity, CardType};
+use darkshuffle::models::card::{CardRarity, CardType, CardEffect};
 use darkshuffle::models::config::{GameSettings, CardRarityWeights};
 use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IConfigSystems<T> {
-    fn add_card(
-        ref self: T, name: felt252, rarity: CardRarity, cost: u8, card_type: CardType
-    );
     fn add_settings(
         ref self: T,
         start_health: u8,
@@ -24,6 +21,11 @@ trait IConfigSystems<T> {
         enemy_attack: u8,
         enemy_health: u8,
     ) -> u32;
+
+    fn add_random_settings(ref self: T) -> u32;
+    fn add_creature_card(ref self: T, name: felt252, rarity: u8, cost: u8, attack: u8, health: u8, card_type: u8, play_effect: CardEffect, death_effect: CardEffect, attack_effect: CardEffect);
+    fn add_spell_card(ref self: T, name: felt252, rarity: u8, cost: u8, card_type: u8, effect: CardEffect, extra_effect: CardEffect);
+
     fn setting_details(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
     fn game_settings(self: @T, game_id: u64) -> GameSettings;
@@ -34,7 +36,7 @@ mod config_systems {
     use achievement::components::achievable::AchievableComponent;
     use darkshuffle::constants::DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS;
     use darkshuffle::constants::{DEFAULT_NS, VERSION};
-    use darkshuffle::models::card::{CardRarity, CardType};
+    use darkshuffle::models::card::{CardRarity, CardType, CardEffect};
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait, SettingsCounter, CardRarityWeights, MapSettings, BattleSettings, DraftSettings};
     use darkshuffle::utils::config::ConfigUtilsImpl;
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
@@ -42,6 +44,7 @@ mod config_systems {
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
     use starknet::{ContractAddress, get_caller_address};
     use tournaments::components::models::game::TokenMetadata;
+    use darkshuffle::utils::random;
 
     component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
     impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
@@ -94,16 +97,6 @@ mod config_systems {
 
     #[abi(embed_v0)]
     impl ConfigSystemsImpl of super::IConfigSystems<ContractState> {
-        fn add_card(
-            ref self: ContractState,
-            name: felt252,
-            rarity: CardRarity,
-            cost: u8,
-            card_type: CardType,
-        ) {
-            let mut world: WorldStorage = self.world(@DEFAULT_NS());
-        }
-
         fn add_settings(
             ref self: ContractState,
             start_health: u8,
@@ -156,6 +149,30 @@ mod config_systems {
             world.write_model(@settings);
             world.write_model(@settings_count);
             settings_count.count
+        }
+
+        fn add_random_settings(ref self: ContractState) -> u32 {
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
+            let mut settings_count: SettingsCounter = world.read_model(VERSION);
+            settings_count.count += 1;
+
+            let random_hash = random::get_random_hash();
+            let seed: u128 = random::get_entropy(random_hash);
+
+            let settings: GameSettings = ConfigUtilsImpl::random_settings(settings_count.count, seed);
+            world.write_model(@settings);
+            world.write_model(@settings_count);
+            settings_count.count
+        }
+
+        fn add_creature_card(ref self: ContractState, name: felt252, rarity: u8, cost: u8, attack: u8, health: u8, card_type: u8, play_effect: CardEffect, death_effect: CardEffect, attack_effect: CardEffect) {
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());            
+            ConfigUtilsImpl::create_creature_card(ref world, name, rarity, cost, attack, health, card_type, play_effect, death_effect, attack_effect);
+        }
+
+        fn add_spell_card(ref self: ContractState, name: felt252, rarity: u8, cost: u8, card_type: u8, effect: CardEffect, extra_effect: CardEffect) {
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
+            ConfigUtilsImpl::create_spell_card(ref world, name, rarity, cost, card_type, effect, extra_effect);
         }
 
         fn setting_details(self: @ContractState, settings_id: u32) -> GameSettings {
