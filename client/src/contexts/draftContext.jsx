@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { getDraft } from "../api/indexer";
 import { delay } from "../helpers/utilities";
 import { DojoContext } from "./dojoContext";

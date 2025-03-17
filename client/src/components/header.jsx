@@ -14,6 +14,7 @@ import { ellipseAddress } from '../helpers/utilities';
 import ChooseName from './dialogs/chooseName';
 import ConnectWallet from './dialogs/connectWallet';
 import ProfileMenu from './header/profileMenu';
+import GameSettingsList from './dialogs/gameSettingsList';
 
 const menuItems = [
   {
@@ -35,6 +36,7 @@ function Header(props) {
 
   const [connectWallet, openConnectWallet] = useState(false)
   const [nameDialog, openNameDialog] = useState(false)
+  const [gameSettings, openGameSettings] = useState(false)
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -95,9 +97,10 @@ function Header(props) {
         </IconButton>
       </Box>
 
-      <ProfileMenu handleClose={handleClose} anchorEl={anchorEl} openNameDialog={openNameDialog} />
+      <ProfileMenu handleClose={handleClose} anchorEl={anchorEl} openNameDialog={openNameDialog} openGameSettings={openGameSettings} />
       <ChooseName open={nameDialog} close={openNameDialog} />
       <ConnectWallet open={connectWallet} close={openConnectWallet} />
+      <GameSettingsList open={gameSettings} close={openGameSettings} />
     </Box>
   );
 }

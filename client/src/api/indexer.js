@@ -2,8 +2,8 @@ import { getContractByName } from "@dojoengine/core";
 import { getEntityIdFromKeys, hexToAscii } from "@dojoengine/utils";
 import { gql, request } from 'graphql-request';
 import { dojoConfig } from '../../dojo.config';
+import { cardTypes, formatCardEffect, rarities, types } from "../helpers/cards";
 import { get_short_namespace } from '../helpers/components';
-import { formatCardEffect, types, rarities, cardTypes } from "../helpers/cards";
 
 let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace(NS);
@@ -71,15 +71,22 @@ export async function getSettings(settings_id) {
         node {
           settings_id,
           start_health,
+          persistent_health,
           start_energy,
           start_hand_size,
-          draft_size,
           max_energy,
           max_hand_size,
-          card_ids,
           draw_amount,
           auto_draft,
-          persistent_health
+          draft_size,
+          card_ids,
+          card_rarity_weights {
+            common,
+            uncommon,
+            rare,
+            epic,
+            legendary
+          }
         }
       }
     }
@@ -595,7 +602,7 @@ export async function getCardDetails(card_ids) {
   const cardDetailsList = cards.map(card => {
     const cardId = parseInt(card.id, 16);
     let details = {};
-    
+
     // Check if this is a creature card
     if (card.category === 1) {
       const creature = creatureCards.find(c => c.id === card.id);
@@ -610,7 +617,7 @@ export async function getCardDetails(card_ids) {
           attackEffect: formatCardEffect(creature.attack_effect)
         };
       }
-    } 
+    }
     // Check if this is a spell card
     else if (card.category === 2) {
       const spell = spellCards.find(s => s.id === card.id);
@@ -682,12 +689,49 @@ export async function getTokenMetadata(game_id) {
 
   if (!metadata) return null;
 
+  let tokenId = parseInt(metadata.token_id, 16)
+
   return {
-    id: parseInt(metadata.token_id, 16),
+    id: tokenId,
+    tokenId,
     playerName: hexToAscii(metadata.player_name),
     settingsId: parseInt(metadata.settings_id, 16),
     expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
     available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000,
     active: game?.hero_health !== 0
   };
+}
+
+export async function getSettingsList() {
+  const document = gql`
+  {
+    ${NS_SHORT}GameSettingsModels(limit:1000, order:{field:SETTINGS_ID, direction:ASC}) {
+      edges {
+        node {
+          settings_id,
+          start_health,
+          persistent_health,
+          start_energy,
+          start_hand_size,
+          max_energy,
+          max_hand_size,
+          draw_amount,
+          auto_draft,
+          draft_size,
+          card_ids,
+          card_rarity_weights {
+            common,
+            uncommon,
+            rare,
+            epic,
+            legendary
+          }
+        }
+      }
+    }
+  }`
+
+  const res = await request(GQL_ENDPOINT, document)
+
+  return res?.[`${NS_SHORT}GameSettingsModels`]?.edges.map(edge => edge.node)
 }

@@ -15,21 +15,21 @@ export const fetchCardTypeImage = (type, color = '#ffffffe6') => {
 }
 
 export const tierColors = {
-  Common: '#90EE90',
-  Uncommon: '#FFFF00',
-  Rare: '#FFA500',
-  Epic: '#FF0000',
-  Legendary: '#800080',
+  common: '#8B7D6B',
+  uncommon: '#DDEAE0',
+  rare: '#3B82F6',
+  epic: '#A855F7',
+  legendary: '#F97316',
 }
 
 export const buildEffectText = (cardType, effect, effectType) => {
   let isSpell = effectType === 'spell' || effectType === 'spell_extra'
-  
+
   let value = effect.modifier.value
   if (effect.bonus.requirement === effect.modifier.requirement) {
     value += effect.bonus.value
   }
-  
+
   let text = ''
   switch (effect.modifier._type) {
     case 'HeroHealth':
@@ -128,7 +128,7 @@ export const getWeakType = (cardType) => {
 
 export const formatCardEffect = (cardEffect) => {
   if (!cardEffect || !cardEffect.modifier) return {};
-  
+
   // Format the modifier
   const formattedModifier = {
     _type: modifiers[cardEffect.modifier._type],
@@ -136,12 +136,12 @@ export const formatCardEffect = (cardEffect) => {
     value_type: valueTypes[cardEffect.modifier.value_type],
     requirement: requirements[cardEffect.modifier.requirement]
   };
-  
+
   const formattedBonus = {
     value: cardEffect.bonus.value,
     requirement: requirements[cardEffect.bonus.requirement]
   };
-  
+
   return {
     modifier: formattedModifier,
     bonus: formattedBonus

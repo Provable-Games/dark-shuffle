@@ -9,6 +9,7 @@ import { getGameTokens, populateGameTokens } from '../../api/indexer';
 import logo from '../../assets/images/logo.svg';
 import { useTournament } from '../../contexts/tournamentContext';
 import { fadeVariant } from "../../helpers/variants";
+import GameSettings from './gameSettings';
 
 function GameTokens(props) {
   const { tournaments } = useTournament()
@@ -19,6 +20,7 @@ function GameTokens(props) {
 
   const [active, showActive] = useState(true)
   const [loading, setLoading] = useState(true)
+  const [gameSettings, openGameSettings] = useState(false)
 
   useEffect(() => {
     async function fetchGames() {
@@ -29,7 +31,7 @@ function GameTokens(props) {
 
       games = games.map(game => ({
         ...game,
-        tournament: tournaments.find(tournament => tournament.id === game.tournament_id)
+        tournament: tournaments.find(tournament => tournament.id === game.tournament_id),
       }))
 
       setSelectedGame()
@@ -51,6 +53,7 @@ function GameTokens(props) {
   }
 
   function renderGame(game) {
+    console.log(game)
     return <Box sx={[styles.gameContainer, { opacity: selectedGame?.id === game.id ? 1 : 0.8 }]}
       border={selectedGame?.id === game.id ? '1px solid #f59100' : '1px solid rgba(255, 255, 255, 0.3)'}
       onClick={() => setSelectedGame(game)}
@@ -60,7 +63,7 @@ function GameTokens(props) {
         <img alt='' src={logo} height='42' />
 
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography color='primary' textTransform={'uppercase'} fontSize={'12px'}>
+          <Typography color='primary' textTransform={'uppercase'} fontSize={'12px'} >
             {game.playerName} - #{game.id}
           </Typography>
 
@@ -110,7 +113,7 @@ function GameTokens(props) {
 
         </Box>}
 
-        {game.tournament_id ? <Typography sx={{ color: '#f59100' }}>
+        {game.tournament_id ? <Typography sx={{ color: '#f59100', textAlign: 'right' }}>
           {game.tournament?.name}
         </Typography> : <Typography sx={{ color: '#fff', opacity: 0.8 }}>
           Free
@@ -164,7 +167,13 @@ function GameTokens(props) {
             </Box>
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
-              <Button variant='outlined' size='large'
+              <Button color='secondary' variant='outlined' size='large' onClick={() => openGameSettings(true)}
+                disabled={!selectedGame}
+              >
+                View Settings
+              </Button>
+
+              <Button variant='outlined' size='large' sx={{ width: '140px' }}
                 disabled={!selectedGame || !selectedGame.active || selectedGame.available_at > Date.now()}
                 onClick={() => handleResumeGame()}
               >
@@ -176,6 +185,8 @@ function GameTokens(props) {
         </motion.div>
 
       </Box>
+
+      {gameSettings && <GameSettings settingsId={selectedGame?.settingsId} view={true} close={() => openGameSettings(false)} />}
     </Dialog>
   )
 }
@@ -214,7 +225,7 @@ const styles = {
     mb: 1
   },
   gamesContainer: {
-    width: '360px',
+    width: '370px',
     maxWidth: '100%',
     minHeight: '200px',
     display: 'flex',

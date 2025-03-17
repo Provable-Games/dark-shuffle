@@ -70,7 +70,7 @@ function Card(props) {
       </Typography>
 
       <Box sx={isMobile ? styles.mobileLevelContainer : styles.levelContainer}>
-        <BookmarkIcon htmlColor={tierColors[card.rarity]} fontSize='large' />
+        <BookmarkIcon htmlColor={tierColors[card.rarity.toLowerCase()]} fontSize='large' />
       </Box>
     </Box>
 

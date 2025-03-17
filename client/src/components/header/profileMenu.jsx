@@ -3,6 +3,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
+import SettingsIcon from '@mui/icons-material/Settings';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import XIcon from '@mui/icons-material/X';
 import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from '@mui/material';
@@ -14,7 +15,7 @@ import { formatNumber } from '../../helpers/utilities';
 import { dojoConfig } from '../../../dojo.config';
 
 function ProfileMenu(props) {
-  const { handleClose, anchorEl, openNameDialog } = props
+  const { handleClose, anchorEl, openNameDialog, openGameSettings } = props
   const { disconnect } = useDisconnect()
 
   const dojo = useContext(DojoContext)
@@ -53,6 +54,17 @@ function ProfileMenu(props) {
             </IconButton>
           </Box>
         </Box>
+
+        <Divider sx={{ my: 1 }} />
+
+        <MenuItem onClick={() => { openGameSettings(true); handleClose() }}>
+          <ListItemIcon>
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Game Settings
+          </ListItemText>
+        </MenuItem>
 
         <Divider sx={{ my: 1 }} />
 

@@ -1,10 +1,11 @@
 import { LoadingButton, Skeleton } from '@mui/lab'
 import { Box, Button, Typography } from '@mui/material'
-import { useAccount } from '@starknet-react/core'
+import { useAccount, useConnect } from '@starknet-react/core'
 import { useSnackbar } from 'notistack'
 import React, { useContext, useEffect, useState } from 'react'
 import { BrowserView, MobileView } from 'react-device-detect'
-import { getActiveGame, getGameEffects, getMap, getSettings } from '../../api/indexer'
+import { useParams } from 'react-router-dom'
+import { getActiveGame, getGameEffects, getMap, getSettings, getTokenMetadata } from '../../api/indexer'
 import logo from '../../assets/images/logo.svg'
 import { BattleContext } from '../../contexts/battleContext'
 import { DojoContext } from '../../contexts/dojoContext'
@@ -27,8 +28,9 @@ function StartDraft() {
   const { season } = tournamentProvider
 
   const replay = useReplay()
-
-  const { address } = useAccount()
+  const { gameId } = useParams()
+  const { account, address } = useAccount()
+  const { connect, connectors } = useConnect();
   const { enqueueSnackbar } = useSnackbar()
 
   const dojo = useContext(DojoContext)
@@ -36,10 +38,34 @@ function StartDraft() {
   const battle = useContext(BattleContext)
   const draft = useContext(DraftContext)
 
+  let cartridgeConnector = connectors.find(conn => conn.id === "controller")
+
   const [startingSeasonGame, setStartingSeasonGame] = useState(false)
   const [gamesDialog, openGamesDialog] = useState(false)
   const [reconnecting, setReconnecting] = useState(false)
   const [previousGame, setPreviousGame] = useState()
+
+  useEffect(() => {
+    async function loadGame() {
+      if (!account) {
+        connect({ connector: cartridgeConnector })
+        return
+      }
+
+      if (gameId) {
+        let game = await getTokenMetadata(gameId)
+        if (game.active) {
+          loadGameSettings(game)
+        } else {
+          startMintedGame(game)
+        }
+      }
+    }
+
+    if (gameId) {
+      loadGame()
+    }
+  }, [gameId, account])
 
   const stopReconnecting = () => {
     setReconnecting(false)
