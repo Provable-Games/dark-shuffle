@@ -70,7 +70,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 1,
         creatureType: tags.MAGICAL,
-        cost: 2,
+        cost: 3,
         attack: 3,
         health: 4,
         text: "When Played: Magical allies gains +2 attack. If no other Magical ally is in play, reduce the enemy's attack by 1"
@@ -85,8 +85,8 @@ export const CARD_DETAILS = (cardId, id) => {
         cardTier: 1,
         creatureType: tags.MAGICAL,
         cost: 5,
-        attack: 6,
-        health: 6,
+        attack: 5,
+        health: 5,
         text: "On Attack: Heals the hero by 2 if the enemy is a Brute and gains +1 health for every Magical ally in play"
       };
 
@@ -128,7 +128,7 @@ export const CARD_DETAILS = (cardId, id) => {
         creatureType: tags.MAGICAL,
         cost: 1,
         attack: 3,
-        health: 2,
+        health: 3,
         text: "On Attack: Deals an additional 2 damage if another Magical ally is in play."
       };
 
@@ -140,8 +140,8 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 1,
         creatureType: tags.HUNTER,
-        cost: 5,
-        attack: 6,
+        cost: 4,
+        attack: 5,
         health: 4,
         text: "On Attack: Deals 5 extra damage if the enemy is Magical"
       };
@@ -196,7 +196,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 1,
         creatureType: tags.HUNTER,
-        cost: 4,
+        cost: 3,
         attack: 5,
         health: 4,
         text: "On Death: Grants +2 attack to the next Hunter played. If the enemy is Magical, the bonus increases to +4 attack"
@@ -266,7 +266,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 1,
         creatureType: tags.BRUTE,
-        cost: 2,
+        cost: 1,
         attack: 3,
         health: 3,
         text: "On Death: Grants +3 health to the next Brute played. If the enemy is a Hunter, grants +5 health instead"
@@ -294,8 +294,8 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 2,
         creatureType: tags.MAGICAL,
-        cost: 4,
-        attack: 4,
+        cost: 2,
+        attack: 3,
         health: 3,
         text: "When Played: Gain +1 attack if the enemy is a Brute. Gain +1 attack if a Magical ally is in play"
       };
@@ -364,7 +364,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 2,
         creatureType: tags.HUNTER,
-        cost: 4,
+        cost: 3,
         attack: 5,
         health: 2,
         text: "When Played: Gains +2 attack if there are no other Hunter allies in play"
@@ -378,7 +378,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 2,
         creatureType: tags.HUNTER,
-        cost: 3,
+        cost: 2,
         attack: 4,
         health: 2,
         text: "On Attack: Gains +1 attack if the enemy is Magical. Deals 1 extra damage if another Hunter ally is in play"
@@ -392,7 +392,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 2,
         creatureType: tags.HUNTER,
-        cost: 5,
+        cost: 4,
         attack: 4,
         health: 3,
         text: "When Played: Marks the enemy to take 1 additional damage. If the enemy is Magical, increase the damage to 2"
@@ -434,7 +434,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 2,
         creatureType: tags.BRUTE,
-        cost: 5,
+        cost: 3,
         attack: 4,
         health: 4,
         text: "Nephilim takes 1 less damage from all sources. If another Brute ally is in play, increase this to 2"
@@ -476,7 +476,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 2,
         creatureType: tags.BRUTE,
-        cost: 4,
+        cost: 3,
         attack: 3,
         health: 4,
         text: "On Death: Grants +1 attack to the next Brute played"
@@ -490,7 +490,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 3,
         creatureType: tags.MAGICAL,
-        cost: 3,
+        cost: 4,
         attack: 4,
         health: 4,
         text: "When Played: If the enemy is a Brute, reduce the enemy's attack by 1 and grant +1 health to other Magical allies"
@@ -589,7 +589,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardTier: 3,
         creatureType: tags.HUNTER,
         cost: 4,
-        attack: 4,
+        attack: 5,
         health: 4,
         text: "On Death: Grants +1 attack to the next Hunter played. Also gains +1 health if the enemy is Magical"
       };
@@ -618,7 +618,7 @@ export const CARD_DETAILS = (cardId, id) => {
         creatureType: tags.HUNTER,
         cost: 3,
         attack: 4,
-        health: 2,
+        health: 3,
         text: "On Attack: Deals 1 extra damage if the enemy is Magical"
       };
 
@@ -645,7 +645,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardTier: 3,
         creatureType: tags.BRUTE,
         cost: 2,
-        attack: 4,
+        attack: 3,
         health: 3,
         text: "When Played: Gains +1 attack if another Brute ally is in play. If the enemy is a Hunter, it also gains +1 health"
       };
@@ -659,7 +659,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardTier: 3,
         creatureType: tags.BRUTE,
         cost: 5,
-        attack: 5,
+        attack: 6,
         health: 3,
         text: "On Attack: Gains +2 health if the enemy is a Hunter"
       };
@@ -714,7 +714,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 4,
         creatureType: tags.MAGICAL,
-        cost: 1,
+        cost: 2,
         attack: 2,
         health: 2,
         text: "When Played: Reduce the enemy's attack by 1 if it's a Brute"
@@ -757,8 +757,8 @@ export const CARD_DETAILS = (cardId, id) => {
         cardTier: 4,
         creatureType: tags.MAGICAL,
         cost: 4,
-        attack: 3,
-        health: 3,
+        attack: 4,
+        health: 4,
         text: "On Attack: Gains +1 attack if the enemy is a Brute"
       };
 
@@ -799,7 +799,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardTier: 4,
         creatureType: tags.HUNTER,
         cost: 3,
-        attack: 2,
+        attack: 4,
         health: 3,
         text: "On Death: Grants +1 attack to the next Hunter played if the enemy is Magical"
       };
@@ -841,7 +841,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardTier: 4,
         creatureType: tags.BRUTE,
         cost: 3,
-        attack: 2,
+        attack: 3,
         health: 4,
         text: "On Death: Grants +1 attack to all Brute allies if the enemy is a Hunter"
       };
@@ -968,7 +968,7 @@ export const CARD_DETAILS = (cardId, id) => {
         creatureType: tags.MAGICAL,
         cost: 5,
         attack: 4,
-        health: 3,
+        health: 4,
         text: "On Attack: Deals 1 extra damage if the enemy is a Brute"
       };
 
@@ -1092,7 +1092,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.CREATURE,
         cardTier: 5,
         creatureType: tags.BRUTE,
-        cost: 3,
+        cost: 4,
         attack: 2,
         health: 3,
         text: "When Played: Reduce the enemy's attack by 1 if it's a Hunter"
@@ -1108,7 +1108,7 @@ export const CARD_DETAILS = (cardId, id) => {
         creatureType: tags.BRUTE,
         cost: 5,
         attack: 4,
-        health: 3,
+        health: 4,
         text: "On Attack: Deals 1 extra damage if there is another Brute ally in play"
       };
 
@@ -1162,7 +1162,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.SPELL,
         creatureType: tags.SPELL,
         cardTier: 2,
-        cost: 2,
+        cost: 3,
         attack: 0,
         health: 0,
         text: "Reduce the enemy's attack by 1"
@@ -1235,7 +1235,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cost: 5,
         attack: 0,
         health: 0,
-        text: "Deal 4 damage to the enemy and heal your hero for 4"
+        text: "Deal 3 damage to the enemy and heal your hero for 3"
       }
 
     case 85:
@@ -1263,7 +1263,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cost: 5,
         attack: 0,
         health: 0,
-        text: "Restore 5 health to your hero"
+        text: "Restore 4 health to your hero"
       }
 
     case 87:
@@ -1274,7 +1274,7 @@ export const CARD_DETAILS = (cardId, id) => {
         cardType: types.SPELL,
         creatureType: tags.SPELL,
         cardTier: 4,
-        cost: 2,
+        cost: 1,
         attack: 0,
         health: 0,
         text: "Your creatures gain +2 health"

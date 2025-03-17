@@ -13,7 +13,7 @@ openzeppelin_token = { git = "https://github.com/OpenZeppelin/cairo-contracts.gi
 openzeppelin_introspection = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.20.0" }
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.2.1" }
 achievement = { git = "https://github.com/cartridge-gg/arcade", tag = "v1.2.1" }
-tournaments = { git = "https://github.com/Provable-Games/tournaments.git", branch = "update-dojo-1.2.1" }
+tournaments = { git = "https://github.com/Provable-Games/tournaments.git" }
 alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git", tag = "v0.3.0" }
 alexandria_encoding = { git = "https://github.com/keep-starknet-strange/alexandria.git", tag = "v0.3.0" }
 graffiti = { git = "https://github.com/ponderingdemocritus/graffiti", rev = "bc569531791dbc71c6cd8d9bc154c34eedad31fe" }

@@ -45,8 +45,8 @@ export const spellEffect = ({
   }
 
   else if (spell.cardId === 84) {
-    damageMonster(4, 'Spell');
-    healHero(4);
+    damageMonster(3, 'Spell');
+    healHero(3);
   }
 
   else if (spell.cardId === 85) {
@@ -54,7 +54,7 @@ export const spellEffect = ({
   }
 
   else if (spell.cardId === 86) {
-    healHero(5);
+    healHero(4);
   }
 
   else if (spell.cardId === 87) {
