@@ -10,7 +10,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Magical,
-                cost: 2,
+                cost: 3,
                 attack: 3,
                 health: 4,
             };
@@ -22,8 +22,8 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Magical,
                 cost: 5,
-                attack: 6,
-                health: 6,
+                attack: 5,
+                health: 5,
             };
         } else if id == 3 {
             return Card {
@@ -56,7 +56,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 creature_type: CreatureType::Magical,
                 cost: 1,
                 attack: 3,
-                health: 2,
+                health: 3,
             };
         } else if id == 6 {
             return Card {
@@ -65,8 +65,8 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Hunter,
-                cost: 5,
-                attack: 6,
+                cost: 4,
+                attack: 5,
                 health: 4,
             };
         } else if id == 7 {
@@ -109,7 +109,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Hunter,
-                cost: 4,
+                cost: 3,
                 attack: 5,
                 health: 4,
             };
@@ -164,7 +164,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T1,
                 creature_type: CreatureType::Brute,
-                cost: 2,
+                cost: 1,
                 attack: 3,
                 health: 3,
             };
@@ -186,8 +186,8 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Magical,
-                cost: 4,
-                attack: 4,
+                cost: 2,
+                attack: 3,
                 health: 3,
             };
         } else if id == 18 {
@@ -241,7 +241,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Hunter,
-                cost: 4,
+                cost: 3,
                 attack: 5,
                 health: 2,
             };
@@ -252,7 +252,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Hunter,
-                cost: 3,
+                cost: 2,
                 attack: 4,
                 health: 2,
             };
@@ -263,7 +263,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Hunter,
-                cost: 5,
+                cost: 4,
                 attack: 4,
                 health: 3,
             };
@@ -296,7 +296,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Brute,
-                cost: 5,
+                cost: 3,
                 attack: 4,
                 health: 4,
             };
@@ -329,7 +329,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Brute,
-                cost: 4,
+                cost: 3,
                 attack: 3,
                 health: 4,
             };
@@ -340,7 +340,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T3,
                 creature_type: CreatureType::Magical,
-                cost: 3,
+                cost: 4,
                 attack: 4,
                 health: 4,
             };
@@ -418,7 +418,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_tier: CardTier::T3,
                 creature_type: CreatureType::Hunter,
                 cost: 4,
-                attack: 4,
+                attack: 5,
                 health: 4,
             };
         } else if id == 39 {
@@ -441,7 +441,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 creature_type: CreatureType::Hunter,
                 cost: 3,
                 attack: 4,
-                health: 2,
+                health: 3,
             };
         } else if id == 41 {
             return Card {
@@ -462,7 +462,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_tier: CardTier::T3,
                 creature_type: CreatureType::Brute,
                 cost: 2,
-                attack: 4,
+                attack: 3,
                 health: 3,
             };
         } else if id == 43 {
@@ -473,7 +473,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_tier: CardTier::T3,
                 creature_type: CreatureType::Brute,
                 cost: 5,
-                attack: 5,
+                attack: 6,
                 health: 3,
             };
         } else if id == 44 {
@@ -516,7 +516,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T4,
                 creature_type: CreatureType::Magical,
-                cost: 1,
+                cost: 2,
                 attack: 2,
                 health: 2,
             };
@@ -550,8 +550,8 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_tier: CardTier::T4,
                 creature_type: CreatureType::Magical,
                 cost: 4,
-                attack: 3,
-                health: 3,
+                attack: 4,
+                health: 4,
             };
         } else if id == 51 {
             return Card {
@@ -583,7 +583,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_tier: CardTier::T4,
                 creature_type: CreatureType::Hunter,
                 cost: 3,
-                attack: 2,
+                attack: 4,
                 health: 3,
             };
         } else if id == 54 {
@@ -616,7 +616,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_tier: CardTier::T4,
                 creature_type: CreatureType::Brute,
                 cost: 3,
-                attack: 2,
+                attack: 3,
                 health: 4,
             };
         } else if id == 57 {
@@ -716,7 +716,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 creature_type: CreatureType::Magical,
                 cost: 5,
                 attack: 4,
-                health: 3,
+                health: 4,
             };
         } else if id == 66 {
             return Card {
@@ -813,7 +813,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Creature,
                 card_tier: CardTier::T5,
                 creature_type: CreatureType::Brute,
-                cost: 3,
+                cost: 4,
                 attack: 2,
                 health: 3,
             };
@@ -826,7 +826,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 creature_type: CreatureType::Brute,
                 cost: 5,
                 attack: 4,
-                health: 3,
+                health: 4,
             };
         } else if id == 76 {
             return Card {
@@ -868,7 +868,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Spell,
                 card_tier: CardTier::T2,
                 creature_type: CreatureType::Spell,
-                cost: 2,
+                cost: 3,
                 attack: 0,
                 health: 0,
             };
@@ -956,7 +956,7 @@ impl CardUtilsImpl of CardUtilsTrait {
                 card_type: CardType::Spell,
                 card_tier: CardTier::T4,
                 creature_type: CreatureType::Spell,
-                cost: 2,
+                cost: 1,
                 attack: 0,
                 health: 0,
             };

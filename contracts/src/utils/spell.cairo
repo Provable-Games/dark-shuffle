@@ -26,12 +26,12 @@ impl SpellUtilsImpl of SpellUtilsTrait {
         } else if card.card_id == 83 {
             BoardUtilsImpl::update_creatures(ref board, CreatureType::Hunter, 3, 3);
         } else if card.card_id == 84 {
-            BattleUtilsImpl::damage_monster(ref battle, 4, CreatureType::Spell);
-            BattleUtilsImpl::heal_hero(ref battle, 4);
+            BattleUtilsImpl::damage_monster(ref battle, 3, CreatureType::Spell);
+            BattleUtilsImpl::heal_hero(ref battle, 3);
         } else if card.card_id == 85 {
             BattleUtilsImpl::damage_monster(ref battle, 4, CreatureType::Spell);
         } else if card.card_id == 86 {
-            BattleUtilsImpl::heal_hero(ref battle, 5);
+            BattleUtilsImpl::heal_hero(ref battle, 4);
         } else if card.card_id == 87 {
             BoardUtilsImpl::update_creatures(ref board, CreatureType::All, 0, 2);
         } else if card.card_id == 88 {
