@@ -18,7 +18,7 @@ export const DraftProvider = ({ children }) => {
   const [cards, setCards] = useState([])
 
   useEffect(() => {
-    if (gameData && gameSettings?.start_health && gameCards?.length > 0) {
+    if (gameData && gameSettings?.starting_health && gameCards?.length > 0) {
       startDraft()
     }
   }, [gameData, gameSettings, gameCards])

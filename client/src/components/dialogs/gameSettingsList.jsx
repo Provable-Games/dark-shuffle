@@ -9,6 +9,7 @@ import { getSettingsList } from '../../api/indexer';
 import { GameContext } from '../../contexts/gameContext';
 import { fadeVariant } from "../../helpers/variants";
 import GameSettings from './gameSettings';
+import { hexToAscii } from '@dojoengine/utils';
 
 function GameSettingsList(props) {
   const { open, close } = props
@@ -57,15 +58,12 @@ function GameSettingsList(props) {
       onClick={() => setselectedSettings(settings)}
     >
       <Typography color='primary' variant='h6'>
-        Settings #{settings.settings_id}
+        {hexToAscii(settings.name)}
       </Typography>
 
-      <Box display={'flex'} alignItems={'center'}>
-        <Typography ml={1}>
-          {settings.start_health}
-        </Typography>
-        <FavoriteIcon htmlColor="red" fontSize='small' />
-      </Box>
+      <Typography color='secondary'>
+        {settings.description}
+      </Typography>
     </Box >
   }
 
@@ -154,11 +152,10 @@ const styles = {
   settingsContainer: {
     width: '100%',
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: 'column',
     borderRadius: '2px',
-    py: '6px',
-    p: 1,
+    px: 2,
+    py: 1,
     gap: 1,
     cursor: 'pointer',
     boxSizing: 'border-box',

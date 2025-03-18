@@ -42,31 +42,31 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         let DRAW_AMOUNT: u8 = if get_random_number(seed, 5) == 1 { 2 } else { 1 };
 
         seed = LCG(seed);
-        let MAX_BRANCHES: u8 = get_random_number(seed, 3);
+        let POSSIBLE_BRANCHES: u8 = get_random_number(seed, 3);
 
         seed = LCG(seed);
-        let ENEMY_ATTACK: u8 = get_random_number(seed, 5);
+        let ENEMY_STARTING_ATTACK: u8 = get_random_number(seed, 5);
 
         seed = LCG(seed);
-        let START_HEALTH: u8 = get_random_number(seed, 20) + (ENEMY_ATTACK * 10);
+        let STARTING_HEALTH: u8 = get_random_number(seed, 20) + (ENEMY_STARTING_ATTACK * 10);
 
         seed = LCG(seed);
         let DRAFT_SIZE: u8 = get_random_number(seed, 25) + 4;
 
         seed = LCG(seed);
-        let mut ENEMY_HEALTH: u8 = get_random_number(seed, 40) + 20;
-        if ENEMY_HEALTH < DRAFT_SIZE * 2 {
-            ENEMY_HEALTH = DRAFT_SIZE * 2;
+        let mut ENEMY_STARTING_HEALTH: u8 = get_random_number(seed, 40) + 20;
+        if ENEMY_STARTING_HEALTH < DRAFT_SIZE * 2 {
+            ENEMY_STARTING_HEALTH = DRAFT_SIZE * 2;
         }
 
         GameSettings {
             settings_id: settings_id,
-            start_health: START_HEALTH,
+            starting_health: STARTING_HEALTH,
             persistent_health: PERSISTENT_HEALTH,
             map: MapSettings {
-                max_branches: MAX_BRANCHES,
-                enemy_attack: ENEMY_ATTACK,
-                enemy_health: ENEMY_HEALTH,
+                possible_branches: POSSIBLE_BRANCHES,
+                enemy_starting_attack: ENEMY_STARTING_ATTACK,
+                enemy_starting_health: ENEMY_STARTING_HEALTH,
             },
             battle: BattleSettings {
                 start_energy: START_ENERGY,

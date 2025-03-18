@@ -20,7 +20,7 @@ use dojo_cairo_test::{ContractDefTrait, NamespaceDef, TestResource};
 
 use starknet::{ContractAddress, contract_address_const};
 
-const START_HEALTH: u8 = 10;
+const STARTING_HEALTH: u8 = 10;
 const START_ENERGY: u8 = 5;
 const START_HAND_SIZE: u8 = 1;
 const MAX_ENERGY: u8 = 15;
@@ -29,16 +29,16 @@ const DRAFT_SIZE: u8 = 5;
 const DRAW_AMOUNT: u8 = 1;
 const AUTO_DRAFT: bool = true;
 const PERSISTENT_HEALTH: bool = true;
-const MAX_BRANCHES: u8 = 3;
-const ENEMY_ATTACK: u8 = 2;
-const ENEMY_HEALTH: u8 = 40;
+const POSSIBLE_BRANCHES: u8 = 3;
+const ENEMY_STARTING_ATTACK: u8 = 2;
+const ENEMY_STARTING_HEALTH: u8 = 40;
 
 fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
     let (mut world, game_systems_dispatcher) = spawn_darkshuffle();
 
     let settings_id = create_custom_settings(
         ref world,
-        START_HEALTH,
+        STARTING_HEALTH,
         START_ENERGY,
         START_HAND_SIZE,
         DRAFT_SIZE,
@@ -49,9 +49,9 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
         AUTO_DRAFT,
         GET_GENESIS_CARD_IDS(),
         GET_DEFAULT_WEIGHTS(),
-        MAX_BRANCHES,
-        ENEMY_ATTACK,
-        ENEMY_HEALTH,
+        POSSIBLE_BRANCHES,
+        ENEMY_STARTING_ATTACK,
+        ENEMY_STARTING_HEALTH,
     );
 
     let game_id = mint_game_token(
@@ -110,7 +110,7 @@ fn config_test_start_battle() {
     let battle: Battle = world.read_model((game.game_id, game.monsters_slain + 1));
     let battle_resources: BattleResources = world.read_model((battle.battle_id, battle.game_id));
 
-    assert(battle.hero.health == START_HEALTH, 'Hero health incorrect');
+    assert(battle.hero.health == STARTING_HEALTH, 'Hero health incorrect');
     assert(battle.hero.energy == START_ENERGY, 'Hero energy incorrect');
     assert(battle_resources.hand.len() == START_HAND_SIZE.into(), 'Hand size incorrect');
 }

@@ -1,11 +1,22 @@
 use starknet::ContractAddress;
 
+#[derive(Introspect, Drop, Serde)]
+#[dojo::model]
+pub struct GameSettingsMetadata {
+    #[key]
+    settings_id: u32,
+    name: felt252,
+    description: ByteArray,
+    created_by: ContractAddress,
+    created_at: u64,
+}
+
 #[derive(Introspect, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct GameSettings {
     #[key]
     settings_id: u32,
-    start_health: u8,
+    starting_health: u8,
     persistent_health: bool,
     map: MapSettings,
     battle: BattleSettings,
@@ -14,9 +25,9 @@ pub struct GameSettings {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct MapSettings {
-    max_branches: u8,
-    enemy_attack: u8,
-    enemy_health: u8,
+    possible_branches: u8,
+    enemy_starting_attack: u8,
+    enemy_starting_health: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -64,6 +75,6 @@ pub struct CardsCounter {
 #[generate_trait]
 impl GameSettingsImpl of GameSettingsTrait {
     fn exists(self: GameSettings) -> bool {
-        self.start_health.is_non_zero()
+        self.starting_health.is_non_zero()
     }
 }

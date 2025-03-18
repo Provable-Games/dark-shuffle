@@ -117,7 +117,7 @@ export default function Adventurer(props) {
         </CustomTooltip>
 
         <Box width={'160px'} ml={0.5}>
-          <HealthBar variant="determinate" value={normalise(battle.state.values.heroHealth, Math.max(gameSettings.start_health, game.values.heroHealth))} />
+          <HealthBar variant="determinate" value={normalise(battle.state.values.heroHealth, Math.max(gameSettings.starting_health, game.values.heroHealth))} />
         </Box>
 
         {armor > 0 && <Box display={'flex'} alignItems={'center'} ml={0.5}>

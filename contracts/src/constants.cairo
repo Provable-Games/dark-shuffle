@@ -41,16 +41,16 @@ pub mod DEFAULT_SETTINGS {
 
     const PERSISTENT_HEALTH: bool = true;
     const AUTO_DRAFT: bool = false;
-    const START_HEALTH: u8 = 50;
+    const STARTING_HEALTH: u8 = 50;
     const START_ENERGY: u8 = 1;
     const START_HAND_SIZE: u8 = 5;
     const DRAFT_SIZE: u8 = 20;
     const MAX_ENERGY: u8 = 7;
     const MAX_HAND_SIZE: u8 = 10;
     const DRAW_AMOUNT: u8 = 1;
-    const MAX_BRANCHES: u8 = 3;
-    const ENEMY_ATTACK: u8 = 2;
-    const ENEMY_HEALTH: u8 = 40;
+    const POSSIBLE_BRANCHES: u8 = 3;
+    const ENEMY_STARTING_ATTACK: u8 = 2;
+    const ENEMY_STARTING_HEALTH: u8 = 40;
 
     fn GET_GENESIS_CARD_IDS() -> Span<u64> {
         let mut card_ids = array![];
@@ -77,12 +77,12 @@ pub mod DEFAULT_SETTINGS {
     fn GET_DEFAULT_SETTINGS() -> GameSettings {
         GameSettings {
             settings_id: 0,
-            start_health: START_HEALTH,
+            starting_health: STARTING_HEALTH,
             persistent_health: PERSISTENT_HEALTH,
             map: MapSettings {
-                max_branches: MAX_BRANCHES,
-                enemy_attack: ENEMY_ATTACK,
-                enemy_health: ENEMY_HEALTH,
+                possible_branches: POSSIBLE_BRANCHES,
+                enemy_starting_attack: ENEMY_STARTING_ATTACK,
+                enemy_starting_health: ENEMY_STARTING_HEALTH,
             },
             battle: BattleSettings {
                 start_energy: START_ENERGY,

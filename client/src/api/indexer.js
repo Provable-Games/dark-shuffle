@@ -66,26 +66,44 @@ export async function getTournament(tournament_id) {
 export async function getSettings(settings_id) {
   const document = gql`
   {
+    ${NS_SHORT}GameSettingsMetadataModels(where:{settings_id:${settings_id}}) {
+      edges {
+        node {
+          settings_id,
+          name,
+          description
+        }
+      }
+    }
     ${NS_SHORT}GameSettingsModels(where:{settings_id:${settings_id}}) {
       edges {
         node {
           settings_id,
-          start_health,
+          starting_health,
           persistent_health,
-          start_energy,
-          start_hand_size,
-          max_energy,
-          max_hand_size,
-          draw_amount,
-          auto_draft,
-          draft_size,
-          card_ids,
-          card_rarity_weights {
-            common,
-            uncommon,
-            rare,
-            epic,
-            legendary
+          map {
+            possible_branches,
+            enemy_starting_attack,
+            enemy_starting_health
+          },
+          battle {
+            start_energy,
+            start_hand_size,
+            max_energy,
+            max_hand_size,
+            draw_amount
+          },
+          draft {
+            auto_draft,
+            draft_size,
+            card_ids,
+            card_rarity_weights {
+              common,
+              uncommon,
+              rare,
+              epic,
+              legendary
+            }
           }
         }
       }
@@ -94,7 +112,17 @@ export async function getSettings(settings_id) {
 
   const res = await request(GQL_ENDPOINT, document)
 
-  return res?.[`${NS_SHORT}GameSettingsModels`]?.edges[0]?.node
+  let gameSettings = res?.[`${NS_SHORT}GameSettingsModels`]?.edges[0]?.node || {}
+  let gameSettingsMetadata = res?.[`${NS_SHORT}GameSettingsMetadataModels`]?.edges[0]?.node || {}
+
+  return {
+    ...gameSettingsMetadata,
+    starting_health: gameSettings.starting_health,
+    persistent_health: gameSettings.persistent_health,
+    ...gameSettings.map,
+    ...gameSettings.battle,
+    ...gameSettings.draft,
+  }
 }
 
 export async function getActiveGame(game_id) {
@@ -705,26 +733,44 @@ export async function getTokenMetadata(game_id) {
 export async function getSettingsList() {
   const document = gql`
   {
+    ${NS_SHORT}GameSettingsMetadataModels(limit:1000, order:{field:SETTINGS_ID, direction:ASC}) {
+      edges {
+        node {
+          settings_id,
+          name,
+          description
+        }
+      }
+    }
     ${NS_SHORT}GameSettingsModels(limit:1000, order:{field:SETTINGS_ID, direction:ASC}) {
       edges {
         node {
           settings_id,
-          start_health,
+          starting_health,
           persistent_health,
-          start_energy,
-          start_hand_size,
-          max_energy,
-          max_hand_size,
-          draw_amount,
-          auto_draft,
-          draft_size,
-          card_ids,
-          card_rarity_weights {
-            common,
-            uncommon,
-            rare,
-            epic,
-            legendary
+          map {
+            possible_branches,
+            enemy_starting_attack,
+            enemy_starting_health
+          },
+          battle {
+            start_energy,
+            start_hand_size,
+            max_energy,
+            max_hand_size,
+            draw_amount
+          },
+          draft {
+            auto_draft,
+            draft_size,
+            card_ids,
+            card_rarity_weights {
+              common,
+              uncommon,
+              rare,
+              epic,
+              legendary
+            }
           }
         }
       }
@@ -732,6 +778,15 @@ export async function getSettingsList() {
   }`
 
   const res = await request(GQL_ENDPOINT, document)
+  let gameSettings = res?.[`${NS_SHORT}GameSettingsModels`]?.edges.map(edge => edge.node)
+  let gameSettingsMetadata = res?.[`${NS_SHORT}GameSettingsMetadataModels`]?.edges.map(edge => edge.node)
 
-  return res?.[`${NS_SHORT}GameSettingsModels`]?.edges.map(edge => edge.node)
+  return gameSettings.map((edge, index) => ({
+    ...gameSettingsMetadata[index],
+    starting_health: edge.starting_health,
+    persistent_health: edge.persistent_health,
+    ...edge.map,
+    ...edge.battle,
+    ...edge.draft,
+  }))
 }

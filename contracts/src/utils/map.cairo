@@ -18,7 +18,7 @@ impl MapUtilsImpl of MapUtilsTrait {
         }
 
         let mut seed = random::LCG(map.seed);
-        let sections = random::get_random_number(seed, map_settings.max_branches);
+        let sections = random::get_random_number(seed, map_settings.possible_branches);
 
         let mut is_available = false;
         let mut current_node_id = 1;
@@ -41,7 +41,7 @@ impl MapUtilsImpl of MapUtilsTrait {
             }
 
             seed = random::LCG(seed);
-            if random::get_random_number(seed, map_settings.max_branches) > 1 {
+            if random::get_random_number(seed, map_settings.possible_branches) > 1 {
                 depth_3_count += 1;
                 current_node_id += 1;
                 if current_node_id == node_id && game.last_node_id == current_node_id - 2 {
@@ -52,7 +52,7 @@ impl MapUtilsImpl of MapUtilsTrait {
 
             // Depth 4
             seed = random::LCG(seed);
-            if random::get_random_number(seed, map_settings.max_branches) > 1 {
+            if random::get_random_number(seed, map_settings.possible_branches) > 1 {
                 current_node_id += 1;
                 if current_node_id == node_id && game.last_node_id == current_node_id - depth_3_count {
                     is_available = true;
@@ -104,8 +104,8 @@ impl MapUtilsImpl of MapUtilsTrait {
         let monster_id = random::get_random_number(seed, 75 - monster_range) + monster_range;
 
         let map_scaling = map.level - 1;
-        let health = map_settings.enemy_health + (map_scaling * 5);
-        let attack = map_settings.enemy_attack + map_scaling;
+        let health = map_settings.enemy_starting_health + (map_scaling * 5);
+        let attack = map_settings.enemy_starting_attack + map_scaling;
 
         MonsterNode { monster_id, attack, health }
     }

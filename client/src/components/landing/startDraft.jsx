@@ -195,7 +195,7 @@ function StartDraft() {
   }, [replay.spectatingGame])
 
   useEffect(() => {
-    if (previousGame && gameState.getState.gameSettings?.start_health && gameState.getState.gameCards?.length > 0) {
+    if (previousGame && gameState.getState.gameSettings?.starting_health && gameState.getState.gameCards?.length > 0) {
       loadActiveGame()
     }
   }, [previousGame, gameState.getState.gameSettings, gameState.getState.gameCards])

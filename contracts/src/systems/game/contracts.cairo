@@ -139,7 +139,7 @@ mod game_systems {
             let mut game = Game {
                 game_id,
                 state: GameState::Draft.into(),
-                hero_health: game_settings.start_health,
+                hero_health: game_settings.starting_health,
                 hero_xp: 1,
                 monsters_slain: 0,
                 map_level: 0,

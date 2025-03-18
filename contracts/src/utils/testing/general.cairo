@@ -94,7 +94,7 @@ fn create_battle_resources(ref world: WorldStorage, game_id: u64, hand: Span<u8>
 
 fn create_custom_settings(
     ref world: WorldStorage,
-    start_health: u8,
+    starting_health: u8,
     start_energy: u8,
     start_hand_size: u8,
     draft_size: u8,
@@ -105,9 +105,9 @@ fn create_custom_settings(
     auto_draft: bool,
     card_ids: Span<u64>,
     card_rarity_weights: CardRarityWeights,
-    max_branches: u8,
-    enemy_attack: u8,
-    enemy_health: u8,
+    possible_branches: u8,
+    enemy_starting_attack: u8,
+    enemy_starting_health: u8,
 ) -> u32 {
     let settings_id = 99;
 
@@ -115,12 +115,12 @@ fn create_custom_settings(
         .write_model_test(
             @GameSettings {
                 settings_id,
-                start_health,
+                starting_health,
                 persistent_health,
                 map: MapSettings {
-                    max_branches,
-                    enemy_attack,
-                    enemy_health,
+                    possible_branches,
+                    enemy_starting_attack,
+                    enemy_starting_health,
                 },
                 battle: BattleSettings {
                     start_energy,

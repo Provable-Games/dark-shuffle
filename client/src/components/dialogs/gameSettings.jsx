@@ -1,22 +1,23 @@
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Button, CircularProgress, Dialog, Input, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { getSettings } from '../../api/indexer';
-import { tierColors } from '../../helpers/cards';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { DojoContext } from '../../contexts/dojoContext';
-import { useContext } from 'react';
 import { LoadingButton } from '@mui/lab';
+import { Box, CircularProgress, Dialog, Input, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
+import { useContext, useEffect, useState } from 'react';
+import { getSettings } from '../../api/indexer';
+import { DojoContext } from '../../contexts/dojoContext';
+import { tierColors } from '../../helpers/cards';
 
 const DEFAULT_SETTINGS = {
-  start_health: 50,
+  name: 'Default',
+  description: 'Default settings for the game',
+  starting_health: 50,
   persistent_health: true,
-  max_branches: 3,
-  enemy_attack: 2,
-  enemy_health: 40,
+  possible_branches: 3,
+  enemy_starting_attack: 2,
+  enemy_starting_health: 40,
   start_energy: 1,
   start_hand_size: 5,
   max_energy: 10,
@@ -75,20 +76,22 @@ function GameSettings(props) {
       contractName: "config_systems",
       entrypoint: "add_settings",
       calldata: [
-        newSettings.start_health,
+        newSettings.name,
+        newSettings.description,
+        newSettings.starting_health,
+        newSettings.persistent_health,
+        newSettings.possible_branches,
+        newSettings.enemy_starting_attack,
+        newSettings.enemy_starting_health,
         newSettings.start_energy,
         newSettings.start_hand_size,
-        newSettings.draft_size,
         newSettings.max_energy,
         newSettings.max_hand_size,
         newSettings.draw_amount,
         newSettings.card_ids,
         newSettings.card_rarity_weights,
         newSettings.auto_draft,
-        newSettings.persistent_health,
-        newSettings.max_branches,
-        newSettings.enemy_attack,
-        newSettings.enemy_health
+        newSettings.draft_size
       ]
     }], false)
 
@@ -103,20 +106,23 @@ function GameSettings(props) {
     setCreating(false)
   }
 
-  const handleRarityWeightChange = (index, value) => {
+  const handleRarityWeightChange = (rarity, value) => {
     if (value > 10) {
       return;
     }
 
-    let newWeights = [...gameSettings.cardRarityWeights];
+    let newWeights = { ...gameSettings.card_rarity_weights };
 
     if (value < 1) {
-      newWeights = newWeights.map((weight, i) => i === index ? weight : Math.min(10, weight + 1))
+      newWeights = Object.keys(newWeights).reduce((acc, key) => {
+        acc[key] = key === rarity ? 0 : Math.min(newWeights[key] + 1, 10);
+        return acc;
+      }, {});
     } else {
-      newWeights[index] = value;
+      newWeights[rarity] = value;
     }
 
-    setGameSettings({ ...gameSettings, cardRarityWeights: newWeights });
+    setGameSettings({ ...gameSettings, card_rarity_weights: newWeights });
   };
 
   const renderSettingItem = (label, field, type, range) => {
@@ -154,8 +160,8 @@ function GameSettings(props) {
                   {`${((weight / Object.values(gameSettings.card_rarity_weights).reduce((a, b) => a + b, 0)) * 100).toFixed(0)}%`}
                 </Typography>
                 {!view && <Box sx={styles.arrowContainer}>
-                  <ArrowDropUpIcon htmlColor={tierColors[item]} fontSize='small' onClick={() => handleRarityWeightChange(index, weight + 1)} />
-                  <ArrowDropDownIcon htmlColor={tierColors[item]} fontSize='small' onClick={() => handleRarityWeightChange(index, weight - 1)} />
+                  <ArrowDropUpIcon htmlColor={tierColors[item]} fontSize='small' onClick={() => handleRarityWeightChange(item, weight + 1)} />
+                  <ArrowDropDownIcon htmlColor={tierColors[item]} fontSize='small' onClick={() => handleRarityWeightChange(item, weight - 1)} />
                 </Box>}
               </Box>
             )
@@ -192,7 +198,7 @@ function GameSettings(props) {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Typography variant='h6' color={'#f59100'}>Game</Typography>
 
-            {renderSettingItem('Starting Health', 'start_health', 'number', [1, 200])}
+            {renderSettingItem('Starting Health', 'starting_health', 'number', [1, 200])}
             {renderSettingItem('Persistent Health', 'persistent_health', 'boolean')}
 
             <Typography variant='h6' color={'#f59100'}>Battle</Typography>
@@ -214,9 +220,9 @@ function GameSettings(props) {
 
             <Typography variant='h6' color={'#f59100'}>Map</Typography>
 
-            {renderSettingItem('Possible Branches', 'max_branches', 'number', [1, 3])}
-            {renderSettingItem('Enemy Starting Attack', 'enemy_attack', 'number', [1, 10])}
-            {renderSettingItem('Enemy Starting Health', 'enemy_health', 'number', [10, 200])}
+            {renderSettingItem('Possible Branches', 'possible_branches', 'number', [1, 3])}
+            {renderSettingItem('Enemy Starting Attack', 'enemy_starting_attack', 'number', [1, 10])}
+            {renderSettingItem('Enemy Starting Health', 'enemy_starting_health', 'number', [10, 200])}
           </Box>
         </Box>}
 
