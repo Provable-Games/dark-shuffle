@@ -23,6 +23,7 @@ import StartGameDialog from '../dialogs/startGame'
 import Leaderboard from './leaderboard'
 import Monsters from './monsters'
 import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function StartDraft() {
   const tournamentProvider = useTournament()
@@ -30,6 +31,7 @@ function StartDraft() {
 
   const replay = useReplay()
   const { gameId } = useParams()
+  const navigate = useNavigate()
 
   const { account, address } = useAccount()
   const { connect, connectors } = useConnect();
@@ -62,6 +64,8 @@ function StartDraft() {
           startMintedGame(game)
         }
       }
+
+      navigate('/')
     }
 
     if (gameId) {
@@ -102,7 +106,7 @@ function StartDraft() {
 
     enqueueSnackbar('Share Your Game!', {
       variant: 'info',
-      anchorOrigin: { vertical: 'top', horizontal: 'center' },
+      anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
       autoHideDuration: 15000,
       hideIconVariant: true,
       action: snackbarId => (
