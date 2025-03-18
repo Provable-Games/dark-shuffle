@@ -98,8 +98,17 @@ input:-webkit-autofill {
   color: rgb(40, 39, 41);
 }
 
-.notistack-MuiContent-warning, .notistack-MuiContent-info {
+.notistack-MuiContent-warning {
   background-color: #FFE97F;
+}
+
+.notistack-MuiContent-info {
+  border: 1px solid #FFE97F;
+  background-color: rgba(0, 0, 0, 0.80) !important;
+}
+
+.notistack-MuiContent-info #notistack-snackbar {
+  color: #FFE97F;
 }
 
 .notistack-MuiContent-error #notistack-snackbar {
@@ -189,7 +198,7 @@ input:-webkit-autofill {
 .dotLoader {
   width: 14px;
   aspect-ratio: 4;
-  background: radial-gradient(circle closest-side,#FFE97F 90%,#0000) 0/calc(100%/3) 100% space;
+  background: radial-gradient(circle closest-side, #FFE97F 90%, #0000) 0/calc(100%/3) 100% space;
   clip-path: inset(0 100% 0 0);
   animation: l1 1s steps(4) infinite;
 }

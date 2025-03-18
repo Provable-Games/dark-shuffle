@@ -64,8 +64,8 @@ function Leaderboard() {
     }
   }, [page, tab, registrations])
 
-  const seasonPool = Math.floor(season.rewardPool / 1e18 * 0.98)
-  const cashPrizes = [99, 60, 39, 30, 21, 15, 12, 9, 9, 6]
+  const seasonPool = Math.floor(season.rewardPool / 1e18 * 1)
+  const cashPrizes = [300]
 
   return (
     <Box sx={styles.container}>
@@ -74,7 +74,7 @@ function Leaderboard() {
         indicatorColor="primary"
         onChange={changeLeaderboard}
       >
-        <Tab value={'one'} label="Season" />
+        <Tab value={'one'} label="Round 1" />
         <Tab value={'two'} label="Active" />
 
         <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'flex-end' }}>

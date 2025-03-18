@@ -1,3 +1,4 @@
+import CloseIcon from '@mui/icons-material/Close'
 import { LoadingButton, Skeleton } from '@mui/lab'
 import { Box, Button, Typography } from '@mui/material'
 import { useAccount, useConnect } from '@starknet-react/core'
@@ -22,6 +23,8 @@ import ReconnectDialog from '../dialogs/reconnecting'
 import StartGameDialog from '../dialogs/startGame'
 import Leaderboard from './leaderboard'
 import Monsters from './monsters'
+import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function StartDraft() {
   const tournamentProvider = useTournament()
@@ -223,7 +226,7 @@ function StartDraft() {
               Season Pool
             </Typography>
             <Typography variant='h5' color='primary'>
-              {Math.floor(season.rewardPool / 1e18 * 0.98)} $LORDS
+              {Math.floor(season.rewardPool / 1e18 * 1)} $LORDS
             </Typography>
             <Typography variant='h6' color='#f59100'>
               +300 $CASH
@@ -232,7 +235,7 @@ function StartDraft() {
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mb: 1 }]}>
             <Typography>
-              {season.end > currentTime ? `Season 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 1'}
+              {season.end > currentTime ? `Round 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Round 1'}
             </Typography>
             <Typography variant='h5' color='primary'>
               {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
@@ -240,21 +243,21 @@ function StartDraft() {
           </Box>
 
           <Typography variant='h3' textAlign={'center'}>
-            Season 1: Spellbound
+            TEST TOURNEY
           </Typography>
 
           <Typography variant='h6' color='#f59100' textAlign={'center'}>
-            Sponsored by <a href="https://www.opus.money/" target='_blank' className='underline' style={{ color: '#f59100' }}>OPUS</a>
+            Enter tournament on <a href="https://budokan.gg/tournament/1" target='_blank' className='underline' style={{ color: '#f59100' }}>Budokan</a>
           </Typography>
 
-          <LoadingButton variant='outlined'
+          {/* <LoadingButton variant='outlined'
             loading={gameState.getState.startStatus || !season.entryFee}
             onClick={() => startSeasonGame()}
             sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}
-            disabled={season.start > currentTime || season.end < currentTime}
+            disabled={season.start < currentTime}
           >
             Play Season
-          </LoadingButton>
+          </LoadingButton> */}
 
           <Button disabled={!address} variant='outlined' onClick={() => openGamesDialog(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
             My Games
@@ -299,7 +302,7 @@ function StartDraft() {
             <Box display='flex' gap={2}>
               <Box sx={[styles.kpi]}>
                 <Typography>
-                  {season.end > currentTime ? `Season 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Season 1'}
+                  {season.end > currentTime ? `Round 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Round 1'}
                 </Typography>
                 {season.start ? <Typography variant='h5' color='primary'>
                   {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
@@ -308,25 +311,25 @@ function StartDraft() {
 
               <Box sx={styles.kpi}>
                 <Typography>
-                  Season Entry
+                  Tournament Entry
                 </Typography>
                 {season.entryFee ? <Typography variant={'h5'} color='primary'>
-                  {Math.floor(season.entryFee / 1e18)} $LORDS
+                  {season.start > currentTime ? `${Math.floor(season.entryFee / 1e18)} $LORDS` : 'Closed'}
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
               </Box>
 
               <Box sx={[styles.kpi, { position: 'relative' }]}>
                 <Box display={'flex'} justifyContent={'space-between'}>
                   <Typography>
-                    Season Pool
+                    Prize Pool
                   </Typography>
                 </Box>
                 {season.rewardPool !== undefined ? <Typography variant={'h5'} color='primary'>
-                  {Math.floor(season.rewardPool / 1e18 * 0.98)} $LORDS
+                  {Math.floor(season.rewardPool / 1e18 * 1)} $LORDS
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
-                <Typography color='#f59100' sx={{ position: 'absolute', bottom: 2, left: '16px' }}>
+                {/* <Typography color='#f59100' sx={{ position: 'absolute', bottom: 2, left: '16px' }}>
                   +300 $CASH
-                </Typography>
+                </Typography> */}
               </Box>
             </Box>
           </Box>
@@ -338,11 +341,11 @@ function StartDraft() {
             <Box sx={{ maxWidth: '800px' }}>
               <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
                 <Typography variant='h3'>
-                  Season 1: Spellbound
+                  TEST TOURNEY
                 </Typography>
 
                 <Typography variant='h6' color='#f59100'>
-                  Sponsored by <a href="https://www.opus.money/" target='_blank' className='underline' style={{ color: '#f59100' }}>OPUS</a>
+                  Enter tournament on <a href="https://budokan.gg/tournament/1" target='_blank' className='underline' style={{ color: '#f59100' }}>Budokan</a>
                 </Typography>
               </Box>
 
@@ -367,20 +370,20 @@ function StartDraft() {
 
                 <li>
                   <Typography mt={2} style={{ fontSize: '15px' }} color={'primary'}>
-                    Climb the leaderboard to earn a share of the season reward pool and prove your mastery.
+                    Climb the leaderboard to earn rewards and prove your mastery.
                   </Typography>
                 </li>
               </ul>
 
               <Box mt={4} display={'flex'} alignItems={'center'} gap={2}>
-                <LoadingButton variant='outlined'
+                {/* <LoadingButton variant='outlined'
                   loading={gameState.getState.startStatus || !season.entryFee}
                   onClick={() => startSeasonGame()}
                   sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}
-                  disabled={season.start > currentTime || season.end < currentTime}
+                  disabled={season.start < currentTime}
                 >
                   Play Season
-                </LoadingButton>
+                </LoadingButton> */}
 
                 <Button disabled={!address} variant='outlined' onClick={() => openGamesDialog(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
                   My Games

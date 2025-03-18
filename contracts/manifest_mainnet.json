@@ -1,6 +1,6 @@
 {
   "world": {
-    "class_hash": "0x45575a88cc5cef1e444c77ce60b7b4c9e73a01cbbe20926d5a4c72a94011410",
+    "class_hash": "0x7c9469d45a9cdbab775035afb48e1fa73fb35ab059fcb9dfb0a301aa973e783",
     "address": "0x6a9e4c6f0799160ea8ddc43ff982a5f83d7f633e9732ce42701de1288ff705f",
     "seed": "DNC",
     "name": "Realms World",
@@ -11,6 +11,7 @@
       "register_event",
       "register_model",
       "register_contract",
+      "register_library",
       "init_contract",
       "upgrade_event",
       "upgrade_model",
@@ -78,6 +79,10 @@
           {
             "name": "Unregistered",
             "type": "()"
+          },
+          {
+            "name": "Library",
+            "type": "(core::starknet::class_hash::ClassHash, core::felt252)"
           }
         ]
       },
@@ -358,6 +363,34 @@
             "outputs": [
               {
                 "type": "core::starknet::contract_address::ContractAddress"
+              }
+            ],
+            "state_mutability": "external"
+          },
+          {
+            "type": "function",
+            "name": "register_library",
+            "inputs": [
+              {
+                "name": "namespace",
+                "type": "core::byte_array::ByteArray"
+              },
+              {
+                "name": "class_hash",
+                "type": "core::starknet::class_hash::ClassHash"
+              },
+              {
+                "name": "name",
+                "type": "core::byte_array::ByteArray"
+              },
+              {
+                "name": "version",
+                "type": "core::byte_array::ByteArray"
+              }
+            ],
+            "outputs": [
+              {
+                "type": "core::starknet::class_hash::ClassHash"
               }
             ],
             "state_mutability": "external"
@@ -967,6 +1000,28 @@
       },
       {
         "type": "event",
+        "name": "dojo::world::world_contract::world::LibraryRegistered",
+        "kind": "struct",
+        "members": [
+          {
+            "name": "name",
+            "type": "core::byte_array::ByteArray",
+            "kind": "key"
+          },
+          {
+            "name": "namespace",
+            "type": "core::byte_array::ByteArray",
+            "kind": "key"
+          },
+          {
+            "name": "class_hash",
+            "type": "core::starknet::class_hash::ClassHash",
+            "kind": "data"
+          }
+        ]
+      },
+      {
+        "type": "event",
         "name": "dojo::world::world_contract::world::EventEmitted",
         "kind": "struct",
         "members": [
@@ -1207,6 +1262,11 @@
             "kind": "nested"
           },
           {
+            "name": "LibraryRegistered",
+            "type": "dojo::world::world_contract::world::LibraryRegistered",
+            "kind": "nested"
+          },
+          {
             "name": "EventEmitted",
             "type": "dojo::world::world_contract::world::EventEmitted",
             "kind": "nested"
@@ -1252,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x36d27fb8604302b7e4f747a73a84b7c9ae9106f3c5f65e51e934fac9f7c753f",
-      "class_hash": "0x5c1b093d82022571c5b8114350fff9087a17dfaed1bc07ba99e294832c9ad04",
+      "address": "0x62cfee20a5be4b305f610a23291aa27f3fca7a5fd14bd8e2d0389556003e12",
+      "class_hash": "0x6ad209dc90640f1553ac6f6f47831d3b9416f92e8b6215c065f6ea99c5a9f7a",
       "abi": [
         {
           "type": "impl",
@@ -1472,16 +1532,16 @@
         }
       ],
       "init_calldata": [],
-      "tag": "ds_v1_1_3-battle_systems",
-      "selector": "0x63bf833ba979889ab4c940727099f6eeb5a9ef8b33c9e4c499f65796cbbb5a2",
+      "tag": "ds_v1_1_4-battle_systems",
+      "selector": "0x380ba0c091cd846e1dcf5a250c327eae1062e0ee091034a68bc2859a68695f9",
       "systems": [
         "battle_actions",
         "upgrade"
       ]
     },
     {
-      "address": "0x471ead6b2214839df3f41b12cb38df74ad453cb6dc66e6cf4607cd454ceb588",
-      "class_hash": "0x6054fbd2b1f1e6fd90988d9c68ead464b824a129c3d7133c10aa5210a359ca7",
+      "address": "0x1e4351f21742c487c01a61436248540d7eeff990cab6c6955c035b6bc9a2fdc",
+      "class_hash": "0x6f290260ea125995c3c399d09b4cb90b2a9d0b7b7ac3d7a134ca4d6ec1f5c92",
       "abi": [
         {
           "type": "impl",
@@ -1807,16 +1867,16 @@
         }
       ],
       "init_calldata": [],
-      "tag": "ds_v1_1_3-config_systems",
-      "selector": "0x32ef0f3ce310ca3720c5cebdee06193ff17ea78f2ca074d4725358413aea973",
+      "tag": "ds_v1_1_4-config_systems",
+      "selector": "0x5404a52eb3e9f6bdcce3ba01572cce5a9e243fac37d81981c1cfd678727bbd",
       "systems": [
         "add_settings",
         "upgrade"
       ]
     },
     {
-      "address": "0x46f9c2f2f3144059f7332bd989151f782f462f4ea6e3755c2f7b3eac49be73d",
-      "class_hash": "0x7bbc7e3a3a4418a39ce9ff5a24e2f41e6ee9a3d594ba1a112bce5fa25f234bf",
+      "address": "0xae7393b60ad9fd5c26851341b9a4afe61c6ae34326dee79cf5d096e9f55a36",
+      "class_hash": "0x7ba382af2ad101f2397283c3e30889bc4b6981946055c067c149488c2e35dc0",
       "abi": [
         {
           "type": "impl",
@@ -2011,16 +2071,16 @@
         }
       ],
       "init_calldata": [],
-      "tag": "ds_v1_1_3-draft_systems",
-      "selector": "0x42dad5d1307a84bb1b7af24c5e8c4e47aebec644d2039934e9cc92e2cf190b1",
+      "tag": "ds_v1_1_4-draft_systems",
+      "selector": "0x35dadee42ec6df99fe2a483a8e393ec25d8b2ce6f7361776becf52b14423cc1",
       "systems": [
         "pick_card",
         "upgrade"
       ]
     },
     {
-      "address": "0x20fc3c9efd0dde5f53642dac7f53638aeaae98ff9af5f1642546f389ce9dec5",
-      "class_hash": "0x46e1d79b1bf298c905c646c469a6b2925fe3d2ed7729470dc793a5282302176",
+      "address": "0x320f977f47f0885e376b781d9e244d9f59f10154ce844ae1815c919f0374726",
+      "class_hash": "0x324df9de9e32c19ade0585145522934c472677584df587878fcd272cf81e5e2",
       "abi": [
         {
           "type": "impl",
@@ -3228,8 +3288,8 @@
       "init_calldata": [
         "0x000B39b235b44c53a2E9F0c5D35939D9C8E8dAFDd0a2ba2E695b501Fc1e9fd2f"
       ],
-      "tag": "ds_v1_1_3-game_systems",
-      "selector": "0x3ed7c35d552ad5a82e55a7fc942c0c6fac6016bd3dbe96bd2a0132c0b3baa09",
+      "tag": "ds_v1_1_4-game_systems",
+      "selector": "0x66ee1c66fe50d4c032e76c62ebe6d377f8068e5819f894abab4568adac9bedb",
       "systems": [
         "dojo_init",
         "start_game",
@@ -3246,8 +3306,8 @@
       ]
     },
     {
-      "address": "0x45543452215a2b416d8c52e5a475e7e0eed2e7cbaf5a699ae5fc0599f4afae9",
-      "class_hash": "0x241b4f5baadb152dc32d9447e08a710ae15e4c9e60072fe5388bb2e85a1339",
+      "address": "0x7c9a684813410b39c776c49544d8ecb2d39f0b91bd83ffec31ebc938e053e25",
+      "class_hash": "0x542869ec25e644140452fac067ede8c73922065400889c0ea79c42844ac34fc",
       "abi": [
         {
           "type": "impl",
@@ -3454,8 +3514,8 @@
         }
       ],
       "init_calldata": [],
-      "tag": "ds_v1_1_3-map_systems",
-      "selector": "0x8f10142209e384bfe038e00d01e9d12ac65bf2f899f9fd5b90049009e11686",
+      "tag": "ds_v1_1_4-map_systems",
+      "selector": "0x2fe8174e1f5266d03d45181ba1f786744c519d80b4862fd16c317aa064f4112",
       "systems": [
         "generate_tree",
         "select_node",
@@ -3463,116 +3523,118 @@
       ]
     }
   ],
+  "libraries": [],
   "models": [
     {
       "members": [],
-      "class_hash": "0x71db3d1a0e051b74b0373e330d71df8b5e62734c6985b1127a3bc6bc9a22a42",
-      "tag": "ds_v1_1_3-Battle",
-      "selector": "0x43957e78dc729405c1875d5be99e88eeec96c4d2fdf7536b26bc8e57c2df4f2"
+      "class_hash": "0x40ed4508325edfea8496fdad4f0c3fb90ae8d0b00cb4919a9505651b67f0b12",
+      "tag": "ds_v1_1_4-Battle",
+      "selector": "0x128b6e571cdfa5d39b7810a505d12903bfa8a1448ae0e8887509b6e018bdddd"
     },
     {
       "members": [],
-      "class_hash": "0xcb6f4fcca196b81598840e4e3c33037dae16ead1221728d9f51d3662acdb93",
-      "tag": "ds_v1_1_3-Board",
-      "selector": "0x5c8c1fa6174d6e19c4f1fa70af0f25c24adb18d07179bc86dee3fbdf634b6eb"
+      "class_hash": "0x53e0128632081a231d6299cf76b5fe575d3874dd88b84104f3105020c8cf1a5",
+      "tag": "ds_v1_1_4-Board",
+      "selector": "0x667526bdce1839aa2c6be6e4bc251dec45a0a788fa9d5b7a874342e9c06c40c"
     },
     {
       "members": [],
-      "class_hash": "0x733939d740baea51a14a3ce340ad918b3d2595e772b59f01847a716ef17477a",
-      "tag": "ds_v1_1_3-Draft",
-      "selector": "0x18584289286775ca8f5ca8b29651fe8ab453aa399275dfa9fc1b800a4faa22a"
+      "class_hash": "0x1238b8869caa09cc90c64d05d83922e769b9b872fc26cf442b05df4ef0b461d",
+      "tag": "ds_v1_1_4-Draft",
+      "selector": "0x60a27bde1735aca12713d1571390ae7f5f7afaff6cddcae0067058a61bea89"
     },
     {
       "members": [],
-      "class_hash": "0x2095e67eb96d2a0e082a967d6442191da43dc49a065d8421a9bc3d4e118b181",
-      "tag": "ds_v1_1_3-Game",
-      "selector": "0x499e81bdb47705ed4b19b11dc410d02373e72ccb6c6bf26ab372e13adb0dbab"
+      "class_hash": "0x329347fa827136da16ee24f436686acc5d116abfcf73bf1535bedb38ffa92c9",
+      "tag": "ds_v1_1_4-Game",
+      "selector": "0x45f78a7a2ce8d40f80739f6dcdf73ca43f662735d438b17d48894392fbba48f"
     },
     {
       "members": [],
-      "class_hash": "0x7634474ae448d779e8b6edf6e13d22d0414ec01f04167061fe0cbce7509e3d7",
-      "tag": "ds_v1_1_3-GameCounter",
-      "selector": "0x2261379cddfc6737438ddd4ba9656ec8c6cbc7f0ecba952e01e61da56221d59"
+      "class_hash": "0x2942c6bc2a7c32e8fc6388074538f83c5cd92006b120012fbf8d4a47d6aef1",
+      "tag": "ds_v1_1_4-GameCounter",
+      "selector": "0x49d221c60f32d5ded0f70e270cfd550b04b2f4009eb51b6b9789b21c8fc7946"
     },
     {
       "members": [],
-      "class_hash": "0x39fb487fdc07b653fedf5caeacf3e2f24311e178d82448257c61ff87d54909c",
-      "tag": "ds_v1_1_3-GameEffects",
-      "selector": "0x27925f209519a1b274050046d35c9dc5d7ba72532d30ed251d076bb934ddaea"
+      "class_hash": "0x2a0002ad11b64ef4ef427db54f6641886dc2b67d337a4a1a6bd264ac57eccd",
+      "tag": "ds_v1_1_4-GameEffects",
+      "selector": "0x3fda9c5f751e141c0991bf56190de3ead57648a1b06f4ede3ace9046152e8f9"
     },
     {
       "members": [],
-      "class_hash": "0x7f8343d96398622c5cd8e8bf36071b29b8e96050bb2af4b9d1261d164d7f782",
-      "tag": "ds_v1_1_3-GameMetadata",
-      "selector": "0x3fce805054ae7975c331db867e43f963880772781ce79a5fa240df69d9405f2"
+      "class_hash": "0x7b821ba31e4a384100d02c71e21bc12f2c6b809dc28dd313d9b2fee2d7e78fb",
+      "tag": "ds_v1_1_4-GameMetadata",
+      "selector": "0x41fb6229f4c30d8cb7cf4991cce52011f62babced84949da29257bf15528f20"
     },
     {
       "members": [],
-      "class_hash": "0x503fb93f7a8f5190473a8d3fbe9d688561d1bc8115a095b862fc6997a6838e3",
-      "tag": "ds_v1_1_3-GameSettings",
-      "selector": "0x5f004b3017a5234782cebabdc861c65728082b561b44a89bbc0d01e94d34123"
+      "class_hash": "0x2b96348ce51d8dab9f43aed7adee792dd0e63aa5d77e5b9cfd7871231def4f6",
+      "tag": "ds_v1_1_4-GameSettings",
+      "selector": "0x79124e5319ad8d49dbb0a5c76b9b5056b6e1393331dc44add565acb7ec6b2cd"
     },
     {
       "members": [],
-      "class_hash": "0x37c8a2e33143039681db1317eb40279c60ca92c8bacba20ed5be66e19cb070f",
-      "tag": "ds_v1_1_3-Map",
-      "selector": "0x4c3bcec7dc935b60687cc3e65da4698c6ee561f6861f91005d1ca4650d44c49"
+      "class_hash": "0x4fedf9b7068a2f07a0e92e1752af656c60d6193b7ccb5fdcf307049603da659",
+      "tag": "ds_v1_1_4-Map",
+      "selector": "0x34cfe98df67e6f11fc3b18f4fb4e872edac62816451b8aaaee23d3adad60390"
     },
     {
       "members": [],
-      "class_hash": "0x1cbfe9c95d6428d3699cdfe922689995300ef06537e6695b8cc238dfd9b2a6c",
-      "tag": "ds_v1_1_3-Score",
-      "selector": "0x6e400d0d8faaca35ee461a4928b8a2c5ced97c6ebf40e0aa817b016a8f3f571"
+      "class_hash": "0xd4b859cbf8bef2d1e9f81a3e598e281ed855009341058328b10f43204f00ec",
+      "tag": "ds_v1_1_4-Score",
+      "selector": "0x17aed6f723f0a8768ab1268fa124b13a84a43c5f69e8a49cc9311a2328da7d5"
     },
     {
       "members": [],
-      "class_hash": "0x6a2219b6866e1862fe52c8325d3b517bb121a0685677fcbed97f2caa6f4dc28",
-      "tag": "ds_v1_1_3-Settings",
-      "selector": "0x61c11b8e8c622b52adbb2b21dd10a66e7e6e7e960e7d661f713ac1f80da9c8a"
+      "class_hash": "0x3f82fa61272a7c7513cf48e89ca431820f62a1560de657608aca5c8e6a58b9",
+      "tag": "ds_v1_1_4-Settings",
+      "selector": "0x49ddc4be4c89e89f5cc92bb89fc20c0f195803acfe880f9cddc1e44f533202b"
     },
     {
       "members": [],
-      "class_hash": "0x5e09319cd465a9b7c8d1c3e81a1062cb06f3d5b2e884a66594b3b0f70e36f2f",
-      "tag": "ds_v1_1_3-SettingsCounter",
-      "selector": "0x73387f792d9372e9aae0fb076a514b765aefbe3daa06963fcc8b8b90e08236d"
+      "class_hash": "0x71d049431ac7c5544291d65f8f1e4cae9f234bbfe0d8969e56a855468d0b29e",
+      "tag": "ds_v1_1_4-SettingsCounter",
+      "selector": "0xbe9b3770d6aa731167bfa9a549242ce35fd6b2291cd07c6fd15af78304146b"
     },
     {
       "members": [],
-      "class_hash": "0x4f140e4e65a924bc2e492d8ece550b97c13e22f24f72cb741d8d8d0c5044dd8",
-      "tag": "ds_v1_1_3-SettingsDetails",
-      "selector": "0x62da407f161f4f9b1e199dbd0b5207d506c19003d430db7b2279b4ae5471c9a"
+      "class_hash": "0x4d2afc0312d98dc2223a44ae88223336bb0a59a1bf2bcdc50b6f3d8875fb66a",
+      "tag": "ds_v1_1_4-SettingsDetails",
+      "selector": "0xbd51143a5b548d0d5aafa0aa6531de82033ec70a8d1435de69754be55c07b2"
     },
     {
       "members": [],
-      "class_hash": "0x4e2cb9df948d236db5e77096c6e73f94a1335713bfc3bc189bb0e08bf1c70ca",
-      "tag": "ds_v1_1_3-TokenMetadata",
-      "selector": "0x2341cd4f2212086b4104728fafb391cbe9fac9bf2d6ed418cd5f3b5ca0cc475"
+      "class_hash": "0x6d1a541f4d6ccf4dce9c6f60a6e40c24dbc3a60b925a80eb0c9a924c7491f9f",
+      "tag": "ds_v1_1_4-TokenMetadata",
+      "selector": "0x7b6811482a1a14c930defb0507b2bc93e3c042f78005e449c683952b846a149"
     },
     {
       "members": [],
-      "class_hash": "0x4d3f1fb5f7447c51ca354980a54e00253cc5a34c4e9964d89c098fc5d0b1a3e",
-      "tag": "ds_v1_1_3-WorldConfig",
-      "selector": "0x2ff97e838c8bcfdccef978251628b896ddbdc17b19372cb7bbe319f2643b1c2"
+      "class_hash": "0x5a310bfacb581ee050781a562dd9fd86924d039063218fe3c0bee0fe52f3f63",
+      "tag": "ds_v1_1_4-WorldConfig",
+      "selector": "0x65e209c2e3c16ceb097b384bb3b942213c0b37c166417360b78672ff638a0f6"
     }
   ],
   "events": [
     {
       "members": [],
-      "class_hash": "0x54a9cc619dbc179a0c57831c6aae5b6e7d5ea3f5ed48ba9ef768f9e63729a10",
-      "tag": "ds_v1_1_3-GameActionEvent",
-      "selector": "0x41a662bfe03d7e127fc473f4fba8625fa0a673c7ba814a24f40b76f5d3bb060"
+      "class_hash": "0x7cdb31c38c1fde16a618de050c8c71af51a9369b4d66f489f3343f20589b596",
+      "tag": "ds_v1_1_4-GameActionEvent",
+      "selector": "0x17bbfdb22e4f95354949cd5178d685e065b2f2b5a49df8c388b797aa711c648"
     },
     {
       "members": [],
-      "class_hash": "0x6b38999d987627835d4c20e7e571c73d32ddc856786d9790a131bdb3372a246",
-      "tag": "ds_v1_1_3-TrophyCreation",
-      "selector": "0x7747f7faf65f5f2523741d374dc715608a5c0f26dcc2868273109beea0e6de4"
+      "class_hash": "0x19a5c06b3a8417ff3f9883be3acb0e33c835795bd81fb87a5a47e6ed7d2d3af",
+      "tag": "ds_v1_1_4-TrophyCreation",
+      "selector": "0x375d92225031872ff008baf8143fecee71ced4141f55b7229e7f6a1c9215492"
     },
     {
       "members": [],
-      "class_hash": "0xf05f290a704ad2671544b391f0c33d50d6d43d468d52791282852a833a00c7",
-      "tag": "ds_v1_1_3-TrophyProgression",
-      "selector": "0x3b956bb333e694fc454a7d2e165c68df9b33783e664cf49de7efc37fe160e88"
+      "class_hash": "0x1922d2cd8b63eccf66321673234a52126cd9f0ab1bf6298c5abee6ee80c8990",
+      "tag": "ds_v1_1_4-TrophyProgression",
+      "selector": "0x7747e5d10fadc59ce2dd8efb63d4e4378c4e5907253c0f330da359f34c9a609"
     }
-  ]
+  ],
+  "external_contracts": []
 }

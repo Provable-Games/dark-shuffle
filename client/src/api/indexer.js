@@ -726,7 +726,8 @@ export async function getTokenMetadata(game_id) {
     settingsId: parseInt(metadata.settings_id, 16),
     expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
     available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000,
-    active: game?.hero_health !== 0
+    active: game?.hero_health !== 0,
+    started: game?.hero_xp
   };
 }
 

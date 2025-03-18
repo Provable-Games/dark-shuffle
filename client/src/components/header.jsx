@@ -18,7 +18,7 @@ import GameSettingsList from './dialogs/gameSettingsList';
 
 const menuItems = [
   {
-    name: 'Play Season',
+    name: 'Play',
     path: '/',
     icon: <InfoIcon />
   },

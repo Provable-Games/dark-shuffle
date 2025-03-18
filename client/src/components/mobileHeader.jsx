@@ -14,7 +14,7 @@ import { formatNumber } from '../helpers/utilities';
 
 const menuItems = [
   {
-    name: 'Play Season',
+    name: 'Play',
     path: '/',
     icon: <InfoIcon />
   },
