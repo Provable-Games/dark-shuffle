@@ -18,7 +18,7 @@ import ProfileMenu from './header/profileMenu';
 
 const menuItems = [
   {
-    name: 'Play Season',
+    name: 'Play',
     path: '/',
     icon: <InfoIcon />
   },

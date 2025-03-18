@@ -6,7 +6,7 @@ class TournamentSDK {
   constructor(rpcUrl) {
     this.namespace = "budokan_v_1_0_4"
     this.contractName = "Budokan"
-    this.contractAddress = "0x0530d9693304c79b5b506aa2fa09c27681373d71b69a839378ff5fd108aa5fc6"
+    this.contractAddress = "0x5fb427962210ac4b3be5e23419b0d9e91ca6a9c57b0665d2ca7783092506f6e"
     this.provider = new DojoProvider(manifest, rpcUrl);
   }
 
