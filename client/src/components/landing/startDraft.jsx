@@ -1,4 +1,3 @@
-import CloseIcon from '@mui/icons-material/Close'
 import { LoadingButton, Skeleton } from '@mui/lab'
 import { Box, Button, Typography } from '@mui/material'
 import { useAccount, useConnect } from '@starknet-react/core'
@@ -23,8 +22,6 @@ import ReconnectDialog from '../dialogs/reconnecting'
 import StartGameDialog from '../dialogs/startGame'
 import Leaderboard from './leaderboard'
 import Monsters from './monsters'
-import { useParams } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
 
 function StartDraft() {
   const tournamentProvider = useTournament()
