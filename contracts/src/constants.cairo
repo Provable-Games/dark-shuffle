@@ -24,7 +24,7 @@ const LCG_PRIME: u128 = 281474976710656;
 const VERSION: felt252 = '0.0.1';
 
 fn DEFAULT_NS() -> ByteArray {
-    "ds_v1_1_3"
+    "ds_v1_1_4"
 }
 
 fn SCORE_MODEL() -> ByteArray {

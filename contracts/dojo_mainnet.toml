@@ -11,18 +11,18 @@ world_address = "0x06a9e4c6f0799160ea8ddc43ff982a5f83d7f633e9732ce42701de1288ff7
 world_block = 948010
 
 [namespace]
-default = "ds_v1_1_3"
+default = "ds_v1_1_4"
 
 [writers]
-"ds_v1_1_3" = [
-    "ds_v1_1_3-game_systems",
-    "ds_v1_1_3-battle_systems",
-    "ds_v1_1_3-draft_systems",
-    "ds_v1_1_3-map_systems",
-    "ds_v1_1_3-config_systems",
+"ds_v1_1_4" = [
+    "ds_v1_1_4-game_systems",
+    "ds_v1_1_4-battle_systems",
+    "ds_v1_1_4-draft_systems",
+    "ds_v1_1_4-map_systems",
+    "ds_v1_1_4-config_systems",
 ]
 
 [init_call_args]
-"ds_v1_1_3-game_systems" = [
+"ds_v1_1_4-game_systems" = [
     "0x000B39b235b44c53a2E9F0c5D35939D9C8E8dAFDd0a2ba2E695b501Fc1e9fd2f",
 ]
