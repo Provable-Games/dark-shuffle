@@ -1,4 +1,5 @@
-import { Box, Button, CircularProgress, Dialog, Typography } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { Box, Button, CircularProgress, Dialog, IconButton, Typography } from '@mui/material';
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from 'react';
 import { getCardDetails } from '../../api/indexer';
@@ -28,6 +29,11 @@ function DeckBuilder(props) {
   useEffect(() => {
     fetchCardDetails()
   }, [])
+
+  const removeAllCards = () => {
+    setAvailableCards(prev => [...prev, ...selectedCards].sort((a, b) => a.cost - b.cost))
+    setSelectedCards([])
+  }
 
   const removeCard = (cardId) => {
     let card = { ...selectedCards.find(card => card.cardId === cardId) }
@@ -81,9 +87,19 @@ function DeckBuilder(props) {
 
             <Box sx={styles.overview}>
               <Scrollbars style={{ width: '100%', height: 'calc(100% - 60px)' }}>
-                <Typography variant='h6' textAlign='center' color='primary' mt={1}>
-                  {view ? 'Card list' : 'Selected Cards'} ({selectedCards.length})
-                </Typography>
+                <Box display='flex' alignItems='center' justifyContent='space-between' px={1} mt={1}>
+                  <Typography variant='h6' textAlign='center' color='primary'>
+                    {view ? 'Card list' : 'Selected Cards'} ({selectedCards.length})
+                  </Typography>
+
+                  {!view && <IconButton onClick={removeAllCards} sx={{ p: 0, mr: 1 }}>
+                    <CloseIcon color='error' fontSize='medium' />
+                  </IconButton>}
+                </Box>
+
+                {selectedCards.length < 10 && <Typography color='error' px={1}>
+                  10 Cards Required
+                </Typography>}
 
                 <Overview cards={selectedCards} deckBuilder={true} edit={!view} removeCard={removeCard} />
               </Scrollbars>
@@ -92,7 +108,7 @@ function DeckBuilder(props) {
                 <Button variant='outlined' color='secondary' sx={{ width: '100%' }} onClick={close}>
                   Cancel
                 </Button>
-                <Button variant='contained' color='primary' sx={{ width: '100%' }} onClick={() => save(selectedCards.map(card => card.cardId))}>
+                <Button disabled={selectedCards.length < 10} variant='contained' color='primary' sx={{ width: '100%' }} onClick={() => save(selectedCards.map(card => card.cardId))}>
                   Save Cards
                 </Button>
               </Box>}
