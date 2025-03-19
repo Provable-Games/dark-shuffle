@@ -565,8 +565,11 @@ export async function getTokenMetadata(game_id) {
 
   if (!metadata) return null;
 
+  let tokenId = parseInt(metadata.token_id, 16)
+
   return {
-    id: parseInt(metadata.token_id, 16),
+    id: tokenId,
+    tokenId,
     playerName: hexToAscii(metadata.player_name),
     settingsId: parseInt(metadata.settings_id, 16),
     expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
@@ -575,4 +578,3 @@ export async function getTokenMetadata(game_id) {
     started: game?.hero_xp
   };
 }
-
