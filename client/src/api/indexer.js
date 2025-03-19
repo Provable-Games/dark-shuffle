@@ -117,6 +117,7 @@ export async function getSettings(settings_id) {
 
   return {
     ...gameSettingsMetadata,
+    name: hexToAscii(gameSettingsMetadata.name),
     starting_health: gameSettings.starting_health,
     persistent_health: gameSettings.persistent_health,
     ...gameSettings.map,
@@ -784,6 +785,7 @@ export async function getSettingsList() {
 
   return gameSettings.map((edge, index) => ({
     ...gameSettingsMetadata[index],
+    name: hexToAscii(gameSettingsMetadata[index].name),
     starting_health: edge.starting_health,
     persistent_health: edge.persistent_health,
     ...edge.map,

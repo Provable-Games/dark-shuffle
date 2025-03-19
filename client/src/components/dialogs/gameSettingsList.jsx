@@ -1,4 +1,3 @@
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, CircularProgress, Dialog, Typography } from '@mui/material';
 import { motion } from "framer-motion";
@@ -9,7 +8,6 @@ import { getSettingsList } from '../../api/indexer';
 import { GameContext } from '../../contexts/gameContext';
 import { fadeVariant } from "../../helpers/variants";
 import GameSettings from './gameSettings';
-import { hexToAscii } from '@dojoengine/utils';
 
 function GameSettingsList(props) {
   const { open, close } = props
@@ -24,16 +22,16 @@ function GameSettingsList(props) {
   const [settingsList, setSettingsList] = useState([])
   const [minting, setMinting] = useState(false)
 
+  async function fetchSettings() {
+    setLoading(true)
+
+    const settings = await getSettingsList()
+    setSettingsList(settings ?? [])
+
+    setLoading(false)
+  }
+
   useEffect(() => {
-    async function fetchSettings() {
-      setLoading(true)
-
-      const settings = await getSettingsList()
-      setSettingsList(settings ?? [])
-
-      setLoading(false)
-    }
-
     fetchSettings()
   }, [])
 
@@ -43,7 +41,7 @@ function GameSettingsList(props) {
     const res = await gameContext.actions.mintFreeGame(selectedSettings.settings_id)
 
     if (res) {
-      enqueueSnackbar('Game minted with settings #' + selectedSettings.settings_id, { variant: 'success' })
+      enqueueSnackbar(`New Game Minted!`, { variant: 'info' })
       close(false)
     } else {
       enqueueSnackbar('Failed to mint game', { variant: 'error' })
@@ -57,11 +55,17 @@ function GameSettingsList(props) {
       border={selectedSettings?.settings_id === settings.settings_id ? '1px solid #f59100' : '1px solid rgba(255, 255, 255, 0.3)'}
       onClick={() => setselectedSettings(settings)}
     >
-      <Typography color='primary' variant='h6'>
-        {hexToAscii(settings.name)}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography color='primary' variant='h6'>
+          {settings.name}
+        </Typography>
 
-      <Typography color='secondary'>
+        <Typography color='rgba(255, 255, 255, 0.5)' variant='caption'>
+          #{settings.settings_id}
+        </Typography>
+      </Box>
+
+      <Typography color='secondary' sx={{ fontSize: '13px' }}>
         {settings.description}
       </Typography>
     </Box >
@@ -124,7 +128,7 @@ function GameSettingsList(props) {
 
       </Box>
 
-      {gameSettings && <GameSettings settingsId={selectedSettings?.settings_id} view={gameSettings === 'view'} close={() => openGameSettings(false)} />}
+      {gameSettings && <GameSettings settingsId={selectedSettings?.settings_id} view={gameSettings === 'view'} close={() => openGameSettings(false)} refetch={() => fetchSettings()} />}
     </Dialog>
   )
 }
@@ -156,17 +160,17 @@ const styles = {
     borderRadius: '2px',
     px: 2,
     py: 1,
-    gap: 1,
     cursor: 'pointer',
     boxSizing: 'border-box',
     mb: 1
   },
   settingsListContainer: {
-    width: '370px',
+    width: '340px',
     maxWidth: '100%',
     minHeight: '200px',
     display: 'flex',
     flexDirection: 'column',
+    mt: '4px',
     gap: 1,
   },
 }

@@ -9,6 +9,7 @@ import DraftContainer from '../container/DraftContainer'
 import StartBattleContainer from '../container/StartBattleContainer'
 import { GameContext } from '../contexts/gameContext'
 import { useReplay } from '../contexts/replayContext'
+import DeckBuilder from '../components/dialogs/deckBuilder'
 
 function ArenaPage() {
   const gameState = useContext(GameContext)
@@ -47,6 +48,8 @@ function ArenaPage() {
       {state === 'Battle' && <BattleContainer />}
 
       {state === 'Map' && <StartBattleContainer />}
+
+      <DeckBuilder open={true} cardIds={Array.from({ length: 90 }, (_, i) => i + 1)} />
     </Scrollbars>
   )
 }

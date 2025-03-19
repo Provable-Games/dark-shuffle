@@ -1,5 +1,6 @@
+import CloseIcon from '@mui/icons-material/Close'
 import { LoadingButton, Skeleton } from '@mui/lab'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, IconButton, Typography } from '@mui/material'
 import { useAccount, useConnect } from '@starknet-react/core'
 import { useSnackbar } from 'notistack'
 import React, { useContext, useEffect, useState } from 'react'
@@ -31,7 +32,7 @@ function StartDraft() {
   const { gameId } = useParams()
   const { account, address } = useAccount()
   const { connect, connectors } = useConnect();
-  const { enqueueSnackbar } = useSnackbar()
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
   const dojo = useContext(DojoContext)
   const gameState = useContext(GameContext)
@@ -102,6 +103,28 @@ function StartDraft() {
 
   const startMintedGame = async (tokenData) => {
     await draft.actions.prepareStartingGame(tokenData)
+
+    enqueueSnackbar('Share Your Game!', {
+      variant: 'info',
+      anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+      autoHideDuration: 15000,
+      hideIconVariant: true,
+      action: snackbarId => (
+        <>
+          <Button variant='outlined' size='small' sx={{ width: '90px', mr: 1 }}
+            component='a' href={'https://x.com/intent/tweet?text=' + `I'm about to face the beasts of Dark Shuffle — come watch me play and see how far I can go! darkshuffle.io/watch/${tokenData?.tokenId} 🕷️⚔️ @provablegames @darkshuffle_gg`}
+            target='_blank'>
+            Tweet
+          </Button>
+
+          <IconButton size='small' onClick={() => {
+            closeSnackbar(snackbarId)
+          }}>
+            <CloseIcon color='secondary' fontSize='small' />
+          </IconButton>
+        </>
+      )
+    })
   }
 
   const loadGameSettings = async (game) => {

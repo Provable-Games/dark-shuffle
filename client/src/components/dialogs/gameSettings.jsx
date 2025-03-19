@@ -3,16 +3,17 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import CloseIcon from '@mui/icons-material/Close';
 import { LoadingButton } from '@mui/lab';
-import { Box, CircularProgress, Dialog, Input, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Dialog, Input, TextField, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
+import { byteArray } from "starknet";
 import { getSettings } from '../../api/indexer';
 import { DojoContext } from '../../contexts/dojoContext';
 import { tierColors } from '../../helpers/cards';
 
 const DEFAULT_SETTINGS = {
-  name: 'Default',
-  description: 'Default settings for the game',
+  name: '',
+  description: '',
   starting_health: 50,
   persistent_health: true,
   possible_branches: 3,
@@ -44,6 +45,10 @@ function GameSettings(props) {
   const [gameSettings, setGameSettings] = useState(DEFAULT_SETTINGS)
   const [loading, setLoading] = useState(view)
   const [creating, setCreating] = useState(false)
+  const [step, setStep] = useState(1)
+  const [name, setName] = useState('')
+  const [showError, setShowError] = useState(false)
+  const [description, setDescription] = useState('')
 
   useEffect(() => {
     if (view) {
@@ -59,6 +64,11 @@ function GameSettings(props) {
   }
 
   const saveGameSettings = async () => {
+    if (!name || name.length > 31) {
+      setShowError(true)
+      return
+    }
+
     setCreating(true)
     let newSettings = { ...gameSettings }
 
@@ -72,50 +82,54 @@ function GameSettings(props) {
       }
     }
 
-    const res = await dojo.executeTx([{
-      contractName: "config_systems",
-      entrypoint: "add_settings",
-      calldata: [
-        newSettings.name,
-        newSettings.description,
-        newSettings.starting_health,
-        newSettings.persistent_health,
-        newSettings.possible_branches,
-        newSettings.enemy_starting_attack,
-        newSettings.enemy_starting_health,
-        newSettings.start_energy,
-        newSettings.start_hand_size,
-        newSettings.max_energy,
-        newSettings.max_hand_size,
-        newSettings.draw_amount,
-        newSettings.card_ids,
-        newSettings.card_rarity_weights,
-        newSettings.auto_draft,
-        newSettings.draft_size
-      ]
-    }], false)
+    try {
+      const res = await dojo.executeTx([{
+        contractName: "config_systems",
+        entrypoint: "add_settings",
+        calldata: [
+          name,
+          byteArray.byteArrayFromString(description),
+          newSettings.starting_health,
+          newSettings.start_energy,
+          newSettings.start_hand_size,
+          newSettings.draft_size,
+          newSettings.max_energy,
+          newSettings.max_hand_size,
+          newSettings.draw_amount,
+          newSettings.card_ids,
+          newSettings.card_rarity_weights,
+          newSettings.auto_draft,
+          newSettings.persistent_health,
+          newSettings.possible_branches,
+          newSettings.enemy_starting_attack,
+          newSettings.enemy_starting_health,
+        ]
+      }], false)
 
-    if (res) {
-      console.log(res)
-      enqueueSnackbar('Settings created successfully', { variant: 'success' })
-      props.close()
-    } else {
-      enqueueSnackbar('Failed to create settings', { variant: 'error' })
+      if (res) {
+        props.refetch()
+        props.close()
+      } else {
+        enqueueSnackbar('Failed to create settings', { variant: 'error' })
+      }
+    } catch (error) {
+
     }
 
     setCreating(false)
   }
 
   const handleRarityWeightChange = (rarity, value) => {
-    if (value > 10) {
-      return;
-    }
-
     let newWeights = { ...gameSettings.card_rarity_weights };
 
-    if (value < 1) {
+    if (value > 10) {
       newWeights = Object.keys(newWeights).reduce((acc, key) => {
-        acc[key] = key === rarity ? 0 : Math.min(newWeights[key] + 1, 10);
+        acc[key] = key === rarity ? 10 : Math.max(newWeights[key] - 1, 1);
+        return acc;
+      }, {});
+    } else if (value < 1) {
+      newWeights = Object.keys(newWeights).reduce((acc, key) => {
+        acc[key] = key === rarity ? 1 : Math.min(newWeights[key] + 1, 10);
         return acc;
       }, {});
     } else {
@@ -128,7 +142,9 @@ function GameSettings(props) {
   const renderSettingItem = (label, field, type, range) => {
     return (
       <Box sx={styles.settingContainer}>
-        {label && <Typography color={'primary'}>{label}</Typography>}
+        {label && <Typography color={'primary'}>
+          {label} {type === 'cards' && `(${gameSettings[field].length})`}
+        </Typography>}
 
         {type === 'boolean' && <Box height={'38px'} sx={styles.settingValueContainer} onClick={() => !view && setGameSettings({ ...gameSettings, [field]: !gameSettings[field] })}>
           <Typography color={'primary'}>{gameSettings[field] ? 'Yes' : 'No'}</Typography>
@@ -157,7 +173,7 @@ function GameSettings(props) {
               <Box sx={styles.rarityContainer} key={item}>
                 <BookmarkIcon htmlColor={tierColors[item]} fontSize='small' />
                 <Typography color={'primary'} fontSize={'13px'} sx={{ width: '33px' }}>
-                  {`${((weight / Object.values(gameSettings.card_rarity_weights).reduce((a, b) => a + b, 0)) * 100).toFixed(0)}%`}
+                  {`${Math.round((weight / Object.values(gameSettings.card_rarity_weights).reduce((a, b) => a + b, 0)) * 100)}%`}
                 </Typography>
                 {!view && <Box sx={styles.arrowContainer}>
                   <ArrowDropUpIcon htmlColor={tierColors[item]} fontSize='small' onClick={() => handleRarityWeightChange(item, weight + 1)} />
@@ -174,10 +190,10 @@ function GameSettings(props) {
   return (
     <Dialog
       open={true}
-      onClose={props.close}
+      onClose={view ? props.close : () => { }}
       maxWidth={'xl'}
       PaperProps={{
-        sx: { background: 'rgba(0, 0, 0, 0.98)', border: '1px solid #FFE97F' }
+        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F' }
       }}
     >
 
@@ -186,15 +202,15 @@ function GameSettings(props) {
           <CloseIcon htmlColor='#FFF' sx={{ fontSize: '24px' }} />
         </Box>
 
-        <Typography variant='h4' color={'primary'} mb={1}>
-          {view && `Settings #${settingsId}`}
+        <Typography variant='h4' color={'primary'}>
+          {view ? gameSettings.name : step === 2 ? 'Create Settings' : ``}
         </Typography>
 
-        {loading && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+        {loading && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px', width: '800px' }}>
           <CircularProgress />
         </Box>}
 
-        {!loading && <Box sx={{ display: 'flex', gap: 5 }}>
+        {!loading && step === 1 && <Box sx={{ display: 'flex', gap: 5 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Typography variant='h6' color={'#f59100'}>Game</Typography>
 
@@ -226,10 +242,54 @@ function GameSettings(props) {
           </Box>
         </Box>}
 
+        {!loading && step === 2 && <>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }} mt={2}>
+            <Typography variant='h6' color={'#f59100'}>
+              Name
+            </Typography>
+
+            <TextField
+              size="medium"
+              type='text'
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+              error={showError}
+              helperText={showError && name.length > 31 ? 'Name must be less than 31 characters' : ''}
+            />
+
+            <Typography variant='h6' color={'#f59100'}>
+              Description
+            </Typography>
+
+            <TextField
+              size="medium"
+              type='text'
+              multiline
+              rows={6}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              fullWidth
+            />
+          </Box>
+        </>}
+
         {!view && <Box sx={styles.footer}>
-          <LoadingButton loading={creating} variant='contained' color='primary' onClick={saveGameSettings} sx={{ width: '200px' }}>
-            Create Settings
-          </LoadingButton>
+          {step === 1 && <Button variant='contained' color='primary' onClick={() => setStep(2)} sx={{ width: '200px' }}>
+            Continue
+          </Button>}
+
+          {step === 2 &&
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button variant='outlined' color='secondary' onClick={() => setStep(1)} sx={{ width: '150px' }}>
+                Back
+              </Button>
+
+              <LoadingButton loading={creating} variant='contained' color='primary' onClick={saveGameSettings} sx={{ width: '200px' }}>
+                Create Settings
+              </LoadingButton>
+            </Box>
+          }
         </Box>}
       </Box>
     </Dialog>
@@ -246,10 +306,11 @@ const styles = {
     gap: 1,
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'space-between',
     cursor: 'pointer',
     overflow: 'hidden',
     position: 'relative',
-    width: '830px'
+    minHeight: '470px',
   },
   settingContainer: {
     display: 'flex',
@@ -282,7 +343,6 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
     mt: 3
   }
 }
