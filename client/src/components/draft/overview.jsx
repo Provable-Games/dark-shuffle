@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import { Box, IconButton, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import React, { useContext, useState } from "react";
 import { isMobile } from 'react-device-detect';
@@ -7,19 +8,19 @@ import { CardSize, fetch_card_image } from "../../helpers/cards";
 import { uniquefy } from '../../helpers/utilities';
 import Card from "../card";
 
-function Overview() {
+function Overview(props) {
+  const { deckBuilder, edit, removeCard } = props
   const draft = useContext(DraftContext)
-  const { cards } = draft.getState
-
   const [displayCard, setDisplayCard] = useState(null)
 
-  const uniqueCards = uniquefy(cards, "cardIndex")
+  let cards = props.cards || draft.getState.cards
+  const uniqueCards = uniquefy(cards, "cardId")
 
   return <Box sx={styles.container}>
 
     {React.Children.toArray(
       uniqueCards.sort((a, b) => a.cost - b.cost).map(card => {
-        const count = cards.filter(c => c.cardIndex === card.cardIndex).length
+        const count = cards.filter(c => c.cardId === card.cardId).length
 
         return <motion.div style={{ ...styles.card }}
           onHoverStart={() => setDisplayCard(card)}
@@ -44,14 +45,18 @@ function Overview() {
             <Typography color='primary'>
               {count > 1 && count}
             </Typography>
+
+            {deckBuilder && edit && <IconButton size='small' onClick={() => removeCard(card.cardId)}>
+              <CloseIcon color='error' fontSize='small' />
+            </IconButton>}
           </Box>
 
         </motion.div>
       })
     )}
 
-    {displayCard && <Box sx={isMobile ? styles.mobileDisplayCard : styles.displayCard}>
-      <Card card={displayCard} />
+    {displayCard && <Box sx={[isMobile ? styles.mobileDisplayCard : styles.displayCard, { right: deckBuilder ? 'calc(50vw - 260px)' : isMobile ? '0px' : '305px' }]}>
+      <Card card={displayCard} glow={true} />
     </Box>}
   </Box>
 }
@@ -106,7 +111,6 @@ const styles = {
     height: CardSize.big.height,
     width: CardSize.big.width,
     position: 'fixed',
-    right: '305px'
   },
   levelContainer: {
     marginTop: '-5px',

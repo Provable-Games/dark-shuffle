@@ -123,6 +123,7 @@ export async function getSettings(settings_id) {
     ...gameSettings.map,
     ...gameSettings.battle,
     ...gameSettings.draft,
+    card_ids: gameSettings.draft.card_ids.map(cardId => Number(cardId))
   }
 }
 
@@ -791,5 +792,6 @@ export async function getSettingsList() {
     ...edge.map,
     ...edge.battle,
     ...edge.draft,
+    card_ids: edge.draft.card_ids.map(cardId => Number(cardId))
   }))
 }

@@ -48,8 +48,6 @@ function ArenaPage() {
       {state === 'Battle' && <BattleContainer />}
 
       {state === 'Map' && <StartBattleContainer />}
-
-      <DeckBuilder open={true} cardIds={Array.from({ length: 90 }, (_, i) => i + 1)} />
     </Scrollbars>
   )
 }

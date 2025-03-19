@@ -8,7 +8,7 @@ import sword from '../assets/images/sword.png';
 import { fetch_card_image, types, buildEffectText, tierColors } from "../helpers/cards";
 
 function Card(props) {
-  const { card, pendingCard, draftIndex, replaySelection } = props
+  const { card, pendingCard, draftIndex, replaySelection, glow } = props
 
   const renderCardText = () => {
     let effectCount = (card.playEffect?.modifier?._type !== 'None' ? 1 : 0) + (card.attackEffect?.modifier?._type !== 'None' ? 1 : 0) + (card.deathEffect?.modifier?._type !== 'None' ? 1 : 0)
@@ -53,7 +53,8 @@ function Card(props) {
   return <Box sx={[
     styles.container,
     { opacity: (pendingCard >= 0 && pendingCard !== draftIndex) ? 0.3 : 1 },
-    (replaySelection !== undefined && replaySelection === draftIndex) && { border: '1px solid #FFE97F' }
+    (replaySelection !== undefined && replaySelection === draftIndex) && { border: '1px solid #FFE97F' },
+    glow && { border: '1px solid #FFE97F' }
   ]} p={isMobile ? 1 : 1.5} pt={isMobile ? 0.5 : 1.5}>
 
     <Box sx={styles.header}>

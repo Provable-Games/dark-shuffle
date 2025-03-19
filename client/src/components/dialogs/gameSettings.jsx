@@ -10,6 +10,7 @@ import { byteArray } from "starknet";
 import { getSettings } from '../../api/indexer';
 import { DojoContext } from '../../contexts/dojoContext';
 import { tierColors } from '../../helpers/cards';
+import DeckBuilder from './deckBuilder';
 
 const DEFAULT_SETTINGS = {
   name: '',
@@ -49,6 +50,7 @@ function GameSettings(props) {
   const [name, setName] = useState('')
   const [showError, setShowError] = useState(false)
   const [description, setDescription] = useState('')
+  const [deckBuilder, openDeckBuilder] = useState(false)
 
   useEffect(() => {
     if (view) {
@@ -161,7 +163,7 @@ function GameSettings(props) {
         </Box>}
 
         {type === 'cards' && <Box sx={styles.settingValueContainer}>
-          <Typography sx={{ cursor: 'pointer', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'underline' }}>
+          <Typography sx={{ cursor: 'pointer', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'underline' }} onClick={() => openDeckBuilder(true)}>
             View
           </Typography>
         </Box>}
@@ -185,6 +187,11 @@ function GameSettings(props) {
         </Box>}
       </Box>
     )
+  }
+
+  const saveDeck = (cardIds) => {
+    setGameSettings({ ...gameSettings, card_ids: cardIds })
+    openDeckBuilder(false)
   }
 
   return (
@@ -292,6 +299,8 @@ function GameSettings(props) {
           }
         </Box>}
       </Box>
+
+      {deckBuilder && <DeckBuilder open={deckBuilder} close={() => openDeckBuilder(false)} cardIds={gameSettings.card_ids} view={view} save={saveDeck} />}
     </Dialog>
   )
 }
