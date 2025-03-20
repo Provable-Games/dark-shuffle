@@ -34,7 +34,7 @@ function StartDraft() {
   const navigate = useNavigate()
 
   const { account, address } = useAccount()
-  const { connect, connectors } = useConnect();
+  const { connect, connectors, isPending } = useConnect();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
   const dojo = useContext(DojoContext)
@@ -50,7 +50,7 @@ function StartDraft() {
 
   useEffect(() => {
     async function loadGame() {
-      if (!account) {
+      if (!Boolean(account)) {
         connect({ connector: cartridgeConnector })
         return
       }
@@ -64,12 +64,14 @@ function StartDraft() {
           startMintedGame(game)
         }
       }
+
+      navigate('/')
     }
 
-    if (gameId) {
+    if (gameId && !isPending) {
       loadGame()
     }
-  }, [gameId, address])
+  }, [gameId, address, isPending])
 
   const startSeasonGame = async () => {
     if (dojo.balances.lords < season.entryFee) {
