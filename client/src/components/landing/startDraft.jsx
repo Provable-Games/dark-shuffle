@@ -64,14 +64,12 @@ function StartDraft() {
           startMintedGame(game)
         }
       }
-
-      navigate('/')
     }
 
     if (gameId) {
       loadGame()
     }
-  }, [gameId, account])
+  }, [gameId, address])
 
   const startSeasonGame = async () => {
     if (dojo.balances.lords < season.entryFee) {

@@ -20,6 +20,8 @@ function DeathDialog(props) {
   const backToMenu = () => {
     battle.utils.resetBattleState()
     game.endGame()
+
+    navigate('/')
   }
 
   async function startAnimation() {
