@@ -33,7 +33,7 @@ function DraggableCard(props) {
     document.removeEventListener('mouseup', mouseUpHandler);
     event.preventDefault();
 
-    if (event.button !== 0 || event.pageY > play_threshold || game.values.replay) {
+    if (event.button !== 0 || event.pageY > play_threshold || game.values.replay || battle.state.pendingTx) {
       returnCard(event)
       return
     }
