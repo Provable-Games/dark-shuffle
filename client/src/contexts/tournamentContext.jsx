@@ -2,10 +2,9 @@ import { useAccount, useConnect } from '@starknet-react/core';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { dojoConfig } from '../../dojo.config';
 import { getActiveTournaments, getTournament, getTournamentScores } from '../api/indexer';
+import { translateEvent } from '../helpers/events';
 import TournamentSDK from '../sdk/tournaments';
 import { DojoContext } from './dojoContext';
-import { translateEvent } from '../helpers/events';
-import { hexToAscii } from '@dojoengine/utils';
 
 // Create a context
 const TournamentContext = createContext();
@@ -38,16 +37,7 @@ export const TournamentProvider = ({ children }) => {
 
   async function fetchTournaments() {
     const data = await getActiveTournaments()
-
-    setTournaments(data.map(tournament => ({
-      id: parseInt(tournament.id, 16),
-      name: hexToAscii(tournament.metadata?.name || ""),
-      description: tournament.metadata?.description || "",
-      start: parseInt(tournament.schedule?.game?.start || 0, 16),
-      end: parseInt(tournament.schedule?.game?.end || 0, 16),
-      entryFee: parseInt(tournament.entry_fee?.Some?.amount || 0, 16),
-      submissionPeriod: parseInt(tournament.schedule?.submission_duration || 0, 16)
-    })))
+    setTournaments(data)
   }
 
   useEffect(() => {

@@ -421,8 +421,18 @@ export const populateGameTokens = async (tokenIds) => {
         }
       }
     }
-  }
-  `
+
+    ${TOURNAMENT_NS_SHORT}RegistrationModels (limit:10000, where:{
+      game_token_idIN:[${tokenIds}]}
+    ){
+      edges {
+        node {
+          tournament_id
+          game_token_id
+        }
+      }
+    }
+  }`
 
   try {
     const res = await request(GQL_ENDPOINT, document)
@@ -459,39 +469,39 @@ export const populateGameTokens = async (tokenIds) => {
 }
 
 export async function getActiveTournaments() {
-  const document = gql`
-  {
-    ${TOURNAMENT_NS_SHORT}TournamentModels(limit:10000) {
-      edges {
-        node {
-          id,
-          schedule {
-            game {
-              start,
-              end
-            }
-          },
-          metadata {
-            name,
-            description,
-          },
-          game_config {
-            settings_id
-            address
-          },
-          entry_fee {
-            Some {
-              amount
-            }
-          }
-        }
+  try {
+    const currentTimeHex = Math.floor(Date.now() / 1000).toString(16).padStart(64, '0');
+    
+    let url = `${SQL_ENDPOINT}?query=
+      SELECT *
+      FROM "${TOURNAMENT_NS}-Tournament"
+      WHERE 
+        "game_config.address" = "${GAME_ADDRESS.replace(/^0x+/, "0x0")}" AND
+        "schedule.game.end" > "0x${currentTimeHex}"
+      LIMIT 10000`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
       }
-    }
-  }`
-  
-  const res = await request(GQL_ENDPOINT, document)
-  let tournaments = res?.[`${TOURNAMENT_NS_SHORT}TournamentModels`]?.edges.map(edge => edge.node)
-  return tournaments.filter(tournament => tournament.game_config.address === GAME_ADDRESS.toLowerCase() && parseInt(tournament.schedule.game.end, 16) * 1000 > Date.now())
+    });
+
+    const data = await response.json();
+    return data.map(tournament => ({
+      id: parseInt(tournament.id, 16),
+      name: hexToAscii(tournament['metadata.name']).replace(/^\0+/, ''),
+      description: tournament['metadata.description'],
+      start: parseInt(tournament['schedule.game.start'] ?? 0, 16),
+      end: parseInt(tournament['schedule.game.end'] ?? 0, 16),
+      entryFee: parseInt(tournament['entry_fee.Some.amount'] ?? 0, 16),
+      entryFeeDistribution: tournament['entry_fee.Some.distribution'] ?? [],
+      submissionPeriod: parseInt(tournament['schedule.submission_duration'] ?? 0, 16)
+    }));
+  } catch (ex) {
+    console.error("Error fetching active tournaments:", ex);
+    return [];
+  }
 }
 
 export async function getTournamentScores(tournament_id) {
