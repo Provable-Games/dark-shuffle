@@ -52,6 +52,5 @@ export const getGameTokens = async (owner) => {
   }
 
   let tokens = await recursiveFetchTokens([], null)
-  console.log('tokens', tokens)
   return tokens.map(token => token.tokenId)
 };

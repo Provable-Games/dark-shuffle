@@ -468,7 +468,7 @@ export const BattleProvider = ({ children }) => {
 
   const fetchBattleState = async (battleId, gameId) => {
     let data = await getBattleState(parseInt(battleId), parseInt(gameId))
-    console.log(data)
+
     setValues({
       battleId,
 

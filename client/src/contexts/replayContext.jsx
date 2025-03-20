@@ -51,7 +51,7 @@ export const ReplayProvider = ({ children }) => {
       return
     }
 
-    const receipt = await provider.waitForTransaction(txHash || txHashes[step], { retryInterval: 100 })
+    const receipt = await provider.waitForTransaction(txHash || txHashes[step], { retryInterval: 500 })
     if (!receipt) {
       enqueueSnackbar('Failed to load replay', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
       endReplay()
@@ -206,7 +206,6 @@ export const ReplayProvider = ({ children }) => {
         [],
         false,
         (_, data) => {
-          console.log('data', data)
           if (Boolean(data[`${dojoConfig.namespace}-GameActionEvent`])) {
             let gameId = data[`${dojoConfig.namespace}-GameActionEvent`]["game_id"].value
 

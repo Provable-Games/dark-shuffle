@@ -26,9 +26,9 @@ function GameTokens(props) {
     async function fetchGames() {
       setLoading(true)
 
-      const gameTokens = await getGameTokens(address)
-      let games = await populateGameTokens(gameTokens.map(game => game.tokenId))
-
+      const gameTokenIds = await getGameTokens(address)
+      let games = await populateGameTokens(gameTokenIds)
+      console.log(games, tournaments)
       games = games.map(game => ({
         ...game,
         tournament: tournaments.find(tournament => tournament.id === game.tournament_id),
@@ -53,7 +53,6 @@ function GameTokens(props) {
   }
 
   function renderGame(game) {
-    console.log(game)
     return <Box sx={[styles.gameContainer, { opacity: selectedGame?.id === game.id ? 1 : 0.8 }]}
       border={selectedGame?.id === game.id ? '1px solid #f59100' : '1px solid rgba(255, 255, 255, 0.3)'}
       onClick={() => setSelectedGame(game)}

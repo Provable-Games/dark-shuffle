@@ -9,6 +9,7 @@ let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace(NS);
 let GAME_ADDRESS = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
 let GQL_ENDPOINT = dojoConfig.toriiUrl + "/graphql"
+let SQL_ENDPOINT = dojoConfig.toriiUrl + "/sql"
 
 let TOURNAMENT_NS = dojoConfig.tournamentNamespace;
 let TOURNAMENT_NS_SHORT = get_short_namespace(TOURNAMENT_NS);
@@ -368,26 +369,20 @@ export async function getGameTxs(game_id) {
 }
 
 export const getGameTokens = async (accountAddress) => {
-  const document = gql`
-  {
-    tokenBalances(accountAddress:"${accountAddress}", limit:10000) {
-      edges {
-        node {
-        tokenMetadata {
-          ... on ERC721__Token {
-              contractAddress
-              tokenId
-            }
-          }
-        }
-      }
+  let url = `${SQL_ENDPOINT}?query=
+    SELECT token_id FROM token_balances
+    WHERE account_address = "${accountAddress.replace(/^0x0+/, "0x")}" AND contract_address = "${GAME_ADDRESS}"
+    LIMIT 10000`
+
+  const sql = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
     }
-  }
-  `
+  })
 
-  const res = await request(GQL_ENDPOINT, document);
-
-  return res?.tokenBalances?.edges.map(edge => edge.node.tokenMetadata).filter(token => token.contractAddress === GAME_ADDRESS);
+  let data = await sql.json()
+  return data.map(token => parseInt(token.token_id.split(":")[1], 16))
 }
 
 export const populateGameTokens = async (tokenIds) => {
@@ -493,7 +488,7 @@ export async function getActiveTournaments() {
       }
     }
   }`
-
+  
   const res = await request(GQL_ENDPOINT, document)
   let tournaments = res?.[`${TOURNAMENT_NS_SHORT}TournamentModels`]?.edges.map(edge => edge.node)
   return tournaments.filter(tournament => tournament.game_config.address === GAME_ADDRESS.toLowerCase() && parseInt(tournament.schedule.game.end, 16) * 1000 > Date.now())

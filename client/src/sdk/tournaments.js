@@ -4,10 +4,10 @@ import manifest from "../../manifest_tournaments.json";
 
 class TournamentSDK {
   constructor(rpcUrl) {
-    this.namespace = "budokan_v_1_0_4"
-    this.contractName = "Budokan"
-    this.contractAddress = "0x5fb427962210ac4b3be5e23419b0d9e91ca6a9c57b0665d2ca7783092506f6e"
     this.provider = new DojoProvider(manifest, rpcUrl);
+    this.contractAddress = manifest.contracts[0]?.address;
+    this.contractName = manifest.contracts[0]?.tag?.split("-")[1];
+    this.namespace = manifest.contracts[0]?.tag?.split("-")[0];
   }
 
   async execute(account, txs) {
@@ -17,7 +17,7 @@ class TournamentSDK {
 
     try {
       const { transaction_hash } = await this.provider.execute(account, txs, this.namespace, { version: "1" });
-      return account.waitForTransaction(transaction_hash);
+      return account.waitForTransaction(transaction_hash, { retryInterval: 500 });
     } catch (error) {
       console.error('Error executing transaction:', error);
     }
