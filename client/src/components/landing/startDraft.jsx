@@ -31,7 +31,7 @@ function StartDraft() {
   const replay = useReplay()
   const { gameId } = useParams()
   const { account, address } = useAccount()
-  const { connect, connectors } = useConnect();
+  const { connect, connectors, isPending } = useConnect();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
   const dojo = useContext(DojoContext)
@@ -48,7 +48,7 @@ function StartDraft() {
 
   useEffect(() => {
     async function loadGame() {
-      if (!account) {
+      if (!Boolean(account)) {
         connect({ connector: cartridgeConnector })
         return
       }
@@ -63,10 +63,10 @@ function StartDraft() {
       }
     }
 
-    if (gameId) {
+    if (gameId && !isPending) {
       loadGame()
     }
-  }, [gameId, account])
+  }, [gameId, address, isPending])
 
   const stopReconnecting = () => {
     setReconnecting(false)

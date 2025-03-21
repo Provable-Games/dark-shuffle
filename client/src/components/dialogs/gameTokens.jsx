@@ -52,6 +52,32 @@ function GameTokens(props) {
     close(false)
   }
 
+  const renderTimeRemaining = (timestamp) => {
+    const hours = Math.max(0, Math.floor((timestamp - Date.now()) / (1000 * 60 * 60)));
+    const minutes = Math.max(0, Math.floor(((timestamp - Date.now()) % (1000 * 60 * 60)) / (1000 * 60)));
+
+    return (
+      <>
+        {hours > 0 && (
+          <>
+            <Typography color='primary' sx={{ fontSize: '13px' }}>
+              {hours}
+            </Typography>
+            <Typography color='primary' sx={{ fontSize: '13px', ml: '2px' }}>
+              h
+            </Typography>
+          </>
+        )}
+        <Typography color='primary' sx={{ fontSize: '13px', ml: hours > 0 ? '4px' : '0px' }}>
+          {minutes}
+        </Typography>
+        <Typography color='primary' sx={{ fontSize: '13px', ml: '2px' }}>
+          m
+        </Typography>
+      </>
+    );
+  };
+
   function renderGame(game) {
     return <Box sx={[styles.gameContainer, { opacity: selectedGame?.id === game.id ? 1 : 0.8 }]}
       border={selectedGame?.id === game.id ? '1px solid #f59100' : '1px solid rgba(255, 255, 255, 0.3)'}
@@ -90,26 +116,11 @@ function GameTokens(props) {
         {active && game.available_at !== 0 && <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           {game.available_at < Date.now() ? <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <AccessTimeIcon color='primary' sx={{ fontSize: '16px', mr: '3px' }} />
-
-            <Typography color='primary' sx={{ fontSize: '13px' }}>
-              {Math.max(0, Math.floor((game.expires_at - Date.now()) / (1000 * 60 * 60)))}
-            </Typography>
-
-            <Typography color='primary' sx={{ fontSize: '13px', ml: '2px' }}>
-              h
-            </Typography>
+            {renderTimeRemaining(game.expires_at)}
           </Box> : <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <WatchIcon color='primary' sx={{ fontSize: '16px', mr: '3px' }} />
-
-            <Typography color='primary' sx={{ fontSize: '13px' }}>
-              {Math.max(0, Math.floor((game.available_at - Date.now()) / (1000 * 60 * 60)))}
-            </Typography>
-
-            <Typography color='primary' sx={{ fontSize: '13px', ml: '2px' }}>
-              h
-            </Typography>
+            {renderTimeRemaining(game.available_at)}
           </Box>}
-
         </Box>}
 
         {game.tournament_id ? <Typography sx={{ color: '#f59100', textAlign: 'right' }}>
