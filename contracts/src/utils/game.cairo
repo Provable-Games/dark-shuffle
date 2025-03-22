@@ -59,7 +59,13 @@ impl GameUtilsImpl of GameUtilsTrait {
 
         game.monsters_slain += 1;
         game.state = GameState::Map.into();
-        game.map_depth += 1;
+        
+        if game_settings.map.level_depth == game.map_depth {
+            game.map_depth = 0;
+        } else {
+            game.map_depth += 1;
+        }
+
         game.hero_xp += monster_node.health.into();
         if game_settings.persistent_health {
             game.hero_health = battle.hero.health;

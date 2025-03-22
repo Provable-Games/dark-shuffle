@@ -63,7 +63,7 @@ export function translateEvent(event) {
         }
       }
     } else if (component[key] === 'BattleEffects') {
-      let battleEffects = values.splice(index + 1, 5)
+      let battleEffects = values.splice(index + 1, 7)
 
       return {
         ...acc, [key]: {

@@ -1,4 +1,3 @@
-use darkshuffle::constants::LAST_NODE_DEPTH;
 use darkshuffle::models::battle::{Battle, BattleEffects, BattleResources, Hero, Monster};
 use darkshuffle::models::config::{GameSettings, CardRarityWeights, MapSettings, BattleSettings, DraftSettings};
 use darkshuffle::models::draft::Draft;
@@ -37,7 +36,7 @@ fn create_game(ref world: WorldStorage, game_id: u64, state: GameState) {
                 hero_xp: 1,
                 monsters_slain: 0,
                 map_level: 0,
-                map_depth: LAST_NODE_DEPTH,
+                map_depth: 0,
                 last_node_id: 0,
                 action_count: 0,
             },

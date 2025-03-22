@@ -25,10 +25,18 @@ impl MapUtilsImpl of MapUtilsTrait {
 
         let mut section_index = 0;
         while section_index < sections {
+            if map_settings.level_depth == 1 {
+                break;
+            }
+
             // Depth 2
             current_node_id += 1;
             if current_node_id == node_id && game.last_node_id == 1 {
                 is_available = true;
+                break;
+            }
+
+            if map_settings.level_depth == 2 {
                 break;
             }
 
@@ -48,6 +56,10 @@ impl MapUtilsImpl of MapUtilsTrait {
                     is_available = true;
                     break;
                 }
+            }
+
+            if map_settings.level_depth == 3 {
+                break;
             }
 
             // Depth 4
@@ -80,7 +92,7 @@ impl MapUtilsImpl of MapUtilsTrait {
 
         current_node_id += 1;
 
-        if is_available || (current_node_id == node_id && game.map_depth == 5) {
+        if is_available || (current_node_id == node_id && game.map_depth == map_settings.level_depth) {
             true
         } else {
             false
@@ -103,9 +115,13 @@ impl MapUtilsImpl of MapUtilsTrait {
 
         let monster_id = random::get_random_number(seed, 75 - monster_range) + monster_range;
 
-        let map_scaling = map.level - 1;
-        let health = map_settings.enemy_starting_health + (map_scaling * 5);
-        let attack = map_settings.enemy_starting_attack + map_scaling;
+        seed = random::LCG(seed);
+        let mut attack = random::get_random_number(seed, map_settings.enemy_attack_max - map_settings.enemy_attack_min) + map_settings.enemy_attack_min;
+        attack += (map.level - 1) * map_settings.enemy_attack_scaling;
+
+        seed = random::LCG(seed);
+        let mut health = random::get_random_number(seed, map_settings.enemy_health_max - map_settings.enemy_health_min) + map_settings.enemy_health_min;
+        health += (map.level - 1) * map_settings.enemy_health_scaling;
 
         MonsterNode { monster_id, attack, health }
     }

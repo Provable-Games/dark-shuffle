@@ -25,9 +25,14 @@ pub struct GameSettings {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct MapSettings {
+    level_depth: u8,
     possible_branches: u8,
-    enemy_starting_attack: u8,
-    enemy_starting_health: u8,
+    enemy_attack_min: u8,
+    enemy_attack_max: u8,
+    enemy_health_min: u8,
+    enemy_health_max: u8,
+    enemy_attack_scaling: u8,
+    enemy_health_scaling: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]

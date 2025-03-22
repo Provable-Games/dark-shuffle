@@ -45,18 +45,34 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         let POSSIBLE_BRANCHES: u8 = get_random_number(seed, 3);
 
         seed = LCG(seed);
-        let ENEMY_STARTING_ATTACK: u8 = get_random_number(seed, 5);
+        let LEVEL_DEPTH: u8 = get_random_number(seed, 5);
 
         seed = LCG(seed);
-        let STARTING_HEALTH: u8 = get_random_number(seed, 20) + (ENEMY_STARTING_ATTACK * 10);
+        let ENEMY_ATTACK_MIN: u8 = get_random_number(seed, 5);
+
+        seed = LCG(seed);
+        let ENEMY_ATTACK_MAX: u8 = get_random_number(seed, ENEMY_ATTACK_MIN + 2);
+
+        seed = LCG(seed);
+        let mut ENEMY_HEALTH_MIN: u8 = get_random_number(seed, 20) + (ENEMY_ATTACK_MIN * 10);
+
+        seed = LCG(seed);
+        let ENEMY_HEALTH_MAX: u8 = get_random_number(seed, ENEMY_HEALTH_MIN + 20);
 
         seed = LCG(seed);
         let DRAFT_SIZE: u8 = get_random_number(seed, 25) + 4;
 
         seed = LCG(seed);
-        let mut ENEMY_STARTING_HEALTH: u8 = get_random_number(seed, 40) + 20;
-        if ENEMY_STARTING_HEALTH < DRAFT_SIZE * 2 {
-            ENEMY_STARTING_HEALTH = DRAFT_SIZE * 2;
+        let ENEMY_HEALTH_SCALING: u8 = get_random_number(seed, 2);
+
+        seed = LCG(seed);
+        let ENEMY_ATTACK_SCALING: u8 = get_random_number(seed, 2);
+
+        seed = LCG(seed);
+        let STARTING_HEALTH: u8 = get_random_number(seed, 20) + (ENEMY_ATTACK_MIN * 10);
+
+        if ENEMY_HEALTH_MIN > DRAFT_SIZE * 5 {
+            ENEMY_HEALTH_MIN = DRAFT_SIZE * 5;
         }
 
         GameSettings {
@@ -65,8 +81,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             persistent_health: PERSISTENT_HEALTH,
             map: MapSettings {
                 possible_branches: POSSIBLE_BRANCHES,
-                enemy_starting_attack: ENEMY_STARTING_ATTACK,
-                enemy_starting_health: ENEMY_STARTING_HEALTH,
+                level_depth: LEVEL_DEPTH,
+                enemy_attack_min: ENEMY_ATTACK_MIN,
+                enemy_attack_max: ENEMY_ATTACK_MAX,
+                enemy_health_min: ENEMY_HEALTH_MIN,
+                enemy_health_max: ENEMY_HEALTH_MAX,
+                enemy_health_scaling: ENEMY_HEALTH_SCALING,
+                enemy_attack_scaling: ENEMY_ATTACK_SCALING,
             },
             battle: BattleSettings {
                 start_energy: START_ENERGY,

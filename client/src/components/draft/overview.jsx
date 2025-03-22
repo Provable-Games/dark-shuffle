@@ -56,7 +56,7 @@ function Overview(props) {
     )}
 
     {displayCard && <Box sx={[isMobile ? styles.mobileDisplayCard : styles.displayCard, { right: deckBuilder ? 'calc(50vw - 260px)' : isMobile ? '0px' : '305px' }]}>
-      <Card card={displayCard} glow={true} />
+      <Card card={displayCard} glow={Boolean(deckBuilder)} />
     </Box>}
   </Box>
 }

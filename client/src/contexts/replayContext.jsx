@@ -146,7 +146,7 @@ export const ReplayProvider = ({ children }) => {
 
     const mapValues = events.find(e => e.componentName === 'Map')
     if (mapValues) {
-      const computedMap = generateMapNodes(mapValues.level, mapValues.seed)
+      const computedMap = generateMapNodes(mapValues.level, mapValues.seed, game.getState.gameSettings)
       game.setMap(computedMap);
     }
 

@@ -1,6 +1,3 @@
-const LAST_NODE_DEPTH: u8 = 6;
-const PRIZES: u8 = 10;
-
 const MAINNET_CHAIN_ID: felt252 = 0x534e5f4d41494e;
 const SEPOLIA_CHAIN_ID: felt252 = 0x534e5f5345504f4c4941;
 const KATANA_CHAIN_ID: felt252 = 0x4b4154414e41;
@@ -41,7 +38,7 @@ pub mod DEFAULT_SETTINGS {
 
     const PERSISTENT_HEALTH: bool = true;
     const AUTO_DRAFT: bool = false;
-    const STARTING_HEALTH: u8 = 50;
+    const STARTING_HEALTH: u8 = 40;
     const START_ENERGY: u8 = 1;
     const START_HAND_SIZE: u8 = 5;
     const DRAFT_SIZE: u8 = 20;
@@ -49,8 +46,13 @@ pub mod DEFAULT_SETTINGS {
     const MAX_HAND_SIZE: u8 = 10;
     const DRAW_AMOUNT: u8 = 1;
     const POSSIBLE_BRANCHES: u8 = 3;
-    const ENEMY_STARTING_ATTACK: u8 = 2;
-    const ENEMY_STARTING_HEALTH: u8 = 40;
+    const LEVEL_DEPTH: u8 = 5;
+    const ENEMY_ATTACK_MIN: u8 = 2;
+    const ENEMY_ATTACK_MAX: u8 = 3;
+    const ENEMY_HEALTH_MIN: u8 = 30;
+    const ENEMY_HEALTH_MAX: u8 = 50;
+    const ENEMY_HEALTH_SCALING: u8 = 1;
+    const ENEMY_ATTACK_SCALING: u8 = 1;
 
     fn GET_GENESIS_CARD_IDS() -> Span<u64> {
         let mut card_ids = array![];
@@ -81,8 +83,13 @@ pub mod DEFAULT_SETTINGS {
             persistent_health: PERSISTENT_HEALTH,
             map: MapSettings {
                 possible_branches: POSSIBLE_BRANCHES,
-                enemy_starting_attack: ENEMY_STARTING_ATTACK,
-                enemy_starting_health: ENEMY_STARTING_HEALTH,
+                level_depth: LEVEL_DEPTH,
+                enemy_attack_min: ENEMY_ATTACK_MIN,
+                enemy_attack_max: ENEMY_ATTACK_MAX,
+                enemy_health_min: ENEMY_HEALTH_MIN,
+                enemy_health_max: ENEMY_HEALTH_MAX,
+                enemy_attack_scaling: ENEMY_ATTACK_SCALING,
+                enemy_health_scaling: ENEMY_HEALTH_SCALING,
             },
             battle: BattleSettings {
                 start_energy: START_ENERGY,

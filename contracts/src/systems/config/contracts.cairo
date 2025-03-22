@@ -20,8 +20,13 @@ trait IConfigSystems<T> {
         auto_draft: bool,
         persistent_health: bool,
         possible_branches: u8,
-        enemy_starting_attack: u8,
-        enemy_starting_health: u8,
+        level_depth: u8,
+        enemy_attack_min: u8,
+        enemy_attack_max: u8,
+        enemy_health_min: u8,
+        enemy_health_max: u8,
+        enemy_attack_scaling: u8,
+        enemy_health_scaling: u8,
     ) -> u32;
 
     fn add_random_settings(ref self: T) -> u32;
@@ -122,8 +127,13 @@ mod config_systems {
             auto_draft: bool,
             persistent_health: bool,
             possible_branches: u8,
-            enemy_starting_attack: u8,
-            enemy_starting_health: u8,
+            level_depth: u8,
+            enemy_attack_min: u8,
+            enemy_attack_max: u8,
+            enemy_health_min: u8,
+            enemy_health_max: u8,
+            enemy_attack_scaling: u8,
+            enemy_health_scaling: u8,
         ) -> u32 {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
@@ -137,8 +147,13 @@ mod config_systems {
                 persistent_health,
                 map: MapSettings {
                     possible_branches,
-                    enemy_starting_attack,
-                    enemy_starting_health,
+                    level_depth,
+                    enemy_attack_min,
+                    enemy_attack_max,
+                    enemy_health_min,
+                    enemy_health_max,
+                    enemy_attack_scaling,
+                    enemy_health_scaling,
                 },
                 battle: BattleSettings {
                     start_energy,
@@ -258,10 +273,20 @@ mod config_systems {
             assert!(settings.map.possible_branches > 0, "Maximum branches must be greater than 0");
             assert!(settings.map.possible_branches <= 3, "Maximum branches cannot be greater than 3");
 
-            assert!(settings.map.enemy_starting_attack > 0, "Enemy attack must be greater than 0");
-            assert!(settings.map.enemy_starting_attack <= 10, "Enemy attack cannot be greater than 10");
+            assert!(settings.map.level_depth > 0, "Level depth must be greater than 0");
+            assert!(settings.map.level_depth <= 5, "Level depth cannot be greater than 5");
 
-            assert!(settings.map.enemy_starting_health > 10, "Enemy health must be greater than 10");
+            assert!(settings.map.enemy_attack_min > 0, "Enemy attack minimum must be greater than 0");
+            assert!(settings.map.enemy_attack_min <= 10, "Enemy attack minimum cannot be greater than 10");
+            assert!(settings.map.enemy_attack_max >= settings.map.enemy_attack_min, "Enemy attack cannot be less than minimum");
+            assert!(settings.map.enemy_attack_max <= 10, "Enemy attack maximum cannot be greater than 10");
+            assert!(settings.map.enemy_attack_scaling <= 10, "Enemy attack scaling cannot be greater than 10");
+
+            assert!(settings.map.enemy_health_min >= 10, "Enemy health minimum cannot be less than 10");
+            assert!(settings.map.enemy_health_min <= settings.map.enemy_health_max, "Enemy health cannot be less than minimum");
+            assert!(settings.map.enemy_health_max <= 200, "Enemy health maximum cannot be greater than 100");
+            assert!(settings.map.enemy_health_max >= settings.map.enemy_health_min, "Enemy health cannot be less than minimum");
+            assert!(settings.map.enemy_health_scaling <= 50, "Enemy health scaling cannot be greater than 50");
         }
     }
 }

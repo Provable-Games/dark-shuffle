@@ -28,10 +28,10 @@ function GameTokens(props) {
 
       const gameTokenIds = await getGameTokens(address)
       let games = await populateGameTokens(gameTokenIds)
-      console.log(games, tournaments)
+
       games = games.map(game => ({
         ...game,
-        tournament: tournaments.find(tournament => tournament.id === game.tournament_id),
+        tournament: tournaments?.find(tournament => tournament.id === game.tournament_id),
       }))
 
       setSelectedGame()

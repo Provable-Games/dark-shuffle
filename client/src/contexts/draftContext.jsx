@@ -3,6 +3,9 @@ import { getDraft } from "../api/indexer";
 import { delay } from "../helpers/utilities";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
+import { Button, IconButton } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close'
+import { useSnackbar } from "notistack";
 
 export const DraftContext = createContext()
 
@@ -16,6 +19,7 @@ export const DraftProvider = ({ children }) => {
 
   const [options, setOptions] = useState([])
   const [cards, setCards] = useState([])
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
   useEffect(() => {
     if (gameData && gameSettings?.starting_health && gameCards?.length > 0) {
@@ -57,7 +61,31 @@ export const DraftProvider = ({ children }) => {
       game.setGame({ ...gameValues, playerName: gameData.playerName })
       setOptions(draftValues.options.map(option => game.utils.getCard(option)))
       setCards(draftValues.cards.map(card => game.utils.getCard(card)))
+
+      enqueueSnackbar('Share Your Game!', {
+        variant: 'info',
+        anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+        autoHideDuration: 15000,
+        hideIconVariant: true,
+        action: snackbarId => (
+          <>
+            <Button variant='outlined' size='small' sx={{ width: '90px', mr: 1 }}
+              component='a' href={'https://x.com/intent/tweet?text=' + `I'm about to face the beasts of Dark Shuffle — come watch me play and see how far I can go! darkshuffle.io/watch/${gameData.tokenId} 🕷️⚔️ @provablegames @darkshuffle_gg`}
+              target='_blank'>
+              Tweet
+            </Button>
+
+            <IconButton size='small' onClick={() => {
+              closeSnackbar(snackbarId)
+            }}>
+              <CloseIcon color='secondary' fontSize='small' />
+            </IconButton>
+          </>
+        )
+      })
     }
+
+    setGameData()
   }
 
   const selectCard = async (optionId) => {

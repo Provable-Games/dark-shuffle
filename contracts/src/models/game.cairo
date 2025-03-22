@@ -1,4 +1,3 @@
-use darkshuffle::constants::LAST_NODE_DEPTH;
 use dojo::event::EventStorage;
 use dojo::model::ModelStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
@@ -94,7 +93,7 @@ impl GameOwnerImpl of GameOwnerTrait {
 
     fn assert_generate_tree(self: Game) {
         assert(self.state.into() == GameState::Map, 'Not Map');
-        assert(self.map_depth == LAST_NODE_DEPTH, 'Tree Not Completed');
+        assert(self.map_depth == 0, 'Tree Not Completed');
     }
 
     fn assert_select_node(self: Game) {

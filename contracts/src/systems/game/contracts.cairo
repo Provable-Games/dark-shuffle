@@ -20,7 +20,7 @@ trait IGameSystems<T> {
 #[dojo::contract]
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
-    use darkshuffle::constants::{DEFAULT_NS, LAST_NODE_DEPTH, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
+    use darkshuffle::constants::{DEFAULT_NS, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
     use darkshuffle::models::card::Card;
     use darkshuffle::models::config::{GameSettings, GameSettingsTrait};
     use darkshuffle::models::draft::Draft;
@@ -143,7 +143,7 @@ mod game_systems {
                 hero_xp: 1,
                 monsters_slain: 0,
                 map_level: 0,
-                map_depth: LAST_NODE_DEPTH,
+                map_depth: 0,
                 last_node_id: 0,
                 action_count,
             };

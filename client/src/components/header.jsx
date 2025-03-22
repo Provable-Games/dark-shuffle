@@ -100,7 +100,7 @@ function Header(props) {
       <ProfileMenu handleClose={handleClose} anchorEl={anchorEl} openNameDialog={openNameDialog} openGameSettings={openGameSettings} />
       <ChooseName open={nameDialog} close={openNameDialog} />
       <ConnectWallet open={connectWallet} close={openConnectWallet} />
-      <GameSettingsList open={gameSettings} close={openGameSettings} />
+      {gameSettings && <GameSettingsList open={gameSettings} close={openGameSettings} />}
     </Box>
   );
 }
