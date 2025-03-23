@@ -30,8 +30,13 @@ const DRAW_AMOUNT: u8 = 1;
 const AUTO_DRAFT: bool = true;
 const PERSISTENT_HEALTH: bool = true;
 const POSSIBLE_BRANCHES: u8 = 3;
-const ENEMY_STARTING_ATTACK: u8 = 2;
-const ENEMY_STARTING_HEALTH: u8 = 40;
+const LEVEL_DEPTH: u8 = 5;
+const ENEMY_ATTACK_MIN: u8 = 2;
+const ENEMY_ATTACK_MAX: u8 = 3;
+const ENEMY_HEALTH_MIN: u8 = 30;
+const ENEMY_HEALTH_MAX: u8 = 50;
+const ENEMY_ATTACK_SCALING: u8 = 1;
+const ENEMY_HEALTH_SCALING: u8 = 5;
 
 fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
     let (mut world, game_systems_dispatcher) = spawn_darkshuffle();
@@ -50,8 +55,13 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
         GET_GENESIS_CARD_IDS(),
         GET_DEFAULT_WEIGHTS(),
         POSSIBLE_BRANCHES,
-        ENEMY_STARTING_ATTACK,
-        ENEMY_STARTING_HEALTH,
+        LEVEL_DEPTH,
+        ENEMY_ATTACK_MIN,
+        ENEMY_ATTACK_MAX,
+        ENEMY_HEALTH_MIN,
+        ENEMY_HEALTH_MAX,
+        ENEMY_ATTACK_SCALING,
+        ENEMY_HEALTH_SCALING,
     );
 
     let game_id = mint_game_token(

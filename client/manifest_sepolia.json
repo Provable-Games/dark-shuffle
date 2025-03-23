@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x7c9469d45a9cdbab775035afb48e1fa73fb35ab059fcb9dfb0a301aa973e783",
-    "address": "0x232cc6079c6de5847d781f9c3eb61d0d31a6236e35f1b8bd1351a07adeb772d",
-    "seed": "pg_sepolia_await_13",
+    "address": "0x229aad1a2e02dc64bbb09e2026f1152605c82d93915535c41fed6de5c278346",
+    "seed": "pg_sepolia_await_14",
     "name": "Provable Games",
     "entrypoints": [
       "uuid",
@@ -1312,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x6746cf14212454538d767210b555560599590b0f42f69845f933694f88ad16a",
-      "class_hash": "0x37d2b878ddf1408963ad2b963dc1f05b93ff8d9ce5e3b9791c18303a6747d7e",
+      "address": "0x31e743f8d1329158b403d7326c07e0ceb90f2befdfc070e8e0f28f50444271d",
+      "class_hash": "0x63401acabafe39e190c9c92427a68e3d22a0e9c96aa94e73b83f0a63f907e02",
       "abi": [
         {
           "type": "impl",
@@ -1540,8 +1540,8 @@
       ]
     },
     {
-      "address": "0x5667d5446f2b92088217e52abcb94051f2164aa2d0728cc9d3fc18351afe879",
-      "class_hash": "0x42132c1b5d399c0c8ed60f097b475e5355a8b875a6cd9071337067926672305",
+      "address": "0x3f4f1020005b817bd4aa9cedbfbe414c09c383292fc108709d2e50ca6205b86",
+      "class_hash": "0x27847ee8f5fd703ed51a1f56e37759fb7acfccd1ddb171234c7137d5cee5846",
       "abi": [
         {
           "type": "impl",
@@ -1710,15 +1710,35 @@
           "name": "darkshuffle::models::config::MapSettings",
           "members": [
             {
+              "name": "level_depth",
+              "type": "core::integer::u8"
+            },
+            {
               "name": "possible_branches",
               "type": "core::integer::u8"
             },
             {
-              "name": "enemy_starting_attack",
+              "name": "enemy_attack_min",
               "type": "core::integer::u8"
             },
             {
-              "name": "enemy_starting_health",
+              "name": "enemy_attack_max",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_health_min",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_health_max",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_attack_scaling",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_health_scaling",
               "type": "core::integer::u8"
             }
           ]
@@ -1866,11 +1886,31 @@
                   "type": "core::integer::u8"
                 },
                 {
-                  "name": "enemy_starting_attack",
+                  "name": "level_depth",
                   "type": "core::integer::u8"
                 },
                 {
-                  "name": "enemy_starting_health",
+                  "name": "enemy_attack_min",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_attack_max",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_health_min",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_health_max",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_attack_scaling",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_health_scaling",
                   "type": "core::integer::u8"
                 }
               ],
@@ -2149,8 +2189,8 @@
       ]
     },
     {
-      "address": "0x7f0eea0b346b043dea484ffa5ad7b8ec5832b01fd5d9f822ab06dcc860672d0",
-      "class_hash": "0x2b9c4e5dbbd335469f772bb155da89c58d2fbf5a262f9dbb1a56bfe424150c8",
+      "address": "0x3054f7cdcf0903ad31b4e93eee4efb6a6cb8bc53ad0103bc689afd4128545a5",
+      "class_hash": "0x2bc915b8d704a1d67223abc29755286908533a4536a0a99ee61f4ffc2029f6e",
       "abi": [
         {
           "type": "impl",
@@ -2353,8 +2393,8 @@
       ]
     },
     {
-      "address": "0x612625f55bca3bc864ab0a0b8101c9d80473d50dfb4c67c913926bc756348c4",
-      "class_hash": "0x58776149c308ef231a4c8c4c1c46582e9c3633c6bfd5e21a6f25dbf7667b600",
+      "address": "0x145fc86799ecf8ff27d559f48e97b679b698d669c9ce10a506447af654a236b",
+      "class_hash": "0x11822b9fe0352f27679ea4af4d2b7a1f8e955892ddc9ed9af6dc86929b34454",
       "abi": [
         {
           "type": "impl",
@@ -3580,8 +3620,8 @@
       ]
     },
     {
-      "address": "0xb8c749d96ec62d726b7db1d4788c63477d5d6769556faf55c0094e4ba1c388",
-      "class_hash": "0x3763f6a0e6f3d792b081d409051e7ebd9492e40842a3c8af2bc266b59464602",
+      "address": "0x3ec957ced31db71d5816dfbb38267f30be01e4ef1a0f3ec1660fca6d25ab971",
+      "class_hash": "0x739ea2c43cc58c7f5351c46ae2453143d6456976f316ba52d1f42d1b4da780",
       "abi": [
         {
           "type": "impl",
@@ -3861,7 +3901,7 @@
     },
     {
       "members": [],
-      "class_hash": "0x2cd79827291cfdcd4e71692e903025c24c7bdb22262398a160bda349327c92d",
+      "class_hash": "0x19d6bdab328b7c65199a429710432fac3d40cdb6604d1bb5b8229e62c05f4e3",
       "tag": "ds_v1_2_0-GameSettings",
       "selector": "0x40f76893af52af25c2dda8662449d83f52ad15151e90c7645bed03144f7b154"
     },

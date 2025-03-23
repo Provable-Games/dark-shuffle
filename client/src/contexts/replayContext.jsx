@@ -1,16 +1,15 @@
 import { createClient } from "@dojoengine/torii-client";
 import { useSnackbar } from 'notistack';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { RpcProvider } from "starknet";
 import { dojoConfig } from "../../dojo.config";
 import { getGameTxs } from '../api/indexer';
-import { LAST_NODE_LEVEL } from "../helpers/constants";
 import { translateEvent } from '../helpers/events';
 import { generateMapNodes } from '../helpers/map';
 import { BattleContext } from './battleContext';
 import { DraftContext } from './draftContext';
 import { GAME_STATES, GameContext } from './gameContext';
-import { useNavigate } from "react-router-dom";
 
 // Create a context
 const ReplayContext = createContext();
@@ -120,7 +119,7 @@ export const ReplayProvider = ({ children }) => {
     if (gameValues) {
       game.setGame({ ...gameValues, replay: true })
 
-      if (!spectatingGame && gameValues.mapDepth === LAST_NODE_LEVEL && GAME_STATES[gameValues.state] === 'Map') {
+      if (!spectatingGame && gameValues.mapDepth === 0 && GAME_STATES[gameValues.state] === 'Map') {
         if (appliedStep < step) {
           setStep(prev => prev + 1)
         } else {

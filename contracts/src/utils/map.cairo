@@ -25,7 +25,7 @@ impl MapUtilsImpl of MapUtilsTrait {
 
         let mut section_index = 0;
         while section_index < sections {
-            if map_settings.level_depth == 1 {
+            if map_settings.level_depth == 2 {
                 break;
             }
 
@@ -36,8 +36,9 @@ impl MapUtilsImpl of MapUtilsTrait {
                 break;
             }
 
-            if map_settings.level_depth == 2 {
-                break;
+            if map_settings.level_depth == 3 {
+                section_index += 1;
+                continue;
             }
 
             // Depth 3
@@ -58,8 +59,9 @@ impl MapUtilsImpl of MapUtilsTrait {
                 }
             }
 
-            if map_settings.level_depth == 3 {
-                break;
+            if map_settings.level_depth == 4 {
+                section_index += 1;
+                continue;
             }
 
             // Depth 4

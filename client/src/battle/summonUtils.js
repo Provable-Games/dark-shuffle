@@ -4,9 +4,9 @@ import { applyCardEffect, requirementMet } from "./cardUtils";
 export const summonEffect = ({
   creature, values, board, battleEffects, setBattleEffects, gameEffects,
   updateBoard, reduceMonsterAttack, increaseEnergy, damageMonster, setValues,
-  damageHero, healHero, roundStats, setRoundStats
+  damageHero, healHero, roundStats, setRoundStats,
 }) => {
-  let updatedBattleEffects = {};
+  let updatedBattleEffects = { ...battleEffects };
 
   if (roundStats.creaturesPlayed === 0) {
     creature.attack += gameEffects.firstAttack ?? 0;
@@ -61,7 +61,7 @@ export const summonEffect = ({
     if (requirementMet(creature.playEffect.modifier.requirement, creature.cardType, board, values.monsterType, false)) {
       applyCardEffect({
         values, cardEffect: creature.playEffect, creature, board, healHero,
-        increaseEnergy, battleEffects, setBattleEffects,
+        increaseEnergy, battleEffects, setBattleEffects, updatedBattleEffects,
         reduceMonsterAttack, damageMonster, updateBoard,
         onBoard: false
       })

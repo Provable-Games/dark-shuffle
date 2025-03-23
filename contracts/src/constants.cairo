@@ -51,8 +51,8 @@ pub mod DEFAULT_SETTINGS {
     const ENEMY_ATTACK_MAX: u8 = 3;
     const ENEMY_HEALTH_MIN: u8 = 30;
     const ENEMY_HEALTH_MAX: u8 = 50;
-    const ENEMY_HEALTH_SCALING: u8 = 1;
     const ENEMY_ATTACK_SCALING: u8 = 1;
+    const ENEMY_HEALTH_SCALING: u8 = 5;
 
     fn GET_GENESIS_CARD_IDS() -> Span<u64> {
         let mut card_ids = array![];

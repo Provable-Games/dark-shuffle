@@ -105,8 +105,13 @@ fn create_custom_settings(
     card_ids: Span<u64>,
     card_rarity_weights: CardRarityWeights,
     possible_branches: u8,
-    enemy_starting_attack: u8,
-    enemy_starting_health: u8,
+    level_depth: u8,
+    enemy_attack_min: u8,
+    enemy_attack_max: u8,
+    enemy_health_min: u8,
+    enemy_health_max: u8,
+    enemy_attack_scaling: u8,
+    enemy_health_scaling: u8,
 ) -> u32 {
     let settings_id = 99;
 
@@ -118,8 +123,13 @@ fn create_custom_settings(
                 persistent_health,
                 map: MapSettings {
                     possible_branches,
-                    enemy_starting_attack,
-                    enemy_starting_health,
+                    level_depth,
+                    enemy_attack_min,
+                    enemy_attack_max,
+                    enemy_health_min,
+                    enemy_health_max,
+                    enemy_attack_scaling,
+                    enemy_health_scaling,
                 },
                 battle: BattleSettings {
                     start_energy,

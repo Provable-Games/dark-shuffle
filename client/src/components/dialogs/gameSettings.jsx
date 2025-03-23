@@ -11,6 +11,8 @@ import { getSettings } from '../../api/indexer';
 import { DojoContext } from '../../contexts/dojoContext';
 import { tierColors } from '../../helpers/cards';
 import DeckBuilder from './deckBuilder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import sword from '../../assets/images/sword.png';
 
 const DEFAULT_SETTINGS = {
   name: '',
@@ -18,8 +20,13 @@ const DEFAULT_SETTINGS = {
   starting_health: 50,
   persistent_health: true,
   possible_branches: 3,
-  enemy_starting_attack: 2,
-  enemy_starting_health: 40,
+  level_depth: 5,
+  enemy_attack_min: 2,
+  enemy_attack_max: 3,
+  enemy_health_min: 30,
+  enemy_health_max: 50,
+  enemy_attack_scaling: 1,
+  enemy_health_scaling: 5,
   start_energy: 1,
   start_hand_size: 5,
   max_energy: 10,
@@ -103,8 +110,13 @@ function GameSettings(props) {
           newSettings.auto_draft,
           newSettings.persistent_health,
           newSettings.possible_branches,
-          newSettings.enemy_starting_attack,
-          newSettings.enemy_starting_health,
+          newSettings.level_depth,
+          newSettings.enemy_attack_min,
+          newSettings.enemy_attack_max,
+          newSettings.enemy_health_min,
+          newSettings.enemy_health_max,
+          newSettings.enemy_attack_scaling,
+          newSettings.enemy_health_scaling,
         ]
       }], false)
 
@@ -159,6 +171,43 @@ function GameSettings(props) {
             disabled={view}
             onChange={(e) => setGameSettings({ ...gameSettings, [field]: e.target.value })}
             onBlur={() => setGameSettings({ ...gameSettings, [field]: Math.max(range[0], Math.min(range[1], gameSettings[field])) })}
+          />
+        </Box>}
+
+        {type === 'range' && <Box sx={styles.settingValueContainer} gap={0.5}>
+          <Input disableUnderline={true} sx={{ color: '#FFE97F', width: '50px' }}
+            inputProps={{ style: { textAlign: 'center', border: '1px solid #ffffff50', padding: '0', fontSize: '14px' } }}
+            value={gameSettings[field[0]]}
+            disabled={view}
+            onChange={(e) => setGameSettings({ ...gameSettings, [field[0]]: e.target.value })}
+            onBlur={() => setGameSettings({ ...gameSettings, [field[0]]: Math.max(range[0], Math.min(range[1], gameSettings[field[0]])) })}
+          />
+          <Typography color={'primary'}>{`-`}</Typography>
+          <Input disableUnderline={true} sx={{ color: '#FFE97F', width: '50px' }}
+            inputProps={{ style: { textAlign: 'center', border: '1px solid #ffffff50', padding: '0', fontSize: '14px' } }}
+            value={gameSettings[field[1]]}
+            disabled={view}
+            onChange={(e) => setGameSettings({ ...gameSettings, [field[1]]: e.target.value })}
+            onBlur={() => setGameSettings({ ...gameSettings, [field[1]]: Math.max(range[0], Math.min(range[1], gameSettings[field[1]])) })}
+          />
+        </Box>}
+
+        {type === 'scaling' && <Box sx={styles.settingValueContainer} gap={2}>
+          <Input disableUnderline={true} sx={{ color: '#FFE97F', width: '50px' }}
+            inputProps={{ style: { textAlign: 'center', border: '1px solid #ffffff50', padding: '0', fontSize: '14px' } }}
+            value={gameSettings[field[0]]}
+            disabled={view}
+            onChange={(e) => setGameSettings({ ...gameSettings, [field[0]]: e.target.value })}
+            onBlur={() => setGameSettings({ ...gameSettings, [field[0]]: Math.max(range[0][0], Math.min(range[0][1], gameSettings[field[0]])) })}
+            startAdornment={<img src={sword} alt='sword' style={{ width: '15px', height: '15px', paddingRight: '2px' }} />}
+          />
+          <Input disableUnderline={true} sx={{ color: '#FFE97F', width: '50px' }}
+            inputProps={{ style: { textAlign: 'center', border: '1px solid #ffffff50', padding: '0', fontSize: '14px' } }}
+            value={gameSettings[field[1]]}
+            disabled={view}
+            onChange={(e) => setGameSettings({ ...gameSettings, [field[1]]: e.target.value })}
+            onBlur={() => setGameSettings({ ...gameSettings, [field[1]]: Math.max(range[1][0], Math.min(range[1][1], gameSettings[field[1]])) })}
+            startAdornment={<FavoriteIcon htmlColor={'red'} sx={{ fontSize: '16px', pr: '2px' }} />}
           />
         </Box>}
 
@@ -221,8 +270,9 @@ function GameSettings(props) {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Typography variant='h6' color={'#f59100'}>Game</Typography>
 
-            {renderSettingItem('Starting Health', 'starting_health', 'number', [1, 200])}
+            {renderSettingItem('Auto Draft', 'auto_draft', 'boolean')}
             {renderSettingItem('Persistent Health', 'persistent_health', 'boolean')}
+            {renderSettingItem('Starting Health', 'starting_health', 'number', [1, 200])}
 
             <Typography variant='h6' color={'#f59100'}>Battle</Typography>
 
@@ -236,7 +286,6 @@ function GameSettings(props) {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Typography variant='h6' color={'#f59100'}>Draft</Typography>
 
-            {renderSettingItem('Auto Draft', 'auto_draft', 'boolean')}
             {renderSettingItem('Draft Size', 'draft_size', 'number', [1, 50])}
             {renderSettingItem('Cards', 'card_ids', 'cards')}
             {renderSettingItem('', 'card_rarity_weights', 'weights')}
@@ -244,8 +293,10 @@ function GameSettings(props) {
             <Typography variant='h6' color={'#f59100'}>Map</Typography>
 
             {renderSettingItem('Possible Branches', 'possible_branches', 'number', [1, 3])}
-            {renderSettingItem('Enemy Starting Attack', 'enemy_starting_attack', 'number', [1, 10])}
-            {renderSettingItem('Enemy Starting Health', 'enemy_starting_health', 'number', [10, 200])}
+            {renderSettingItem('Level Depth', 'level_depth', 'number', [1, 10])}
+            {renderSettingItem('Enemy Attack', ['enemy_attack_min', 'enemy_attack_max'], 'range', [1, 10])}
+            {renderSettingItem('Enemy Health', ['enemy_health_min', 'enemy_health_max'], 'range', [10, 200])}
+            {renderSettingItem('Enemy Scaling', ['enemy_attack_scaling', 'enemy_health_scaling'], 'scaling', [[1, 10], [1, 50]])}
           </Box>
         </Box>}
 

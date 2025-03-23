@@ -2235,10 +2235,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Skeleton',
             CardRarity::Common.into(),
+            CardType::Brute.into(),
             5,
             4,
             3,
-            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),

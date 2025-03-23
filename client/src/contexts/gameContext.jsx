@@ -91,7 +91,7 @@ export const GameProvider = ({ children }) => {
       const gameValues = res.find(e => e.componentName === 'Game')
 
       const computedMap = generateMapNodes(mapValues.level, mapValues.seed, gameSettings)
-
+      
       setMap(computedMap);
       setGame(gameValues);
     }

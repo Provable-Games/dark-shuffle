@@ -40,9 +40,17 @@ fn get_random_card_index(seed: u128, card_pool: Span<u8>) -> u8 {
 }
 
 fn get_random_number_zero_indexed(seed: u128, range: u8) -> u8 {
+    if range == 0 {
+        return 0;
+    }
+
     (seed % range.into()).try_into().unwrap()
 }
 
 fn get_random_number(seed: u128, range: u8) -> u8 {
+    if range == 0 {
+        return 0;
+    }
+
     (seed % range.into() + 1).try_into().unwrap()
 }

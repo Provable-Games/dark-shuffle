@@ -280,12 +280,13 @@ mod config_systems {
             assert!(settings.map.enemy_attack_min <= 10, "Enemy attack minimum cannot be greater than 10");
             assert!(settings.map.enemy_attack_max >= settings.map.enemy_attack_min, "Enemy attack cannot be less than minimum");
             assert!(settings.map.enemy_attack_max <= 10, "Enemy attack maximum cannot be greater than 10");
-            assert!(settings.map.enemy_attack_scaling <= 10, "Enemy attack scaling cannot be greater than 10");
-
+            
             assert!(settings.map.enemy_health_min >= 10, "Enemy health minimum cannot be less than 10");
-            assert!(settings.map.enemy_health_min <= settings.map.enemy_health_max, "Enemy health cannot be less than minimum");
-            assert!(settings.map.enemy_health_max <= 200, "Enemy health maximum cannot be greater than 100");
+            assert!(settings.map.enemy_health_min <= 200, "Enemy health minimum cannot be greater than 200");
             assert!(settings.map.enemy_health_max >= settings.map.enemy_health_min, "Enemy health cannot be less than minimum");
+            assert!(settings.map.enemy_health_max <= 200, "Enemy health maximum cannot be greater than 200");
+            
+            assert!(settings.map.enemy_attack_scaling <= 10, "Enemy attack scaling cannot be greater than 10");
             assert!(settings.map.enemy_health_scaling <= 50, "Enemy health scaling cannot be greater than 50");
         }
     }

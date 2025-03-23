@@ -4,23 +4,22 @@ export const applyCardEffect = ({
   values, cardEffect, creature, board, healHero,
   increaseEnergy, battleEffects, setBattleEffects,
   reduceMonsterAttack, damageMonster, updateBoard,
-  onBoard
+  onBoard, updatedBattleEffects
 }) => {
   let cardType = creature.cardType;
+  updatedBattleEffects = updatedBattleEffects || { ...battleEffects };
 
   let modifierValue = cardEffect.modifier.value_type === 'Fixed'
     ? cardEffect.modifier.value
     : cardEffect.modifier.value * allyCount(cardType, board);
 
-  if (cardEffect.bonus && requirementMet(cardEffect.bonus.requirement, cardType, board, values.monsterType, onBoard)) {
+  if (cardEffect.bonus.value && requirementMet(cardEffect.bonus.requirement, cardType, board, values.monsterType, onBoard)) {
     if (cardEffect.bonus.value_type === 'Fixed') {
       modifierValue += cardEffect.bonus.value;
     } else {
       modifierValue += cardEffect.bonus.value * allyCount(cardType, board);
     }
   }
-
-  let updatedBattleEffects = {};
 
   switch (cardEffect.modifier._type) {
     case 'HeroHealth':

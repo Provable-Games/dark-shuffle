@@ -10,11 +10,10 @@ import HeroStats from '../components/draft/heroStats';
 import Overview from '../components/draft/overview';
 import Structure from '../components/gametree/structure';
 import { BattleContext } from '../contexts/battleContext';
-import { GameContext } from '../contexts/gameContext';
-import { LAST_NODE_LEVEL } from '../helpers/constants';
-import { fadeVariant } from "../helpers/variants";
 import { DojoContext } from '../contexts/dojoContext';
+import { GameContext } from '../contexts/gameContext';
 import { useReplay } from '../contexts/replayContext';
+import { fadeVariant } from "../helpers/variants";
 
 function StartBattleContainer() {
   const dojo = useContext(DojoContext)
@@ -26,7 +25,7 @@ function StartBattleContainer() {
   const [selectingNode, setSelectingNode] = useState(false)
 
   useEffect(() => {
-    if (game.values.mapDepth === LAST_NODE_LEVEL && !game.values.replay) {
+    if (game.values.mapDepth === 0 && !game.values.replay) {
       game.actions.generateMap()
     }
   }, [game.values.mapDepth])
@@ -57,7 +56,7 @@ function StartBattleContainer() {
 
         <Box sx={isMobile ? styles.mobileDraftContainer : styles.draftContainer}>
 
-          {(game.values.mapDepth === LAST_NODE_LEVEL)
+          {(game.values.mapDepth === 0)
             ? <Box mt={10}><BlockRevealAnimation icon /></Box>
             : <Structure selectNode={selectNode} selectingNode={selectingNode} />
           }

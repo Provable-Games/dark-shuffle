@@ -2,7 +2,7 @@ use core::array::{ArrayTrait, SpanTrait};
 use darkshuffle::constants::DEFAULT_NS;
 use darkshuffle::models::battle::{m_Battle, m_BattleResources};
 use darkshuffle::models::card::{m_Card, m_CreatureCard, m_SpellCard};
-use darkshuffle::models::config::{m_CardsCounter, m_GameSettings};
+use darkshuffle::models::config::{m_CardsCounter, m_GameSettings, m_GameSettingsMetadata};
 use darkshuffle::models::draft::m_Draft;
 use darkshuffle::models::game::{m_Game, m_GameEffects};
 use darkshuffle::models::map::m_Map;
@@ -26,6 +26,7 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_Battle::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_BattleResources::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_GameSettings::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Model(m_GameSettingsMetadata::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Draft::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_Game::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_GameEffects::TEST_CLASS_HASH.try_into().unwrap()),

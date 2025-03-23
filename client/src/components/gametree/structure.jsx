@@ -4,14 +4,14 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Menu, Typography } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { isMobile } from 'react-device-detect';
 import skull from "../../assets/images/skull.png";
 import sword from "../../assets/images/sword.png";
 import { GET_MONSTER } from '../../battle/monsterUtils';
 import { GameContext } from '../../contexts/gameContext';
+import { useReplay } from '../../contexts/replayContext';
 import { CardSize, fetch_card_image, fetchCardTypeImage } from '../../helpers/cards';
 import { LargeCustomTooltip } from '../../helpers/styles';
-import { isMobile } from 'react-device-detect';
-import { useReplay } from '../../contexts/replayContext';
 
 const INACTIVE_OPACITY = 0.5
 
@@ -152,7 +152,7 @@ function Structure(props) {
           return { opacity: 0 }
         }
 
-        if (connectedToEndNode.length === 1) {
+        if (connectedToEndNode.length <= 1) {
           return { opacity: 0 }
         }
       }
@@ -380,7 +380,9 @@ function Structure(props) {
   }
 
   if (tree.length === 0) {
-    return <Box>Tree not generated</Box>
+    return <Box sx={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+      {RenderType(map[0])}
+    </Box>
   }
 
   return (

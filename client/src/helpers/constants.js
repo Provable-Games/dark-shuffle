@@ -2,7 +2,5 @@ export const VRF_PROVIDER_ADDRESS = '0x051fea4450da9d6aee758bdeba88b2f665bcbf549
 
 export const ADVENTURER_ID = 65535;
 
-export const LAST_NODE_LEVEL = 6;
-
 export const U128_MAX = BigInt(340282366920938463463374607431768211455);
 export const LCG_PRIME = 281474976710656;

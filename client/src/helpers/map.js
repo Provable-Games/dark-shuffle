@@ -8,14 +8,28 @@ export const generateMapNodes = (mapLevel, mapSeed, settings) => {
     // depth 1
     nodes.push(getMonsterNode(mapLevel, mapSeed, nodeId, null, [], settings))
 
+    if (settings.level_depth === 1) {
+        return nodes;
+    }
+
     let seed = LCG(mapSeed)
     let sections = getRandomNumber(seed, settings.possible_branches)
     let lastSectionNodeIds = []
 
     for (let i = 0; i < sections; i++) {
+        if (settings.level_depth === 2) {
+            lastSectionNodeIds.push(nodeId)
+            continue;
+        }
+
         // depth 2
         nodeId += 1
         nodes.push(getMonsterNode(mapLevel, mapSeed, nodeId, i, [1], settings))
+
+        if (settings.level_depth === 3) {
+            lastSectionNodeIds.push(nodeId)
+            continue;
+        }
 
         // depth 3
         let depth3Count = 1
@@ -27,6 +41,14 @@ export const generateMapNodes = (mapLevel, mapSeed, settings) => {
             depth3Count += 1
             nodeId += 1
             nodes.push(getMonsterNode(mapLevel, mapSeed, nodeId, i, [nodeId - 2], settings))
+        }
+
+        if (settings.level_depth === 4) {
+            lastSectionNodeIds.push(nodeId)
+            if (depth3Count > 1) {
+                lastSectionNodeIds.push(nodeId - 1)
+            }
+            continue;
         }
 
         // depth 4
@@ -67,9 +89,13 @@ export const getMonsterNode = (mapLevel, mapSeed, nodeId, section, parents, sett
     let monsterId = getRandomNumber(seed, 75 - monsterRange) + monsterRange;
     let details = get_monster_details(monsterId);
 
-    let mapScaling = mapLevel - 1;
-    let health = settings.enemy_starting_health + (mapScaling * 5);
-    let attack = settings.enemy_starting_attack + mapScaling;
+    seed = LCG(seed)
+    let attack = getRandomNumber(seed, settings.enemy_attack_max - settings.enemy_attack_min) + settings.enemy_attack_min;
+    attack += (mapLevel - 1) * settings.enemy_attack_scaling;
+
+    seed = LCG(seed)
+    let health = getRandomNumber(seed, settings.enemy_health_max - settings.enemy_health_min) + settings.enemy_health_min;
+    health += (mapLevel - 1) * settings.enemy_health_scaling;
 
     let monsterNameSeed = LCG(seed)
     let monsterPrefix = BEAST_NAME_PREFIXES[getRandomNumber(monsterNameSeed, 69)]

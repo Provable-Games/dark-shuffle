@@ -1,10 +1,10 @@
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import sword from '../assets/images/sword.png';
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { isMobile } from 'react-device-detect';
 import bolt from "../assets/images/bolt.png";
-import sword from '../assets/images/sword.png';
 import { fetch_card_image, types, buildEffectText, tierColors } from "../helpers/cards";
 
 function Card(props) {

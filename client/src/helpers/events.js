@@ -64,7 +64,6 @@ export function translateEvent(event) {
       }
     } else if (component[key] === 'BattleEffects') {
       let battleEffects = values.splice(index + 1, 7)
-
       return {
         ...acc, [key]: {
           enemyMarks: parseInt(values[index]),

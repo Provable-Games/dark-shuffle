@@ -84,8 +84,13 @@ export async function getSettings(settings_id) {
           persistent_health,
           map {
             possible_branches,
-            enemy_starting_attack,
-            enemy_starting_health
+            level_depth,
+            enemy_attack_min,
+            enemy_attack_max,
+            enemy_health_min,
+            enemy_health_max,
+            enemy_attack_scaling,
+            enemy_health_scaling
           },
           battle {
             start_energy,
@@ -271,7 +276,7 @@ export async function getBattleState(battle_id, game_id) {
   }`
 
   const res = await request(GQL_ENDPOINT, document);
-
+  
   const result = {
     battle: res?.entity.models.find(model => model.hero),
     battleResources: res?.entity.models.find(model => model.hand)
@@ -747,8 +752,13 @@ export async function getSettingsList() {
           persistent_health,
           map {
             possible_branches,
-            enemy_starting_attack,
-            enemy_starting_health
+            level_depth,
+            enemy_attack_min,
+            enemy_attack_max,
+            enemy_health_min,
+            enemy_health_max,
+            enemy_attack_scaling,
+            enemy_health_scaling
           },
           battle {
             start_energy,
