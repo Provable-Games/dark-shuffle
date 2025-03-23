@@ -370,7 +370,7 @@ const styles = {
     cursor: 'pointer',
     overflow: 'hidden',
     position: 'relative',
-    minHeight: '470px',
+    minHeight: '520px',
   },
   settingContainer: {
     display: 'flex',
