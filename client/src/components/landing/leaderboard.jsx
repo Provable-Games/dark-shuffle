@@ -134,7 +134,11 @@ function Leaderboard() {
                 </Box>
 
                 <Box width='90px' display={'flex'} gap={0.5} alignItems={'center'}>
-                  {tab === 'one' && rank <= season.distribution?.length && <>
+                  {tab === 'one' && rank <= 8 && <>
+                    <CheckIcon sx={{ fontSize: '16px' }} color='primary' />
+                  </>}
+
+                  {/* {tab === 'one' && rank <= season.distribution?.length && <>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#FFE97F" height={10}><path d="M0 12v2h1v2h6V4h2v12h6v-2h1v-2h-2v2h-3V4h2V0h-2v2H9V0H7v2H5V0H3v4h2v10H2v-2z"></path></svg>
 
                     <Typography color={'primary'} sx={{ fontSize: '12px' }}>
@@ -146,7 +150,7 @@ function Leaderboard() {
                     {!isMobile && cashPrizes[i] && <Typography color={'#f59100'} sx={{ fontSize: '12px' }}>
                       +${cashPrizes[i]}
                     </Typography>}
-                  </>}
+                  </>} */}
                 </Box>
               </Box>
             </>
