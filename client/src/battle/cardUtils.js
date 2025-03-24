@@ -29,10 +29,10 @@ export const applyCardEffect = ({
       increaseEnergy(modifierValue);
       break;
     case 'HeroDamageReduction':
-      updatedBattleEffects.heroDmgReduction += battleEffects.heroDmgReduction + modifierValue;
+      updatedBattleEffects.heroDmgReduction += modifierValue;
       break;
     case 'EnemyMarks':
-      updatedBattleEffects.enemyMarks += battleEffects.enemyMarks + modifierValue;
+      updatedBattleEffects.enemyMarks += modifierValue;
       break;
     case 'EnemyAttack':
       reduceMonsterAttack(modifierValue);

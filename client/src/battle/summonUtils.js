@@ -20,8 +20,8 @@ export const summonEffect = ({
   creature.attack += gameEffects.allAttack ?? 0;
 
   if (creature.cardType === tags.HUNTER) {
-    creature.attack += gameEffects.hunterAttack ?? 0 + battleEffects.nextHunterAttackBonus;
-    creature.health += gameEffects.hunterHealth ?? 0 + battleEffects.nextHunterHealthBonus;
+    creature.attack += (gameEffects.hunterAttack ?? 0) + updatedBattleEffects.nextHunterAttackBonus;
+    creature.health += (gameEffects.hunterHealth ?? 0) + updatedBattleEffects.nextHunterHealthBonus;
 
     updatedBattleEffects.nextHunterAttackBonus = 0;
     updatedBattleEffects.nextHunterHealthBonus = 0;
@@ -32,8 +32,8 @@ export const summonEffect = ({
       setValues(prev => ({ ...prev, monsterHealth: prev.monsterHealth + 2 }))
     }
   } else if (creature.cardType === tags.BRUTE) {
-    creature.attack += gameEffects.bruteAttack ?? 0 + battleEffects.nextBruteAttackBonus;
-    creature.health += gameEffects.bruteHealth ?? 0 + battleEffects.nextBruteHealthBonus;
+    creature.attack += (gameEffects.bruteAttack ?? 0) + updatedBattleEffects.nextBruteAttackBonus;
+    creature.health += (gameEffects.bruteHealth ?? 0) + updatedBattleEffects.nextBruteHealthBonus;
 
     updatedBattleEffects.nextBruteHealthBonus = 0;
     updatedBattleEffects.nextBruteAttackBonus = 0;
@@ -44,8 +44,8 @@ export const summonEffect = ({
       setValues(prev => ({ ...prev, monsterHealth: prev.monsterHealth + 2 }))
     }
   } else if (creature.cardType === tags.MAGICAL) {
-    creature.attack += gameEffects.magicalAttack ?? 0 + battleEffects.nextMagicalAttackBonus;
-    creature.health += gameEffects.magicalHealth ?? 0 + battleEffects.nextMagicalHealthBonus;
+    creature.attack += (gameEffects.magicalAttack ?? 0) + updatedBattleEffects.nextMagicalAttackBonus;
+    creature.health += (gameEffects.magicalHealth ?? 0) + updatedBattleEffects.nextMagicalHealthBonus;
 
     updatedBattleEffects.nextMagicalHealthBonus = 0;
     updatedBattleEffects.nextMagicalAttackBonus = 0;
