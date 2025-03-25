@@ -154,7 +154,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Warlock',
             CardRarity::Legendary.into(),
             CardType::Magical.into(),
-            2,
+            3,
             3,
             4,
             CardEffect {
@@ -185,8 +185,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardRarity::Legendary.into(),
             CardType::Magical.into(),
             5,
-            6,
-            6,
+            5,
+            5,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfHealth.into(), value: 1, value_type: ValueType::PerAlly.into(), requirement: 0,
@@ -219,7 +219,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             4,
             CardEffect {
                 modifier: CardModifier {
-                    _type: Modifier::EnemyAttack.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
+                    _type: Modifier::EnemyAttack.into(),
+                    value: 1,
+                    value_type: ValueType::Fixed.into(),
+                    requirement: Requirement::EnemyWeak.into(),
                 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
@@ -232,7 +235,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     _type: Modifier::AllyAttack.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
-                    requirement: Requirement::EnemyWeak.into(),
+                    requirement: 0,
                 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
@@ -276,7 +279,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardType::Magical.into(),
             1,
             3,
-            2,
+            3,
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -302,9 +305,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Griffin',
             CardRarity::Legendary.into(),
             CardType::Hunter.into(),
-            5,
-            6,
             4,
+            5,
+            4,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
@@ -312,10 +319,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -359,16 +362,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
                     value: 1,
                     value_type: ValueType::PerAlly.into(),
-                    requirement: Requirement::HasAlly.into(),
+                    requirement: 0,
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -408,7 +411,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Minotaur',
             CardRarity::Legendary.into(),
             CardType::Hunter.into(),
-            4,
+            3,
             5,
             4,
             CardEffect {
@@ -446,16 +449,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -498,6 +501,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             4,
             6,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 2,
@@ -505,10 +512,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     requirement: Requirement::EnemyWeak.into(),
                 },
                 bonus: EffectBonus { value: 1, requirement: Requirement::HasAlly.into() },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
@@ -550,9 +553,17 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Tarrasque',
             CardRarity::Legendary.into(),
             CardType::Brute.into(),
-            2,
+            1,
             3,
             3,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::NextAllyHealth.into(),
@@ -562,14 +573,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                 },
                 bonus: EffectBonus { value: 2, requirement: Requirement::EnemyWeak.into() },
             },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
         );
 
         // Card 16: Gorgon
@@ -578,18 +581,9 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Gorgon',
             CardRarity::Epic.into(),
             CardType::Magical.into(),
-            2,
             3,
             3,
-            CardEffect {
-                modifier: CardModifier {
-                    _type: Modifier::EnemyAttack.into(),
-                    value: 1,
-                    value_type: ValueType::Fixed.into(),
-                    requirement: Requirement::EnemyWeak.into(),
-                },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
+            3,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -600,6 +594,15 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
+            CardEffect {
+                modifier: CardModifier {
+                    _type: Modifier::EnemyAttack.into(),
+                    value: 1,
+                    value_type: ValueType::Fixed.into(),
+                    requirement: Requirement::EnemyWeak.into(),
+                },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
         );
 
         // Card 17: Kitsune
@@ -608,8 +611,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Kitsune',
             CardRarity::Epic.into(),
             CardType::Magical.into(),
-            4,
-            4,
+            2,
+            3,
             3,
             CardEffect {
                 modifier: CardModifier {
@@ -669,21 +672,21 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             4,
             CardEffect {
                 modifier: CardModifier {
-                    _type: Modifier::EnemyAttack.into(),
-                    value: 1,
-                    value_type: ValueType::Fixed.into(),
-                    requirement: Requirement::EnemyWeak.into(),
-                },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,
                 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier {
+                    _type: Modifier::EnemyAttack.into(),
+                    value: 1,
+                    value_type: ValueType::Fixed.into(),
+                    requirement: Requirement::EnemyWeak.into(),
+                },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -698,16 +701,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -726,16 +729,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             2,
             CardEffect {
-                modifier: CardModifier {
-                    _type: Modifier::EnemyHealth.into(),
-                    value: 1,
-                    value_type: ValueType::Fixed.into(),
-                    requirement: Requirement::EnemyWeak.into(),
-                },
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                modifier: CardModifier {
+                    _type: Modifier::EnemyHealth.into(),
+                    value: 3,
+                    value_type: ValueType::Fixed.into(),
+                    requirement: Requirement::EnemyWeak.into(),
+                },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -750,7 +753,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Ammit',
             CardRarity::Epic.into(),
             CardType::Hunter.into(),
-            4,
+            3,
             5,
             2,
             CardEffect {
@@ -778,9 +781,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Nue',
             CardRarity::Epic.into(),
             CardType::Hunter.into(),
-            3,
+            2,
             4,
             2,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -794,10 +801,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
         );
 
         // Card 24: Skinwalker
@@ -806,7 +809,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Skinwalker',
             CardRarity::Epic.into(),
             CardType::Hunter.into(),
-            5,
+            4,
             4,
             3,
             CardEffect {
@@ -835,6 +838,14 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::NextAllyAttack.into(),
                     value: 2,
@@ -842,14 +853,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     requirement: 0,
                 },
                 bonus: EffectBonus { value: 1, requirement: Requirement::EnemyWeak.into() },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
 
@@ -863,20 +866,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             5,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -919,16 +922,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             4,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfHealth.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -947,20 +950,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::NextAllyHealth.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
                     requirement: 0,
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -971,9 +974,17 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Juggernaut',
             CardRarity::Epic.into(),
             CardType::Brute.into(),
-            4,
+            3,
             3,
             4,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::NextAllyAttack.into(),
@@ -981,14 +992,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     value_type: ValueType::Fixed.into(),
                     requirement: 0,
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -999,7 +1002,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Rakshasa',
             CardRarity::Rare.into(),
             CardType::Magical.into(),
-            3,
+            4,
             4,
             4,
             CardEffect {
@@ -1033,16 +1036,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::HasAlly.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -1067,16 +1070,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1125,16 +1128,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1174,16 +1177,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
-                    requirement: Requirement::NoAlly.into(),
+                    requirement: Requirement::HasAlly.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -1199,8 +1202,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardRarity::Rare.into(),
             CardType::Hunter.into(),
             4,
+            5,
             4,
-            4,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::NextAllyAttack.into(),
@@ -1209,14 +1220,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     requirement: 0,
                 },
                 bonus: EffectBonus { value: 1, requirement: Requirement::EnemyWeak.into() },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
 
@@ -1256,7 +1259,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardType::Hunter.into(),
             3,
             4,
-            2,
+            3,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
@@ -1264,10 +1271,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -1286,20 +1289,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             5,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1311,7 +1314,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardRarity::Rare.into(),
             CardType::Brute.into(),
             2,
-            4,
+            3,
             3,
             CardEffect {
                 modifier: CardModifier {
@@ -1339,8 +1342,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardRarity::Rare.into(),
             CardType::Brute.into(),
             5,
-            5,
+            6,
             3,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfHealth.into(),
@@ -1348,10 +1355,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -1398,6 +1401,14 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(),
                     value: 1,
@@ -1405,14 +1416,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     requirement: Requirement::EnemyWeak.into(),
                 },
                 bonus: EffectBonus { value: 1, requirement: Requirement::NoAlly.into() },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
 
@@ -1426,16 +1429,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -1450,7 +1453,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Ghoul',
             CardRarity::Uncommon.into(),
             CardType::Magical.into(),
-            1,
+            2,
             2,
             2,
             CardEffect {
@@ -1482,20 +1485,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::HasAlly.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1532,8 +1535,12 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardRarity::Uncommon.into(),
             CardType::Magical.into(),
             4,
-            3,
-            3,
+            4,
+            4,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -1541,10 +1548,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -1600,16 +1603,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::HasAlly.into(),
                 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1621,8 +1624,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardRarity::Uncommon.into(),
             CardType::Hunter.into(),
             3,
-            2,
+            4,
             3,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::NextAllyAttack.into(),
@@ -1630,14 +1641,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1653,7 +1656,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             CardEffect {
                 modifier: CardModifier {
-                    _type: Modifier::EnemyHealth.into(),
+                    _type: Modifier::EnemyMarks.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
@@ -1680,16 +1683,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -1705,8 +1708,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardRarity::Uncommon.into(),
             CardType::Brute.into(),
             3,
-            2,
+            3,
             4,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(),
@@ -1714,14 +1725,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1736,16 +1739,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -1820,20 +1823,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1848,20 +1851,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1876,16 +1879,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::HasAlly.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -1932,20 +1935,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(),
                     value: 2,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -1958,7 +1961,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardType::Magical.into(),
             5,
             4,
-            3,
+            4,
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
@@ -1966,10 +1973,6 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -2016,16 +2019,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             2,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::HasAlly.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -2044,20 +2047,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             1,
             1,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::NextAllyAttack.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -2072,16 +2075,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -2128,20 +2131,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             3,
             4,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -2184,20 +2187,20 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             1,
             2,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::EnemyWeak.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
         );
@@ -2208,7 +2211,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Orc',
             CardRarity::Common.into(),
             CardType::Brute.into(),
-            3,
+            4,
             2,
             3,
             CardEffect {
@@ -2240,16 +2243,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             4,
             3,
             CardEffect {
+                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
+                bonus: EffectBonus { value: 0, requirement: 0 },
+            },
+            CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
                     value: 1,
                     value_type: ValueType::Fixed.into(),
                     requirement: Requirement::HasAlly.into(),
                 },
-                bonus: EffectBonus { value: 0, requirement: 0 },
-            },
-            CardEffect {
-                modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
@@ -2289,7 +2292,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                     _type: Modifier::EnemyHealth.into(),
                     value: 4,
                     value_type: ValueType::Fixed.into(),
-                    requirement: Requirement::EnemyWeak.into(),
+                    requirement: 0,
                 },
                 bonus: EffectBonus { value: 4, requirement: Requirement::EnemyWeak.into() },
             },
@@ -2324,7 +2327,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Gorgon Gaze',
             CardRarity::Epic.into(),
             CardType::Magical.into(),
-            2,
+            3,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2422,13 +2425,13 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             5,
             CardEffect {
                 modifier: CardModifier {
-                    _type: Modifier::EnemyHealth.into(), value: 4, value_type: ValueType::Fixed.into(), requirement: 0,
+                    _type: Modifier::EnemyHealth.into(), value: 3, value_type: ValueType::Fixed.into(), requirement: 0,
                 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
             CardEffect {
                 modifier: CardModifier {
-                    _type: Modifier::HeroHealth.into(), value: 4, value_type: ValueType::Fixed.into(), requirement: 0,
+                    _type: Modifier::HeroHealth.into(), value: 3, value_type: ValueType::Fixed.into(), requirement: 0,
                 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
@@ -2462,7 +2465,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             5,
             CardEffect {
                 modifier: CardModifier {
-                    _type: Modifier::HeroHealth.into(), value: 5, value_type: ValueType::Fixed.into(), requirement: 0,
+                    _type: Modifier::HeroHealth.into(), value: 4, value_type: ValueType::Fixed.into(), requirement: 0,
                 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
@@ -2478,7 +2481,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             'Kappa Gift',
             CardRarity::Uncommon.into(),
             CardType::Magical.into(),
-            2,
+            1,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllHealth.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,

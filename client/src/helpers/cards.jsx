@@ -88,7 +88,7 @@ export const buildEffectText = (cardType, effect, effectType) => {
   if (effect.modifier?.requirement !== 'None') {
     switch (effect.modifier.requirement) {
       case 'EnemyWeak':
-        text += ` if the enemy is ${getWeakType(cardType)}`
+        text += ` if the enemy is a ${getWeakType(cardType)}`
         break;
       case 'HasAlly':
         text += ` if you have ${isSpell ? 'a' : 'another'} ${cardType}`
