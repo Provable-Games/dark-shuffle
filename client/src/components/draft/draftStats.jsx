@@ -30,7 +30,8 @@ function DraftStats() {
   }, [cards]);
 
   const typeCount = cards.reduce((acc, card) => {
-    acc[card.cardType] = (acc[card.cardType] || 0) + 1
+    const type = card.category === types.CREATURE ? card.cardType : card.category
+    acc[type] = (acc[type] || 0) + 1
     return acc
   }, {})
 

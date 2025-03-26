@@ -83,10 +83,10 @@ impl BattleUtilsImpl of BattleUtilsTrait {
             damage -= 1;
         }
 
-        if battle.monster.health < damage {
+        if battle.monster.health < damage.into() {
             battle.monster.health = 0;
         } else {
-            battle.monster.health -= damage;
+            battle.monster.health -= damage.into();
         }
     }
 

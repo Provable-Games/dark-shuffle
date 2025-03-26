@@ -39,7 +39,7 @@ pub struct Hero {
 pub struct Monster {
     monster_id: u8,
     attack: u8,
-    health: u8,
+    health: u16,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -79,7 +79,7 @@ pub struct BoardStats {
 
 #[derive(Copy, Drop, Serde)]
 pub struct RoundStats {
-    monster_start_health: u8,
+    monster_start_health: u16,
     creatures_played: u8,
     creature_attack_count: u8,
 }

@@ -12,5 +12,5 @@ pub struct Map {
 pub struct MonsterNode {
     monster_id: u8,
     attack: u8,
-    health: u8,
+    health: u16,
 }
