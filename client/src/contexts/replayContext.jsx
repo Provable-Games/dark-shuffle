@@ -62,6 +62,7 @@ export const ReplayProvider = ({ children }) => {
 
   const startReplay = async (_game) => {
     setLoadingReplay(true)
+    navigate('/watch/' + _game.id)
 
     let txs = await getGameTxs(_game.id)
     await game.utils.initializeGameSettings(_game.settingsId)
@@ -108,6 +109,7 @@ export const ReplayProvider = ({ children }) => {
 
   const spectateGame = (game) => {
     setSpectatingGame(game)
+    navigate('/watch/' + game.id)
   }
 
   const applyEvents = () => {

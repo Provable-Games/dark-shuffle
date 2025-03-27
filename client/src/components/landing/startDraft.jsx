@@ -4,7 +4,7 @@ import { useAccount, useConnect } from '@starknet-react/core'
 import { useSnackbar } from 'notistack'
 import React, { useContext, useEffect, useState } from 'react'
 import { BrowserView, MobileView } from 'react-device-detect'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { getActiveGame, getGameEffects, getMap, getSettings, getTokenMetadata } from '../../api/indexer'
 import logo from '../../assets/images/logo.svg'
 import { BattleContext } from '../../contexts/battleContext'
@@ -219,9 +219,9 @@ function StartDraft() {
             </Typography>
           </Box>
 
-          <Box sx={[styles.kpi, { width: '100%', height: '90px', mt: 1 }]}>
+          {/* <Box sx={[styles.kpi, { width: '100%', height: '90px', mt: 1 }]}>
             <Typography variant='h6'>
-              Season Pool
+              Prize Pool
             </Typography>
             <Typography variant='h5' color='primary'>
               {Math.floor(season.rewardPool / 1e18 * 1)} $LORDS
@@ -229,23 +229,33 @@ function StartDraft() {
             <Typography variant='h6' color='#f59100'>
               +300 $CASH
             </Typography>
+          </Box> */}
+
+          <Box sx={[styles.kpi, { width: '100%', height: '90px', mt: 1 }]}>
+            <Typography>
+              {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
+            </Typography>
+            <Typography variant='h5' color='primary'>
+              {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : (season.end + season.submissionPeriod > currentTime ? `validating scores` : 'Finished'))}
+            </Typography>
           </Box>
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mb: 1 }]}>
-            <Typography>
-              {season.end > currentTime ? `Round 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Round 1'}
-            </Typography>
-            <Typography variant='h5' color='primary'>
-              {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
+            <Typography color='primary' textAlign={'center'}>
+              Top 4 qualifies to the finals
             </Typography>
           </Box>
 
           <Typography variant='h3' textAlign={'center'}>
-            TEST TOURNEY
+            World Championship 1
           </Typography>
 
           <Typography variant='h6' color='#f59100' textAlign={'center'}>
-            Enter tournament on <a href="https://budokan.gg/tournament/1" target='_blank' className='underline' style={{ color: '#f59100' }}>Budokan</a>
+            <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Quaterfinals</a>
+          </Typography>
+
+          <Typography variant='h6' color='#f59100' textAlign={'center'}>
+            <a href={`https://budokan.gg/tournament/10`} target='_blank' className='underline' style={{ color: 'white' }}>Round 1 results</a>
           </Typography>
 
           {/* <LoadingButton variant='outlined'
@@ -300,34 +310,26 @@ function StartDraft() {
             <Box display='flex' gap={2}>
               <Box sx={[styles.kpi]}>
                 <Typography>
-                  {season.end > currentTime ? `Round 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Round 1'}
+                  {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
                 </Typography>
                 {season.start ? <Typography variant='h5' color='primary'>
-                  {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
+                  {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : (season.end + season.submissionPeriod > currentTime ? `validating scores` : 'Finished'))}
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
               </Box>
 
-              <Box sx={styles.kpi}>
+              {/* <Box sx={styles.kpi}>
                 <Typography>
                   Tournament Entry
                 </Typography>
                 {season.entryFee ? <Typography variant={'h5'} color='primary'>
                   {season.start > currentTime ? `${Math.floor(season.entryFee / 1e18)} $LORDS` : 'Closed'}
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
-              </Box>
+              </Box> */}
 
               <Box sx={[styles.kpi, { position: 'relative' }]}>
-                <Box display={'flex'} justifyContent={'space-between'}>
-                  <Typography>
-                    Prize Pool
-                  </Typography>
-                </Box>
-                {season.rewardPool !== undefined ? <Typography variant={'h5'} color='primary'>
-                  {Math.floor(season.rewardPool / 1e18 * 1)} $LORDS
-                </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
-                {/* <Typography color='#f59100' sx={{ position: 'absolute', bottom: 2, left: '16px' }}>
-                  +300 $CASH
-                </Typography> */}
+                <Typography color='primary' textAlign={'center'}>
+                  Top 4 qualifies to the finals
+                </Typography>
               </Box>
             </Box>
           </Box>
@@ -339,11 +341,15 @@ function StartDraft() {
             <Box sx={{ maxWidth: '800px' }}>
               <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
                 <Typography variant='h3'>
-                  TEST TOURNEY
+                  World Championship 1
                 </Typography>
 
                 <Typography variant='h6' color='#f59100'>
-                  Enter tournament on <a href="https://budokan.gg/tournament/1" target='_blank' className='underline' style={{ color: '#f59100' }}>Budokan</a>
+                  <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Quaterfinals</a>
+                </Typography>
+
+                <Typography variant='h6' color='#f59100' textAlign={'center'}>
+                  <a href={`https://budokan.gg/tournament/10`} target='_blank' className='underline' style={{ color: 'white' }}>Round 1 results</a>
                 </Typography>
               </Box>
 

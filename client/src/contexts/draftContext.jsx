@@ -74,7 +74,6 @@ export const DraftProvider = ({ children }) => {
               target='_blank'>
               Tweet
             </Button>
-
             <IconButton size='small' onClick={() => {
               closeSnackbar(snackbarId)
             }}>
