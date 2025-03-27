@@ -2,15 +2,12 @@
 use darkshuffle::models::battle::{Battle, BattleResources};
 use darkshuffle::models::draft::{Draft};
 use darkshuffle::models::game::{Game, GameState};
-use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
-use darkshuffle::systems::draft::contracts::{IDraftSystemsDispatcher, IDraftSystemsDispatcherTrait, draft_systems};
 use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
-use darkshuffle::systems::map::contracts::{IMapSystemsDispatcher, IMapSystemsDispatcherTrait, map_systems};
 use darkshuffle::constants::DEFAULT_SETTINGS::{GET_GENESIS_CARD_IDS, GET_DEFAULT_WEIGHTS};
 
 use darkshuffle::utils::testing::{
     general::{create_battle, create_custom_settings, create_draft, create_game, create_map, mint_game_token, create_battle_resources},
-    systems::{deploy_battle_systems, deploy_draft_systems, deploy_game_systems, deploy_map_systems, deploy_system},
+    systems::{deploy_game_systems},
     world::spawn_darkshuffle,
 };
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
@@ -79,17 +76,16 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
 
 #[test] // 106622001 gas
 fn config_test_draft_size() {
-    let (mut world, game_id, _) = setup();
-    let draft_systems_dispatcher = deploy_draft_systems(ref world);
+    let (mut world, game_id, game_systems_dispatcher) = setup();
 
     create_game(ref world, game_id, GameState::Draft);
     create_draft(ref world, game_id, array![1, 2, 3].span(), array![1, 2, 3].span());
-    draft_systems_dispatcher.pick_card(game_id, 1);
+    game_systems_dispatcher.pick_card(game_id, 1);
 
     let draft: Draft = world.read_model(game_id);
     assert(draft.cards.len() == 4, 'Selected card is not set');
 
-    draft_systems_dispatcher.pick_card(game_id, 0);
+    game_systems_dispatcher.pick_card(game_id, 0);
 
     let draft: Draft = world.read_model(game_id);
     let game: Game = world.read_model(game_id);
@@ -101,7 +97,6 @@ fn config_test_draft_size() {
 #[test] // 108082996 gas
 fn config_test_start_battle() {
     let (mut world, game_id, game_systems_dispatcher) = setup();
-    let map_systems_dispatcher = deploy_map_systems(ref world);
 
     game_systems_dispatcher.start_game(game_id);
     create_map(ref world, game_id, 1, 1000);
@@ -114,7 +109,7 @@ fn config_test_start_battle() {
     world.write_model_test(@game);
 
     let node_id = 1;
-    map_systems_dispatcher.select_node(game_id, node_id);
+    game_systems_dispatcher.select_node(game_id, node_id);
 
     let game: Game = world.read_model(game_id);
     let battle: Battle = world.read_model((game.game_id, game.monsters_slain + 1));
@@ -127,8 +122,7 @@ fn config_test_start_battle() {
 
 #[test] // 106246647 gas
 fn config_test_max_energy_and_hand_size() {
-    let (mut world, game_id, _) = setup();
-    let battle_systems_dispatcher = deploy_battle_systems(ref world);
+    let (mut world, game_id, game_systems_dispatcher) = setup();
 
     let hero_health = 50;
     let monster_attack = 3;
@@ -137,7 +131,7 @@ fn config_test_max_energy_and_hand_size() {
 
     create_battle_resources(ref world, game_id, array![1, 2].span(), array![1, 2, 3, 4, 5].span());
 
-    battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
+    game_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
 
     let battle: Battle = world.read_model((battle_id, game_id));
     let battle_resources: BattleResources = world.read_model((battle_id, game_id));

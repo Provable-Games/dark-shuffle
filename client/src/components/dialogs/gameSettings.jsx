@@ -93,7 +93,7 @@ function GameSettings(props) {
 
     try {
       const res = await dojo.executeTx([{
-        contractName: "config_systems",
+        contractName: "game_systems",
         entrypoint: "add_settings",
         calldata: [
           name,

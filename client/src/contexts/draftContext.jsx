@@ -98,7 +98,7 @@ export const DraftProvider = ({ children }) => {
       await delay(500)
     }
 
-    const res = await dojo.executeTx([{ contractName: "draft_systems", entrypoint: "pick_card", calldata: [game.values.gameId, optionId] }], cards.length < gameSettings.draft_size - 1)
+    const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "pick_card", calldata: [game.values.gameId, optionId] }], cards.length < gameSettings.draft_size - 1)
 
     if (res) {
       const gameValues = res.find(e => e.componentName === 'Game')

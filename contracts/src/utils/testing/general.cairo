@@ -59,7 +59,7 @@ fn create_battle(
     hero_energy: u8,
     monster_id: u8,
     monster_attack: u8,
-    monster_health: u8,
+    monster_health: u16,
 ) -> u16 {
     let battle_id = 1;
 

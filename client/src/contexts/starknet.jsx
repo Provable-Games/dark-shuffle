@@ -19,10 +19,7 @@ const StarknetChainId = {
   SN_SEPOLIA: "0x534e5f5345504f4c4941",
 }
 
-const battle_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "battle_systems")?.address
-const draft_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "draft_systems")?.address
 const game_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
-const map_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "map_systems")?.address
 
 const cartridge = new ControllerConnector({
   policies: [
@@ -35,19 +32,19 @@ const cartridge = new ControllerConnector({
       method: "start_game",
     },
     {
-      target: draft_systems,
+      target: game_systems,
       method: "pick_card",
     },
     {
-      target: map_systems,
+      target: game_systems,
       method: "generate_tree",
     },
     {
-      target: map_systems,
+      target: game_systems,
       method: "select_node",
     },
     {
-      target: battle_systems,
+      target: game_systems,
       method: "battle_actions",
     },
     {

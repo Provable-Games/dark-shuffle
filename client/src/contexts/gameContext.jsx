@@ -84,7 +84,7 @@ export const GameProvider = ({ children }) => {
       return
     }
 
-    const res = await dojo.executeTx([{ contractName: "map_systems", entrypoint: "generate_tree", calldata: [values.gameId] }], true);
+    const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "generate_tree", calldata: [values.gameId] }], true);
 
     if (res) {
       const mapValues = res.find(e => e.componentName === 'Map')
