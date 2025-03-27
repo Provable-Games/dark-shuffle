@@ -74,7 +74,7 @@ function Leaderboard() {
         indicatorColor="primary"
         onChange={changeLeaderboard}
       >
-        <Tab value={'one'} label="Round 1" />
+        <Tab value={'one'} label="Quaterfinals" />
         <Tab value={'two'} label="Active" />
 
         <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'flex-end' }}>

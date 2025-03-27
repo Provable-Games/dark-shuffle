@@ -101,7 +101,11 @@ function StartDraft() {
   }
 
   const startMintedGame = async (tokenData) => {
-    await draft.actions.startDraft(tokenData)
+    const success = await draft.actions.startDraft(tokenData)
+
+    if (!success) {
+      return
+    }
 
     enqueueSnackbar('Share Your Game!', {
       variant: 'info',
@@ -231,7 +235,7 @@ function StartDraft() {
             </Typography>
           </Box>
 
-          <Box sx={[styles.kpi, { width: '100%', height: '90px', mt: 1 }]}>
+          {/* <Box sx={[styles.kpi, { width: '100%', height: '90px', mt: 1 }]}>
             <Typography variant='h6'>
               Prize Pool
             </Typography>
@@ -241,11 +245,11 @@ function StartDraft() {
             <Typography variant='h6' color='#f59100'>
               +300 $CASH
             </Typography>
-          </Box>
+          </Box> */}
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mt: 1 }]}>
             <Typography>
-              {season.end > currentTime ? `Round 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Round 1'}
+              {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
             </Typography>
             <Typography variant='h5' color='primary'>
               {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
@@ -253,11 +257,8 @@ function StartDraft() {
           </Box>
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mb: 1 }]}>
-            <Typography variant='h6'>
-              Games Registered
-            </Typography>
-            <Typography variant='h5' color='primary'>
-              {season.entryCount}
+            <Typography color='primary' textAlign={'center'}>
+              Top 4 qualifies to the finals
             </Typography>
           </Box>
 
@@ -266,7 +267,11 @@ function StartDraft() {
           </Typography>
 
           <Typography variant='h6' color='#f59100' textAlign={'center'}>
-            Enter on <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Budokan</a>
+            <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Quaterfinals</a>
+          </Typography>
+
+          <Typography variant='h6' color='#f59100' textAlign={'center'}>
+            <a href={`https://budokan.gg/tournament/10`} target='_blank' className='underline' style={{ color: 'white' }}>Round 1 results</a>
           </Typography>
 
           {/* <LoadingButton variant='outlined'
@@ -321,19 +326,10 @@ function StartDraft() {
             <Box display='flex' gap={2}>
               <Box sx={[styles.kpi]}>
                 <Typography>
-                  {season.end > currentTime ? `Round 1 ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Round 1'}
+                  {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
                 </Typography>
                 {season.start ? <Typography variant='h5' color='primary'>
                   {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
-                </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
-              </Box>
-
-              <Box sx={styles.kpi}>
-                <Typography>
-                  Games Registered
-                </Typography>
-                {season.entryCount !== undefined ? <Typography variant={'h5'} color='primary'>
-                  {season.entryCount}
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
               </Box>
 
@@ -348,7 +344,7 @@ function StartDraft() {
 
               <Box sx={[styles.kpi, { position: 'relative' }]}>
                 <Typography color='primary' textAlign={'center'}>
-                  Top 8 qualifies to next round
+                  Top 4 qualifies to the finals
                 </Typography>
               </Box>
             </Box>
@@ -365,7 +361,11 @@ function StartDraft() {
                 </Typography>
 
                 <Typography variant='h6' color='#f59100'>
-                  Enter on <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Budokan</a>
+                  <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Quaterfinals</a>
+                </Typography>
+
+                <Typography variant='h6' color='#f59100' textAlign={'center'}>
+                  <a href={`https://budokan.gg/tournament/10`} target='_blank' className='underline' style={{ color: 'white' }}>Round 1 results</a>
                 </Typography>
               </Box>
 

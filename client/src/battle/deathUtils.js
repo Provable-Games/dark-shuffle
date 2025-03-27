@@ -7,7 +7,7 @@ export const deathEffect = ({
   let updatedBattleEffects = {};
 
   if (creature.cardId === 3) {
-    reduceMonsterAttack(2);
+    reduceMonsterAttack(1);
 
     if (values.monsterType === tags.BRUTE) {
       updateBoard(tags.MAGICAL, 2, 0);

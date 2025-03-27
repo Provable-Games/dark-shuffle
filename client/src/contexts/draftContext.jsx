@@ -45,14 +45,17 @@ export const DraftProvider = ({ children }) => {
 
       let settings = await getSettings(tokenData.settingsId)
       if (!settings) {
-        return
+        return false
       }
 
       game.setGameSettings(settings)
 
       game.setGame({ ...gameValues, playerName: tokenData.playerName })
       setOptions(draftValues.options.map(option => CARD_DETAILS(option)))
+      return true
     }
+
+    return false
   }
 
   const selectCard = async (optionId) => {
