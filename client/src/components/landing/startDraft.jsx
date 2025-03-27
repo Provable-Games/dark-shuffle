@@ -252,7 +252,7 @@ function StartDraft() {
               {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
             </Typography>
             <Typography variant='h5' color='primary'>
-              {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
+              {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : (season.end + season.submissionPeriod > currentTime ? `validating scores` : 'Finished'))}
             </Typography>
           </Box>
 
@@ -329,7 +329,7 @@ function StartDraft() {
                   {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
                 </Typography>
                 {season.start ? <Typography variant='h5' color='primary'>
-                  {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : 'Finished')}
+                  {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : (season.end + season.submissionPeriod > currentTime ? `validating scores` : 'Finished'))}
                 </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
               </Box>
 
