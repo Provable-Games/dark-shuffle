@@ -31,12 +31,12 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
 }
 
 
-#[test] // 1276286585 gas
+#[test]
 fn gas_check() {
     setup();
 }
 
-#[test] // 1277570969 with introspectpacked
+#[test]
 fn gas_check_game_model() {
     let (mut world, game_id, _) = setup();
 
@@ -139,62 +139,6 @@ fn draft_test_draft_complete() {
     assert(game.state.into() == GameState::Map, 'Game state not set to map');
 }
 
-
-#[test]
-fn battle_test_end_turn() {
-    let (mut world, game_id, game_systems_dispatcher) = setup();
-    create_game(ref world, game_id, GameState::Battle);
-
-    let hero_health = 50;
-    let monster_attack = 3;
-
-    let battle_id = create_battle(ref world, game_id, 1, hero_health, 255, 75, monster_attack, 10);
-
-    create_battle_resources(
-        ref world,
-        game_id,
-        array![1, 2, 3].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
-    );
-
-    game_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
-
-    let battle: Battle = world.read_model((battle_id, game_id));
-    let battle_resources: BattleResources = world.read_model((battle_id, game_id));
-
-    assert(battle.round == 2, 'Round not incremented');
-    assert(battle.hero.energy == battle.round, 'Energy not increased');
-    assert(battle_resources.hand.len() == 4, 'No cards drawn');
-    assert(battle.hero.health == hero_health - monster_attack, 'Hero health not reduced');
-}
-
-#[test]
-fn battle_test_summon_creature() {
-    let (mut world, game_id, game_systems_dispatcher) = setup();
-    create_game(ref world, game_id, GameState::Battle);
-
-    let card_index = 0;
-    let card: Card = CardUtilsImpl::get_card(world, game_id, card_index);
-    let battle_id = create_battle(ref world, game_id, 1, 50, card.cost, 1, 0, 100);
-
-    create_battle_resources(
-        ref world,
-        game_id,
-        array![card_index].span(),
-        array![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].span(),
-    );
-
-    game_systems_dispatcher
-        .battle_actions(game_id, battle_id, array![array![0, card_index].span(), array![1].span()].span());
-
-    let battle_resources: BattleResources = world.read_model((battle_id, game_id));
-
-    assert(*battle_resources.board.at(0).card_index == card_index, 'Creature card index not set');
-    assert(battle_resources.hand.len() == 1, 'Card not removed from hand');
-
-    let battle: Battle = world.read_model((battle_id, game_id));
-    assert(battle.monster.health != 100, 'Monster health not reduced');
-}
 
 #[test]
 fn map_test_generate_tree() {

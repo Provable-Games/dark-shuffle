@@ -1,3 +1,4 @@
+use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
 use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
 use darkshuffle::utils::testing::mock::gameTokenMock::GameTokenMock;
 use dojo::model::ModelStorage;
@@ -13,6 +14,11 @@ fn deploy_system(ref world: WorldStorage, name: ByteArray) -> ContractAddress {
 fn deploy_game_systems(ref world: WorldStorage) -> IGameSystemsDispatcher {
     let game_systems_address = deploy_system(ref world, "game_systems");
     IGameSystemsDispatcher { contract_address: game_systems_address }
+}
+
+fn deploy_battle_systems(ref world: WorldStorage) -> IBattleSystemsDispatcher {
+    let battle_systems_address = deploy_system(ref world, "battle_systems");
+    IBattleSystemsDispatcher { contract_address: battle_systems_address }
 }
 
 fn deploy_game_token_mock(ref world: WorldStorage) -> ContractAddress {

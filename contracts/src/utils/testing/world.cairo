@@ -7,6 +7,8 @@ use darkshuffle::models::draft::m_Draft;
 use darkshuffle::models::game::{m_Game, m_GameEffects};
 use darkshuffle::models::map::m_Map;
 use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
+use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
+use darkshuffle::systems::config::contracts::{IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait, config_systems};
 use darkshuffle::utils::testing::systems::deploy_game_systems;
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
@@ -53,6 +55,8 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Event(achievement::events::index::e_TrophyCreation::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyProgression::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Contract(game_systems::TEST_CLASS_HASH),
+            TestResource::Contract(config_systems::TEST_CLASS_HASH),
+            TestResource::Contract(battle_systems::TEST_CLASS_HASH),
         ]
             .span(),
     };
@@ -65,6 +69,10 @@ fn contract_defs() -> Span<ContractDef> {
         ContractDefTrait::new(@DEFAULT_NS(), @"game_systems")
             .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span())
             .with_init_calldata(array![contract_address_const::<'player1'>().into()].span()),
+        ContractDefTrait::new(@DEFAULT_NS(), @"config_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
+        ContractDefTrait::new(@DEFAULT_NS(), @"battle_systems")
+            .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
     ]
         .span()
 }

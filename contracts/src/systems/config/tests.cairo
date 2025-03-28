@@ -2,12 +2,13 @@
 use darkshuffle::models::battle::{Battle, BattleResources};
 use darkshuffle::models::draft::{Draft};
 use darkshuffle::models::game::{Game, GameState};
+use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
 use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
 use darkshuffle::constants::DEFAULT_SETTINGS::{GET_GENESIS_CARD_IDS, GET_DEFAULT_WEIGHTS};
 
 use darkshuffle::utils::testing::{
     general::{create_battle, create_custom_settings, create_draft, create_game, create_map, mint_game_token, create_battle_resources},
-    systems::{deploy_game_systems},
+    systems::{deploy_game_systems, deploy_battle_systems},
     world::spawn_darkshuffle,
 };
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
@@ -122,7 +123,8 @@ fn config_test_start_battle() {
 
 #[test] // 106246647 gas
 fn config_test_max_energy_and_hand_size() {
-    let (mut world, game_id, game_systems_dispatcher) = setup();
+    let (mut world, game_id, _) = setup();
+    let battle_systems_dispatcher = deploy_battle_systems(ref world);
 
     let hero_health = 50;
     let monster_attack = 3;
@@ -131,7 +133,7 @@ fn config_test_max_energy_and_hand_size() {
 
     create_battle_resources(ref world, game_id, array![1, 2].span(), array![1, 2, 3, 4, 5].span());
 
-    game_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
+    battle_systems_dispatcher.battle_actions(game_id, battle_id, array![array![1].span()].span());
 
     let battle: Battle = world.read_model((battle_id, game_id));
     let battle_resources: BattleResources = world.read_model((battle_id, game_id));
