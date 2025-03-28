@@ -1,10 +1,9 @@
 import EditIcon from '@mui/icons-material/Edit';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
-import SportsScoreIcon from '@mui/icons-material/SportsScore';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import XIcon from '@mui/icons-material/X';
 import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from '@mui/material';
 import { useDisconnect } from '@starknet-react/core';
@@ -12,7 +11,6 @@ import React, { useContext } from 'react';
 import { DojoContext } from '../../contexts/dojoContext';
 import { useTournament } from '../../contexts/tournamentContext';
 import { formatNumber } from '../../helpers/utilities';
-import { dojoConfig } from '../../../dojo.config';
 
 function ProfileMenu(props) {
   const { handleClose, anchorEl, openNameDialog, openGameSettings } = props
@@ -68,12 +66,12 @@ function ProfileMenu(props) {
 
         <Divider sx={{ my: 1 }} />
 
-        <MenuItem onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); handleClose; }}>
+        <MenuItem onClick={() => { window.open("https://discord.com/channels/884211910222970891/1249816798971560117", "_blank"); handleClose; }}>
           <ListItemIcon>
-            <GitHubIcon fontSize="small" />
+            <SportsEsportsIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>
-            Github
+            Discord
           </ListItemText>
         </MenuItem>
 
@@ -86,7 +84,16 @@ function ProfileMenu(props) {
           </ListItemText>
         </MenuItem>
 
-        <Divider sx={{ my: 2 }} />
+        <MenuItem onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); handleClose; }}>
+          <ListItemIcon>
+            <GitHubIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Github
+          </ListItemText>
+        </MenuItem>
+
+        {/* <Divider sx={{ my: 2 }} />
 
         <MenuItem disabled={season.end >= new Date() / 1000} onClick={() => { actions.submitScores(dojoConfig.seasonTournamentId) }}>
           <ListItemIcon>
@@ -104,7 +111,7 @@ function ProfileMenu(props) {
           <ListItemText>
             Distribute Prizes
           </ListItemText>
-        </MenuItem>
+        </MenuItem> */}
 
         <Divider sx={{ my: 2 }} />
 

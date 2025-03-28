@@ -64,7 +64,7 @@ function Monster(props) {
     animationData: attackBonusAnim,
     loop: false,
     autoplay: false,
-    style: { ...(isMobile ? { height: '24px', width: '24px' } : { height: '24px', width: '24px' }), bottom: '10px', left: '24px', position: 'absolute', background: 'rgba(8, 8, 8, 1)' },
+    style: { ...(isMobile ? { height: '24px', width: '24px' } : { height: '24px', width: '24px' }), bottom: '10px', left: '24px', position: 'absolute' },
     onComplete: () => attackPlus.stop()
   });
 

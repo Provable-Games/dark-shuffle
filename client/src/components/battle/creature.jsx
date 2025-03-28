@@ -1,20 +1,18 @@
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Box, Typography } from "@mui/material";
 import { motion, useAnimationControls } from "framer-motion";
+import { useLottie } from "lottie-react";
 import React, { useContext, useEffect, useState } from "react";
 import { isMobile } from 'react-device-detect';
+import healAnim from "../../assets/animations/heal.json";
+import skullAnim from "../../assets/animations/skull.json";
 import sword from "../../assets/images/sword.png";
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import { AnimationContext } from '../../contexts/animationHandler';
+import { BattleContext } from "../../contexts/battleContext";
 import { CardSize, fetch_card_image, fetchCardTypeImage } from '../../helpers/cards';
 import DamageAnimation from '../animations/damageAnimation';
 import SleepAnimation from '../animations/sleepAnimation';
-import skullAnim from "../../assets/animations/skull.json";
-import healAnim from "../../assets/animations/heal.json";
-import attackBonusAnim from "../../assets/animations/attack_bonus.json";
-import attackMinusAnim from "../../assets/animations/attack_minus.json";
 import Card from '../card';
-import { BattleContext } from "../../contexts/battleContext";
-import { useLottie } from "lottie-react";
 
 let mobileSize = { width: '100px', height: '100px' }
 let browserSize = { width: '120px', height: '120px' }
@@ -29,7 +27,8 @@ function Creature(props) {
   const [health, setHealth] = useState(creature.health)
   const [attack, setAttack] = useState(creature.attack)
   const [damageTaken, setDamageTaken] = useState(0)
-  const [showAttackMinus, setShowAttackMinus] = useState(false)
+  const [attackGlow, setAttackGlow] = useState(false);
+  const [healthGlow, setHealthGlow] = useState(false);
 
   const controls = useAnimationControls()
   const skullControls = useAnimationControls()
@@ -48,22 +47,6 @@ function Creature(props) {
     autoplay: false,
     style: { width: '50px', height: '50px', position: 'absolute', right: '-7px', bottom: '-8px' },
     onComplete: () => heal.stop()
-  });
-
-  const attackMinus = useLottie({
-    animationData: attackMinusAnim,
-    loop: false,
-    autoplay: false,
-    style: { width: '30px', height: '30px', position: 'absolute', left: '18px', bottom: '1px', opacity: showAttackMinus ? 1 : 0 },
-    onComplete: () => setShowAttackMinus(false)
-  });
-
-  const attackPlus = useLottie({
-    animationData: attackBonusAnim,
-    loop: false,
-    autoplay: false,
-    style: { width: '60px', height: '60px', position: 'absolute', left: '30px', bottom: '30px' },
-    onComplete: () => attackPlus.stop()
   });
 
   const killCreature = async () => {
@@ -85,26 +68,24 @@ function Creature(props) {
   }, [creature.dead])
 
   useEffect(() => {
+    if (creature.health !== health) {
+      setHealthGlow(creature.health > health ? 'green' : 'red')
+      setTimeout(() => setHealthGlow(false), 1000)
+    }
+    
     if (creature.health < health) {
       setDamageTaken(health - creature.health)
       setHealth(creature.health)
-    }
-
-    if (creature.health > health) {
+    } else if (creature.health > health) {
       heal.play()
       setHealth(creature.health)
     }
   }, [creature.health])
 
   useEffect(() => {
-    if (creature.attack < attack) {
-      setShowAttackMinus(true)
-      attackMinus.play()
-      setAttack(creature.attack)
-    }
-
-    if (creature.attack > attack) {
-      attackPlus.play()
+    if (creature.attack && creature.attack !== attack) {
+      setAttackGlow(creature.attack > attack ? 'green' : 'red')
+      setTimeout(() => setAttackGlow(false), 1000)
       setAttack(creature.attack)
     }
   }, [creature.attack])
@@ -163,8 +144,6 @@ function Creature(props) {
         {creature.attacked && <SleepAnimation />}
 
         {heal.View}
-        {attackMinus.View}
-        {attackPlus.View}
 
         <DamageAnimation damage={damageTaken} small={true} />
 
@@ -178,17 +157,46 @@ function Creature(props) {
 
         <Box sx={styles.bottomContainer}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h6" fontSize={isMobile && '12px'}>
-              {creature.attack}
-            </Typography>
+            <motion.div
+              animate={{
+                textShadow: attackGlow 
+                  ? `0 0 8px ${attackGlow === 'green' ? "rgba(0, 255, 0, 0.8)" : "rgba(255, 0, 0, 0.8)"}`
+                  : "none",
+              }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              <Typography variant="h6" fontSize={isMobile && '12px'}>
+                {creature.attack}
+              </Typography>
+            </motion.div>
 
-            <img alt='' src={sword} height={'18px'} width={'18px'} />
+            <motion.img 
+              alt='' 
+              src={sword} 
+              height={'18px'} 
+              width={'18px'} 
+              animate={{
+                rotate: attackGlow ? [0, -20, 20, 0] : 0
+              }}
+              transition={{
+                duration: 1,
+              }}
+            />
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h6" fontSize={isMobile && '12px'}>
-              {creature.health}
-            </Typography>
+            <motion.div
+              animate={{
+                textShadow: healthGlow 
+                  ? `0 0 8px ${healthGlow === 'green' ? "rgba(0, 255, 0, 0.8)" : "rgba(255, 0, 0, 0.8)"}`
+                  : "none",
+              }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              <Typography variant="h6" fontSize={isMobile && '12px'}>
+                {creature.health}
+              </Typography>
+            </motion.div>
 
             <FavoriteIcon htmlColor="red" fontSize={'small'} sx={{ fontSize: '18px' }} />
           </Box>
