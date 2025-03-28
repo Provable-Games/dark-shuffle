@@ -249,7 +249,7 @@ function StartDraft() {
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mt: 1 }]}>
             <Typography>
-              {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
+              {season.end > currentTime ? `Finals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Finals'}
             </Typography>
             <Typography variant='h5' color='primary'>
               {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : (season.end + season.submissionPeriod > currentTime ? `validating scores` : 'Finished'))}
@@ -267,11 +267,15 @@ function StartDraft() {
           </Typography>
 
           <Typography variant='h6' color='#f59100' textAlign={'center'}>
-            <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Quaterfinals</a>
+            <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Finals</a>
           </Typography>
 
           <Typography variant='h6' color='#f59100' textAlign={'center'}>
             <a href={`https://budokan.gg/tournament/10`} target='_blank' className='underline' style={{ color: 'white' }}>Round 1 results</a>
+          </Typography>
+
+          <Typography variant='h6' color='#f59100' textAlign={'center'}>
+            <a href={`https://budokan.gg/tournament/11`} target='_blank' className='underline' style={{ color: 'white' }}>Quaterfinals results</a>
           </Typography>
 
           {/* <LoadingButton variant='outlined'
@@ -326,7 +330,7 @@ function StartDraft() {
             <Box display='flex' gap={2}>
               <Box sx={[styles.kpi]}>
                 <Typography>
-                  {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
+                  {season.end > currentTime ? `Finals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Finals'}
                 </Typography>
                 {season.start ? <Typography variant='h5' color='primary'>
                   {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : (season.end + season.submissionPeriod > currentTime ? `validating scores` : 'Finished'))}
@@ -343,8 +347,16 @@ function StartDraft() {
               </Box> */}
 
               <Box sx={[styles.kpi, { position: 'relative' }]}>
-                <Typography color='primary' textAlign={'center'}>
-                  Top 4 qualifies to the finals
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography>
+                    Prize Pool
+                  </Typography>
+                </Box>
+                {season.rewardPool !== undefined ? <Typography variant={'h5'} color='primary'>
+                  {Math.floor(season.rewardPool * 0.99)} $LORDS
+                </Typography> : <Skeleton variant='text' width={'80%'} height={32} />}
+                <Typography color='#f59100' sx={{ position: 'absolute', bottom: 2, left: '16px' }}>
+                  +300 $CASH
                 </Typography>
               </Box>
             </Box>
@@ -361,11 +373,15 @@ function StartDraft() {
                 </Typography>
 
                 <Typography variant='h6' color='#f59100'>
-                  <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Quaterfinals</a>
+                  <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Finals</a>
                 </Typography>
 
                 <Typography variant='h6' color='#f59100' textAlign={'center'}>
                   <a href={`https://budokan.gg/tournament/10`} target='_blank' className='underline' style={{ color: 'white' }}>Round 1 results</a>
+                </Typography>
+
+                <Typography variant='h6' color='#f59100' textAlign={'center'}>
+                  <a href={`https://budokan.gg/tournament/11`} target='_blank' className='underline' style={{ color: 'white' }}>Quaterfinals results</a>
                 </Typography>
               </Box>
 

@@ -30,8 +30,8 @@ export const TournamentProvider = ({ children }) => {
       end: parseInt(data.tournament.schedule?.game?.end || 0, 16),
       entryFee: entryFee,
       entryCount: data.entryCount,
-      rewardPool: entryFee * data.entryCount,
-      distribution: data.tournament.entry_fee?.Some?.distribution || [],
+      rewardPool: 6800,
+      distribution: [40, 30, 20, 10],
       submissionPeriod: parseInt(data.tournament.schedule?.submission_duration || 0, 16),
       leaderboard: data.leaderboard.map(tokenId => Number(tokenId))
     })
