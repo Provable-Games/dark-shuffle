@@ -24,7 +24,7 @@ export const ReplayProvider = ({ children }) => {
   const navigate = useNavigate()
   const [toriiClient, setToriiClient] = useState(null)
 
-  let provider = new RpcProvider({ nodeUrl: dojoConfig.rpcUrl });
+  let provider = new RpcProvider({ nodeUrl: dojoConfig.alchemyUrl });
 
   const [txHashes, setTxHashes] = useState([]);
   const [step, setStep] = useState(0)

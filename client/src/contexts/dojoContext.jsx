@@ -9,6 +9,7 @@ import Lords from "../abi/Lords.json";
 import { fetchBalances } from "../api/starknet";
 import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
 import { translateEvent } from "../helpers/events";
+import { RpcProvider } from "starknet";
 
 export const DojoContext = createContext()
 
@@ -26,6 +27,7 @@ export const DojoProvider = ({ children }) => {
   const [customName, setCustomName] = useState(localStorage.getItem("customName"))
 
   const dojoprovider = new _dojoProvider(dojoConfig.manifest, dojoConfig.rpcUrl);
+  let provider = new RpcProvider({ nodeUrl: dojoConfig.alchemyUrl });
 
   let cartridgeConnector = connectors.find(conn => conn.id === "controller")
 
@@ -77,7 +79,7 @@ export const DojoProvider = ({ children }) => {
     try {
       const tx = await dojoprovider.execute(account, txs, dojoConfig.namespace, { version: "1" });
 
-      const receipt = await account.waitForTransaction(tx.transaction_hash, { retryInterval: 500 })
+      const receipt = await provider.waitForTransaction(tx.transaction_hash, { retryInterval: 500 })
 
       if (receipt.execution_status === "REVERTED") {
         enqueueSnackbar('Contract error', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })

@@ -20,6 +20,7 @@ const StarknetChainId = {
 }
 
 const game_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
+const battle_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "battle_systems")?.address
 
 const cartridge = new ControllerConnector({
   policies: [
@@ -44,7 +45,7 @@ const cartridge = new ControllerConnector({
       method: "select_node",
     },
     {
-      target: game_systems,
+      target: battle_systems,
       method: "battle_actions",
     },
     {

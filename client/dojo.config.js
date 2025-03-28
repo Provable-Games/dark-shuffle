@@ -14,6 +14,7 @@ const {
   VITE_PUBLIC_LORDS_ADDRESS,
   VITE_PUBLIC_NAMESPACE,
   VITE_PUBLIC_TOURNAMENT_NAMESPACE,
+  VITE_PUBLIC_ALCHEMY_URL,
 } = import.meta.env;
 
 export const dojoConfig = {
@@ -22,6 +23,7 @@ export const dojoConfig = {
   chain: VITE_PUBLIC_CHAIN,
   namespace: VITE_PUBLIC_NAMESPACE,
   tournamentNamespace: VITE_PUBLIC_TOURNAMENT_NAMESPACE,
+  alchemyUrl: VITE_PUBLIC_ALCHEMY_URL,
   rpcUrl: VITE_PUBLIC_NODE_URL,
   toriiUrl: VITE_PUBLIC_TORII,
   masterAddress: VITE_PUBLIC_MASTER_ADDRESS,
