@@ -140,7 +140,6 @@ export const BattleProvider = ({ children }) => {
     const leaderboard = res.find(e => e.componentName === 'Leaderboard')
     const battleValues = res.find(e => e.componentName === 'Battle')
     const battleResources = res.find(e => e.componentName === 'BattleResources')
-
     setUpdatedValues({ ...battleValues, ...battleResources })
 
     if (gameValues) {
@@ -207,6 +206,7 @@ export const BattleProvider = ({ children }) => {
     }
 
     setValues(prev => ({ ...prev, heroEnergy: prev.heroEnergy - cost }))
+    const startValues = { attack: creature.attack, health: creature.health }
 
     summonEffect({
       creature, values, board, battleEffects, setBattleEffects, gameEffects,
@@ -214,7 +214,7 @@ export const BattleProvider = ({ children }) => {
       damageHero, healHero, roundStats, setRoundStats
     })
 
-    setBoard(prev => [...prev, { ...creature, id: (prev[prev.length - 1]?.id || 0) + 1 }])
+    setBoard(prev => [...prev, { ...creature, id: (prev[prev.length - 1]?.id || 0) + 1, startValues }])
     setHand(prev => prev.filter(card => card.id !== creature.id))
     setActions(prev => [...prev, [0, creature.cardIndex]])
   }

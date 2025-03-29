@@ -10,7 +10,7 @@ import { fadeVariant } from "../../helpers/variants";
 import GameSettings from './gameSettings';
 import { useAccount } from '@starknet-react/core';
 
-let recommendedSettings = [0, 1, 2, 3, 4, 5]
+let recommendedSettings = [0]
 
 function GameSettingsList(props) {
   const { open, close } = props

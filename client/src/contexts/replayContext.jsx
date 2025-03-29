@@ -102,7 +102,7 @@ export const ReplayProvider = ({ children }) => {
   }
 
   const previousStep = async () => {
-    if (step > 0) {
+    if (step > 1) {
       setStep(prev => prev - 1)
     }
   }
@@ -122,7 +122,7 @@ export const ReplayProvider = ({ children }) => {
       game.setGame({ ...gameValues, replay: true })
 
       if (!spectatingGame && gameValues.mapDepth === 0 && GAME_STATES[gameValues.state] === 'Map') {
-        if (appliedStep < step) {
+        if (appliedStep === null || appliedStep < step) {
           setStep(prev => prev + 1)
         } else {
           setStep(prev => prev - 1)
@@ -183,8 +183,8 @@ export const ReplayProvider = ({ children }) => {
 
   const getPlayedCards = () => {
     const event = translatedEvents[step + 1]
-    const nextBattleValues = event?.find(e => e.componentName === 'Battle')
-    const battleValues = translatedEvents[step]?.find(e => e.componentName === 'Battle')
+    const nextBattleValues = event?.find(e => e.componentName === 'BattleResources')
+    const battleValues = translatedEvents[step]?.find(e => e.componentName === 'BattleResources')
     if (!battleValues || !nextBattleValues) return null
 
     return battleValues.hand.filter(cardIndex => !nextBattleValues.hand.includes(cardIndex))

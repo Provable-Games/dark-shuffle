@@ -2,22 +2,16 @@ import CrisisAlertIcon from '@mui/icons-material/CrisisAlert';
 import { Box, Typography } from "@mui/material";
 import { motion, useAnimationControls } from "framer-motion";
 import { useLottie } from 'lottie-react';
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { isMobile } from 'react-device-detect';
 import skullAnim from "../../assets/animations/skull.json";
 
-import attackBonusAnim from "../../assets/animations/attack_bonus.json";
-import attackMinusAnim from "../../assets/animations/attack_minus.json";
-import healAnim from "../../assets/animations/heal.json";
 import markEnemyAnim from "../../assets/animations/mark_enemy.json";
-
-import { useState } from "react";
 import { AnimationContext } from '../../contexts/animationHandler';
+import { BattleContext } from '../../contexts/battleContext';
 import { CustomTooltip } from "../../helpers/styles";
 import { delay } from "../../helpers/utilities";
-import DamageAnimation from '../animations/damageAnimation';
 import * as Monsters from './monsters';
-import { BattleContext } from '../../contexts/battleContext';
 
 function Monster(props) {
   const battle = useContext(BattleContext)
@@ -25,12 +19,7 @@ function Monster(props) {
 
   const { monster } = props
 
-  const [health, setHealth] = useState(monster.health)
-  const [attack, setAttack] = useState(monster.attack)
   const [marks, setMarks] = useState(battle.state.battleEffects?.enemyMarks ?? 0)
-
-  const [damageTaken, setDamageTaken] = useState(0)
-  const [showAttackMinus, setShowAttackMinus] = useState(false)
 
   const controls = useAnimationControls()
   const skullControls = useAnimationControls()
@@ -42,30 +31,6 @@ function Monster(props) {
     autoplay: false,
     style: { ...(isMobile ? { height: '160px', width: '160px' } : { height: '200px', width: '200px' }), top: 0, position: 'absolute' },
     onComplete: () => skull.stop()
-  });
-
-  const heal = useLottie({
-    animationData: healAnim,
-    loop: false,
-    autoplay: false,
-    style: { ...(isMobile ? { height: '160px', width: '160px' } : { height: '200px', width: '200px' }), top: 0, position: 'absolute' },
-    onComplete: () => heal.stop()
-  });
-
-  const attackMinus = useLottie({
-    animationData: attackMinusAnim,
-    loop: false,
-    autoplay: false,
-    style: { height: '80px', width: '80px', top: isMobile ? '40px' : '60px', right: isMobile ? '40px' : '60px', position: 'absolute', opacity: showAttackMinus ? 1 : 0 },
-    onComplete: () => setShowAttackMinus(false)
-  });
-
-  const attackPlus = useLottie({
-    animationData: attackBonusAnim,
-    loop: false,
-    autoplay: false,
-    style: { ...(isMobile ? { height: '24px', width: '24px' } : { height: '24px', width: '24px' }), bottom: '10px', left: '24px', position: 'absolute' },
-    onComplete: () => attackPlus.stop()
   });
 
   const markEnemy = useLottie({
@@ -89,30 +54,7 @@ function Monster(props) {
       fadeSkull()
       skull.play()
     }
-
-    else if (monster.health < health) {
-      setDamageTaken(health - monster.health)
-      setHealth(monster.health)
-    }
-
-    else if (monster.health > health) {
-      heal.play()
-      setHealth(monster.health)
-    }
   }, [monster.health])
-
-  useEffect(() => {
-    if (monster.attack < attack) {
-      setShowAttackMinus(true)
-      attackMinus.play()
-      setAttack(monster.attack)
-    }
-
-    else if (monster.attack > attack) {
-      attackPlus.play()
-      setAttack(monster.attack)
-    }
-  }, [monster.attack])
 
   useEffect(() => {
     if (animationHandler.monsterAnimations.length < 1) {
@@ -172,8 +114,6 @@ function Monster(props) {
       style={isMobile ? { position: 'relative', width: '160px', height: '160px' } : { position: 'relative', width: '200px', height: '200px' }}
     >
 
-      {monster.health > 0 && <DamageAnimation damage={damageTaken} />}
-
       <motion.div animate={skullControls} style={{ left: isMobile ? 'calc(50% - 80px)' : 'calc(50% - 100px)', top: 0, position: 'absolute', opacity: monster.health > 0 ? 0 : 1 }}>
         {skull.View}
       </motion.div>
@@ -194,9 +134,6 @@ function Monster(props) {
           {MonsterComponent && <MonsterComponent monster={monster} />}
         </Box>
 
-        {heal.View}
-        {attackMinus.View}
-        {attackPlus.View}
         {markEnemy.View}
       </CustomTooltip>}
 

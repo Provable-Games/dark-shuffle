@@ -759,7 +759,6 @@ export async function getSettingsList(address = null, ids = null) {
     ${whereStatement}
     ORDER BY settings_id ASC
     LIMIT 1000`;
-  console.log(url)
   try {
     const response = await fetch(url, {
       method: "GET",

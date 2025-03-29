@@ -87,14 +87,12 @@ impl BoardUtilsImpl of BoardUtilsTrait {
     fn update_creatures(ref board: Array<CreatureDetails>, _type: Option<CardType>, attack: u8, health: u8) {
         let mut i = 0;
         while i < board.len() {
-            let creature: CreatureDetails = *board.at(i);
-            let card_type: CardType = creature.creature_card.card_type.into();
-            if _type == Option::None || _type == Option::Some(card_type) {
-                let mut creature = board.pop_front().unwrap();
+            let mut creature = board.pop_front().unwrap();
+            if _type == Option::None || _type == Option::Some(creature.creature_card.card_type.into()) {
                 Self::increase_creature_attack(ref creature, attack);
                 Self::increase_creature_health(ref creature, health);
-                board.append(creature);
             }
+            board.append(creature);
             i += 1;
         };
     }

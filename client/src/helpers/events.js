@@ -34,7 +34,7 @@ export function translateEvent(event) {
 
     if (component[key] === 'CreatureArray') {
       let creatureCount = parseInt(values[index]);
-      let creatures = values.splice(index + 1, creatureCount);
+      let creatures = values.splice(index + 1, creatureCount * 3);
 
       return {
         ...acc, [key]: Array.from({ length: creatureCount }, (_, i) => ({

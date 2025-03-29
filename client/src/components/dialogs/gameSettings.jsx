@@ -293,7 +293,7 @@ function GameSettings(props) {
             <Typography variant='h6' color={'#f59100'}>Map</Typography>
 
             {renderSettingItem('Possible Branches', 'possible_branches', 'number', [1, 3])}
-            {renderSettingItem('Level Depth', 'level_depth', 'number', [1, 10])}
+            {renderSettingItem('Level Depth', 'level_depth', 'number', [1, 5])}
             {renderSettingItem('Enemy Attack', ['enemy_attack_min', 'enemy_attack_max'], 'range', [1, 10])}
             {renderSettingItem('Enemy Health', ['enemy_health_min', 'enemy_health_max'], 'range', [10, 200])}
             {renderSettingItem('Enemy Scaling', ['enemy_attack_scaling', 'enemy_health_scaling'], 'scaling', [[1, 10], [1, 50]])}

@@ -92,7 +92,7 @@ export default function Adventurer(props) {
         </Box>
 
         <Typography mr={'50px'} sx={{ fontSize: '13px', opacity: 0.7 }}>
-          +{Math.min(gameSettings.max_energy, battle.state.values.round + 1)}
+          →{Math.min(gameSettings.max_energy, gameSettings.start_energy + battle.state.values.round)}
         </Typography>
       </Box>
 

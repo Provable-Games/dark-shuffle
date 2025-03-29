@@ -93,6 +93,11 @@ function StartDraft() {
   }
 
   const startFreeGame = async () => {
+    if (!Boolean(account)) {
+      connect({ connector: cartridgeConnector })
+      return
+    }
+
     setStartingSeasonGame(false)
     gameState.setStartStatus('Minting Game Token')
 
@@ -233,7 +238,7 @@ function StartDraft() {
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mt: 1 }]}>
             <Typography>
-              {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
+              {season.end > currentTime ? `Season ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Season'}
             </Typography>
             <Typography variant='h5' color='primary'>
               {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : (season.end + season.submissionPeriod > currentTime ? `validating scores` : 'Finished'))}
@@ -242,20 +247,12 @@ function StartDraft() {
 
           <Box sx={[styles.kpi, { width: '100%', height: '90px', mb: 1 }]}>
             <Typography color='primary' textAlign={'center'}>
-              Top 4 qualifies to the finals
+              Sepolia
             </Typography>
           </Box>
 
           <Typography variant='h3' textAlign={'center'}>
-            World Championship 1
-          </Typography>
-
-          <Typography variant='h6' color='#f59100' textAlign={'center'}>
-            <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Quaterfinals</a>
-          </Typography>
-
-          <Typography variant='h6' color='#f59100' textAlign={'center'}>
-            <a href={`https://budokan.gg/tournament/10`} target='_blank' className='underline' style={{ color: 'white' }}>Round 1 results</a>
+            Test Version 1.2
           </Typography>
 
           {/* <LoadingButton variant='outlined'
@@ -266,14 +263,13 @@ function StartDraft() {
           >
             Play Season
           </LoadingButton> */}
+          <LoadingButton variant='outlined' loading={gameState.getState.startStatus} onClick={() => startFreeGame()} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
+            Play Game
+          </LoadingButton>
 
           <Button disabled={!address} variant='outlined' onClick={() => openGamesDialog(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
             My Games
           </Button>
-
-          <LoadingButton color='secondary' variant='outlined' loading={gameState.getState.startStatus} onClick={() => startFreeGame()} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
-            Play Demo
-          </LoadingButton>
 
           <Box width={'100%'} sx={_styles.customBox} mt={1}>
 
@@ -310,7 +306,7 @@ function StartDraft() {
             <Box display='flex' gap={2}>
               <Box sx={[styles.kpi]}>
                 <Typography>
-                  {season.end > currentTime ? `Quaterfinals ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Quaterfinals'}
+                  {season.end > currentTime ? `Season ${season.start > currentTime ? 'begins in' : 'ends in'}` : 'Season'}
                 </Typography>
                 {season.start ? <Typography variant='h5' color='primary'>
                   {season.start > currentTime ? `${formatTimeUntil(season.start)}` : (season.end > currentTime ? `${formatTimeUntil(season.end)}` : (season.end + season.submissionPeriod > currentTime ? `validating scores` : 'Finished'))}
@@ -328,7 +324,7 @@ function StartDraft() {
 
               <Box sx={[styles.kpi, { position: 'relative' }]}>
                 <Typography color='primary' textAlign={'center'}>
-                  Top 4 qualifies to the finals
+                  Sepolia
                 </Typography>
               </Box>
             </Box>
@@ -341,15 +337,7 @@ function StartDraft() {
             <Box sx={{ maxWidth: '800px' }}>
               <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
                 <Typography variant='h3'>
-                  World Championship 1
-                </Typography>
-
-                <Typography variant='h6' color='#f59100'>
-                  <a href={`https://budokan.gg/tournament/${season.tournamentId}`} target='_blank' className='underline' style={{ color: '#f59100' }}>Enter Quaterfinals</a>
-                </Typography>
-
-                <Typography variant='h6' color='#f59100' textAlign={'center'}>
-                  <a href={`https://budokan.gg/tournament/10`} target='_blank' className='underline' style={{ color: 'white' }}>Round 1 results</a>
+                  Test Version 1.2
                 </Typography>
               </Box>
 
@@ -388,15 +376,14 @@ function StartDraft() {
                 >
                   Play Season
                 </LoadingButton> */}
+                <LoadingButton variant='outlined' loading={gameState.getState.startStatus}
+                  onClick={() => startFreeGame()} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
+                  Play Game
+                </LoadingButton>
 
                 <Button disabled={!address} variant='outlined' onClick={() => openGamesDialog(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
                   My Games
                 </Button>
-
-                <LoadingButton color='secondary' variant='outlined' loading={gameState.getState.startStatus} disabled={!address}
-                  onClick={() => startFreeGame()} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
-                  Play Demo
-                </LoadingButton>
               </Box>
             </Box>
 
