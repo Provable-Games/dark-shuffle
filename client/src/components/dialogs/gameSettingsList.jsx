@@ -170,9 +170,17 @@ function GameSettingsList(props) {
 
       </Box>
 
-      {gameSettings && <GameSettings settingsId={selectedSettings?.settings_id} view={gameSettings === 'view'} close={() => openGameSettings(false)} refetch={() => {
-        setTab('my')
-      }} />}
+      {gameSettings && <GameSettings
+        settingsId={selectedSettings?.settings_id}
+        view={gameSettings === 'view'}
+        close={() => openGameSettings(false)}
+        refetch={() => {
+          if (tab === 'my') {
+            fetchSettings()
+          } else {
+            setTab('my')
+          }
+        }} />}
     </Dialog>
   )
 }
