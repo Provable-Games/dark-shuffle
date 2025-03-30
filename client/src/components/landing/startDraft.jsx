@@ -5,7 +5,7 @@ import { useSnackbar } from 'notistack'
 import React, { useContext, useEffect, useState } from 'react'
 import { BrowserView, MobileView } from 'react-device-detect'
 import { useParams } from 'react-router-dom'
-import { getActiveGame, getGameEffects, getMap, getSettings, getTokenMetadata } from '../../api/indexer'
+import { getActiveGame, getGameEffects, getMap, getTokenMetadata } from '../../api/indexer'
 import logo from '../../assets/images/logo.svg'
 import { BattleContext } from '../../contexts/battleContext'
 import { DojoContext } from '../../contexts/dojoContext'
@@ -116,14 +116,12 @@ function StartDraft() {
     gameState.utils.initializeGameSettings(game.settingsId)
   }
 
-  const loadActiveGame = async () => {
+  const loadActiveGame = async (game) => {
+    let settings = gameState.getState.gameSettings
+
     try {
-      let data = await getActiveGame(previousGame.id)
+      let data = await getActiveGame(game.id)
       data.state = GAME_STATES[data.state]
-
-      let settings = await getSettings(previousGame.settingsId)
-
-      gameState.setGameSettings(settings)
 
       await draft.actions.fetchDraft(data.game_id)
 
@@ -171,7 +169,7 @@ function StartDraft() {
         gameId: data.game_id,
         state: data.state,
 
-        playerName: previousGame.playerName,
+        playerName: game.playerName,
 
         heroHealth: data.hero_health,
         heroXp: data.hero_xp,
@@ -190,21 +188,17 @@ function StartDraft() {
       stopReconnecting()
       enqueueSnackbar('Failed To Reconnect', { variant: 'warning' })
     }
+
+    gameState.setStartStatus()
   }
 
   let currentTime = Date.now() / 1000
 
   useEffect(() => {
-    if (replay.spectatingGame) {
-      loadActiveGame(replay.spectatingGame)
+    if ((previousGame || replay.spectatingGame) && gameState.getState.gameSettings?.starting_health && gameState.getState.gameCards?.length > 0) {
+      loadActiveGame(previousGame || replay.spectatingGame)
     }
-  }, [replay.spectatingGame])
-
-  useEffect(() => {
-    if (previousGame && gameState.getState.gameSettings?.starting_health && gameState.getState.gameCards?.length > 0) {
-      loadActiveGame()
-    }
-  }, [previousGame, gameState.getState.gameSettings, gameState.getState.gameCards])
+  }, [previousGame, replay.spectatingGame, gameState.getState.gameSettings, gameState.getState.gameCards])
 
   return (
     <>

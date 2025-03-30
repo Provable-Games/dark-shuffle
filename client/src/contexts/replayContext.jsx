@@ -107,9 +107,11 @@ export const ReplayProvider = ({ children }) => {
     }
   }
 
-  const spectateGame = (game) => {
-    setSpectatingGame(game)
-    navigate('/watch/' + game.id)
+  const spectateGame = (_game) => {
+    game.setStartStatus('Loading Game')
+    setSpectatingGame(_game)
+    game.utils.initializeGameSettings(_game.settingsId)
+    navigate('/watch/' + _game.id)
   }
 
   const applyEvents = () => {
