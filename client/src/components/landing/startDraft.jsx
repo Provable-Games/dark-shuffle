@@ -4,7 +4,7 @@ import { useAccount, useConnect } from '@starknet-react/core'
 import { useSnackbar } from 'notistack'
 import React, { useContext, useEffect, useState } from 'react'
 import { BrowserView, MobileView } from 'react-device-detect'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { getActiveGame, getGameEffects, getMap, getSettings, getTokenMetadata } from '../../api/indexer'
 import logo from '../../assets/images/logo.svg'
 import { BattleContext } from '../../contexts/battleContext'
@@ -255,6 +255,10 @@ function StartDraft() {
             Test Version 1.2
           </Typography>
 
+          <Typography variant='h6' color='#f59100' textAlign={'center'}>
+            <a href={`https://budokan.gg/tournament/11`} target='_blank' className='underline' style={{ color: 'white' }}>Quaterfinals results</a>
+          </Typography>
+
           {/* <LoadingButton variant='outlined'
             loading={gameState.getState.startStatus || !season.entryFee}
             onClick={() => startSeasonGame()}
@@ -338,6 +342,10 @@ function StartDraft() {
               <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
                 <Typography variant='h3'>
                   Test Version 1.2
+                </Typography>
+
+                <Typography variant='h6' color='#f59100' textAlign={'center'}>
+                  <a href={`https://budokan.gg/tournament/11`} target='_blank' className='underline' style={{ color: 'white' }}>Quaterfinals results</a>
                 </Typography>
               </Box>
 
