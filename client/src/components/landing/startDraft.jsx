@@ -255,10 +255,6 @@ function StartDraft() {
             Test Version 1.2
           </Typography>
 
-          <Typography variant='h6' color='#f59100' textAlign={'center'}>
-            <a href={`https://budokan.gg/tournament/11`} target='_blank' className='underline' style={{ color: 'white' }}>Quaterfinals results</a>
-          </Typography>
-
           {/* <LoadingButton variant='outlined'
             loading={gameState.getState.startStatus || !season.entryFee}
             onClick={() => startSeasonGame()}
@@ -342,10 +338,6 @@ function StartDraft() {
               <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
                 <Typography variant='h3'>
                   Test Version 1.2
-                </Typography>
-
-                <Typography variant='h6' color='#f59100' textAlign={'center'}>
-                  <a href={`https://budokan.gg/tournament/11`} target='_blank' className='underline' style={{ color: 'white' }}>Quaterfinals results</a>
                 </Typography>
               </Box>
 
