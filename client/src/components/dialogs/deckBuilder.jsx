@@ -147,6 +147,13 @@ const styles = {
     justifyContent: 'space-between',
     gap: 1.5,
   },
+  mobileContainer: {
+    boxSizing: 'border-box',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: 1.5,
+  },
   cards: {
     display: 'flex',
     flexWrap: 'wrap',

@@ -2,17 +2,18 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import CloseIcon from '@mui/icons-material/Close';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, CircularProgress, Dialog, Input, TextField, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
+import { isMobile } from 'react-device-detect';
 import { byteArray } from "starknet";
 import { getSettings } from '../../api/indexer';
+import sword from '../../assets/images/sword.png';
 import { DojoContext } from '../../contexts/dojoContext';
 import { tierColors } from '../../helpers/cards';
 import DeckBuilder from './deckBuilder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import sword from '../../assets/images/sword.png';
 
 const DEFAULT_SETTINGS = {
   name: '',
@@ -266,7 +267,7 @@ function GameSettings(props) {
           <CircularProgress />
         </Box>}
 
-        {!loading && step === 1 && <Box sx={{ display: 'flex', gap: 5 }}>
+        {!loading && step === 1 && <Box sx={{ display: 'flex', gap: isMobile ? 1 : 5, flexWrap: 'wrap' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Typography variant='h6' color={'#f59100'}>Game</Typography>
 
@@ -371,6 +372,8 @@ const styles = {
     overflow: 'hidden',
     position: 'relative',
     minHeight: '520px',
+    maxWidth: '98vw',
+    overflow: 'scroll'
   },
   settingContainer: {
     display: 'flex',
@@ -380,7 +383,8 @@ const styles = {
     px: 1,
     minHeight: '38px',
     border: '1px solid #FFE97F',
-    width: '360px'
+    width: '360px',
+    maxWidth: 'calc(100vw - 50px)'
   },
   settingValueContainer: {
     display: 'flex',
@@ -392,7 +396,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '72px'
+    width: isMobile ? '17vw' : '72px'
   },
   arrowContainer: {
     display: 'flex',

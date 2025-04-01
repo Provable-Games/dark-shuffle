@@ -1,16 +1,18 @@
+import GitHubIcon from '@mui/icons-material/GitHub';
 import InfoIcon from '@mui/icons-material/Info';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
+import SettingsIcon from '@mui/icons-material/Settings';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import XIcon from '@mui/icons-material/X';
 import { LoadingButton } from '@mui/lab';
-import { Box, Divider, IconButton, List, Typography } from '@mui/material';
+import { Box, Divider, IconButton, ListItemIcon, ListItemText, MenuItem, Typography } from '@mui/material';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { useConnect, useDisconnect } from '@starknet-react/core';
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { DojoContext } from '../contexts/dojoContext';
-import { GameContext } from '../contexts/gameContext';
 import { formatNumber } from '../helpers/utilities';
+import GameSettingsList from './dialogs/gameSettingsList';
 
 const menuItems = [
   {
@@ -22,13 +24,13 @@ const menuItems = [
 
 function MobileHeader(props) {
   const dojo = useContext(DojoContext)
-  const game = useContext(GameContext)
 
   const { connect, connector, connectors } = useConnect();
   const { disconnect } = useDisconnect()
   let cartridgeConnector = connectors.find(conn => conn.id === "controller")
 
   const [menu, toggleMenu] = useState(false)
+  const [gameSettings, openGameSettings] = useState(false)
 
   return <Box sx={styles.mobileHeader}>
     <Box />
@@ -44,20 +46,6 @@ function MobileHeader(props) {
         onClose={() => toggleMenu(false)}
         onOpen={() => toggleMenu(true)}
       >
-
-        <List>
-          {menuItems.map(item => {
-            return <Link to={item.path} key={item.name} sx={styles.item}>
-              <Box sx={styles.content}>
-                <Typography variant='h6'>
-                  {item.name}
-                </Typography>
-              </Box>
-            </Link>
-          })}
-        </List>
-
-        <Divider />
 
         {!dojo.address && <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 2 }}>
           <LoadingButton fullWidth loading={dojo.connecting} variant='outlined' onClick={() => connect({ connector: cartridgeConnector })} size='large' startIcon={<SportsEsportsIcon />}>
@@ -86,9 +74,65 @@ function MobileHeader(props) {
             </Box>
           </Box>
 
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ mt: 2 }} />
+        </>}
 
-          <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} boxSizing={'borderBox'} px={2} onClick={disconnect}>
+        {/* <List>
+          {menuItems.map(item => {
+            return <Link to={item.path} key={item.name} sx={styles.item}>
+              <Box sx={styles.content}>
+                <Typography variant='h6'>
+                  {item.name}
+                </Typography>
+              </Box>
+            </Link>
+          })}
+        </List> */}
+
+        <Divider />
+
+        <MenuItem onClick={() => { openGameSettings(true); handleClose() }}>
+          <ListItemIcon>
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Game Settings
+          </ListItemText>
+        </MenuItem>
+
+        <Box sx={{ width: '100%', height: '1px', background: 'rgba(255, 255, 255, 0.12)' }} />
+
+        <MenuItem onClick={() => { window.open("https://discord.com/channels/884211910222970891/1249816798971560117", "_blank"); handleClose; }}>
+          <ListItemIcon>
+            <SportsEsportsIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Discord
+          </ListItemText>
+        </MenuItem>
+
+        <MenuItem onClick={() => { window.open("https://x.com/darkshuffle_gg", "_blank"); handleClose; }}>
+          <ListItemIcon>
+            <XIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Twitter
+          </ListItemText>
+        </MenuItem>
+
+        <MenuItem onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); handleClose; }}>
+          <ListItemIcon>
+            <GitHubIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Github
+          </ListItemText>
+        </MenuItem>
+
+        <Divider sx={{ my: 2 }} />
+
+        {dojo.address && <>
+          <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} boxSizing={'borderBox'} px={2} my={1} pb={1} onClick={disconnect}>
             <Box display={'flex'} alignItems={'center'} gap={1}>
               <LogoutIcon fontSize="small" />
 
@@ -97,12 +141,11 @@ function MobileHeader(props) {
               </Typography>
             </Box>
           </Box>
-
-          <Divider sx={{ mt: 2 }} />
         </>}
-
       </SwipeableDrawer>
     </Box>
+
+    {gameSettings && <GameSettingsList open={gameSettings} close={openGameSettings} />}
   </Box>
 }
 
@@ -139,7 +182,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 2,
-    height: '40px',
+    height: '32px',
     px: 2,
     boxSizing: 'border-box',
     textAlign: 'center',
