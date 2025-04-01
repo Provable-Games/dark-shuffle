@@ -1,7 +1,7 @@
 [world]
 name = "Provable Games"
 description = "PG Sepolia World"
-seed = "pg_sepolia_await_18"
+seed = "DNC"
 
 [namespace]
 default = "ds_v1_2_0"
@@ -15,6 +15,7 @@ default = "ds_v1_2_0"
 
 [env]
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
+world_address = "0x01bfa92665fb815c9ec5f37c562a5c9a06fdf23ce022c1d33d4ac07cef5ad80c"
 
 [init_call_args]
 "ds_v1_2_0-game_systems" = [

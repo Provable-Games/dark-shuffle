@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x7c9469d45a9cdbab775035afb48e1fa73fb35ab059fcb9dfb0a301aa973e783",
-    "address": "0x1a3bdc385e4271c4998f01ee1a20d5637c4f298b548fa9eee7d2386c98834ca",
-    "seed": "pg_sepolia_await_18",
+    "address": "0x1bfa92665fb815c9ec5f37c562a5c9a06fdf23ce022c1d33d4ac07cef5ad80c",
+    "seed": "DNC",
     "name": "Provable Games",
     "entrypoints": [
       "uuid",
@@ -1312,7 +1312,7 @@
   },
   "contracts": [
     {
-      "address": "0x44e04d4d700628dd81e854f46402ee2415bcca8be81baef0986a4462eb6a91",
+      "address": "0x2e79e1fbd6705d11804f486d900755ecf42ee3434653b0e6e0ec6be02ee469",
       "class_hash": "0x1a50b1607e9c69ba867235d2114cd12da7a15159cb893c88a5cbc98a5fdd10b",
       "abi": [
         {
@@ -1540,7 +1540,7 @@
       ]
     },
     {
-      "address": "0x49533ffd2283eb1a572aa429a66de39249f667783d3d1633e28b1b7181f613a",
+      "address": "0x5f22b67f2c6fc96c688f7c7d827e2c631d88fc5916e6a5fd4d1c20f20be9d12",
       "class_hash": "0x6502e5add1cb40fd4e4e8a59654262da90d6b52011cd4199988fbc29cd7ec0b",
       "abi": [
         {
@@ -2189,7 +2189,7 @@
       ]
     },
     {
-      "address": "0x1cc13634e837546a7db185ea5edb9bdaa91003805af032288e67b20b5194863",
+      "address": "0x4359aee29873cd9603207d29b4140468bac3e042aa10daab2e1a8b2dd60ef7b",
       "class_hash": "0x58247d1ac4b9a240db7830dd65242120cef599e59821ad39755e0e01019e977",
       "abi": [
         {
