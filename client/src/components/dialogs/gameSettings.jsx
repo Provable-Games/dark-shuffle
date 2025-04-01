@@ -369,7 +369,6 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-between',
     cursor: 'pointer',
-    overflow: 'hidden',
     position: 'relative',
     minHeight: '520px',
     maxWidth: '98vw',
