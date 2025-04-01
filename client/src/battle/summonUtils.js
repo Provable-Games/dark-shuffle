@@ -74,5 +74,6 @@ export const summonEffect = ({
     }
   }
 
+  setBattleEffects(prev => ({ ...prev, ...updatedBattleEffects }));
   setRoundStats(prev => ({ ...prev, creaturesPlayed: prev.creaturesPlayed + 1 }));
 }
