@@ -1,27 +1,27 @@
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, CircularProgress, Dialog, Divider, TextField, Typography } from '@mui/material';
+import { useAccount } from '@starknet-react/core';
 import { motion } from "framer-motion";
 import { useSnackbar } from 'notistack';
 import React, { useContext, useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
-import { getSettingsList } from '../../api/indexer';
+import { getRecommendedSettings, getSettingsList } from '../../api/indexer';
+import { DraftContext } from '../../contexts/draftContext';
 import { GameContext } from '../../contexts/gameContext';
 import { fadeVariant } from "../../helpers/variants";
 import GameSettings from './gameSettings';
-import { useAccount } from '@starknet-react/core';
-
-let recommendedSettings = [0]
 
 function GameSettingsList(props) {
   const { open, close } = props
 
   const gameContext = useContext(GameContext)
+  const draft = useContext(DraftContext)
   const { enqueueSnackbar } = useSnackbar()
   const { address } = useAccount()
 
   const [selectedSettings, setselectedSettings] = useState()
 
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [tab, setTab] = useState('recommended')
   const [gameSettings, openGameSettings] = useState(false)
   const [settingsList, setSettingsList] = useState([])
@@ -36,26 +36,36 @@ function GameSettingsList(props) {
 
     setLoading(true)
 
-    const settings = await getSettingsList(tab === 'my' ? address : null, tab === 'recommended' ? recommendedSettings : [search])
-    setSettingsList(settings ?? [])
+    if (tab === 'recommended') {
+      const settings = await getRecommendedSettings()
+      setSettingsList(settings ?? [])
+    } else {
+      const settings = await getSettingsList(tab === 'my' ? address : null, [search])
+      setSettingsList(settings ?? [])
+    }
 
     setLoading(false)
   }
 
   useEffect(() => {
-    fetchSettings()
-  }, [tab, search])
+    if (tab === 'recommended') {
+      setSettingsList(gameContext.recommendedSettings)
+    } else {
+      fetchSettings()
+    }
+  }, [tab, search, gameContext.recommendedSettings])
 
   const mintGame = async () => {
     setMinting(true)
 
-    const res = await gameContext.actions.mintFreeGame(selectedSettings.settings_id)
-
-    if (res) {
-      enqueueSnackbar(`New Game Minted!`, { variant: 'info' })
+    try {
+      gameContext.setStartStatus('Minting Game Token')
+      const tokenData = await gameContext.actions.mintFreeGame(selectedSettings.settings_id)
+      gameContext.setStartStatus('Loading Game Settings')
+      await draft.actions.prepareStartingGame(tokenData)
       close(false)
-    } else {
-      enqueueSnackbar('Failed to mint game', { variant: 'error' })
+    } catch (error) {
+      enqueueSnackbar('Failed to start game', { variant: 'error' })
     }
 
     setMinting(false)
@@ -161,7 +171,7 @@ function GameSettingsList(props) {
                 loading={minting}
                 onClick={() => mintGame()}
               >
-                Mint Game
+                Play
               </LoadingButton>
             </Box>
 

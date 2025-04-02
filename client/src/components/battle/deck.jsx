@@ -2,16 +2,19 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { motion } from "framer-motion"
 
-import { Box, Typography } from '@mui/material'
+import { Box, Drawer, Typography } from '@mui/material'
 import { BattleContext } from '../../contexts/battleContext'
 import { CardSize } from '../../helpers/cards'
 import SmallCard from '../smallCard'
+import Overview from '../draft/overview'
+import Scrollbars from 'react-custom-scrollbars'
 
 function Deck() {
   const battle = useContext(BattleContext)
   const { deck, newHandCards } = battle.state
 
   const [drawCard, setDrawCard] = useState(false)
+  const [deckList, showDeckList] = useState()
 
   useEffect(() => {
     if (newHandCards.length > 0 && !drawCard) {
@@ -64,7 +67,7 @@ function Deck() {
 
   return (
     <>
-      <Box sx={styles.deck}>
+      <Box sx={styles.deck} onClick={() => showDeckList(true)}>
         <Box sx={styles.cardCount}>
           <Typography>
             {deck.length}
@@ -73,6 +76,16 @@ function Deck() {
       </Box>
 
       {drawCard && renderDrawCard()}
+
+      <Drawer open={deckList} onClose={() => showDeckList(false)}>
+        <Typography variant='h6' textAlign='center' color='primary' mt={1}>
+          Deck
+        </Typography>
+
+        <Scrollbars style={{ width: '300px', height: '100%' }}>
+          <Overview deck={deck} />
+        </Scrollbars>
+      </Drawer>
     </>
   )
 }

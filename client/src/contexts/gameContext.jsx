@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { generateMapNodes } from "../helpers/map";
 import { DojoContext } from "./dojoContext";
-import { getCardDetails, getSettings } from "../api/indexer";
+import { getCardDetails, getRecommendedSettings, getSettings } from "../api/indexer";
 
 export const GameContext = createContext()
 
@@ -29,6 +29,17 @@ export const GameProvider = ({ children }) => {
 
   const [map, setMap] = useState(null)
   const [score, setScore] = useState()
+
+  const [recommendedSettings, setRecommendedSettings] = useState([])
+
+  useEffect(() => {
+    const fetchRecommendedSettings = async () => {
+      const settings = await getRecommendedSettings()
+      setRecommendedSettings(settings)
+    }
+
+    fetchRecommendedSettings()
+  }, [])
 
   const setGame = (values) => {
     if (!isNaN(values.state || 0)) {
@@ -91,7 +102,7 @@ export const GameProvider = ({ children }) => {
       const gameValues = res.find(e => e.componentName === 'Game')
 
       const computedMap = generateMapNodes(mapValues.level, mapValues.seed, gameSettings)
-      
+
       setMap(computedMap);
       setGame(gameValues);
     }
@@ -126,6 +137,7 @@ export const GameProvider = ({ children }) => {
 
         values,
         score,
+        recommendedSettings,
 
         setStartStatus,
         setGame,

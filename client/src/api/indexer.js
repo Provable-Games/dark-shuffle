@@ -462,6 +462,26 @@ export const populateGameTokens = async (tokenIds) => {
   }
 }
 
+export async function getSettingsMetadata(settings_ids) {
+  const document = gql`
+  {
+    ${NS_SHORT}GameSettingsMetadataModels(where:{settings_idIN:[${settings_ids}]}) {
+      edges {
+        node {
+          settings_id
+          name
+          description
+        }
+      }
+    }
+  }
+  `
+
+  const res = await request(GQL_ENDPOINT, document);
+
+  return res?.[`${NS_SHORT}GameSettingsMetadataModels`]?.edges.map(edge => edge.node);
+}
+
 export async function getActiveTournaments() {
   try {
     const currentTimeHex = Math.floor(Date.now() / 1000).toString(16).padStart(64, '0');
@@ -732,6 +752,32 @@ export async function getTokenMetadata(game_id) {
   };
 }
 
+export async function getRecommendedSettings() {
+  try {
+    let url = `${SQL_ENDPOINT}?query=
+      SELECT settings_id, COUNT(*) as usage_count
+      FROM "${NS}-TokenMetadata"
+      GROUP BY settings_id
+      ORDER BY usage_count DESC, settings_id ASC
+      LIMIT 50`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+    const topSettingsIds = data.map(item => parseInt(item.settings_id, 16));
+
+    return await getSettingsList(null, topSettingsIds);
+  } catch (error) {
+    console.error("Error fetching recommended settings:", error);
+    return [];
+  }
+}
+
 export async function getSettingsList(address = null, ids = null) {
   let whereClause = [];
 
@@ -768,8 +814,7 @@ export async function getSettingsList(address = null, ids = null) {
     });
 
     const data = await response.json();
-
-    return data.map(item => ({
+    let results = data.map(item => ({
       settings_id: item.settings_id,
       name: hexToAscii(item.name).replace(/^\0+/, ''),
       description: item.description,
@@ -800,6 +845,13 @@ export async function getSettingsList(address = null, ids = null) {
         legendary: item["draft.card_rarity_weights.legendary"]
       }
     }));
+
+    // Sort by the order of input IDs if provided
+    if (ids && ids.length > 0) {
+      results.sort((a, b) => ids.indexOf(a.settings_id) - ids.indexOf(b.settings_id));
+    }
+
+    return results;
   } catch (error) {
     console.error("Error fetching settings list:", error);
     return [];

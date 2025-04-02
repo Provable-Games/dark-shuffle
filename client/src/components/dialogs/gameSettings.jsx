@@ -372,7 +372,7 @@ const styles = {
     position: 'relative',
     minHeight: '520px',
     maxWidth: '98vw',
-    overflow: 'scroll'
+    overflow: isMobile ? 'scroll' : 'hidden'
   },
   settingContainer: {
     display: 'flex',

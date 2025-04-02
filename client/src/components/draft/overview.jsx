@@ -9,11 +9,15 @@ import { uniquefy } from '../../helpers/utilities';
 import Card from "../card";
 
 function Overview(props) {
-  const { deckBuilder, edit, removeCard } = props
+  const { deckBuilder, edit, removeCard, deck } = props
   const draft = useContext(DraftContext)
   const [displayCard, setDisplayCard] = useState(null)
 
   let cards = props.cards || draft.getState.cards
+  if (deck) {
+    cards = deck.map(card => cards.find(c => c.cardIndex === card))
+  }
+
   const uniqueCards = uniquefy(cards, "cardId")
 
   return <Box sx={styles.container}>
@@ -70,6 +74,7 @@ const styles = {
     gap: 0.5,
     p: 1,
     width: '100%',
+    minWidth: '300px',
     boxSizing: 'border-box'
   },
   cardCost: {

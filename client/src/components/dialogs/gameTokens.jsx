@@ -5,11 +5,12 @@ import { Box, Button, CircularProgress, Dialog, Typography } from '@mui/material
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
-import { getGameTokens, populateGameTokens } from '../../api/indexer';
+import { getGameTokens, getSettingsMetadata, populateGameTokens } from '../../api/indexer';
 import logo from '../../assets/images/logo.svg';
 import { useTournament } from '../../contexts/tournamentContext';
 import { fadeVariant } from "../../helpers/variants";
 import GameSettings from './gameSettings';
+import { hexToAscii } from '@dojoengine/utils';
 
 function GameTokens(props) {
   const { tournaments } = useTournament()
@@ -28,9 +29,11 @@ function GameTokens(props) {
 
       const gameTokenIds = await getGameTokens(address)
       let games = await populateGameTokens(gameTokenIds)
+      let settingsMetadata = await getSettingsMetadata(games.map(game => game.settingsId))
 
       games = games.map(game => ({
         ...game,
+        settingsMetadata: settingsMetadata.find(metadata => metadata.settings_id === game.settingsId),
         tournament: tournaments?.find(tournament => tournament.id === game.tournament_id),
       }))
 
@@ -109,6 +112,10 @@ function GameTokens(props) {
               New
             </Typography>
           }
+
+          <Typography color='secondary' sx={{ fontSize: '13px' }}>
+            {hexToAscii(game.settingsMetadata?.name || '')}
+          </Typography>
         </Box>
       </Box>
 
