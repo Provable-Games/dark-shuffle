@@ -54,7 +54,7 @@ function StartDraft() {
 
       if (gameId) {
         let game = await getTokenMetadata(gameId)
-        if (game.active) {
+        if (game.started) {
           loadGameSettings(game)
         } else {
           startMintedGame(game)
