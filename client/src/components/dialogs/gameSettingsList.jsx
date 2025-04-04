@@ -55,6 +55,12 @@ function GameSettingsList(props) {
     }
   }, [tab, search, gameContext.recommendedSettings])
 
+  useEffect(() => {
+    if (settingsList.length > 0) {
+      setselectedSettings(settingsList[0])
+    }
+  }, [settingsList])
+
   const mintGame = async () => {
     setMinting(true)
 

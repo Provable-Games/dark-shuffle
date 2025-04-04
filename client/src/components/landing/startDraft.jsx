@@ -22,6 +22,7 @@ import ReconnectDialog from '../dialogs/reconnecting'
 import StartGameDialog from '../dialogs/startGame'
 import Leaderboard from './leaderboard'
 import Monsters from './monsters'
+import GameSettingsList from '../dialogs/gameSettingsList'
 
 function StartDraft() {
   const tournamentProvider = useTournament()
@@ -44,6 +45,7 @@ function StartDraft() {
   const [gamesDialog, openGamesDialog] = useState(false)
   const [reconnecting, setReconnecting] = useState(false)
   const [previousGame, setPreviousGame] = useState()
+  const [gameSettings, openGameSettings] = useState(false)
 
   useEffect(() => {
     async function loadGame() {
@@ -257,7 +259,7 @@ function StartDraft() {
           >
             Play Season
           </LoadingButton> */}
-          <LoadingButton variant='outlined' loading={gameState.getState.startStatus} onClick={() => startFreeGame()} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
+          <LoadingButton variant='outlined' loading={gameState.getState.startStatus} onClick={() => openGameSettings(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
             Play Game
           </LoadingButton>
 
@@ -371,7 +373,7 @@ function StartDraft() {
                   Play Season
                 </LoadingButton> */}
                 <LoadingButton variant='outlined' loading={gameState.getState.startStatus}
-                  onClick={() => startFreeGame()} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
+                  onClick={() => openGameSettings(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
                   Play Game
                 </LoadingButton>
 
@@ -396,6 +398,7 @@ function StartDraft() {
       {gamesDialog && <GameTokens open={gamesDialog} close={openGamesDialog} address={address} resumeGame={loadGameSettings} startGame={startMintedGame} />}
       {reconnecting && <ReconnectDialog close={stopReconnecting} />}
       {(replay.loadingReplay && !replay.translatedEvents[0]) && <LoadingReplayDialog close={() => replay.endReplay()} />}
+      {gameSettings && <GameSettingsList open={gameSettings} close={openGameSettings} />}
     </>
   )
 }
