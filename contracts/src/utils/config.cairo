@@ -121,13 +121,16 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         cards_count.count += 1;
         world.write_model(@cards_count);
 
-        world.write_model(@Card { id: cards_count.count, name, rarity, cost, category: CardCategory::Creature.into() });
-        world
-            .write_model(
-                @CreatureCard {
-                    id: cards_count.count, attack, health, card_type, play_effect, attack_effect, death_effect,
-                },
-            );
+        let card = Card { id: cards_count.count, name, rarity, cost, category: CardCategory::Creature.into() };
+        let creature_card = CreatureCard {
+            id: cards_count.count, attack, health, card_type, play_effect, attack_effect, death_effect,
+        };
+        
+        // Validate the card before writing to storage
+        assert(Self::validate_card(card, Option::Some(creature_card), Option::None), 'Invalid creature card');
+        
+        world.write_model(@card);
+        world.write_model(@creature_card);
     }
 
     fn create_spell_card(
@@ -143,9 +146,74 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         cards_count.count += 1;
         world.write_model(@cards_count);
 
-        world.write_model(@Card { id: cards_count.count, name, rarity, cost, category: CardCategory::Spell.into() });
-        world.write_model(@SpellCard { id: cards_count.count, card_type, effect, extra_effect });
+        let card = Card { id: cards_count.count, name, rarity, cost, category: CardCategory::Spell.into() };
+        let spell_card = SpellCard { id: cards_count.count, card_type, effect, extra_effect };
+        
+        // Validate the card before writing to storage
+        assert(Self::validate_card(card, Option::None, Option::Some(spell_card)), 'Invalid spell card');
+        
+        world.write_model(@card);
+        world.write_model(@spell_card);
     }
+
+    fn validate_card(card: Card, creature_card: Option<CreatureCard>, spell_card: Option<SpellCard>) -> bool {
+        // Validate basic card attributes
+        assert!(card.name != 0, "Card name cannot be empty");
+        assert!(card.rarity > CardRarity::None.into() && card.rarity <= CardRarity::Legendary.into(), "Invalid card rarity");
+        assert!(card.cost > 0, "Card cost must be positive");
+        assert!(card.category > CardCategory::None.into() && card.category <= CardCategory::Spell.into(), "Invalid card category");
+
+        // Validate based on card category
+        let category: CardCategory = card.category.into();
+        match category {
+            CardCategory::Creature => {
+                // Ensure creature card exists
+                assert!(creature_card.is_some(), "Creature card must exist for creature category");
+                let creature = creature_card.unwrap();
+                
+                // Validate creature card attributes
+                assert!(creature.id == card.id, "Creature card ID must match card ID");
+                assert!(creature.attack > 0, "Creature attack must be positive");
+                assert!(creature.health > 0, "Creature health must be positive");
+                assert!(creature.card_type > CardType::None.into() && creature.card_type <= CardType::Magical.into(), "Invalid creature card type");
+                
+                // Validate creature card effects
+                Self::validate_card_effect(creature.play_effect);
+                Self::validate_card_effect(creature.attack_effect);
+                Self::validate_card_effect(creature.death_effect);
+                
+                true
+            },
+            CardCategory::Spell => {
+                // Ensure spell card exists
+                assert!(spell_card.is_some(), "Spell card must exist for spell category");
+                let spell = spell_card.unwrap();
+                
+                // Validate spell card attributes
+                assert!(spell.id == card.id, "Spell card ID must match card ID");
+                assert!(spell.card_type > CardType::None.into() && spell.card_type <= CardType::Magical.into(), "Invalid spell card type");
+                
+                // Validate spell card effects
+                Self::validate_card_effect(spell.effect);
+                Self::validate_card_effect(spell.extra_effect);
+                
+                true
+            },
+            _ => false,
+        }
+    }
+
+    fn validate_card_effect(effect: CardEffect) -> bool {
+        // Validate modifier
+        assert!(effect.modifier._type >= Modifier::None.into() && effect.modifier._type <= Modifier::SelfHealth.into(), "Invalid modifier type");
+        assert!(effect.modifier.value_type >= ValueType::None.into() && effect.modifier.value_type <= ValueType::PerAlly.into(), "Invalid value type");
+        assert!(effect.modifier.requirement >= Requirement::None.into() && effect.modifier.requirement <= Requirement::NoAlly.into(), "Invalid requirement");
+        
+        // Validate bonus
+        assert!(effect.bonus.requirement >= Requirement::None.into() && effect.bonus.requirement <= Requirement::NoAlly.into(), "Invalid bonus requirement");
+        
+        true
+    } 
 
     fn create_genesis_cards(ref world: WorldStorage) {
         // Card 1: Warlock

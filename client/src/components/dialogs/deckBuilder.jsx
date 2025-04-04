@@ -135,7 +135,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     boxSizing: 'border-box',
-    width: '1120px',
+    minWidth: '1137px',
     height: '800px',
     maxHeight: '90vh',
     overflow: 'hidden'
@@ -145,7 +145,6 @@ const styles = {
     width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
-    gap: 1.5,
   },
   mobileContainer: {
     boxSizing: 'border-box',
@@ -159,7 +158,7 @@ const styles = {
     flexWrap: 'wrap',
     gap: 3,
     alignItems: 'center',
-    width: '840px',
+    width: '836px',
     py: 1,
     px: 2,
     boxSizing: 'border-box',
@@ -176,7 +175,7 @@ const styles = {
     position: 'relative',
   },
   scrollbar: {
-    width: '900px',
+    width: '836px',
     height: '800px',
     maxHeight: '90vh',
   },

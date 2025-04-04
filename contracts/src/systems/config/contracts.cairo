@@ -30,7 +30,7 @@ trait IConfigSystems<T> {
     ) -> u32;
 
     fn add_random_settings(ref self: T) -> u32;
-    fn add_creature_card(ref self: T, name: felt252, rarity: u8, cost: u8, attack: u8, health: u8, card_type: u8, play_effect: CardEffect, death_effect: CardEffect, attack_effect: CardEffect);
+    fn add_creature_card(ref self: T, name: felt252, rarity: u8, cost: u8, attack: u8, health: u8, card_type: u8, play_effect: CardEffect, attack_effect: CardEffect, death_effect: CardEffect);
     fn add_spell_card(ref self: T, name: felt252, rarity: u8, cost: u8, card_type: u8, effect: CardEffect, extra_effect: CardEffect);
 
     fn setting_details(self: @T, settings_id: u32) -> GameSettings;
@@ -207,9 +207,9 @@ mod config_systems {
             settings_count.count
         }
 
-        fn add_creature_card(ref self: ContractState, name: felt252, rarity: u8, cost: u8, attack: u8, health: u8, card_type: u8, play_effect: CardEffect, death_effect: CardEffect, attack_effect: CardEffect) {
+        fn add_creature_card(ref self: ContractState, name: felt252, rarity: u8, cost: u8, attack: u8, health: u8, card_type: u8, play_effect: CardEffect, attack_effect: CardEffect, death_effect: CardEffect) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());            
-            ConfigUtilsImpl::create_creature_card(ref world, name, rarity, cost, attack, health, card_type, play_effect, death_effect, attack_effect);
+            ConfigUtilsImpl::create_creature_card(ref world, name, rarity, cost, attack, health, card_type, play_effect, attack_effect, death_effect);
         }
 
         fn add_spell_card(ref self: ContractState, name: felt252, rarity: u8, cost: u8, card_type: u8, effect: CardEffect, extra_effect: CardEffect) {

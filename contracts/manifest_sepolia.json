@@ -1541,7 +1541,7 @@
     },
     {
       "address": "0x5f22b67f2c6fc96c688f7c7d827e2c631d88fc5916e6a5fd4d1c20f20be9d12",
-      "class_hash": "0x6502e5add1cb40fd4e4e8a59654262da90d6b52011cd4199988fbc29cd7ec0b",
+      "class_hash": "0x26c973d1445d7406ddadb8cc4ad841ca46a69a0772791f22451738cbf1949",
       "abi": [
         {
           "type": "impl",
@@ -1965,11 +1965,11 @@
                   "type": "darkshuffle::models::card::CardEffect"
                 },
                 {
-                  "name": "death_effect",
+                  "name": "attack_effect",
                   "type": "darkshuffle::models::card::CardEffect"
                 },
                 {
-                  "name": "attack_effect",
+                  "name": "death_effect",
                   "type": "darkshuffle::models::card::CardEffect"
                 }
               ],
