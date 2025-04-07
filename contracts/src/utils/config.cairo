@@ -221,10 +221,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Warlock',
             CardRarity::Legendary.into(),
-            CardType::Magical.into(),
             3,
             3,
             4,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -251,10 +251,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Typhon',
             CardRarity::Legendary.into(),
+            5,
+            5,
+            5,
             CardType::Magical.into(),
-            5,
-            5,
-            5,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfHealth.into(), value: 1, value_type: ValueType::PerAlly.into(), requirement: 0,
@@ -281,10 +281,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Jiangshi',
             CardRarity::Legendary.into(),
-            CardType::Magical.into(),
             3,
             3,
             4,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(),
@@ -314,10 +314,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Anansi',
             CardRarity::Legendary.into(),
-            CardType::Magical.into(),
             4,
             4,
             5,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllAttack.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -344,10 +344,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Basilisk',
             CardRarity::Legendary.into(),
-            CardType::Magical.into(),
             1,
             3,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -372,10 +372,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Griffin',
             CardRarity::Legendary.into(),
-            CardType::Hunter.into(),
             4,
             5,
             4,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -400,10 +400,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Manticore',
             CardRarity::Legendary.into(),
-            CardType::Hunter.into(),
             4,
             4,
             5,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyMarks.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -425,10 +425,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Phoenix',
             CardRarity::Legendary.into(),
-            CardType::Hunter.into(),
             1,
             3,
             2,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -453,10 +453,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Dragon',
             CardRarity::Legendary.into(),
-            CardType::Hunter.into(),
             2,
             4,
             3,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -478,10 +478,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Minotaur',
             CardRarity::Legendary.into(),
-            CardType::Hunter.into(),
             3,
             5,
             4,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::NextAllyAttack.into(),
@@ -506,10 +506,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Kraken',
             CardRarity::Legendary.into(),
-            CardType::Brute.into(),
             2,
             3,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -536,10 +536,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Colossus',
             CardRarity::Legendary.into(),
-            CardType::Brute.into(),
             5,
             5,
             7,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroDamageReduction.into(),
@@ -564,10 +564,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Balrog',
             CardRarity::Legendary.into(),
-            CardType::Brute.into(),
             3,
             4,
             6,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -592,10 +592,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Leviathan',
             CardRarity::Legendary.into(),
-            CardType::Brute.into(),
             1,
             4,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfHealth.into(),
@@ -620,10 +620,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Tarrasque',
             CardRarity::Legendary.into(),
-            CardType::Brute.into(),
             1,
             3,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -648,10 +648,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Gorgon',
             CardRarity::Epic.into(),
+            3,
+            3,
+            3,
             CardType::Magical.into(),
-            3,
-            3,
-            3,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -678,10 +678,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Kitsune',
             CardRarity::Epic.into(),
-            CardType::Magical.into(),
             2,
             3,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -706,10 +706,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Lich',
             CardRarity::Epic.into(),
-            CardType::Magical.into(),
             4,
             3,
             4,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(),
@@ -734,10 +734,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Chimera',
             CardRarity::Epic.into(),
-            CardType::Magical.into(),
             3,
             3,
             4,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -764,10 +764,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Wendigo',
             CardRarity::Epic.into(),
-            CardType::Magical.into(),
             2,
             2,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -792,10 +792,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Qilin',
             CardRarity::Epic.into(),
-            CardType::Hunter.into(),
             1,
             3,
             2,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -820,10 +820,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Ammit',
             CardRarity::Epic.into(),
-            CardType::Hunter.into(),
             3,
             5,
             2,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -848,10 +848,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Nue',
             CardRarity::Epic.into(),
-            CardType::Hunter.into(),
             2,
             4,
             2,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -876,10 +876,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Skinwalker',
             CardRarity::Epic.into(),
-            CardType::Hunter.into(),
             4,
             4,
             3,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyMarks.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -901,10 +901,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Chupacabra',
             CardRarity::Epic.into(),
-            CardType::Hunter.into(),
             2,
             2,
             3,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -929,10 +929,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Titan',
             CardRarity::Epic.into(),
-            CardType::Brute.into(),
             2,
             2,
             5,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -957,10 +957,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Nephilim',
             CardRarity::Epic.into(),
-            CardType::Brute.into(),
             3,
             4,
             4,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -985,10 +985,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Behemoth',
             CardRarity::Epic.into(),
-            CardType::Brute.into(),
             3,
             4,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1013,10 +1013,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Hydra',
             CardRarity::Epic.into(),
-            CardType::Brute.into(),
             1,
             3,
             2,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1041,10 +1041,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Juggernaut',
             CardRarity::Epic.into(),
-            CardType::Brute.into(),
             3,
             3,
             4,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1069,10 +1069,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Rakshasa',
             CardRarity::Rare.into(),
+            4,
+            4,
+            4,
             CardType::Magical.into(),
-            4,
-            4,
-            4,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(),
@@ -1099,10 +1099,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Werewolf',
             CardRarity::Rare.into(),
-            CardType::Magical.into(),
             2,
             3,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1127,10 +1127,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Banshee',
             CardRarity::Rare.into(),
-            CardType::Magical.into(),
             4,
             3,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -1157,10 +1157,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Draugr',
             CardRarity::Rare.into(),
-            CardType::Magical.into(),
             1,
             2,
             2,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -1182,10 +1182,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Vampire',
             CardRarity::Rare.into(),
-            CardType::Magical.into(),
             4,
             4,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -1215,10 +1215,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Weretiger',
             CardRarity::Rare.into(),
-            CardType::Hunter.into(),
             5,
             6,
             3,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyMarks.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -1240,10 +1240,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Wyvern',
             CardRarity::Rare.into(),
-            CardType::Hunter.into(),
             1,
             3,
             2,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1268,10 +1268,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Roc',
             CardRarity::Rare.into(),
-            CardType::Hunter.into(),
             4,
             5,
             4,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1296,10 +1296,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Harpy',
             CardRarity::Rare.into(),
-            CardType::Hunter.into(),
             2,
             3,
             3,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -1324,10 +1324,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Pegasus',
             CardRarity::Rare.into(),
-            CardType::Hunter.into(),
             3,
             4,
             3,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1352,10 +1352,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Oni',
             CardRarity::Rare.into(),
-            CardType::Brute.into(),
             3,
             3,
             5,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1380,10 +1380,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Jotunn',
             CardRarity::Rare.into(),
-            CardType::Brute.into(),
             2,
             3,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -1408,10 +1408,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Ettin',
             CardRarity::Rare.into(),
-            CardType::Brute.into(),
             5,
             6,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1436,10 +1436,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Cyclops',
             CardRarity::Rare.into(),
-            CardType::Brute.into(),
             4,
             3,
             4,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(),
@@ -1464,10 +1464,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Giant',
             CardRarity::Rare.into(),
-            CardType::Brute.into(),
             1,
             2,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1492,10 +1492,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Goblin',
             CardRarity::Uncommon.into(),
-            CardType::Magical.into(),
             2,
             2,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1520,10 +1520,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Ghoul',
             CardRarity::Uncommon.into(),
+            2,
+            2,
+            2,
             CardType::Magical.into(),
-            2,
-            2,
-            2,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(),
@@ -1548,10 +1548,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Wraith',
             CardRarity::Uncommon.into(),
-            CardType::Magical.into(),
             3,
             3,
             2,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1576,10 +1576,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Sprite',
             CardRarity::Uncommon.into(),
-            CardType::Magical.into(),
             2,
             2,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -1601,10 +1601,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Kappa',
             CardRarity::Uncommon.into(),
+            4,
+            4,
+            4,
             CardType::Magical.into(),
-            4,
-            4,
-            4,
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1629,10 +1629,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Hippogriff',
             CardRarity::Uncommon.into(),
-            CardType::Hunter.into(),
             1,
             3,
             1,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
@@ -1657,10 +1657,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Fenrir',
             CardRarity::Uncommon.into(),
+            2,
+            2,
+            2,
             CardType::Hunter.into(),
-            2,
-            2,
-            2,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfHealth.into(),
@@ -1690,10 +1690,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Jaguar',
             CardRarity::Uncommon.into(),
-            CardType::Hunter.into(),
             3,
             4,
             3,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1718,10 +1718,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Satori',
             CardRarity::Uncommon.into(),
-            CardType::Hunter.into(),
             4,
             4,
             2,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyMarks.into(),
@@ -1746,10 +1746,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Direwolf',
             CardRarity::Uncommon.into(),
+            2,
+            2,
+            2,
             CardType::Hunter.into(),
-            2,
-            2,
-            2,
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1774,10 +1774,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Nemeanlion',
             CardRarity::Uncommon.into(),
-            CardType::Brute.into(),
             3,
             3,
             4,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1802,10 +1802,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Berserker',
             CardRarity::Uncommon.into(),
-            CardType::Brute.into(),
             2,
             3,
             2,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1830,10 +1830,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Yeti',
             CardRarity::Uncommon.into(),
-            CardType::Brute.into(),
             1,
             3,
             2,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfHealth.into(),
@@ -1858,10 +1858,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Golem',
             CardRarity::Uncommon.into(),
-            CardType::Brute.into(),
             4,
             4,
             2,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(),
@@ -1886,10 +1886,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Ent',
             CardRarity::Uncommon.into(),
-            CardType::Brute.into(),
             2,
             2,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1914,10 +1914,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Fairy',
             CardRarity::Common.into(),
-            CardType::Magical.into(),
             4,
             3,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1942,10 +1942,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Leprechaun',
             CardRarity::Common.into(),
+            2,
+            2,
+            2,
             CardType::Magical.into(),
-            2,
-            2,
-            2,
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -1970,10 +1970,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Kelpie',
             CardRarity::Common.into(),
+            1,
+            1,
+            1,
             CardType::Magical.into(),
-            1,
-            1,
-            1,
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -1998,10 +1998,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Pixie',
             CardRarity::Common.into(),
-            CardType::Magical.into(),
             3,
             2,
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -2026,10 +2026,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Gnome',
             CardRarity::Common.into(),
-            CardType::Magical.into(),
             5,
             4,
             4,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -2054,10 +2054,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Bear',
             CardRarity::Common.into(),
-            CardType::Hunter.into(),
             4,
             3,
             2,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
@@ -2082,10 +2082,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Wolf',
             CardRarity::Common.into(),
+            2,
+            2,
+            2,
             CardType::Hunter.into(),
-            2,
-            2,
-            2,
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -2110,10 +2110,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Mantis',
             CardRarity::Common.into(),
+            1,
+            1,
+            1,
             CardType::Hunter.into(),
-            1,
-            1,
-            1,
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -2138,10 +2138,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Spider',
             CardRarity::Common.into(),
-            CardType::Hunter.into(),
             3,
             3,
             2,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -2166,10 +2166,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Rat',
             CardRarity::Common.into(),
-            CardType::Hunter.into(),
             5,
             4,
             4,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::SelfAttack.into(),
@@ -2194,10 +2194,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Troll',
             CardRarity::Common.into(),
-            CardType::Brute.into(),
             4,
             3,
             4,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -2222,10 +2222,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Bigfoot',
             CardRarity::Common.into(),
-            CardType::Brute.into(),
             2,
             3,
             2,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
@@ -2250,10 +2250,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Ogre',
             CardRarity::Common.into(),
-            CardType::Brute.into(),
             1,
             1,
             2,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -2278,10 +2278,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Orc',
             CardRarity::Common.into(),
-            CardType::Brute.into(),
             4,
             2,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(),
@@ -2306,10 +2306,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Skeleton',
             CardRarity::Common.into(),
-            CardType::Brute.into(),
             5,
             4,
             3,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier { _type: 0, value: 0, value_type: 0, requirement: 0 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
@@ -2334,8 +2334,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Warlock Pact',
             CardRarity::Legendary.into(),
-            CardType::Magical.into(),
             1,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroEnergy.into(), value: 3, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2353,8 +2353,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Dragon Breath',
             CardRarity::Legendary.into(),
-            CardType::Magical.into(),
             1,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(),
@@ -2375,8 +2375,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Jiangshi Curse',
             CardRarity::Legendary.into(),
-            CardType::Magical.into(),
             2,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyMarks.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2394,8 +2394,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Gorgon Gaze',
             CardRarity::Epic.into(),
-            CardType::Magical.into(),
             3,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyAttack.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2413,8 +2413,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Titan Call',
             CardRarity::Epic.into(),
-            CardType::Brute.into(),
             1,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyAttack.into(), value: 3, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2432,8 +2432,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Wendigo Frenzy',
             CardRarity::Epic.into(),
-            CardType::Magical.into(),
             2,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllAttack.into(), value: 3, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2451,8 +2451,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Giant Shoulders',
             CardRarity::Rare.into(),
-            CardType::Brute.into(),
             2,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(), value: 1, value_type: ValueType::PerAlly.into(), requirement: 0,
@@ -2470,8 +2470,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Werewolf Howl',
             CardRarity::Rare.into(),
-            CardType::Hunter.into(),
             3,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyStats.into(), value: 3, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2489,8 +2489,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Vampire Bite',
             CardRarity::Rare.into(),
-            CardType::Magical.into(),
             5,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(), value: 3, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2510,8 +2510,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Wraith Shadow',
             CardRarity::Uncommon.into(),
-            CardType::Magical.into(),
             1,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::EnemyHealth.into(), value: 4, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2529,8 +2529,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Sprite Favor',
             CardRarity::Uncommon.into(),
-            CardType::Magical.into(),
             5,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::HeroHealth.into(), value: 4, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2548,8 +2548,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Kappa Gift',
             CardRarity::Uncommon.into(),
-            CardType::Magical.into(),
             1,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllHealth.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2567,8 +2567,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Ogre Strength',
             CardRarity::Common.into(),
-            CardType::Brute.into(),
             1,
+            CardType::Brute.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyStats.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2586,8 +2586,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Kitsune Blessing',
             CardRarity::Common.into(),
-            CardType::Magical.into(),
             1,
+            CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyStats.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
@@ -2605,8 +2605,8 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             ref world,
             'Bear Foot',
             CardRarity::Common.into(),
-            CardType::Hunter.into(),
             1,
+            CardType::Hunter.into(),
             CardEffect {
                 modifier: CardModifier {
                     _type: Modifier::AllyStats.into(), value: 1, value_type: ValueType::Fixed.into(), requirement: 0,
