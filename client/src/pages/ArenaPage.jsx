@@ -73,14 +73,12 @@ function ArenaPage() {
   return (
     <Scrollbars style={{ ...styles.container, border: showWatchBorder ? '1px solid #f59100' : 'none' }}>
       {gameContext.values.gameId === null && <>
-        {!gameContext.getState.loading &&
-          <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
-            <LandingContainer />
-          </motion.div>
-        }
-        {(watchGameId || gameId || gameContext.getState.loading) &&
-          <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
+        {(watchGameId || gameId || gameContext.getState.loading)
+          ? <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
             <LoadingContainer />
+          </motion.div>
+          : <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
+            <LandingContainer />
           </motion.div>
         }
       </>}
