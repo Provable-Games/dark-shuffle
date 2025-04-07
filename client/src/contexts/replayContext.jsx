@@ -65,7 +65,7 @@ export const ReplayProvider = ({ children }) => {
     navigate('/watch/' + _game.id)
 
     let txs = await getGameTxs(_game.id)
-    await game.utils.initializeGameSettings(_game.settingsId)
+    await game.actions.loadGameDetails(_game)
 
     if (txs.length > 0) {
       fetchEvents(0, txs[0].tx_hash)
@@ -108,9 +108,8 @@ export const ReplayProvider = ({ children }) => {
   }
 
   const spectateGame = (_game) => {
-    game.setStartStatus('Loading Game')
     setSpectatingGame(_game)
-    game.utils.initializeGameSettings(_game.settingsId)
+    game.actions.loadGameDetails(_game)
     navigate('/watch/' + _game.id)
   }
 

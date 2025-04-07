@@ -1,3 +1,4 @@
+import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
@@ -12,9 +13,9 @@ import { DojoContext } from '../contexts/dojoContext';
 import { GameContext } from '../contexts/gameContext';
 import { ellipseAddress } from '../helpers/utilities';
 import ChooseName from './dialogs/chooseName';
-import ConnectWallet from './dialogs/connectWallet';
-import ProfileMenu from './header/profileMenu';
 import GameSettingsList from './dialogs/gameSettingsList';
+import ProfileMenu from './header/profileMenu';
+import GameSettings from './dialogs/gameSettings';
 
 const menuItems = [
   {
@@ -34,7 +35,6 @@ function Header(props) {
 
   const dojo = useContext(DojoContext)
 
-  const [connectWallet, openConnectWallet] = useState(false)
   const [nameDialog, openNameDialog] = useState(false)
   const [gameSettings, openGameSettings] = useState(false)
 
@@ -54,15 +54,21 @@ function Header(props) {
     game.endGame()
   }
 
+  if (game.getState.loading) {
+    return null
+  }
+
+  const inGame = game.values.gameId && !game.values.replay
+
   return (
-    <Box sx={styles.header}>
+    <Box sx={[styles.header, { height: inGame ? '42px' : '55px', pl: inGame ? 1 : 3 }]}>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-        <Box height={32} sx={{ opacity: 1, cursor: 'pointer' }} onClick={backToMenu}>
-          <img alt='' src={logo} height='32' />
+        <Box sx={{ height: '32px', opacity: 1, cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={backToMenu}>
+          {inGame ? <CloseIcon fontSize='medium' htmlColor='white' /> : <img alt='' src={logo} height='32' />}
         </Box>
 
-        {menuItems.map(item => {
+        {!inGame && menuItems.map(item => {
           return <Link to={item.path} key={item.name} sx={styles.item}>
             <Box sx={styles.content}>
               <Typography>
@@ -75,7 +81,7 @@ function Header(props) {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {dojo.address
-          ? <Button onClick={() => connector.controller.openProfile()} startIcon={<SportsEsportsIcon />} size='medium' variant='outlined'>
+          ? <Button onClick={() => connector.controller.openProfile()} startIcon={<SportsEsportsIcon />} size={inGame ? 'small' : 'medium'} variant='outlined'>
             {dojo.userName
               ? <Typography color='primary' sx={{ fontSize: '12px' }}>
                 {dojo.userName.toUpperCase()}
@@ -92,15 +98,16 @@ function Header(props) {
           </LoadingButton>
         }
 
-        <IconButton onClick={handleClick} size='medium'>
+        <IconButton onClick={handleClick} size={inGame ? 'small' : 'medium'}>
           <SettingsIcon color='primary' />
         </IconButton>
       </Box>
 
-      <ProfileMenu handleClose={handleClose} anchorEl={anchorEl} openNameDialog={openNameDialog} openGameSettings={openGameSettings} />
+      <ProfileMenu handleClose={handleClose} anchorEl={anchorEl} openNameDialog={openNameDialog} openGameSettings={openGameSettings} inGame={inGame} backToMenu={backToMenu} />
       <ChooseName open={nameDialog} close={openNameDialog} />
-      <ConnectWallet open={connectWallet} close={openConnectWallet} />
-      {gameSettings && <GameSettingsList open={gameSettings} close={openGameSettings} />}
+
+      {(gameSettings && !inGame) && <GameSettingsList open={gameSettings} close={openGameSettings} />}
+      {(gameSettings && inGame) && <GameSettings settingsId={game.getState.tokenData.settingsId} view={true} close={() => openGameSettings(false)} />}
     </Box>
   );
 }
@@ -110,13 +117,11 @@ export default Header
 const styles = {
   header: {
     width: '100%',
-    height: '55px',
     borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     pr: 1,
-    pl: 3,
     boxSizing: 'border-box',
     gap: 4
   },

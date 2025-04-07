@@ -452,7 +452,8 @@ export const populateGameTokens = async (tokenIds) => {
         health: game?.hero_health,
         xp: game?.hero_xp,
         tournament_id: parseInt(tournament?.tournament_id, 16),
-        active: game?.hero_health !== 0 && (expires_at === 0 || expires_at > Date.now())
+        active: game?.hero_health !== 0 && (expires_at === 0 || expires_at > Date.now()),
+        gameStarted: Boolean(game?.hero_xp)
       }
     })
 
@@ -748,7 +749,7 @@ export async function getTokenMetadata(game_id) {
     expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
     available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000,
     active: game?.hero_health !== 0,
-    started: game?.hero_xp
+    gameStarted: Boolean(game?.hero_xp)
   };
 }
 

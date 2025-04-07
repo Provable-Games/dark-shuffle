@@ -12,9 +12,8 @@ export const DraftContext = createContext()
 export const DraftProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
-  const { gameSettings, gameCards } = game.getState
+  const { gameSettings, gameCards, tokenData } = game.getState
 
-  const [gameData, setGameData] = useState()
   const [pendingCard, setPendingCard] = useState()
 
   const [options, setOptions] = useState([])
@@ -22,43 +21,35 @@ export const DraftProvider = ({ children }) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
   useEffect(() => {
-    if (gameData && gameSettings?.starting_health && gameCards?.length > 0) {
+    if (!tokenData.gameStarted && gameSettings?.starting_health && gameCards?.length > 0) {
       startDraft()
     }
-  }, [gameData, gameSettings, gameCards])
+  }, [tokenData, gameSettings, gameCards])
 
-  const initializeState = () => {
+  const initializeDraft = () => {
     setPendingCard()
     setOptions([])
     setCards([])
-    game.setStartStatus('Minting Game Token')
-  }
-
-  const prepareStartingGame = async (tokenData) => {
-    setGameData(tokenData)
-    await game.utils.initializeGameSettings(tokenData.settingsId)
   }
 
   const startDraft = async () => {
-    initializeState()
-
-    game.setStartStatus('Shuffling Cards')
+    initializeDraft()
 
     const txs = []
     txs.push({
       contractName: "game_systems",
       entrypoint: "start_game",
-      calldata: [gameData.tokenId]
+      calldata: [tokenData.tokenId]
     })
 
+    game.setLoadingProgress(99)
     const res = await dojo.executeTx(txs, true)
-    game.setStartStatus()
 
     if (res) {
       const gameValues = res.find(e => e.componentName === 'Game')
       const draftValues = res.find(e => e.componentName === 'Draft')
 
-      game.setGame({ ...gameValues, playerName: gameData.playerName })
+      game.setGame({ ...gameValues, playerName: tokenData.playerName })
       setOptions(draftValues.options.map(option => game.utils.getCard(option)))
       setCards(draftValues.cards.map(card => game.utils.getCard(card)))
 
@@ -70,7 +61,7 @@ export const DraftProvider = ({ children }) => {
         action: snackbarId => (
           <>
             <Button variant='outlined' size='small' sx={{ width: '90px', mr: 1 }}
-              component='a' href={'https://x.com/intent/tweet?text=' + `I'm about to face the beasts of Dark Shuffle — come watch me play and see how far I can go! darkshuffle.io/watch/${gameData.tokenId} 🕷️⚔️ @provablegames @darkshuffle_gg`}
+              component='a' href={'https://x.com/intent/tweet?text=' + `I'm about to face the beasts of Dark Shuffle — come watch me play and see how far I can go! darkshuffle.io/watch/${tokenData.tokenId} 🕷️⚔️ @provablegames @darkshuffle_gg`}
               target='_blank'>
               Tweet
             </Button>
@@ -83,8 +74,6 @@ export const DraftProvider = ({ children }) => {
         )
       })
     }
-
-    setGameData()
   }
 
   const selectCard = async (optionId) => {
@@ -126,7 +115,6 @@ export const DraftProvider = ({ children }) => {
     <DraftContext.Provider
       value={{
         actions: {
-          prepareStartingGame,
           selectCard,
           fetchDraft
         },

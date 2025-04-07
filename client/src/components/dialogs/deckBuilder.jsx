@@ -55,7 +55,7 @@ function DeckBuilder(props) {
       onClose={view ? close : () => { }}
       maxWidth={'lg'}
       PaperProps={{
-        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97Fd1' }
+        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97Fd1', maxWidth: '98vw' }
       }}
     >
       <Box sx={styles.dialogContainer}>

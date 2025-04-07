@@ -12,14 +12,12 @@ import Structure from '../components/gametree/structure';
 import { BattleContext } from '../contexts/battleContext';
 import { DojoContext } from '../contexts/dojoContext';
 import { GameContext } from '../contexts/gameContext';
-import { useReplay } from '../contexts/replayContext';
 import { fadeVariant } from "../helpers/variants";
 
-function StartBattleContainer() {
+function MapContainer() {
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
   const battle = useContext(BattleContext)
-  const replay = useReplay();
 
   const [cardOverview, setCardOverview] = useState(false)
   const [selectingNode, setSelectingNode] = useState(false)
@@ -86,7 +84,7 @@ function StartBattleContainer() {
 
           </Box>}
 
-          {cardOverview && <Box sx={styles.mobileOverview} width={'280px'}>
+          {cardOverview && <Box sx={styles.mobileOverview} width={'300px'}>
             <Scrollbars style={{ width: '100%', height: '100%' }}>
 
               <IconButton onClick={() => setCardOverview(false)} sx={{ ml: 1 }}>
@@ -106,7 +104,7 @@ function StartBattleContainer() {
   )
 }
 
-export default StartBattleContainer
+export default MapContainer
 
 const styles = {
   container: {

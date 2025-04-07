@@ -3,24 +3,32 @@ import React, { useContext, useEffect } from 'react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { useParams } from 'react-router-dom'
 import { getTokenMetadata } from '../api/indexer'
-import StartDraft from '../components/landing/startDraft'
 import BattleContainer from '../container/BattleContainer'
 import DraftContainer from '../container/DraftContainer'
-import StartBattleContainer from '../container/StartBattleContainer'
+import MapContainer from '../container/MapContainer'
 import { GameContext } from '../contexts/gameContext'
 import { useReplay } from '../contexts/replayContext'
-import DeckBuilder from '../components/dialogs/deckBuilder'
+import { useAccount, useConnect } from '@starknet-react/core'
+import LandingContainer from '../container/LandingContainer'
+import LoadingContainer from '../container/LoadingContainer'
+import { motion } from 'framer-motion'
+import { fadeVariant } from '../helpers/variants'
 
 function ArenaPage() {
-  const gameState = useContext(GameContext)
-  const { state } = gameState.values
+  const gameContext = useContext(GameContext)
+  const { state } = gameContext.values
 
   const replay = useReplay()
-  const { watchGameId } = useParams()
+  const { watchGameId, gameId } = useParams()
+  const { account, address } = useAccount()
+  const { connect, connectors, isPending } = useConnect();
   const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
-    async function fetchGame() {
+    async function watchGame() {
+      gameContext.setLoading(true)
+      gameContext.setLoadingProgress(10)
+
       let game = await getTokenMetadata(watchGameId)
 
       if (game) {
@@ -35,19 +43,65 @@ function ArenaPage() {
     }
 
     if (watchGameId) {
-      fetchGame()
+      watchGame()
     }
   }, [watchGameId])
 
+  useEffect(() => {
+    async function loadGame() {
+      if (!Boolean(account)) {
+        connect({ connector: connectors.find(conn => conn.id === "controller") })
+        return
+      }
+
+      if (gameId) {
+        gameContext.setLoading(true)
+        gameContext.setLoadingProgress(10)
+
+        let tokenData = await getTokenMetadata(gameId)
+        gameContext.actions.loadGameDetails(tokenData)
+      }
+    }
+
+    if (gameId && !isPending) {
+      loadGame()
+    }
+  }, [gameId, address, isPending])
+
+  const showWatchBorder = gameContext.values.replay && !gameContext.getState.loading
+
   return (
-    <Scrollbars style={{ ...styles.container, border: gameState.values.replay ? '1px solid #f59100' : 'none' }}>
-      {gameState.values.gameId === null && <StartDraft />}
+    <Scrollbars style={{ ...styles.container, border: showWatchBorder ? '1px solid #f59100' : 'none' }}>
+      {gameContext.values.gameId === null && <>
+        {!gameContext.getState.loading &&
+          <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
+            <LandingContainer />
+          </motion.div>
+        }
+        {(watchGameId || gameId || gameContext.getState.loading) &&
+          <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
+            <LoadingContainer />
+          </motion.div>
+        }
+      </>}
 
-      {state === 'Draft' && <DraftContainer />}
+      {state === 'Draft' &&
+        <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
+          <DraftContainer />
+        </motion.div>
+      }
 
-      {state === 'Battle' && <BattleContainer />}
+      {state === 'Battle' &&
+        <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
+          <BattleContainer />
+        </motion.div>
+      }
 
-      {state === 'Map' && <StartBattleContainer />}
+      {state === 'Map' &&
+        <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
+          <MapContainer />
+        </motion.div>
+      }
     </Scrollbars>
   )
 }

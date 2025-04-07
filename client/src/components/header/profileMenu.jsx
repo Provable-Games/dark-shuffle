@@ -9,15 +9,18 @@ import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, T
 import { useDisconnect } from '@starknet-react/core';
 import React, { useContext } from 'react';
 import { DojoContext } from '../../contexts/dojoContext';
-import { useTournament } from '../../contexts/tournamentContext';
 import { formatNumber } from '../../helpers/utilities';
 
 function ProfileMenu(props) {
-  const { handleClose, anchorEl, openNameDialog, openGameSettings } = props
+  const { handleClose, anchorEl, openNameDialog, openGameSettings, inGame, backToMenu } = props
   const { disconnect } = useDisconnect()
-
   const dojo = useContext(DojoContext)
-  const { season, actions } = useTournament()
+
+  const disconnectController = () => {
+    disconnect()
+    handleClose()
+    backToMenu()
+  }
 
   return (
     <>
@@ -60,7 +63,7 @@ function ProfileMenu(props) {
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>
-            Game Settings
+            {inGame ? 'View Settings' : 'Game Settings'}
           </ListItemText>
         </MenuItem>
 
@@ -93,29 +96,9 @@ function ProfileMenu(props) {
           </ListItemText>
         </MenuItem>
 
-        {/* <Divider sx={{ my: 2 }} />
-
-        <MenuItem disabled={season.end >= new Date() / 1000} onClick={() => { actions.submitScores(dojoConfig.seasonTournamentId) }}>
-          <ListItemIcon>
-            <SportsScoreIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>
-            Submit Season
-          </ListItemText>
-        </MenuItem>
-
-        <MenuItem disabled={season.end + season.submissionPeriod >= new Date() / 1000} onClick={() => { actions.distributePrizes(dojoConfig.seasonTournamentId) }}>
-          <ListItemIcon>
-            <EmojiEventsIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>
-            Distribute Prizes
-          </ListItemText>
-        </MenuItem> */}
-
         <Divider sx={{ my: 2 }} />
 
-        <MenuItem onClick={() => { disconnect(); handleClose(); }}>
+        <MenuItem onClick={() => { disconnectController(); }}>
           <ListItemIcon>
             <LogoutIcon fontSize="small" />
           </ListItemIcon>

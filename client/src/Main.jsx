@@ -14,15 +14,13 @@ import { TournamentProvider } from "./contexts/tournamentContext";
 import { routes } from './helpers/routes';
 import { mainTheme } from './helpers/themes';
 
-import { useState } from 'react';
 import MobileHeader from './components/mobileHeader';
-import { AnimationHandler } from "./contexts/animationHandler";
-import { StarknetProvider } from "./contexts/starknet";
-import { ReplayProvider } from './contexts/replayContext';
 import ReplayOverlay from './components/replayOverlay';
+import { AnimationHandler } from "./contexts/animationHandler";
+import { ReplayProvider } from './contexts/replayContext';
+import { StarknetProvider } from "./contexts/starknet";
 
 function Main() {
-  const [connectWallet, showConnectWallet] = useState(false)
 
   return (
     <BrowserRouter>
@@ -35,17 +33,17 @@ function Main() {
                 <AnimationHandler>
 
                   <StarknetProvider>
-                    <DojoProvider showConnectWallet={showConnectWallet}>
+                    <DojoProvider>
                       <TournamentProvider>
                         <GameProvider>
                           <DraftProvider>
                             <BattleProvider>
-                              <ReplayProvider showConnectWallet={showConnectWallet}>
+                              <ReplayProvider>
 
                                 <Box className='main'>
                                   <ReplayOverlay />
-                                  {isBrowser && <Header connectWallet={connectWallet} showConnectWallet={showConnectWallet} />}
-                                  {isMobile && <MobileHeader connectWallet={connectWallet} showConnectWallet={showConnectWallet} />}
+                                  {isBrowser && <Header />}
+                                  {isMobile && <MobileHeader />}
 
                                   <AnimatePresence mode="wait">
 

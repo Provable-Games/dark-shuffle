@@ -250,7 +250,7 @@ function GameSettings(props) {
       onClose={view ? props.close : () => { }}
       maxWidth={'xl'}
       PaperProps={{
-        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F' }
+        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F', maxWidth: '98vw' }
       }}
     >
 

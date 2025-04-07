@@ -2,7 +2,6 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Button, CircularProgress, Dialog, Divider, TextField, Typography } from '@mui/material';
 import { useAccount } from '@starknet-react/core';
 import { motion } from "framer-motion";
-import { useSnackbar } from 'notistack';
 import React, { useContext, useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 import { getRecommendedSettings, getSettingsList } from '../../api/indexer';
@@ -16,7 +15,6 @@ function GameSettingsList(props) {
 
   const gameContext = useContext(GameContext)
   const draft = useContext(DraftContext)
-  const { enqueueSnackbar } = useSnackbar()
   const { address } = useAccount()
 
   const [selectedSettings, setselectedSettings] = useState()
@@ -26,7 +24,6 @@ function GameSettingsList(props) {
   const [gameSettings, openGameSettings] = useState(false)
   const [settingsList, setSettingsList] = useState([])
   const [search, setSearch] = useState('')
-  const [minting, setMinting] = useState(false)
 
   async function fetchSettings() {
     if (tab === 'search' && !search) {
@@ -61,20 +58,9 @@ function GameSettingsList(props) {
     }
   }, [settingsList])
 
-  const mintGame = async () => {
-    setMinting(true)
-
-    try {
-      gameContext.setStartStatus('Minting Game Token')
-      const tokenData = await gameContext.actions.mintFreeGame(selectedSettings.settings_id)
-      gameContext.setStartStatus('Loading Game Settings')
-      await draft.actions.prepareStartingGame(tokenData)
-      close(false)
-    } catch (error) {
-      enqueueSnackbar('Failed to start game', { variant: 'error' })
-    }
-
-    setMinting(false)
+  const startNewGame = async () => {
+    const tokenData = await gameContext.actions.mintFreeGame(selectedSettings.settings_id)
+    await gameContext.actions.loadGameDetails(tokenData)
   }
 
   function renderSettingsOverview(settings) {
@@ -104,7 +90,7 @@ function GameSettingsList(props) {
       onClose={() => close(false)}
       maxWidth={'lg'}
       PaperProps={{
-        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F' }
+        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F', maxWidth: '98vw' }
       }}
     >
       <Box sx={styles.dialogContainer}>
@@ -174,8 +160,7 @@ function GameSettingsList(props) {
 
               <LoadingButton variant='outlined' size='large' sx={{ width: '140px' }}
                 disabled={!selectedSettings}
-                loading={minting}
-                onClick={() => mintGame()}
+                onClick={() => startNewGame()}
               >
                 Play
               </LoadingButton>

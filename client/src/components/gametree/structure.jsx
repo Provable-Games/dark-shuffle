@@ -19,7 +19,7 @@ function Structure(props) {
   const replay = useReplay()
   const game = useContext(GameContext)
 
-  const { map } = game.getState
+  const { map, gameSettings } = game.getState
   const [tree, buildTree] = useState([])
   const scrollbarRef = useRef(null);
 
@@ -83,7 +83,7 @@ function Structure(props) {
   }, [map])
 
   function RenderBattleMenu() {
-    let monster = GET_MONSTER(selectedNode?.monsterId, selectedNode?.monsterName)
+    let monster = GET_MONSTER(selectedNode?.monsterId, selectedNode?.monsterName, gameSettings)
 
     return <Menu
       anchorEl={anchorEl}
@@ -276,7 +276,7 @@ function Structure(props) {
   }
 
   function RenderMonsterCircle(node) {
-    let monster = GET_MONSTER(node.monsterId, node.monsterName)
+    let monster = GET_MONSTER(node.monsterId, node.monsterName, gameSettings)
 
     return <Box sx={styles.circleContainer}>
       <LargeCustomTooltip leaveDelay={200} position={'top'} title={

@@ -1,5 +1,4 @@
 import GitHubIcon from '@mui/icons-material/GitHub';
-import InfoIcon from '@mui/icons-material/Info';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -11,19 +10,14 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { useConnect, useDisconnect } from '@starknet-react/core';
 import React, { useContext, useState } from 'react';
 import { DojoContext } from '../contexts/dojoContext';
+import { GameContext } from '../contexts/gameContext';
 import { formatNumber } from '../helpers/utilities';
+import GameSettings from './dialogs/gameSettings';
 import GameSettingsList from './dialogs/gameSettingsList';
-
-const menuItems = [
-  {
-    name: 'Play',
-    path: '/',
-    icon: <InfoIcon />
-  },
-]
 
 function MobileHeader(props) {
   const dojo = useContext(DojoContext)
+  const game = useContext(GameContext)
 
   const { connect, connector, connectors } = useConnect();
   const { disconnect } = useDisconnect()
@@ -31,6 +25,8 @@ function MobileHeader(props) {
 
   const [menu, toggleMenu] = useState(false)
   const [gameSettings, openGameSettings] = useState(false)
+
+  const inGame = game.values.gameId
 
   return <Box sx={styles.mobileHeader}>
     <Box />
@@ -77,32 +73,20 @@ function MobileHeader(props) {
           <Divider sx={{ mt: 2 }} />
         </>}
 
-        {/* <List>
-          {menuItems.map(item => {
-            return <Link to={item.path} key={item.name} sx={styles.item}>
-              <Box sx={styles.content}>
-                <Typography variant='h6'>
-                  {item.name}
-                </Typography>
-              </Box>
-            </Link>
-          })}
-        </List> */}
-
         <Divider />
 
-        <MenuItem onClick={() => { openGameSettings(true); handleClose() }}>
+        <MenuItem onClick={() => { openGameSettings(true); toggleMenu(false) }}>
           <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>
-            Game Settings
+            {inGame ? 'View Settings' : 'Game Settings'}
           </ListItemText>
         </MenuItem>
 
         <Box sx={{ width: '100%', height: '1px', background: 'rgba(255, 255, 255, 0.12)' }} />
 
-        <MenuItem onClick={() => { window.open("https://discord.com/channels/884211910222970891/1249816798971560117", "_blank"); handleClose; }}>
+        <MenuItem onClick={() => { window.open("https://discord.com/channels/884211910222970891/1249816798971560117", "_blank"); toggleMenu(false) }}>
           <ListItemIcon>
             <SportsEsportsIcon fontSize="small" />
           </ListItemIcon>
@@ -111,7 +95,7 @@ function MobileHeader(props) {
           </ListItemText>
         </MenuItem>
 
-        <MenuItem onClick={() => { window.open("https://x.com/darkshuffle_gg", "_blank"); handleClose; }}>
+        <MenuItem onClick={() => { window.open("https://x.com/darkshuffle_gg", "_blank"); toggleMenu(false) }}>
           <ListItemIcon>
             <XIcon fontSize="small" />
           </ListItemIcon>
@@ -120,7 +104,7 @@ function MobileHeader(props) {
           </ListItemText>
         </MenuItem>
 
-        <MenuItem onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); handleClose; }}>
+        <MenuItem onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); toggleMenu(false) }}>
           <ListItemIcon>
             <GitHubIcon fontSize="small" />
           </ListItemIcon>
@@ -146,6 +130,7 @@ function MobileHeader(props) {
     </Box>
 
     {gameSettings && <GameSettingsList open={gameSettings} close={openGameSettings} />}
+    {(gameSettings && inGame) && <GameSettings settingsId={game.getState.tokenData.settingsId} view={true} close={() => openGameSettings(false)} />}
   </Box>
 }
 

@@ -1,20 +1,22 @@
+import { hexToAscii } from '@dojoengine/utils';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import WatchIcon from '@mui/icons-material/Watch';
 import { Box, Button, CircularProgress, Dialog, Typography } from '@mui/material';
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 import { getGameTokens, getSettingsMetadata, populateGameTokens } from '../../api/indexer';
 import logo from '../../assets/images/logo.svg';
+import { GameContext } from '../../contexts/gameContext';
 import { useTournament } from '../../contexts/tournamentContext';
 import { fadeVariant } from "../../helpers/variants";
 import GameSettings from './gameSettings';
-import { hexToAscii } from '@dojoengine/utils';
 
 function GameTokens(props) {
+  const gameContext = useContext(GameContext)
   const { tournaments } = useTournament()
-  const { open, close, address, resumeGame, startGame } = props
+  const { open, close, address } = props
 
   const [games, setGames] = useState([])
   const [selectedGame, setSelectedGame] = useState()
@@ -46,12 +48,7 @@ function GameTokens(props) {
   }, [address, active])
 
   const handleResumeGame = () => {
-    if (selectedGame.xp) {
-      resumeGame(selectedGame)
-    } else {
-      startGame(selectedGame)
-    }
-
+    gameContext.actions.loadGameDetails(selectedGame)
     close(false)
   }
 
@@ -145,7 +142,7 @@ function GameTokens(props) {
       onClose={() => close(false)}
       maxWidth={'lg'}
       PaperProps={{
-        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F' }
+        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F', maxWidth: '98vw' }
       }}
     >
       <Box sx={styles.dialogContainer}>

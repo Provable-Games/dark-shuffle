@@ -7,7 +7,7 @@ export const MONSTER_LIST = () => {
   })
 }
 
-export const GET_MONSTER = (monsterId, fullName) => {
+export const GET_MONSTER = (monsterId, fullName, gameSettings) => {
   let details = get_monster_details(monsterId)
 
   return {
@@ -17,12 +17,12 @@ export const GET_MONSTER = (monsterId, fullName) => {
     monsterType: details.monsterType,
     abilities: <>
       <Typography color="primary">{fullName}</Typography>
-      {getMonsterAbilities(monsterId)}
+      {getMonsterAbilities(monsterId, gameSettings?.persistent_health)}
     </>
   }
 }
 
-const getMonsterAbilities = (monsterId) => {
+const getMonsterAbilities = (monsterId, persistentHealth) => {
   switch (Number(monsterId)) {
     case 75:
       return formatAbility({
@@ -117,9 +117,9 @@ const getMonsterAbilities = (monsterId) => {
         reward: "The first beast you play each turn gets +2 health."
       })
     case 56:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 10 health."
-      })
+      }) : null;
     case 55:
       return formatAbility({
         ability: "Deals 2 damage to your hero whenever you play a beast with higher health than its attack.",
@@ -129,41 +129,41 @@ const getMonsterAbilities = (monsterId) => {
     case 53:
     case 52:
     case 51:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 10 health."
-      })
+      }) : null;
     case 50:
     case 49:
     case 48:
     case 47:
     case 46:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 10 health."
-      })
+      }) : null;
     case 45:
     case 44:
     case 43:
     case 42:
     case 41:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 15 health."
-      })
+      }) : null;
     case 40:
     case 39:
     case 38:
     case 37:
     case 36:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 15 health."
-      })
+      }) : null;
     case 35:
     case 34:
     case 33:
     case 32:
     case 31:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 15 health."
-      })
+      }) : null;
     case 30:
       return formatAbility({
         ability: "Deals 3 damage to your hero if you didn't deal damage this turn.",
@@ -173,17 +173,17 @@ const getMonsterAbilities = (monsterId) => {
     case 28:
     case 27:
     case 26:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 20 health."
-      })
+      }) : null;
     case 25:
     case 24:
     case 23:
     case 22:
     case 21:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 20 health."
-      })
+      }) : null;
     case 20:
       return formatAbility({
         ability: "Wendigo gains +1 attack for each beast in your hand.",
@@ -193,9 +193,9 @@ const getMonsterAbilities = (monsterId) => {
     case 18:
     case 17:
     case 16:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 20 health."
-      })
+      }) : null;
     case 15:
       return formatAbility({
         ability: "Tarrasque gains +1 attack for each beast that attacked it this turn.",
@@ -212,9 +212,9 @@ const getMonsterAbilities = (monsterId) => {
     case 6:
     case 5:
     case 4:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 20 health."
-      })
+      }) : null;
     case 3:
       return formatAbility({
         effect: "Jiangshi starts with +1 attack and +1 health for each Brute in your deck.",

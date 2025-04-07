@@ -12,15 +12,17 @@ import { GameContext } from '../../contexts/gameContext';
 import { CustomTooltip, EnergyBar, HealthBar } from '../../helpers/styles';
 import { normalise } from '../../helpers/utilities';
 import DamageAnimation from '../animations/damageAnimation';
+import BattleEffects from './battleEffects';
 
 export default function Adventurer(props) {
   const game = useContext(GameContext)
-  const { gameSettings } = game.getState
+  const { gameSettings, gameEffects } = game.getState
 
   const battle = useContext(BattleContext)
+  const { battleEffects, values: battleValues } = battle.state
 
-  const [armor, setArmor] = useState(battle.state.battleEffects.heroDmgReduction ?? 0 + game.getState.gameEffects.heroDmgReduction ?? 0)
-  const [health, setHealth] = useState(battle.state.values.heroHealth)
+  const [armor, setArmor] = useState(battleEffects.heroDmgReduction ?? 0 + gameEffects.heroDmgReduction ?? 0)
+  const [health, setHealth] = useState(battleValues.heroHealth)
   const [damageTaken, setDamageTaken] = useState(0)
 
   const _shield = useLottie({
@@ -40,23 +42,23 @@ export default function Adventurer(props) {
   });
 
   useEffect(() => {
-    if (health > battle.state.values.heroHealth) {
-      setDamageTaken(health - battle.state.values.heroHealth)
-      setHealth(battle.state.values.heroHealth)
+    if (health > battleValues.heroHealth) {
+      setDamageTaken(health - battleValues.heroHealth)
+      setHealth(battleValues.heroHealth)
     }
 
-    if (health < battle.state.values.heroHealth) {
+    if (health < battleValues.heroHealth) {
       heal.play()
-      setHealth(battle.state.values.heroHealth)
+      setHealth(battleValues.heroHealth)
     }
-  }, [battle.state.values.heroHealth])
+  }, [battleValues.heroHealth])
 
   useEffect(() => {
-    if (battle.state.battleEffects.heroDmgReduction ?? 0 + game.getState.gameEffects.heroDmgReduction ?? 0 > armor) {
+    if (battleEffects.heroDmgReduction ?? 0 + gameEffects.heroDmgReduction ?? 0 > armor) {
       _shield.play()
-      setArmor(battle.state.battleEffects.heroDmgReduction ?? 0 + game.getState.gameEffects.heroDmgReduction ?? 0)
+      setArmor(battleEffects.heroDmgReduction ?? 0 + gameEffects.heroDmgReduction ?? 0)
     }
-  }, [battle.state.battleEffects.heroDmgReduction])
+  }, [battleEffects.heroDmgReduction])
 
   return <Box sx={styles.king}>
     <DamageAnimation damage={damageTaken} mini={true} />
@@ -64,7 +66,16 @@ export default function Adventurer(props) {
     {_shield.View}
     {heal.View}
 
-    <img alt='' src={monarch} height={'70%'} />
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70%' }}>
+      <Box width='50px'>
+        <BattleEffects />
+      </Box>
+      <img alt='' src={monarch} height={'100%'} />
+
+      <Box width='50px'>
+
+      </Box>
+    </Box>
 
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -80,7 +91,7 @@ export default function Adventurer(props) {
         }>
           <Box width={'80px'} display={'flex'} alignItems={'center'} justifyContent={'flex-end'}>
             <Typography>
-              {battle.state.values.heroEnergy}
+              {battleValues.heroEnergy}
             </Typography>
 
             <img alt='' src={bolt} height={18} />
@@ -88,11 +99,11 @@ export default function Adventurer(props) {
         </CustomTooltip>
 
         <Box width={'160px'} mx={0.5}>
-          <EnergyBar variant="determinate" value={normalise(battle.state.values.heroEnergy, battle.state.values.round)} />
+          <EnergyBar variant="determinate" value={normalise(battleValues.heroEnergy, battleValues.round)} />
         </Box>
 
         <Typography mr={'50px'} sx={{ fontSize: '13px', opacity: 0.7 }}>
-          →{Math.min(gameSettings.max_energy, gameSettings.start_energy + battle.state.values.round)}
+          →{Math.min(gameSettings.max_energy, gameSettings.start_energy + battleValues.round)}
         </Typography>
       </Box>
 
@@ -109,7 +120,7 @@ export default function Adventurer(props) {
         }>
           <Box width={'80px'} display={'flex'} alignItems={'center'} justifyContent={'flex-end'}>
             <Typography>
-              {battle.state.values.heroHealth}
+              {battleValues.heroHealth}
             </Typography>
 
             <FavoriteIcon htmlColor="red" sx={{ fontSize: '18px' }} />
@@ -117,7 +128,7 @@ export default function Adventurer(props) {
         </CustomTooltip>
 
         <Box width={'160px'} ml={0.5}>
-          <HealthBar variant="determinate" value={normalise(battle.state.values.heroHealth, Math.max(gameSettings.starting_health, game.values.heroHealth))} />
+          <HealthBar variant="determinate" value={normalise(battleValues.heroHealth, Math.max(gameSettings.starting_health, game.values.heroHealth))} />
         </Box>
 
         {armor > 0 && <Box display={'flex'} alignItems={'center'} ml={0.5}>
