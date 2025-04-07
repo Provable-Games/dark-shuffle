@@ -15,5 +15,9 @@ export function LCG(entropy) {
 }
 
 export function getRandomNumber(seed, max) {
+  if (max === 0) {
+    return 0;
+  }
+
   return seed % max + 1;
 }

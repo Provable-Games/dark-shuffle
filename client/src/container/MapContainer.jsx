@@ -10,23 +10,20 @@ import HeroStats from '../components/draft/heroStats';
 import Overview from '../components/draft/overview';
 import Structure from '../components/gametree/structure';
 import { BattleContext } from '../contexts/battleContext';
-import { GameContext } from '../contexts/gameContext';
-import { LAST_NODE_LEVEL } from '../helpers/constants';
-import { fadeVariant } from "../helpers/variants";
 import { DojoContext } from '../contexts/dojoContext';
-import { useReplay } from '../contexts/replayContext';
+import { GameContext } from '../contexts/gameContext';
+import { fadeVariant } from "../helpers/variants";
 
-function StartBattleContainer() {
+function MapContainer() {
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
   const battle = useContext(BattleContext)
-  const replay = useReplay();
 
   const [cardOverview, setCardOverview] = useState(false)
   const [selectingNode, setSelectingNode] = useState(false)
 
   useEffect(() => {
-    if (game.values.mapDepth === LAST_NODE_LEVEL && !game.values.replay) {
+    if (game.values.mapDepth === 0 && !game.values.replay) {
       game.actions.generateMap()
     }
   }, [game.values.mapDepth])
@@ -37,14 +34,15 @@ function StartBattleContainer() {
     }
 
     setSelectingNode(true)
-    const res = await dojo.executeTx([{ contractName: "map_systems", entrypoint: "select_node", calldata: [game.values.gameId, nodeId] }], true)
+    const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "select_node", calldata: [game.values.gameId, nodeId] }], true)
 
     if (res) {
       const gameValues = res.find(e => e.componentName === 'Game')
       const battleValues = res.find(e => e.componentName === 'Battle')
+      const battleResourcesValues = res.find(e => e.componentName === 'BattleResources')
 
       game.setGame(gameValues)
-      battle.actions.startBattle(battleValues)
+      battle.actions.startBattle(battleValues, battleResourcesValues)
     }
 
     setSelectingNode(false)
@@ -56,7 +54,7 @@ function StartBattleContainer() {
 
         <Box sx={isMobile ? styles.mobileDraftContainer : styles.draftContainer}>
 
-          {(game.values.mapDepth === LAST_NODE_LEVEL)
+          {(game.values.mapDepth === 0)
             ? <Box mt={10}><BlockRevealAnimation icon /></Box>
             : <Structure selectNode={selectNode} selectingNode={selectingNode} />
           }
@@ -86,7 +84,7 @@ function StartBattleContainer() {
 
           </Box>}
 
-          {cardOverview && <Box sx={styles.mobileOverview} width={'280px'}>
+          {cardOverview && <Box sx={styles.mobileOverview} width={'300px'}>
             <Scrollbars style={{ width: '100%', height: '100%' }}>
 
               <IconButton onClick={() => setCardOverview(false)} sx={{ ml: 1 }}>
@@ -106,7 +104,7 @@ function StartBattleContainer() {
   )
 }
 
-export default StartBattleContainer
+export default MapContainer
 
 const styles = {
   container: {

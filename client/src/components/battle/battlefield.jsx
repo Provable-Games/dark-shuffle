@@ -66,6 +66,7 @@ function Battlefield(props) {
         {React.Children.toArray(
           battle.state.board.map((creature, i) => {
             return <Creature
+              key={creature.id}
               pos={i}
               creature={creature}
             />

@@ -1,35 +1,42 @@
+import { hexToAscii } from '@dojoengine/utils';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import WatchIcon from '@mui/icons-material/Watch';
 import { Box, Button, CircularProgress, Dialog, Typography } from '@mui/material';
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
-import { getGameTokens, populateGameTokens } from '../../api/indexer';
+import { getGameTokens, getSettingsMetadata, populateGameTokens } from '../../api/indexer';
 import logo from '../../assets/images/logo.svg';
+import { GameContext } from '../../contexts/gameContext';
 import { useTournament } from '../../contexts/tournamentContext';
 import { fadeVariant } from "../../helpers/variants";
+import GameSettings from './gameSettings';
 
 function GameTokens(props) {
+  const gameContext = useContext(GameContext)
   const { tournaments } = useTournament()
-  const { open, close, address, resumeGame, startGame } = props
+  const { open, close, address } = props
 
   const [games, setGames] = useState([])
   const [selectedGame, setSelectedGame] = useState()
 
   const [active, showActive] = useState(true)
   const [loading, setLoading] = useState(true)
+  const [gameSettings, openGameSettings] = useState(false)
 
   useEffect(() => {
     async function fetchGames() {
       setLoading(true)
 
-      const gameTokens = await getGameTokens(address)
-      let games = await populateGameTokens(gameTokens.map(game => game.tokenId))
+      const gameTokenIds = await getGameTokens(address)
+      let games = await populateGameTokens(gameTokenIds)
+      let settingsMetadata = await getSettingsMetadata(games.map(game => game.settingsId))
 
       games = games.map(game => ({
         ...game,
-        tournament: tournaments.find(tournament => tournament.id === game.tournament_id)
+        settingsMetadata: settingsMetadata.find(metadata => metadata.settings_id === game.settingsId),
+        tournament: tournaments?.find(tournament => tournament.id === game.tournament_id),
       }))
 
       setSelectedGame()
@@ -41,12 +48,7 @@ function GameTokens(props) {
   }, [address, active])
 
   const handleResumeGame = () => {
-    if (selectedGame.xp) {
-      resumeGame(selectedGame)
-    } else {
-      startGame(selectedGame)
-    }
-
+    gameContext.actions.loadGameDetails(selectedGame)
     close(false)
   }
 
@@ -86,7 +88,7 @@ function GameTokens(props) {
         <img alt='' src={logo} height='42' />
 
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography color='primary' textTransform={'uppercase'} fontSize={'12px'}>
+          <Typography color='primary' textTransform={'uppercase'} fontSize={'12px'} >
             {game.playerName} - #{game.id}
           </Typography>
 
@@ -107,6 +109,10 @@ function GameTokens(props) {
               New
             </Typography>
           }
+
+          <Typography color='secondary' sx={{ fontSize: '13px' }}>
+            {hexToAscii(game.settingsMetadata?.name || '')}
+          </Typography>
         </Box>
       </Box>
 
@@ -121,7 +127,7 @@ function GameTokens(props) {
           </Box>}
         </Box>}
 
-        {game.tournament_id ? <Typography sx={{ color: '#f59100' }}>
+        {game.tournament_id ? <Typography sx={{ color: '#f59100', textAlign: 'right' }}>
           {game.tournament?.name}
         </Typography> : <Typography sx={{ color: '#fff', opacity: 0.8 }}>
           Free
@@ -136,7 +142,7 @@ function GameTokens(props) {
       onClose={() => close(false)}
       maxWidth={'lg'}
       PaperProps={{
-        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F' }
+        sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F', maxWidth: '98vw' }
       }}
     >
       <Box sx={styles.dialogContainer}>
@@ -175,7 +181,13 @@ function GameTokens(props) {
             </Box>
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
-              <Button variant='outlined' size='large'
+              <Button color='secondary' variant='outlined' size='large' onClick={() => openGameSettings(true)}
+                disabled={!selectedGame}
+              >
+                View Settings
+              </Button>
+
+              <Button variant='outlined' size='large' sx={{ width: '140px' }}
                 disabled={!selectedGame || !selectedGame.active || selectedGame.available_at > Date.now()}
                 onClick={() => handleResumeGame()}
               >
@@ -187,6 +199,8 @@ function GameTokens(props) {
         </motion.div>
 
       </Box>
+
+      {gameSettings && <GameSettings settingsId={selectedGame?.settingsId} view={true} close={() => openGameSettings(false)} />}
     </Dialog>
   )
 }
@@ -225,7 +239,7 @@ const styles = {
     mb: 1
   },
   gamesContainer: {
-    width: '360px',
+    width: '370px',
     maxWidth: '100%',
     minHeight: '200px',
     display: 'flex',

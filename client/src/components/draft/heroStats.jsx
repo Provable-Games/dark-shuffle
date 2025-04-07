@@ -2,6 +2,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Box, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import { GameContext } from "../../contexts/gameContext";
+import GameEffects from '../battle/gameEffects';
 
 function HeroStats(props) {
   const game = useContext(GameContext)
@@ -30,7 +31,7 @@ function HeroStats(props) {
       </Typography>
     </Box>
 
-    <Box mt={1} display={'flex'} justifyContent={'space-between'}>
+    <Box mt={0.5} display={'flex'} justifyContent={'space-between'}>
       <Typography>
         Health left
       </Typography>
@@ -44,18 +45,9 @@ function HeroStats(props) {
       </Box>
     </Box>
 
-    {/* <Box mt={4} display={'flex'} flexDirection={'column'} gap={'1px'}>
-      <Typography color={'#ffb260'} mb={0.5}>
-        Effects
-      </Typography>
-      <Typography sx={{ fontSize: '13px' }} color={'#ffb260'}>
-        - Creatures have +1 attack
-      </Typography>
-
-      <Typography sx={{ fontSize: '13px' }} color={'#ffb260'}>
-        - Start battle with +1 energy
-      </Typography>
-    </Box> */}
+    <Box mt={1}>
+      <GameEffects overview={true} />
+    </Box>
 
   </Box>
 }

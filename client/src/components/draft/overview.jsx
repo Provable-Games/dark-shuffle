@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import { Box, IconButton, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import React, { useContext, useState } from "react";
 import { isMobile } from 'react-device-detect';
@@ -7,11 +8,15 @@ import { CardSize, fetch_card_image } from "../../helpers/cards";
 import { uniquefy } from '../../helpers/utilities';
 import Card from "../card";
 
-function Overview() {
+function Overview(props) {
+  const { deckBuilder, edit, removeCard, deck } = props
   const draft = useContext(DraftContext)
-  const { cards } = draft.getState
-
   const [displayCard, setDisplayCard] = useState(null)
+
+  let cards = props.cards || draft.getState.cards
+  if (deck) {
+    cards = deck.map(card => cards.find(c => c.cardIndex === card))
+  }
 
   const uniqueCards = uniquefy(cards, "cardId")
 
@@ -44,14 +49,18 @@ function Overview() {
             <Typography color='primary'>
               {count > 1 && count}
             </Typography>
+
+            {deckBuilder && edit && <IconButton size='small' onClick={() => removeCard(card.cardId)}>
+              <CloseIcon color='error' fontSize='small' />
+            </IconButton>}
           </Box>
 
         </motion.div>
       })
     )}
 
-    {displayCard && <Box sx={isMobile ? styles.mobileDisplayCard : styles.displayCard}>
-      <Card card={displayCard} />
+    {displayCard && <Box sx={[isMobile ? styles.mobileDisplayCard : styles.displayCard, { right: deckBuilder ? 'calc(50vw - 260px)' : isMobile ? '0px' : '305px' }]}>
+      <Card card={displayCard} glow={Boolean(deckBuilder)} />
     </Box>}
   </Box>
 }
@@ -65,6 +74,7 @@ const styles = {
     gap: 0.5,
     p: 1,
     width: '100%',
+    minWidth: '300px',
     boxSizing: 'border-box'
   },
   cardCost: {
@@ -106,7 +116,6 @@ const styles = {
     height: CardSize.big.height,
     width: CardSize.big.width,
     position: 'fixed',
-    right: '305px'
   },
   levelContainer: {
     marginTop: '-5px',

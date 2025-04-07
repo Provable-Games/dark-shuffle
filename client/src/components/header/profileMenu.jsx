@@ -1,24 +1,26 @@
 import EditIcon from '@mui/icons-material/Edit';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
-import SportsScoreIcon from '@mui/icons-material/SportsScore';
+import SettingsIcon from '@mui/icons-material/Settings';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import XIcon from '@mui/icons-material/X';
 import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from '@mui/material';
 import { useDisconnect } from '@starknet-react/core';
 import React, { useContext } from 'react';
 import { DojoContext } from '../../contexts/dojoContext';
-import { useTournament } from '../../contexts/tournamentContext';
 import { formatNumber } from '../../helpers/utilities';
-import { dojoConfig } from '../../../dojo.config';
 
 function ProfileMenu(props) {
-  const { handleClose, anchorEl, openNameDialog } = props
+  const { handleClose, anchorEl, openNameDialog, openGameSettings, inGame, backToMenu } = props
   const { disconnect } = useDisconnect()
-
   const dojo = useContext(DojoContext)
-  const { season, actions } = useTournament()
+
+  const disconnectController = () => {
+    disconnect()
+    handleClose()
+    backToMenu()
+  }
 
   return (
     <>
@@ -56,12 +58,23 @@ function ProfileMenu(props) {
 
         <Divider sx={{ my: 1 }} />
 
-        <MenuItem onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); handleClose; }}>
+        <MenuItem onClick={() => { openGameSettings(true); handleClose() }}>
           <ListItemIcon>
-            <GitHubIcon fontSize="small" />
+            <SettingsIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>
-            Github
+            {inGame ? 'View Settings' : 'Game Settings'}
+          </ListItemText>
+        </MenuItem>
+
+        <Divider sx={{ my: 1 }} />
+
+        <MenuItem onClick={() => { window.open("https://discord.com/channels/884211910222970891/1249816798971560117", "_blank"); handleClose; }}>
+          <ListItemIcon>
+            <SportsEsportsIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Discord
           </ListItemText>
         </MenuItem>
 
@@ -74,29 +87,18 @@ function ProfileMenu(props) {
           </ListItemText>
         </MenuItem>
 
-        <Divider sx={{ my: 2 }} />
-
-        <MenuItem disabled={season.end >= new Date() / 1000} onClick={() => { actions.submitScores(dojoConfig.seasonTournamentId) }}>
+        <MenuItem onClick={() => { window.open("https://github.com/provable-games/dark-shuffle", "_blank"); handleClose; }}>
           <ListItemIcon>
-            <SportsScoreIcon fontSize="small" />
+            <GitHubIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>
-            Submit Season
-          </ListItemText>
-        </MenuItem>
-
-        <MenuItem disabled={season.end + season.submissionPeriod >= new Date() / 1000} onClick={() => { actions.distributePrizes(dojoConfig.seasonTournamentId) }}>
-          <ListItemIcon>
-            <EmojiEventsIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>
-            Distribute Prizes
+            Github
           </ListItemText>
         </MenuItem>
 
         <Divider sx={{ my: 2 }} />
 
-        <MenuItem onClick={() => { disconnect(); handleClose(); }}>
+        <MenuItem onClick={() => { disconnectController(); }}>
           <ListItemIcon>
             <LogoutIcon fontSize="small" />
           </ListItemIcon>

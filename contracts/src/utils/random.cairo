@@ -1,5 +1,5 @@
 use core::{integer::{U256DivRem, u256_try_as_non_zero}};
-use darkshuffle::constants::{CARD_POOL_SIZE, LCG_PRIME, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, U128_MAX};
+use darkshuffle::constants::{LCG_PRIME, MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID, U128_MAX};
 
 use darkshuffle::utils::cartridge::vrf::{IVrfProviderDispatcher, IVrfProviderDispatcherTrait, Source};
 use starknet::{ContractAddress, contract_address_const, get_block_timestamp, get_caller_address, get_tx_info};
@@ -10,8 +10,8 @@ fn get_vrf_address() -> ContractAddress {
 
 fn get_random_hash() -> felt252 {
     let chain_id = get_tx_info().unbox().chain_id;
-    // TODO: readd support for sepolia, currently throwing an Index out of bounds
-    if chain_id == MAINNET_CHAIN_ID {
+
+    if chain_id == MAINNET_CHAIN_ID || chain_id == SEPOLIA_CHAIN_ID {
         let vrf_provider = IVrfProviderDispatcher { contract_address: get_vrf_address() };
         vrf_provider.consume_random(Source::Nonce(get_caller_address()))
     } else {
@@ -33,43 +33,24 @@ fn LCG(seed: u128) -> u128 {
     (a * seed + c) % m
 }
 
-fn get_random_card_id(seed: u128, include_spells: bool) -> u8 {
-    let range: u128 = if include_spells {
-        270
-    } else {
-        225
-    };
-    let card_number: u16 = (seed % range + 1).try_into().unwrap();
+fn get_random_card_index(seed: u128, card_pool: Span<u8>) -> u8 {
+    let index: u32 = (seed % card_pool.len().into()).try_into().unwrap();
 
-    // Spells
-    if card_number > 255 {
-        ((270 - card_number) / 5 + 88).try_into().unwrap()
-    } else if card_number > 243 {
-        ((255 - card_number) / 4 + 85).try_into().unwrap()
-    } else if card_number > 234 {
-        ((243 - card_number) / 3 + 82).try_into().unwrap()
-    } else if card_number > 228 {
-        ((234 - card_number) / 2 + 79).try_into().unwrap()
-    } else if card_number > 225 {
-        ((228 - card_number) + 76).try_into().unwrap()
-    } // Creatures
-    else if card_number > 150 {
-        ((225 - card_number) / 5 + 61).try_into().unwrap()
-    } else if card_number > 90 {
-        ((150 - card_number) / 4 + 46).try_into().unwrap()
-    } else if card_number > 45 {
-        ((90 - card_number) / 3 + 31).try_into().unwrap()
-    } else if card_number > 15 {
-        ((45 - card_number) / 2 + 16).try_into().unwrap()
-    } else {
-        card_number.try_into().unwrap()
-    }
+    *card_pool.at(index)
 }
 
 fn get_random_number_zero_indexed(seed: u128, range: u8) -> u8 {
+    if range == 0 {
+        return 0;
+    }
+
     (seed % range.into()).try_into().unwrap()
 }
 
 fn get_random_number(seed: u128, range: u8) -> u8 {
+    if range == 0 {
+        return 0;
+    }
+
     (seed % range.into() + 1).try_into().unwrap()
 }

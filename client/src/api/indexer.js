@@ -1,13 +1,15 @@
+import { getContractByName } from "@dojoengine/core";
 import { getEntityIdFromKeys, hexToAscii } from "@dojoengine/utils";
 import { gql, request } from 'graphql-request';
 import { dojoConfig } from '../../dojo.config';
+import { cardTypes, formatCardEffect, rarities, types } from "../helpers/cards";
 import { get_short_namespace } from '../helpers/components';
-import { getContractByName } from "@dojoengine/core";
 
 let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace(NS);
 let GAME_ADDRESS = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
 let GQL_ENDPOINT = dojoConfig.toriiUrl + "/graphql"
+let SQL_ENDPOINT = dojoConfig.toriiUrl + "/sql"
 
 let TOURNAMENT_NS = dojoConfig.tournamentNamespace;
 let TOURNAMENT_NS_SHORT = get_short_namespace(TOURNAMENT_NS);
@@ -65,16 +67,50 @@ export async function getTournament(tournament_id) {
 export async function getSettings(settings_id) {
   const document = gql`
   {
+    ${NS_SHORT}GameSettingsMetadataModels(where:{settings_id:${settings_id}}) {
+      edges {
+        node {
+          settings_id,
+          name,
+          description
+        }
+      }
+    }
     ${NS_SHORT}GameSettingsModels(where:{settings_id:${settings_id}}) {
       edges {
         node {
           settings_id,
-          start_health,
-          start_energy,
-          start_hand_size,
-          draft_size,
-          max_energy,
-          max_hand_size,
+          starting_health,
+          persistent_health,
+          map {
+            possible_branches,
+            level_depth,
+            enemy_attack_min,
+            enemy_attack_max,
+            enemy_health_min,
+            enemy_health_max,
+            enemy_attack_scaling,
+            enemy_health_scaling
+          },
+          battle {
+            start_energy,
+            start_hand_size,
+            max_energy,
+            max_hand_size,
+            draw_amount
+          },
+          draft {
+            auto_draft,
+            draft_size,
+            card_ids,
+            card_rarity_weights {
+              common,
+              uncommon,
+              rare,
+              epic,
+              legendary
+            }
+          }
         }
       }
     }
@@ -82,7 +118,19 @@ export async function getSettings(settings_id) {
 
   const res = await request(GQL_ENDPOINT, document)
 
-  return res?.[`${NS_SHORT}GameSettingsModels`]?.edges[0]?.node
+  let gameSettings = res?.[`${NS_SHORT}GameSettingsModels`]?.edges[0]?.node || {}
+  let gameSettingsMetadata = res?.[`${NS_SHORT}GameSettingsMetadataModels`]?.edges[0]?.node || {}
+
+  return {
+    ...gameSettingsMetadata,
+    name: hexToAscii(gameSettingsMetadata.name),
+    starting_health: gameSettings.starting_health,
+    persistent_health: gameSettings.persistent_health,
+    ...gameSettings.map,
+    ...gameSettings.battle,
+    ...gameSettings.draft,
+    card_ids: gameSettings.draft.card_ids.map(cardId => Number(cardId))
+  }
 }
 
 export async function getActiveGame(game_id) {
@@ -141,7 +189,6 @@ export async function getGameEffects(game_id) {
           game_id,
           first_attack,
           first_health,
-          first_creature_cost,
           all_attack,
           hunter_attack,
           hunter_health,
@@ -203,9 +250,6 @@ export async function getBattleState(battle_id, game_id) {
             attack
             health
           }
-
-          hand
-          deck
           
           battle_effects { 
             enemy_marks
@@ -214,38 +258,17 @@ export async function getBattleState(battle_id, game_id) {
             next_hunter_health_bonus
             next_brute_attack_bonus
             next_brute_health_bonus
+            next_magical_attack_bonus
+            next_magical_health_bonus
           }
         }
-        ... on ${NS}_Board {
-          creature1 {
-            card_id,
-            attack,
-            health,
-          }
-          creature2 {
-            card_id,
-            attack,
-            health,
-          }
-          creature3 {
-            card_id,
-            attack,
-            health,
-          }
-          creature4 {
-            card_id,
-            attack,
-            health,
-          }
-          creature5 {
-            card_id,
-            attack,
-            health,
-          }
-          creature6 {
-            card_id,
-            attack,
-            health,
+        ... on ${NS}_BattleResources {
+          hand
+          deck
+          board {
+            card_index
+            attack
+            health
           }
         }
       }
@@ -256,7 +279,7 @@ export async function getBattleState(battle_id, game_id) {
 
   const result = {
     battle: res?.entity.models.find(model => model.hero),
-    board: res?.entity.models.find(model => model.creature1)
+    battleResources: res?.entity.models.find(model => model.hand)
   };
 
   return result;
@@ -351,26 +374,20 @@ export async function getGameTxs(game_id) {
 }
 
 export const getGameTokens = async (accountAddress) => {
-  const document = gql`
-  {
-    tokenBalances(accountAddress:"${accountAddress}", limit:10000) {
-      edges {
-        node {
-        tokenMetadata {
-          ... on ERC721__Token {
-              contractAddress
-              tokenId
-            }
-          }
-        }
-      }
+  let url = `${SQL_ENDPOINT}?query=
+    SELECT token_id FROM token_balances
+    WHERE account_address = "${accountAddress.replace(/^0x0+/, "0x")}" AND contract_address = "${GAME_ADDRESS}"
+    LIMIT 10000`
+
+  const sql = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
     }
-  }
-  `
+  })
 
-  const res = await request(GQL_ENDPOINT, document);
-
-  return res?.tokenBalances?.edges.map(edge => edge.node.tokenMetadata).filter(token => token.contractAddress === GAME_ADDRESS);
+  let data = await sql.json()
+  return data.map(token => parseInt(token.token_id.split(":")[1], 16))
 }
 
 export const populateGameTokens = async (tokenIds) => {
@@ -409,19 +426,7 @@ export const populateGameTokens = async (tokenIds) => {
         }
       }
     }
-
-    ${TOURNAMENT_NS_SHORT}RegistrationModels (limit:10000, where:{
-      game_token_idIN:[${tokenIds}]}
-    ){
-      edges {
-        node {
-          tournament_id
-          game_token_id
-        }
-      }
-    }
-  }
-  `
+  }`
 
   try {
     const res = await request(GQL_ENDPOINT, document)
@@ -447,7 +452,8 @@ export const populateGameTokens = async (tokenIds) => {
         health: game?.hero_health,
         xp: game?.hero_xp,
         tournament_id: parseInt(tournament?.tournament_id, 16),
-        active: game?.hero_health !== 0 && (expires_at === 0 || expires_at > Date.now())
+        active: game?.hero_health !== 0 && (expires_at === 0 || expires_at > Date.now()),
+        gameStarted: Boolean(game?.hero_xp)
       }
     })
 
@@ -457,40 +463,60 @@ export const populateGameTokens = async (tokenIds) => {
   }
 }
 
-export async function getActiveTournaments() {
+export async function getSettingsMetadata(settings_ids) {
   const document = gql`
   {
-    ${TOURNAMENT_NS_SHORT}TournamentModels(limit:10000) {
+    ${NS_SHORT}GameSettingsMetadataModels(where:{settings_idIN:[${settings_ids}]}) {
       edges {
         node {
-          id,
-          schedule {
-            game {
-              start,
-              end
-            }
-          },
-          metadata {
-            name,
-            description,
-          },
-          game_config {
-            settings_id
-            address
-          },
-          entry_fee {
-            Some {
-              amount
-            }
-          }
+          settings_id
+          name
+          description
         }
       }
     }
-  }`
+  }
+  `
 
-  const res = await request(GQL_ENDPOINT, document)
-  let tournaments = res?.[`${TOURNAMENT_NS_SHORT}TournamentModels`]?.edges.map(edge => edge.node)
-  return tournaments.filter(tournament => tournament.game_config.address === GAME_ADDRESS.toLowerCase() && parseInt(tournament.schedule.game.end, 16) * 1000 > Date.now())
+  const res = await request(GQL_ENDPOINT, document);
+
+  return res?.[`${NS_SHORT}GameSettingsMetadataModels`]?.edges.map(edge => edge.node);
+}
+
+export async function getActiveTournaments() {
+  try {
+    const currentTimeHex = Math.floor(Date.now() / 1000).toString(16).padStart(64, '0');
+
+    let url = `${SQL_ENDPOINT}?query=
+      SELECT *
+      FROM "${TOURNAMENT_NS}-Tournament"
+      WHERE 
+        "game_config.address" = "${GAME_ADDRESS.replace(/^0x+/, "0x0")}" AND
+        "schedule.game.end" > "0x${currentTimeHex}"
+      LIMIT 10000`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+    return data.map(tournament => ({
+      id: parseInt(tournament.id, 16),
+      name: hexToAscii(tournament['metadata.name']).replace(/^\0+/, ''),
+      description: tournament['metadata.description'],
+      start: parseInt(tournament['schedule.game.start'] ?? 0, 16),
+      end: parseInt(tournament['schedule.game.end'] ?? 0, 16),
+      entryFee: parseInt(tournament['entry_fee.Some.amount'] ?? 0, 16),
+      entryFeeDistribution: tournament['entry_fee.Some.distribution'] ?? [],
+      submissionPeriod: parseInt(tournament['schedule.submission_duration'] ?? 0, 16)
+    }));
+  } catch (ex) {
+    console.error("Error fetching active tournaments:", ex);
+    return [];
+  }
 }
 
 export async function getTournamentScores(tournament_id) {
@@ -517,6 +543,154 @@ export async function getTournamentScores(tournament_id) {
   } catch (ex) {
     console.log(ex)
   }
+}
+
+export async function getCardDetails(card_ids) {
+  let cardIds = card_ids.map(cardId => `"${cardId.toString()}"`);
+
+  const document = gql`
+  {
+    ${NS_SHORT}CardModels(limit:1000, where:{idIN:[${cardIds}]}) {
+      edges {
+        node {
+          id
+          name
+          rarity
+          cost
+          category
+        }
+      }
+    }
+    ${NS_SHORT}CreatureCardModels(limit:1000, where:{idIN:[${cardIds}]}) {
+      edges {
+        node {
+          id
+          attack
+          health
+          card_type
+          play_effect {
+            modifier {
+              _type
+              value
+              value_type
+              requirement
+            }
+            bonus {
+              value
+              requirement
+            }
+          }
+          attack_effect {
+            modifier {
+              _type
+              value
+              value_type
+              requirement
+            }
+            bonus {
+              value
+              requirement
+            }
+          }
+          death_effect {
+            modifier {
+              _type
+              value
+              value_type
+              requirement
+            }
+            bonus {
+              value
+              requirement
+            }
+          }
+        }
+      }
+    }
+    ${NS_SHORT}SpellCardModels(limit:1000, where:{idIN:[${cardIds}]}) {
+      edges {
+        node {
+          id
+          card_type
+          effect {
+            modifier {
+              _type
+              value_type
+              value
+              requirement
+            }
+            bonus {
+              value
+              requirement
+            }
+          }
+          extra_effect {
+            modifier {
+              _type
+              value_type
+              value
+              requirement
+            }
+            bonus {
+              value
+              requirement
+            }
+          }
+        }
+      }
+    }
+  }
+  `
+
+  const res = await request(GQL_ENDPOINT, document);
+
+  // Get base card data
+  const cards = res?.[`${NS_SHORT}CardModels`]?.edges.map(edge => edge.node) || [];
+  const creatureCards = res?.[`${NS_SHORT}CreatureCardModels`]?.edges.map(edge => edge.node) || [];
+  const spellCards = res?.[`${NS_SHORT}SpellCardModels`]?.edges.map(edge => edge.node) || [];
+
+  const cardDetailsList = cards.map(card => {
+    const cardId = parseInt(card.id, 16);
+    let details = {};
+
+    // Check if this is a creature card
+    if (card.category === 1) {
+      const creature = creatureCards.find(c => c.id === card.id);
+      if (creature) {
+        details = {
+          category: types.CREATURE,
+          attack: creature.attack,
+          health: creature.health,
+          cardType: cardTypes[creature.card_type],
+          playEffect: formatCardEffect(creature.play_effect),
+          deathEffect: formatCardEffect(creature.death_effect),
+          attackEffect: formatCardEffect(creature.attack_effect)
+        };
+      }
+    }
+    // Check if this is a spell card
+    else if (card.category === 2) {
+      const spell = spellCards.find(s => s.id === card.id);
+      if (spell) {
+        details = {
+          category: types.SPELL,
+          cardType: cardTypes[spell.card_type],
+          effect: formatCardEffect(spell.effect),
+          extraEffect: formatCardEffect(spell.extra_effect)
+        };
+      }
+    }
+
+    return {
+      cardId,
+      name: hexToAscii(card.name),
+      rarity: rarities[card.rarity],
+      cost: card.cost,
+      ...details
+    };
+  });
+
+  return cardDetailsList;
 }
 
 export async function getTokenMetadata(game_id) {
@@ -575,6 +749,112 @@ export async function getTokenMetadata(game_id) {
     expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
     available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000,
     active: game?.hero_health !== 0,
-    started: game?.hero_xp
+    gameStarted: Boolean(game?.hero_xp)
   };
+}
+
+export async function getRecommendedSettings() {
+  try {
+    let url = `${SQL_ENDPOINT}?query=
+      SELECT settings_id, COUNT(*) as usage_count
+      FROM "${NS}-TokenMetadata"
+      GROUP BY settings_id
+      ORDER BY usage_count DESC, settings_id ASC
+      LIMIT 50`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+    const topSettingsIds = data.map(item => parseInt(item.settings_id, 16));
+
+    return await getSettingsList(null, topSettingsIds);
+  } catch (error) {
+    console.error("Error fetching recommended settings:", error);
+    return [];
+  }
+}
+
+export async function getSettingsList(address = null, ids = null) {
+  let whereClause = [];
+
+  if (address) {
+    whereClause.push(`metadata.created_by = "${address}"`);
+  }
+
+  if (!address && ids && ids.length > 0) {
+    const idsFormatted = ids.join(',');
+    whereClause.push(`settings.settings_id IN (${idsFormatted})`);
+  }
+
+  const whereStatement = whereClause.length > 0
+    ? `WHERE ${whereClause.join(' AND ')}`
+    : '';
+
+  let url = `${SQL_ENDPOINT}?query=
+    SELECT *
+    FROM 
+      "${NS}-GameSettingsMetadata" as metadata
+    JOIN 
+      "${NS}-GameSettings" as settings
+    ON 
+      metadata.settings_id = settings.settings_id
+    ${whereStatement}
+    ORDER BY settings_id ASC
+    LIMIT 1000`;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+    let results = data.map(item => ({
+      settings_id: item.settings_id,
+      name: hexToAscii(item.name).replace(/^\0+/, ''),
+      description: item.description,
+      created_by: item.created_by,
+      starting_health: item.starting_health,
+      persistent_health: item.persistent_health,
+      possible_branches: item["map.possible_branches"],
+      level_depth: item["map.level_depth"],
+      enemy_attack_min: item["map.enemy_attack_min"],
+      enemy_attack_max: item["map.enemy_attack_max"],
+      enemy_health_min: item["map.enemy_health_min"],
+      enemy_health_max: item["map.enemy_health_max"],
+      enemy_attack_scaling: item["map.enemy_attack_scaling"],
+      enemy_health_scaling: item["map.enemy_health_scaling"],
+      start_energy: item["battle.start_energy"],
+      start_hand_size: item["battle.start_hand_size"],
+      max_energy: item["battle.max_energy"],
+      max_hand_size: item["battle.max_hand_size"],
+      draw_amount: item["battle.draw_amount"],
+      auto_draft: Boolean(item["draft.auto_draft"]),
+      draft_size: item["draft.draft_size"],
+      card_ids: JSON.parse(item["draft.card_ids"]).map(cardId => Number(cardId)),
+      card_rarity_weights: {
+        common: item["draft.card_rarity_weights.common"],
+        uncommon: item["draft.card_rarity_weights.uncommon"],
+        rare: item["draft.card_rarity_weights.rare"],
+        epic: item["draft.card_rarity_weights.epic"],
+        legendary: item["draft.card_rarity_weights.legendary"]
+      }
+    }));
+
+    // Sort by the order of input IDs if provided
+    if (ids && ids.length > 0) {
+      results.sort((a, b) => ids.indexOf(a.settings_id) - ids.indexOf(b.settings_id));
+    }
+
+    return results;
+  } catch (error) {
+    console.error("Error fetching settings list:", error);
+    return [];
+  }
 }

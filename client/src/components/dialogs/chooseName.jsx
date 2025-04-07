@@ -33,7 +33,7 @@ function ChooseName(props) {
       onClose={() => close(false)}
       maxWidth={'lg'}
       PaperProps={{
-        sx: { background: 'rgba(0, 0, 0, 1)', border: '2px solid #FFE97F' }
+        sx: { background: 'rgba(0, 0, 0, 1)', border: '2px solid #FFE97F', maxWidth: '98vw' }
       }}
     >
       <Box sx={isMobile ? styles.mobileWizardContainer : styles.wizardContainer}>

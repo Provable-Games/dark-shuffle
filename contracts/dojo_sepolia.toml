@@ -1,25 +1,23 @@
 [world]
 name = "Provable Games"
 description = "PG Sepolia World"
-seed = "pg_sepolia"
+seed = "DNC"
 
 [namespace]
-default = "ds"
-
-[init_call_args]
-"ds-game_systems" = [
-    "0x0238df9Efd27Aba2ccB0bdC97a4cf440caA403e9ed3f1883294Ab6CDBA6C5282",
-]
+default = "ds_v1_2_0"
 
 [writers]
-"ds" = [
-    "ds-game_systems",
-    "ds-battle_systems",
-    "ds-draft_systems",
-    "ds-map_systems",
-    "ds-config_systems",
+"ds_v1_2_0" = [
+    "ds_v1_2_0-game_systems",
+    "ds_v1_2_0-battle_systems",
+    "ds_v1_2_0-config_systems",
 ]
 
 [env]
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
-world_address = "0x01ae9655937bde6abec7a89152ec645bc9a4993ddbb7d58075852f3dc8c39099"
+world_address = "0x01bfa92665fb815c9ec5f37c562a5c9a06fdf23ce022c1d33d4ac07cef5ad80c"
+
+[init_call_args]
+"ds_v1_2_0-game_systems" = [
+    "0x0238df9Efd27Aba2ccB0bdC97a4cf440caA403e9ed3f1883294Ab6CDBA6C5282",
+]

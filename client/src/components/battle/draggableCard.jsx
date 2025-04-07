@@ -38,11 +38,11 @@ function DraggableCard(props) {
       return
     }
 
-    if (values.card.cardType === types.CREATURE) {
+    if (values.card.category === types.CREATURE) {
       battle.actions.summonCreature(values.card)
     }
 
-    else if (values.card.cardType === types.SPELL) {
+    else if (values.card.category === types.SPELL) {
       battle.actions.castSpell(values.card)
     }
 
@@ -53,7 +53,7 @@ function DraggableCard(props) {
     ref.current.style.transform = `translate(${relX + event.pageX - values.pageX}px, ${relY + event.pageY - values.pageY}px)`;
 
     if (playable) {
-      if (values.card.cardType === types.CREATURE) {
+      if (values.card.category === types.CREATURE) {
         if (event.pageY < play_threshold) {
           ref.current.style.border = '1px solid #FFE97F'
         } else {
@@ -61,7 +61,7 @@ function DraggableCard(props) {
         }
       }
 
-      if (values.card.cardType === types.SPELL) {
+      if (values.card.category === types.SPELL) {
         if (event.pageY < play_threshold) {
           ref.current.style.border = '1px solid #FFE97F'
         } else {
@@ -105,7 +105,7 @@ function DraggableCard(props) {
         cost={battle.utils.getCardCost(card)}
         onHand={true}
         energy={battle.state.values.heroEnergy}
-        showStats={!isMobile && card.cardType === types.CREATURE}
+        showStats={!isMobile && card.category === types.CREATURE}
       />
 
     </motion.div>

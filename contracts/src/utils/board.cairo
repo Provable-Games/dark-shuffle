@@ -1,253 +1,148 @@
-use darkshuffle::models::battle::{Battle, BattleEffects, Board, BoardStats, Creature, CreatureType, RoundStats};
-use darkshuffle::utils::{attack::AttackUtilsImpl, cards::CardUtilsImpl, death::DeathUtilsImpl};
+use core::num::traits::OverflowingAdd;
+use darkshuffle::constants::U8_MAX;
+use darkshuffle::models::battle::{Battle, BoardStats, Creature, CreatureDetails, RoundStats};
+use darkshuffle::models::card::{Card, CardType, CreatureCard};
+use darkshuffle::utils::attack::AttackUtilsImpl;
+use darkshuffle::utils::cards::CardUtilsImpl;
+use darkshuffle::utils::death::DeathUtilsImpl;
+use darkshuffle::utils::monsters::MonsterUtilsImpl;
+use dojo::world::WorldStorage;
 
 #[generate_trait]
 impl BoardUtilsImpl of BoardUtilsTrait {
-    fn no_creature() -> Creature {
-        Creature { card_id: 0, attack: 0, health: 0 }
-    }
+    fn get_packed_board(ref board: Array<CreatureDetails>) -> Span<Creature> {
+        let mut packed_board = array![];
 
-    fn add_creature_to_board(creature: Creature, ref board: Board, ref board_stats: BoardStats) {
-        if board.creature1.card_id == 0 {
-            board.creature1 = creature;
-        } else if board.creature2.card_id == 0 {
-            board.creature2 = creature;
-        } else if board.creature3.card_id == 0 {
-            board.creature3 = creature;
-        } else if board.creature4.card_id == 0 {
-            board.creature4 = creature;
-        } else if board.creature5.card_id == 0 {
-            board.creature5 = creature;
-        } else if board.creature6.card_id == 0 {
-            board.creature6 = creature;
-        } else {
-            panic(array!['Board is full']);
-        }
-
-        let creature_type = CardUtilsImpl::get_card(creature.card_id).creature_type;
-        if creature_type == CreatureType::Magical {
-            board_stats.magical_count += 1;
-        } else if creature_type == CreatureType::Brute {
-            board_stats.brute_count += 1;
-        } else if creature_type == CreatureType::Hunter {
-            board_stats.hunter_count += 1;
-        }
-    }
-
-    fn attack_monster(ref battle: Battle, ref board: Board, board_stats: BoardStats, ref round_stats: RoundStats) {
-        if board.creature1.card_id != 0 {
-            AttackUtilsImpl::creature_attack(ref board.creature1, ref battle, board_stats);
-            round_stats.creature_attack_count += 1;
-        }
-
-        if board.creature2.card_id != 0 {
-            AttackUtilsImpl::creature_attack(ref board.creature2, ref battle, board_stats);
-            round_stats.creature_attack_count += 1;
-        }
-
-        if board.creature3.card_id != 0 {
-            AttackUtilsImpl::creature_attack(ref board.creature3, ref battle, board_stats);
-            round_stats.creature_attack_count += 1;
-        }
-
-        if board.creature4.card_id != 0 {
-            AttackUtilsImpl::creature_attack(ref board.creature4, ref battle, board_stats);
-            round_stats.creature_attack_count += 1;
-        }
-
-        if board.creature5.card_id != 0 {
-            AttackUtilsImpl::creature_attack(ref board.creature5, ref battle, board_stats);
-            round_stats.creature_attack_count += 1;
-        }
-
-        if board.creature6.card_id != 0 {
-            AttackUtilsImpl::creature_attack(ref board.creature6, ref battle, board_stats);
-            round_stats.creature_attack_count += 1;
-        }
-    }
-
-    fn get_board_stats(board: Board, monster_id: u8) -> BoardStats {
-        let mut stats: BoardStats = BoardStats {
-            magical_count: 0,
-            brute_count: 0,
-            hunter_count: 0,
-            monster_type: CardUtilsImpl::get_card(monster_id).creature_type,
+        let mut i = 0;
+        while i < board.len() {
+            packed_board
+                .append(
+                    Creature {
+                        card_index: *board.at(i).card_index, attack: *board.at(i).attack, health: *board.at(i).health,
+                    },
+                );
+            i += 1;
         };
 
-        if board.creature1.card_id != 0 {
-            let creature_type = CardUtilsImpl::get_card(board.creature1.card_id).creature_type;
-            if creature_type == CreatureType::Magical {
-                stats.magical_count += 1;
-            } else if creature_type == CreatureType::Brute {
-                stats.brute_count += 1;
-            } else if creature_type == CreatureType::Hunter {
-                stats.hunter_count += 1;
-            }
-        }
+        packed_board.span()
+    }
 
-        if board.creature2.card_id != 0 {
-            let creature_type = CardUtilsImpl::get_card(board.creature2.card_id).creature_type;
-            if creature_type == CreatureType::Magical {
-                stats.magical_count += 1;
-            } else if creature_type == CreatureType::Brute {
-                stats.brute_count += 1;
-            } else if creature_type == CreatureType::Hunter {
-                stats.hunter_count += 1;
-            }
-        }
+    fn unpack_board(world: WorldStorage, game_id: u64, board: Span<Creature>) -> Array<CreatureDetails> {
+        let mut unpacked_board = array![];
 
-        if board.creature3.card_id != 0 {
-            let creature_type = CardUtilsImpl::get_card(board.creature3.card_id).creature_type;
-            if creature_type == CreatureType::Magical {
-                stats.magical_count += 1;
-            } else if creature_type == CreatureType::Brute {
-                stats.brute_count += 1;
-            } else if creature_type == CreatureType::Hunter {
-                stats.hunter_count += 1;
-            }
-        }
+        let mut i = 0;
+        while i < board.len() {
+            let card: Card = CardUtilsImpl::get_card(world, game_id, *board.at(i).card_index);
+            let creature_card: CreatureCard = CardUtilsImpl::get_creature_card(world, card.id);
+            unpacked_board
+                .append(
+                    CreatureDetails {
+                        card_index: *board.at(i).card_index,
+                        attack: *board.at(i).attack,
+                        health: *board.at(i).health,
+                        creature_card: creature_card,
+                    },
+                );
+            i += 1;
+        };
 
-        if board.creature4.card_id != 0 {
-            let creature_type = CardUtilsImpl::get_card(board.creature4.card_id).creature_type;
-            if creature_type == CreatureType::Magical {
-                stats.magical_count += 1;
-            } else if creature_type == CreatureType::Brute {
-                stats.brute_count += 1;
-            } else if creature_type == CreatureType::Hunter {
-                stats.hunter_count += 1;
-            }
-        }
+        unpacked_board
+    }
 
-        if board.creature5.card_id != 0 {
-            let creature_type = CardUtilsImpl::get_card(board.creature5.card_id).creature_type;
-            if creature_type == CreatureType::Magical {
-                stats.magical_count += 1;
-            } else if creature_type == CreatureType::Brute {
-                stats.brute_count += 1;
-            } else if creature_type == CreatureType::Hunter {
-                stats.hunter_count += 1;
-            }
-        }
+    fn attack_monster(
+        ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats, ref round_stats: RoundStats,
+    ) {
+        let mut i = 0;
 
-        if board.creature6.card_id != 0 {
-            let creature_type = CardUtilsImpl::get_card(board.creature6.card_id).creature_type;
-            if creature_type == CreatureType::Magical {
-                stats.magical_count += 1;
-            } else if creature_type == CreatureType::Brute {
-                stats.brute_count += 1;
-            } else if creature_type == CreatureType::Hunter {
-                stats.hunter_count += 1;
+        while i < board.len() {
+            let mut creature = board.pop_front().unwrap();
+            AttackUtilsImpl::creature_attack(ref creature, ref battle, ref board, board_stats);
+            board.append(creature);
+            i += 1;
+        };
+
+        round_stats.creature_attack_count += board.len().try_into().unwrap();
+    }
+
+    fn get_board_stats(ref board: Array<CreatureDetails>, monster_id: u8) -> BoardStats {
+        let monster_type = MonsterUtilsImpl::get_monster_type(monster_id);
+        let mut stats: BoardStats = BoardStats { magical_count: 0, brute_count: 0, hunter_count: 0, monster_type };
+
+        let mut i = 0;
+        while i < board.len() {
+            let creature: CreatureDetails = *board.at(i);
+            let card_type: CardType = creature.creature_card.card_type.into();
+            match card_type {
+                CardType::Magical => stats.magical_count += 1,
+                CardType::Brute => stats.brute_count += 1,
+                CardType::Hunter => stats.hunter_count += 1,
+                _ => {},
             }
-        }
+            i += 1;
+        };
 
         stats
     }
 
-    fn update_creatures(ref board: Board, creature_type: CreatureType, attack: u8, health: u8) {
-        if board.creature1.card_id != 0 {
-            if creature_type == CreatureType::All
-                || creature_type == CardUtilsImpl::get_card(board.creature1.card_id).creature_type {
-                board.creature1.attack += attack;
-                board.creature1.health += health;
+    fn update_creatures(ref board: Array<CreatureDetails>, _type: Option<CardType>, attack: u8, health: u8) {
+        let mut i = 0;
+        while i < board.len() {
+            let mut creature = board.pop_front().unwrap();
+            if _type == Option::None || _type == Option::Some(creature.creature_card.card_type.into()) {
+                Self::increase_creature_attack(ref creature, attack);
+                Self::increase_creature_health(ref creature, health);
             }
-        }
-
-        if board.creature2.card_id != 0 {
-            if creature_type == CreatureType::All
-                || creature_type == CardUtilsImpl::get_card(board.creature2.card_id).creature_type {
-                board.creature2.attack += attack;
-                board.creature2.health += health;
-            }
-        }
-
-        if board.creature3.card_id != 0 {
-            if creature_type == CreatureType::All
-                || creature_type == CardUtilsImpl::get_card(board.creature3.card_id).creature_type {
-                board.creature3.attack += attack;
-                board.creature3.health += health;
-            }
-        }
-
-        if board.creature4.card_id != 0 {
-            if creature_type == CreatureType::All
-                || creature_type == CardUtilsImpl::get_card(board.creature4.card_id).creature_type {
-                board.creature4.attack += attack;
-                board.creature4.health += health;
-            }
-        }
-
-        if board.creature5.card_id != 0 {
-            if creature_type == CreatureType::All
-                || creature_type == CardUtilsImpl::get_card(board.creature5.card_id).creature_type {
-                board.creature5.attack += attack;
-                board.creature5.health += health;
-            }
-        }
-
-        if board.creature6.card_id != 0 {
-            if creature_type == CreatureType::All
-                || creature_type == CardUtilsImpl::get_card(board.creature6.card_id).creature_type {
-                board.creature6.attack += attack;
-                board.creature6.health += health;
-            }
-        }
+            board.append(creature);
+            i += 1;
+        };
     }
 
-    fn clean_board(ref battle: Battle, ref board: Board, board_stats: BoardStats) {
-        if board.creature1.card_id != 0 && board.creature1.health == 0 {
-            DeathUtilsImpl::creature_death(board.creature1, ref battle, ref board, board_stats);
-            board.creature1 = Self::no_creature();
-        }
-
-        if board.creature2.card_id != 0 && board.creature2.health == 0 {
-            DeathUtilsImpl::creature_death(board.creature2, ref battle, ref board, board_stats);
-            board.creature2 = Self::no_creature();
-        }
-
-        if board.creature3.card_id != 0 && board.creature3.health == 0 {
-            DeathUtilsImpl::creature_death(board.creature3, ref battle, ref board, board_stats);
-            board.creature3 = Self::no_creature();
-        }
-
-        if board.creature4.card_id != 0 && board.creature4.health == 0 {
-            DeathUtilsImpl::creature_death(board.creature4, ref battle, ref board, board_stats);
-            board.creature4 = Self::no_creature();
-        }
-
-        if board.creature5.card_id != 0 && board.creature5.health == 0 {
-            DeathUtilsImpl::creature_death(board.creature5, ref battle, ref board, board_stats);
-            board.creature5 = Self::no_creature();
-        }
-
-        if board.creature6.card_id != 0 && board.creature6.health == 0 {
-            DeathUtilsImpl::creature_death(board.creature6, ref battle, ref board, board_stats);
-            board.creature6 = Self::no_creature();
-        }
+    fn remove_dead_creatures(ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats) {
+        let mut i = 0;
+        while i < board.len() {
+            let mut creature = board.pop_front().unwrap();
+            if creature.health == 0 {
+                DeathUtilsImpl::creature_death(ref creature, ref battle, ref board, board_stats);
+            } else {
+                board.append(creature);
+            }
+            i += 1;
+        };
     }
 
-    fn get_strongest_creature(board: Board) -> Creature {
-        let mut strongest_creature = board.creature1;
+    fn get_strongest_creature(ref board: Array<CreatureDetails>) -> CreatureDetails {
+        let mut strongest_creature = CardUtilsImpl::no_creature_card();
 
-        if board.creature2.attack > strongest_creature.attack {
-            strongest_creature = board.creature2;
+        if board.len() == 0 {
+            return strongest_creature;
         }
 
-        if board.creature3.attack > strongest_creature.attack {
-            strongest_creature = board.creature3;
-        }
-
-        if board.creature4.attack > strongest_creature.attack {
-            strongest_creature = board.creature4;
-        }
-
-        if board.creature5.attack > strongest_creature.attack {
-            strongest_creature = board.creature5;
-        }
-
-        if board.creature6.attack > strongest_creature.attack {
-            strongest_creature = board.creature6;
-        }
+        let mut i = 0;
+        while i < board.len() {
+            if *board.at(i).attack > strongest_creature.attack {
+                strongest_creature.attack = *board.at(i).attack;
+            }
+            i += 1;
+        };
 
         strongest_creature
+    }
+
+    fn increase_creature_attack(ref creature: CreatureDetails, amount: u8) {
+        let (result, overflow) = OverflowingAdd::overflowing_add(creature.attack, amount);
+        creature.attack = if overflow {
+            U8_MAX
+        } else {
+            result
+        };
+    }
+
+    fn increase_creature_health(ref creature: CreatureDetails, amount: u8) {
+        let (result, overflow) = OverflowingAdd::overflowing_add(creature.health, amount);
+        creature.health = if overflow {
+            U8_MAX
+        } else {
+            result
+        };
     }
 }

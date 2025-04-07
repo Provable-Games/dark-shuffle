@@ -1,20 +1,60 @@
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import sword from '../assets/images/sword.png';
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { isMobile } from 'react-device-detect';
 import bolt from "../assets/images/bolt.png";
-import sword from '../assets/images/sword.png';
-import { fetch_card_image, types } from "../helpers/cards";
-import { tierColors } from '../helpers/constants';
+import { fetch_card_image, types, buildEffectText, tierColors } from "../helpers/cards";
 
 function Card(props) {
-  const { card, pendingCard, draftIndex, replaySelection } = props
+  const { card, pendingCard, draftIndex, replaySelection, glow } = props
+
+  const renderCardText = () => {
+    let effectCount = (card.playEffect?.modifier?._type !== 'None' ? 1 : 0) + (card.attackEffect?.modifier?._type !== 'None' ? 1 : 0) + (card.deathEffect?.modifier?._type !== 'None' ? 1 : 0)
+    let fontSize = effectCount > 1 ? '12px' : '13px'
+
+    return <Box sx={styles.textContainer} p={isMobile ? '2px' : '4px'}>
+      {card.playEffect && card.playEffect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span>Play:</span>
+        <span style={styles.breadText}>
+          {buildEffectText(card.cardType, card.playEffect, 'play')}
+        </span>
+      </Typography>}
+
+      {card.attackEffect && card.attackEffect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span>Attack:</span>
+        <span style={styles.breadText}>
+          {buildEffectText(card.cardType, card.attackEffect, 'attack')}
+        </span>
+      </Typography>}
+
+      {card.deathEffect && card.deathEffect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span>Death:</span>
+        <span style={styles.breadText}>
+          {buildEffectText(card.cardType, card.deathEffect, 'death')}
+        </span>
+      </Typography>}
+
+      {card.effect && card.effect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span>
+          {buildEffectText(card.cardType, card.effect, 'spell')}
+        </span>
+      </Typography>}
+
+      {card.extraEffect && card.extraEffect?.modifier?._type !== 'None' && <Typography sx={styles.breadTextContainer} fontSize={fontSize}>
+        <span style={{ marginLeft: '4px' }}>
+          and {buildEffectText(card.cardType, card.extraEffect, 'spell_extra').toLowerCase()}
+        </span>
+      </Typography>}
+    </Box>
+  }
 
   return <Box sx={[
     styles.container,
     { opacity: (pendingCard >= 0 && pendingCard !== draftIndex) ? 0.3 : 1 },
-    (replaySelection !== undefined && replaySelection === draftIndex) && { border: '1px solid #FFE97F' }
+    (replaySelection !== undefined && replaySelection === draftIndex) && { border: '1px solid #FFE97F' },
+    glow && { border: '1px solid #FFE97F' }
   ]} p={isMobile ? 1 : 1.5} pt={isMobile ? 0.5 : 1.5}>
 
     <Box sx={styles.header}>
@@ -31,7 +71,7 @@ function Card(props) {
       </Typography>
 
       <Box sx={isMobile ? styles.mobileLevelContainer : styles.levelContainer}>
-        <BookmarkIcon htmlColor={tierColors[card.cardTier]} fontSize='large' />
+        <BookmarkIcon htmlColor={tierColors[card.rarity.toLowerCase()]} fontSize='large' />
       </Box>
     </Box>
 
@@ -39,18 +79,9 @@ function Card(props) {
       <img alt='' src={fetch_card_image(card.name)} height={'100%'} />
     </Box>
 
-    <Box sx={styles.textContainer} p={isMobile ? '2px' : '4px'}>
-      {card.cardType === types.CREATURE && <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
-        <span>{card.text.split(':')[0]}:</span>
-        <span style={{ opacity: 0.7, fontSize: '13px' }}>{card.text.split(':')[1]}</span>
-      </Typography>}
+    {renderCardText()}
 
-      {card.cardType === types.SPELL && <Typography sx={{ opacity: 1, width: '100%' }} textAlign={'center'} fontSize={isMobile ? '12px' : '13px'}>
-        {card.text}
-      </Typography>}
-    </Box>
-
-    {card.cardType === types.CREATURE && <Box sx={styles.bottomContainer}>
+    {card.category === types.CREATURE && <Box sx={styles.bottomContainer}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Typography variant="h6" fontSize={isMobile && '14px'}>
           {card.attack}
@@ -64,7 +95,7 @@ function Card(props) {
 
       <Box>
         <Typography variant="subtitle1" fontSize={isMobile ? '13px' : '15px'}>
-          {card.creatureType}
+          {card.cardType}
         </Typography>
       </Box>
 
@@ -77,7 +108,7 @@ function Card(props) {
       </Box>
     </Box>}
 
-    {card.cardType === types.SPELL && <Box sx={[styles.bottomContainer, { justifyContent: 'center' }]}>
+    {card.category === types.SPELL && <Box sx={[styles.bottomContainer, { justifyContent: 'center' }]}>
       <Typography variant="subtitle1" fontSize={isMobile ? '13px' : '15px'}>
         Spell
       </Typography>
@@ -117,13 +148,15 @@ const styles = {
   },
   textContainer: {
     width: '100%',
-    height: '33%',
+    height: '35%',
     border: '1px solid #FFE97F70',
     borderRadius: '4px',
     boxSizing: 'border-box',
     display: 'flex',
+    flexDirection: 'column',
     gap: 0.5,
-    background: 'rgba(0, 0, 0, 0.3)'
+    background: 'rgba(0, 0, 0, 0.3)',
+    overflow: 'hidden'
   },
   title: {
     fontSize: '18px',
@@ -168,5 +201,14 @@ const styles = {
     marginTop: '-9px',
     marginRight: '-10px',
     position: 'relative'
+  },
+  breadText: {
+    opacity: 0.7
+  },
+  breadTextContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    textAlign: 'center',
+    lineHeight: '1.25'
   }
 }

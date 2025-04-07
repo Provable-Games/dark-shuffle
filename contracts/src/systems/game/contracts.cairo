@@ -1,10 +1,12 @@
-use darkshuffle::models::config::{GameSettings};
-use darkshuffle::models::game::{Game, GameState};
+use darkshuffle::models::game::{GameState};
 use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IGameSystems<T> {
     fn start_game(ref self: T, game_id: u64);
+    fn pick_card(ref self: T, game_id: u64, option_id: u8);
+    fn generate_tree(ref self: T, game_id: u64);
+    fn select_node(ref self: T, game_id: u64, node_id: u8);
     fn action_count(self: @T, game_id: u64) -> u16;
     fn cards(self: @T, game_id: u64) -> Span<felt252>;
     fn game_state(self: @T, game_id: u64) -> GameState;
@@ -20,33 +22,42 @@ trait IGameSystems<T> {
 #[dojo::contract]
 mod game_systems {
     use achievement::store::{Store, StoreTrait};
-
-    use darkshuffle::constants::{
-        DEFAULT_NS, LAST_NODE_DEPTH, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL, WORLD_CONFIG_ID,
-    };
-    use darkshuffle::models::battle::{Card};
-    use darkshuffle::models::config::{GameSettings, GameSettingsTrait, WorldConfig};
-    use darkshuffle::models::draft::{Draft};
-    use darkshuffle::models::game::{Game, GameActionEvent, GameOwnerTrait, GameState};
-    use darkshuffle::utils::renderer::utils::create_metadata;
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
-    use darkshuffle::utils::{cards::CardUtilsImpl, config::ConfigUtilsImpl, draft::DraftUtilsImpl, random};
+
+    use starknet::{ContractAddress, get_caller_address, get_tx_info, get_block_timestamp};
+    use darkshuffle::constants::{DEFAULT_NS, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
+    use darkshuffle::models::{
+        card::{Card, CardCategory, CreatureCard, SpellCard},
+        config::{GameSettings, GameSettingsTrait},
+        draft::{Draft, DraftOwnerTrait},
+        game::{Game, GameActionEvent, GameOwnerTrait, GameState},
+        map::{Map, MonsterNode},
+    };
+
+    use darkshuffle::utils::{
+        random,
+        cards::CardUtilsImpl,
+        config::ConfigUtilsImpl,
+        draft::DraftUtilsImpl,
+        renderer::utils::create_metadata,
+        map::MapUtilsImpl,
+    };
+    
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::WorldStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-
+    
     use openzeppelin_introspection::src5::SRC5Component;
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-
     use openzeppelin_token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait, IERC721Metadata};
     use openzeppelin_token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
-    use starknet::{ContractAddress, get_caller_address, get_contract_address, get_tx_info};
+
     use tournaments::components::game::game_component;
     use tournaments::components::interfaces::{IGameDetails, IGameToken, ISettings};
     use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
-    use tournaments::components::models::game::{TokenMetadata};
-    use tournaments::components::models::lifecycle::{Lifecycle};
+    use tournaments::components::models::game::TokenMetadata;
+    use tournaments::components::models::lifecycle::Lifecycle;
 
     component!(path: game_component, storage: game, event: GameEvent);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -103,13 +114,6 @@ mod game_systems {
                 SCORE_ATTRIBUTE(),
                 SETTINGS_MODEL(),
             );
-
-        // TODO: We shouldn't need to store this as the token address is the game system address which is already being
-        // stored
-        let mut world: WorldStorage = self.world(@DEFAULT_NS());
-        let mut world_config: WorldConfig = world.read_model(WORLD_CONFIG_ID);
-        world_config.game_token_address = get_contract_address();
-        world.write_model(@world_config);
     }
 
     #[abi(embed_v0)]
@@ -141,28 +145,146 @@ mod game_systems {
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let random_hash = random::get_random_hash();
             let seed: u128 = random::get_entropy(random_hash);
-            let options = DraftUtilsImpl::get_draft_options(seed, game_settings.include_spells);
             let action_count = 0;
 
-            let game = Game {
+            let mut game = Game {
                 game_id,
                 state: GameState::Draft.into(),
-                hero_health: game_settings.start_health,
+                hero_health: game_settings.starting_health,
                 hero_xp: 1,
                 monsters_slain: 0,
                 map_level: 0,
-                map_depth: LAST_NODE_DEPTH,
+                map_depth: 0,
                 last_node_id: 0,
                 action_count,
             };
 
-            world.write_model(@game);
-            world.write_model(@Draft { game_id, options, cards: array![].span() });
+            let card_pool = DraftUtilsImpl::get_weighted_draft_list(world, game_settings);
+            if game_settings.draft.auto_draft {
+                game.state = GameState::Map.into();
+                let draft_list = DraftUtilsImpl::auto_draft(seed, card_pool, game_settings.draft.draft_size);
+                world.write_model(@Draft { game_id, options: array![].span(), cards: draft_list });
+            } else {
+                let options = DraftUtilsImpl::get_draft_options(seed, card_pool);
+                world.write_model(@Draft { game_id, options, cards: array![].span() });
+            }
 
+            world.write_model(@game);
             world
                 .emit_event(
                     @GameActionEvent {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count,
+                    },
+                );
+            game.update_metadata(world);
+        }
+
+        fn pick_card(ref self: ContractState, game_id: u64, option_id: u8) {
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
+
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
+
+            let mut game: Game = world.read_model(game_id);
+            game.assert_owner(world);
+            game.assert_draft();
+
+            let mut draft: Draft = world.read_model(game_id);
+            draft.add_card(*draft.options.at(option_id.into()));
+
+            let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
+            let current_draft_size = draft.cards.len();
+
+            if current_draft_size == game_settings.draft.draft_size.into() {
+                game.state = GameState::Map.into();
+                game.action_count = current_draft_size.try_into().unwrap();
+                world.write_model(@game);
+            } else {
+                let random_hash = random::get_random_hash();
+                let seed: u128 = random::get_entropy(random_hash);
+                let card_pool = DraftUtilsImpl::get_weighted_draft_list(world, game_settings);
+                draft.options = DraftUtilsImpl::get_draft_options(seed, card_pool);
+            }
+
+            world.write_model(@draft);
+            world
+                .emit_event(
+                    @GameActionEvent {
+                        game_id,
+                        tx_hash: starknet::get_tx_info().unbox().transaction_hash,
+                        count: current_draft_size.try_into().unwrap(),
+                    },
+                );
+            game.update_metadata(world);
+        }
+
+        fn generate_tree(ref self: ContractState, game_id: u64) {
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
+
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
+
+            let mut game: Game = world.read_model(game_id);
+            game.assert_owner(world);
+            game.assert_generate_tree();
+
+            let random_hash = random::get_random_hash();
+            let seed: u128 = random::get_entropy(random_hash);
+
+            game.map_level += 1;
+            game.map_depth = 1;
+            game.last_node_id = 0;
+            game.action_count += 1;
+
+            world.write_model(@Map { game_id, level: game.map_level, seed });
+
+            world.write_model(@game);
+            world
+                .emit_event(
+                    @GameActionEvent {
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
+                    },
+                );
+
+            // [Achievement] Complete a map
+            if game.map_level > 1 {
+                let player_id: felt252 = starknet::get_caller_address().into();
+                let task_id: felt252 = Task::Explorer.identifier();
+                let time = starknet::get_block_timestamp();
+                let store = StoreTrait::new(world);
+                store.progress(player_id, task_id, count: 1, time: time);
+            }
+        }
+
+        fn select_node(ref self: ContractState, game_id: u64, node_id: u8) {
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
+
+            let token_metadata: TokenMetadata = world.read_model(game_id);
+            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
+
+            let mut game: Game = world.read_model(game_id);
+            game.assert_owner(world);
+            game.assert_select_node();
+
+            let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
+            let mut map: Map = world.read_model((game_id, game.map_level));
+            assert(MapUtilsImpl::node_available(game, map, node_id, game_settings.map), 'Invalid node');
+
+            game.last_node_id = node_id;
+
+            let monster_node: MonsterNode = MapUtilsImpl::get_monster_node(map, node_id, game_settings.map);
+            let random_hash = random::get_random_hash();
+            let seed: u128 = random::get_entropy(random_hash);
+
+            MapUtilsImpl::start_battle(ref world, ref game, monster_node, seed);
+
+            game.action_count += 1;
+
+            world.write_model(@game);
+            world
+                .emit_event(
+                    @GameActionEvent {
+                        game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
                     },
                 );
             game.update_metadata(world);
@@ -199,7 +321,7 @@ mod game_systems {
 
             let mut i = 0;
             while i < draft.cards.len() {
-                let card: Card = CardUtilsImpl::get_card(*draft.cards.at(i));
+                let card: Card = CardUtilsImpl::get_card(world, game_id, *draft.cards.at(i));
                 cards.append(card.name);
                 i += 1;
             };

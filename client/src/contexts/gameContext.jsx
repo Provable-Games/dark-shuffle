@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { generateMapNodes } from "../helpers/map";
 import { DojoContext } from "./dojoContext";
+import { getCardDetails, getRecommendedSettings, getSettings } from "../api/indexer";
+import { useSnackbar } from "notistack";
 
 export const GameContext = createContext()
 
@@ -19,14 +21,36 @@ const GAME_VALUES = {
 
 export const GameProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
-  const [startStatus, setStartStatus] = useState()
+  const { enqueueSnackbar } = useSnackbar()
 
+  const [loading, setLoading] = useState(false)
+  const [loadingProgress, setLoadingProgress] = useState(0)
+
+  const [tokenData, setTokenData] = useState({})
   const [values, setValues] = useState({ ...GAME_VALUES })
   const [gameSettings, setGameSettings] = useState({})
+  const [gameCards, setGameCards] = useState([])
   const [gameEffects, setGameEffects] = useState({})
 
   const [map, setMap] = useState(null)
   const [score, setScore] = useState()
+
+  const [recommendedSettings, setRecommendedSettings] = useState([])
+
+  useEffect(() => {
+    const fetchRecommendedSettings = async () => {
+      const settings = await getRecommendedSettings()
+      setRecommendedSettings(settings)
+    }
+
+    fetchRecommendedSettings()
+  }, [])
+
+  useEffect(() => {
+    if (values.gameId) {
+      setLoading(false);
+    }
+  }, [values.gameId])
 
   const setGame = (values) => {
     if (!isNaN(values.state || 0)) {
@@ -37,24 +61,55 @@ export const GameProvider = ({ children }) => {
   }
 
   const endGame = () => {
+    setLoading(false)
+    setLoadingProgress(0)
+    setTokenData({})
     setValues({ ...GAME_VALUES })
     setGameEffects({})
+    setGameCards([])
     setGameSettings({})
     setMap(null)
     setScore()
   }
 
   const mintFreeGame = async (settingsId = 0) => {
-    const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "mint", calldata: [
-      '0x' + dojo.playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
-      settingsId,
-      1,
-      1,
-      dojo.address
-    ] }])
+    setLoading(true)
+    setLoadingProgress(45)
 
-    const tokenMetadata = res.find(e => e.componentName === 'TokenMetadata')
-    return tokenMetadata
+    try {
+      const res = await dojo.executeTx([{
+        contractName: "game_systems", entrypoint: "mint", calldata: [
+          '0x' + dojo.playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
+          settingsId,
+          1,
+          1,
+          dojo.address
+        ]
+      }])
+
+      const tokenMetadata = res.find(e => e.componentName === 'TokenMetadata')
+      return tokenMetadata
+    } catch (ex) {
+      handleError()
+    }
+  }
+
+  const loadGameDetails = async (tokenData) => {
+    setLoading(true)
+    setLoadingProgress(55)
+
+    try {
+      setTokenData(tokenData)
+
+      const settings = await getSettings(tokenData.settingsId)
+      const cardDetails = await getCardDetails(settings.card_ids)
+
+      setGameSettings(settings)
+      setGameCards(cardDetails)
+    } catch (ex) {
+      handleError()
+    }
+
   }
 
   const updateMapStatus = (nodeId) => {
@@ -79,17 +134,30 @@ export const GameProvider = ({ children }) => {
       return
     }
 
-    const res = await dojo.executeTx([{ contractName: "map_systems", entrypoint: "generate_tree", calldata: [values.gameId] }], true);
+    const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "generate_tree", calldata: [values.gameId] }], true);
 
     if (res) {
       const mapValues = res.find(e => e.componentName === 'Map')
       const gameValues = res.find(e => e.componentName === 'Game')
 
-      const computedMap = generateMapNodes(mapValues.level, mapValues.seed)
+      const computedMap = generateMapNodes(mapValues.level, mapValues.seed, gameSettings)
 
       setMap(computedMap);
       setGame(gameValues);
     }
+  }
+
+  const getCard = (cardIndex, id) => {
+    return {
+      id,
+      cardIndex,
+      ...gameCards.find(card => Number(card.cardId) === Number(gameSettings.card_ids[cardIndex])),
+    }
+  }
+
+  const handleError = () => {
+    enqueueSnackbar('Failed to start game', { variant: 'error' })
+    endGame();
   }
 
   return (
@@ -99,24 +167,36 @@ export const GameProvider = ({ children }) => {
           map,
           gameEffects,
           gameSettings,
-          startStatus,
+          gameCards,
+          loading,
+          tokenData,
+          loadingProgress
         },
 
         values,
         score,
+        recommendedSettings,
 
-        setStartStatus,
         setGame,
         endGame,
         setScore,
         setGameEffects,
         setGameSettings,
         setMap,
+        setTokenData,
+        setLoading,
+        setLoadingProgress,
+
+        utils: {
+          getCard,
+          handleError
+        },
 
         actions: {
           generateMap,
           updateMapStatus,
-          mintFreeGame,
+          loadGameDetails,
+          mintFreeGame
         }
       }}
     >

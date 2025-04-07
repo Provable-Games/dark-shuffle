@@ -6,17 +6,20 @@ import bolt from "../../assets/images/bolt.png";
 import beast from "../../assets/images/beast.png";
 import hero from "../../assets/images/hero.png";
 import { GameContext } from '../../contexts/gameContext';
-import { fetchBeastTypeImage, tags } from '../../helpers/cards';
+import { fetchCardTypeImage, tags } from '../../helpers/cards';
 import { LargeCustomTooltip } from '../../helpers/styles';
 import { isMobile } from 'react-device-detect';
 
-export default function GameEffects() {
+export default function GameEffects(props) {
+  const { overview } = props
   const game = useContext(GameContext)
   const { gameEffects } = game.getState
 
-  return <Box sx={isMobile ? styles.effectMobileContainer : styles.effectContainer}>
+  const circleStyle = overview ? styles.overviewEffectCircle : styles.effectCircle
 
-    {(gameEffects.allAttack > 0 || gameEffects.firstCreatureCost > 0 || gameEffects.firstAttack > 0 || gameEffects.firstHealth > 0)
+  return <Box sx={overview ? styles.overviewContainer : isMobile ? styles.effectMobileContainer : styles.effectContainer}>
+
+    {(gameEffects.allAttack > 0 || gameEffects.firstAttack > 0 || gameEffects.firstHealth > 0)
       && <LargeCustomTooltip title={
         <Box p={0.5}>
           <Box mb={0.5}>
@@ -25,10 +28,6 @@ export default function GameEffects() {
 
           {gameEffects.allAttack > 0 && <Typography sx={styles.effectText}>
             All beasts get +{gameEffects.allAttack} attack.
-          </Typography>}
-
-          {gameEffects.firstCreatureCost > 0 && <Typography sx={styles.effectText}>
-            The first beast you play each turn costs {gameEffects.firstCreatureCost} less.
           </Typography>}
 
           {gameEffects.firstAttack > 0 && <Typography sx={styles.effectText}>
@@ -40,7 +39,7 @@ export default function GameEffects() {
           </Typography>}
         </Box>
       }>
-        <Box sx={styles.effectCircle}>
+        <Box sx={circleStyle}>
           <img alt='' src={beast} height={16} />
         </Box>
       </LargeCustomTooltip>}
@@ -54,8 +53,8 @@ export default function GameEffects() {
         {gameEffects.magicalHealth > 0 && <Typography sx={styles.effectText}>Gets +{gameEffects.magicalHealth} health when played.</Typography>}
       </Box>
     }>
-      <Box sx={styles.effectCircle}>
-        {fetchBeastTypeImage(tags.MAGICAL, "#FFE97F")}
+      <Box sx={circleStyle}>
+        {fetchCardTypeImage(tags.MAGICAL, "#FFE97F")}
       </Box>
     </LargeCustomTooltip>}
 
@@ -68,8 +67,8 @@ export default function GameEffects() {
         {gameEffects.hunterHealth > 0 && <Typography sx={styles.effectText}>Gets +{gameEffects.hunterHealth} health when played.</Typography>}
       </Box>
     }>
-      <Box sx={styles.effectCircle}>
-        {fetchBeastTypeImage(tags.HUNTER, "#FFE97F")}
+      <Box sx={circleStyle}>
+        {fetchCardTypeImage(tags.HUNTER, "#FFE97F")}
       </Box>
     </LargeCustomTooltip>}
 
@@ -82,8 +81,8 @@ export default function GameEffects() {
         {gameEffects.bruteHealth > 0 && <Typography sx={styles.effectText}>Gets +{gameEffects.bruteHealth} health when played.</Typography>}
       </Box>
     }>
-      <Box sx={styles.effectCircle} pr={0.5}>
-        {fetchBeastTypeImage(tags.BRUTE, "#FFE97F")}
+      <Box sx={circleStyle} pr={0.5}>
+        {fetchCardTypeImage(tags.BRUTE, "#FFE97F")}
       </Box>
     </LargeCustomTooltip>}
 
@@ -97,7 +96,7 @@ export default function GameEffects() {
         {gameEffects.cardDraw > 1 && <Typography sx={styles.effectText}>You draw {gameEffects.cardDraw} extra cards.</Typography>}
       </Box>
     }>
-      <Box sx={styles.effectCircle}>
+      <Box sx={circleStyle}>
         <img alt='' src={cards} height={16} />
       </Box>
     </LargeCustomTooltip>}
@@ -112,7 +111,7 @@ export default function GameEffects() {
         {gameEffects.heroCardHeal > 0 && <Typography sx={styles.effectText}>At the end of your turn, heal equal to the number of cards in your hand.</Typography>}
       </Box>
     }>
-      <Box sx={styles.effectCircle}>
+      <Box sx={circleStyle}>
         <FavoriteIcon htmlColor='#ffb260' sx={{ fontSize: '16px' }} />
       </Box>
     </LargeCustomTooltip>}
@@ -125,7 +124,7 @@ export default function GameEffects() {
         {gameEffects.startBonusEnergy > 0 && <Typography sx={styles.effectText}>You start with +{gameEffects.startBonusEnergy} energy.</Typography>}
       </Box>
     }>
-      <Box sx={styles.effectCircle}>
+      <Box sx={circleStyle}>
         <img alt='' src={bolt} height={16} />
       </Box>
     </LargeCustomTooltip>}
@@ -140,7 +139,7 @@ export default function GameEffects() {
         </Typography>}
       </Box>
     }>
-      <Box sx={styles.effectCircle}>
+      <Box sx={circleStyle}>
         <img alt='' src={hero} height={16} />
       </Box>
     </LargeCustomTooltip>}
@@ -165,6 +164,13 @@ const styles = {
     mb: 1
   },
 
+  overviewContainer: {
+    width: '100%',
+    display: 'flex',
+    gap: 1,
+    flexWrap: 'wrap',
+  },
+
   effectCircle: {
     width: '30px',
     height: '30px',
@@ -177,6 +183,19 @@ const styles = {
     alignItems: 'center',
     cursor: 'pointer',
     animation: 'animateGlowSmall 2s linear infinite',
+  },
+
+  overviewEffectCircle: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    background: 'rgba(0, 0, 0, 0.6)',
+    border: '1px solid #f59100',
+    boxSizing: 'border-box',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: 'pointer',
   },
 
   effectText: {

@@ -1,10 +1,10 @@
+use darkshuffle::models::card::{Card, CardType, CreatureCard};
 use darkshuffle::models::game::{Game, GameOwnerTrait};
 use dojo::model::ModelStorage;
-use dojo::world::WorldStorage;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
 use starknet::{ContractAddress, get_caller_address};
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Battle {
     #[key]
@@ -14,24 +14,19 @@ pub struct Battle {
     round: u8,
     hero: Hero,
     monster: Monster,
-    hand: Span<u8>,
-    deck: Span<u8>,
     battle_effects: BattleEffects,
 }
 
-#[derive(Introspect, Copy, Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
 #[dojo::model]
-pub struct Board {
+pub struct BattleResources {
     #[key]
     battle_id: u16,
     #[key]
     game_id: u64,
-    creature1: Creature,
-    creature2: Creature,
-    creature3: Creature,
-    creature4: Creature,
-    creature5: Creature,
-    creature6: Creature,
+    hand: Span<u8>,
+    deck: Span<u8>,
+    board: Span<Creature>,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -42,14 +37,14 @@ pub struct Hero {
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Monster {
-    monster_id: u8, // TODO: could be moved to fixed model
+    monster_id: u8,
     attack: u8,
-    health: u8,
+    health: u16,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Creature {
-    card_id: u8,
+    card_index: u8,
     attack: u8,
     health: u8,
 }
@@ -62,6 +57,16 @@ pub struct BattleEffects {
     next_hunter_health_bonus: u8,
     next_brute_attack_bonus: u8,
     next_brute_health_bonus: u8,
+    next_magical_attack_bonus: u8,
+    next_magical_health_bonus: u8,
+}
+
+#[derive(Copy, Drop, Serde)]
+pub struct CreatureDetails {
+    card_index: u8,
+    attack: u8,
+    health: u8,
+    creature_card: CreatureCard,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -69,69 +74,29 @@ pub struct BoardStats {
     magical_count: u8,
     brute_count: u8,
     hunter_count: u8,
-    monster_type: CreatureType,
+    monster_type: CardType,
 }
 
 #[derive(Copy, Drop, Serde)]
 pub struct RoundStats {
-    monster_start_health: u8,
+    monster_start_health: u16,
     creatures_played: u8,
     creature_attack_count: u8,
 }
 
-#[derive(Copy, Drop)]
-pub struct Card {
-    card_id: u8,
-    name: felt252,
-    card_type: CardType,
-    card_tier: CardTier,
-    creature_type: CreatureType,
-    cost: u8,
-    attack: u8,
-    health: u8,
-}
-
-#[derive(PartialEq, Introspect, Copy, Drop, Serde)]
-pub enum CardType {
-    Creature,
-    Spell,
-}
-
-#[derive(PartialEq, Introspect, Copy, Drop, Serde)]
-pub enum CreatureType {
-    Hunter,
-    Brute,
-    Magical,
-    Spell,
-    All,
-    None,
-}
-
-#[derive(Introspect, Copy, Drop, Serde)]
-pub enum CardTier {
-    T1,
-    T2,
-    T3,
-    T4,
-    T5,
-}
-
 #[generate_trait]
 impl BattleOwnerImpl of BattleOwnerTrait {
-    fn assert_battle(self: Battle, world: WorldStorage) {
-        let game: Game = world.read_model(self.game_id);
-        game.assert_owner(world);
-
+    fn assert_battle(self: Battle) {
         assert(self.hero.health > 0, 'Battle over');
         assert(self.monster.health > 0, 'Battle over');
     }
 
-    fn card_in_hand(self: Battle, card_id: u8) -> bool {
+    fn card_in_hand(self: BattleResources, card_index: u8) -> bool {
         let mut is_in_hand = false;
 
         let mut i = 0;
         while i < self.hand.len() {
-            if *self.hand.at(i) == card_id {
+            if *self.hand.at(i) == card_index {
                 is_in_hand = true;
                 break;
             }
@@ -140,10 +105,5 @@ impl BattleOwnerImpl of BattleOwnerTrait {
         };
 
         is_in_hand
-    }
-
-    fn assert_creature(self: Creature) {
-        assert(self.card_id != 0, 'Creature not found');
-        assert(self.health > 0, 'Creature dead');
     }
 }

@@ -1,17 +1,15 @@
 import { createClient } from "@dojoengine/torii-client";
 import { useSnackbar } from 'notistack';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { RpcProvider } from "starknet";
 import { dojoConfig } from "../../dojo.config";
-import { getGameTxs, getSettings } from '../api/indexer';
-import { CARD_DETAILS, formatBoard } from '../helpers/cards';
-import { LAST_NODE_LEVEL } from "../helpers/constants";
+import { getGameTxs } from '../api/indexer';
 import { translateEvent } from '../helpers/events';
 import { generateMapNodes } from '../helpers/map';
 import { BattleContext } from './battleContext';
 import { DraftContext } from './draftContext';
 import { GAME_STATES, GameContext } from './gameContext';
-import { useNavigate } from "react-router-dom";
 
 // Create a context
 const ReplayContext = createContext();
@@ -26,7 +24,7 @@ export const ReplayProvider = ({ children }) => {
   const navigate = useNavigate()
   const [toriiClient, setToriiClient] = useState(null)
 
-  let provider = new RpcProvider({ nodeUrl: dojoConfig.rpcUrl });
+  let provider = new RpcProvider({ nodeUrl: dojoConfig.alchemyUrl });
 
   const [txHashes, setTxHashes] = useState([]);
   const [step, setStep] = useState(0)
@@ -52,7 +50,7 @@ export const ReplayProvider = ({ children }) => {
       return
     }
 
-    const receipt = await provider.waitForTransaction(txHash || txHashes[step], { retryInterval: 100 })
+    const receipt = await provider.waitForTransaction(txHash || txHashes[step], { retryInterval: 500 })
     if (!receipt) {
       enqueueSnackbar('Failed to load replay', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
       endReplay()
@@ -67,8 +65,7 @@ export const ReplayProvider = ({ children }) => {
     navigate('/watch/' + _game.id)
 
     let txs = await getGameTxs(_game.id)
-    let settings = await getSettings(_game.settingsId)
-    game.setGameSettings(settings)
+    await game.actions.loadGameDetails(_game)
 
     if (txs.length > 0) {
       fetchEvents(0, txs[0].tx_hash)
@@ -105,14 +102,15 @@ export const ReplayProvider = ({ children }) => {
   }
 
   const previousStep = async () => {
-    if (step > 0) {
+    if (step > 1) {
       setStep(prev => prev - 1)
     }
   }
 
-  const spectateGame = (game) => {
-    setSpectatingGame(game)
-    navigate('/watch/' + game.id)
+  const spectateGame = (_game) => {
+    setSpectatingGame(_game)
+    game.actions.loadGameDetails(_game)
+    navigate('/watch/' + _game.id)
   }
 
   const applyEvents = () => {
@@ -124,8 +122,8 @@ export const ReplayProvider = ({ children }) => {
     if (gameValues) {
       game.setGame({ ...gameValues, replay: true })
 
-      if (!spectatingGame && gameValues.mapDepth === LAST_NODE_LEVEL && GAME_STATES[gameValues.state] === 'Map') {
-        if (appliedStep < step) {
+      if (!spectatingGame && gameValues.mapDepth === 0 && GAME_STATES[gameValues.state] === 'Map') {
+        if (appliedStep === null || appliedStep < step) {
           setStep(prev => prev + 1)
         } else {
           setStep(prev => prev - 1)
@@ -140,8 +138,8 @@ export const ReplayProvider = ({ children }) => {
 
     const draftValues = events.find(e => e.componentName === 'Draft')
     if (draftValues) {
-      draft.update.setCards(draftValues.cards.map(card => CARD_DETAILS(card)))
-      draft.update.setOptions(draftValues.options.map(option => CARD_DETAILS(option)))
+      draft.update.setCards(draftValues.cards.map(card => game.utils.getCard(card)))
+      draft.update.setOptions(draftValues.options.map(option => game.utils.getCard(option)))
 
       if (draftValues.cards.length < game.getState.gameSettings.draft_size) {
         game.setGame({ state: 'Draft' })
@@ -150,22 +148,19 @@ export const ReplayProvider = ({ children }) => {
 
     const mapValues = events.find(e => e.componentName === 'Map')
     if (mapValues) {
-      const computedMap = generateMapNodes(mapValues.level, mapValues.seed)
+      const computedMap = generateMapNodes(mapValues.level, mapValues.seed, game.getState.gameSettings)
       game.setMap(computedMap);
     }
 
     const battleValues = events.find(e => e.componentName === 'Battle')
+    const battleResourcesValues = events.find(e => e.componentName === 'BattleResources')
+
     if (battleValues) {
-      battle.actions.startBattle(battleValues)
+      battle.actions.startBattle(battleValues, battleResourcesValues)
 
       if (gameValues?.lastNodeId) {
         game.actions.updateMapStatus(gameValues.lastNodeId)
       }
-    }
-
-    const boardValues = events.find(e => e.componentName === 'Board')
-    if (boardValues) {
-      battle.utils.setBoard(formatBoard(boardValues))
     }
 
     setAppliedStep(step)
@@ -176,7 +171,7 @@ export const ReplayProvider = ({ children }) => {
     const draftValues = event?.find(e => e.componentName === 'Draft')
     if (!draftValues) return null
 
-    return draft.getState.options.findIndex(option => option.cardId === draftValues.cards[draftValues.cards.length - 1])
+    return draft.getState.options.findIndex(option => option.cardIndex === draftValues.cards[draftValues.cards.length - 1])
   }
 
   const getMapSelection = () => {
@@ -189,11 +184,11 @@ export const ReplayProvider = ({ children }) => {
 
   const getPlayedCards = () => {
     const event = translatedEvents[step + 1]
-    const nextBattleValues = event?.find(e => e.componentName === 'Battle')
-    const battleValues = translatedEvents[step]?.find(e => e.componentName === 'Battle')
+    const nextBattleValues = event?.find(e => e.componentName === 'BattleResources')
+    const battleValues = translatedEvents[step]?.find(e => e.componentName === 'BattleResources')
     if (!battleValues || !nextBattleValues) return null
 
-    return battleValues.hand.filter(card => !nextBattleValues.hand.includes(card))
+    return battleValues.hand.filter(cardIndex => !nextBattleValues.hand.includes(cardIndex))
   }
 
   const setupToriiClient = async () => {
@@ -213,7 +208,6 @@ export const ReplayProvider = ({ children }) => {
         [],
         false,
         (_, data) => {
-          console.log('data', data)
           if (Boolean(data[`${dojoConfig.namespace}-GameActionEvent`])) {
             let gameId = data[`${dojoConfig.namespace}-GameActionEvent`]["game_id"].value
 

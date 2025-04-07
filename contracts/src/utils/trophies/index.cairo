@@ -1,4 +1,4 @@
-use achievement::types::task::{Task as BushidoTask};
+use achievement::types::task::Task as BushidoTask;
 use darkshuffle::utils::trophies;
 
 pub const TROPHY_COUNT: u8 = 28;

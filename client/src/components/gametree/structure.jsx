@@ -4,14 +4,14 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Menu, Typography } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { isMobile } from 'react-device-detect';
 import skull from "../../assets/images/skull.png";
 import sword from "../../assets/images/sword.png";
 import { GET_MONSTER } from '../../battle/monsterUtils';
 import { GameContext } from '../../contexts/gameContext';
-import { CardSize, fetch_card_image, fetchBeastTypeImage } from '../../helpers/cards';
-import { LargeCustomTooltip } from '../../helpers/styles';
-import { isMobile } from 'react-device-detect';
 import { useReplay } from '../../contexts/replayContext';
+import { CardSize, fetch_card_image, fetchCardTypeImage } from '../../helpers/cards';
+import { LargeCustomTooltip } from '../../helpers/styles';
 
 const INACTIVE_OPACITY = 0.5
 
@@ -19,7 +19,7 @@ function Structure(props) {
   const replay = useReplay()
   const game = useContext(GameContext)
 
-  const { map } = game.getState
+  const { map, gameSettings } = game.getState
   const [tree, buildTree] = useState([])
   const scrollbarRef = useRef(null);
 
@@ -83,7 +83,7 @@ function Structure(props) {
   }, [map])
 
   function RenderBattleMenu() {
-    let monster = GET_MONSTER(selectedNode?.monsterId, selectedNode?.monsterName)
+    let monster = GET_MONSTER(selectedNode?.monsterId, selectedNode?.monsterName, gameSettings)
 
     return <Menu
       anchorEl={anchorEl}
@@ -152,7 +152,7 @@ function Structure(props) {
           return { opacity: 0 }
         }
 
-        if (connectedToEndNode.length === 1) {
+        if (connectedToEndNode.length <= 1) {
           return { opacity: 0 }
         }
       }
@@ -276,7 +276,7 @@ function Structure(props) {
   }
 
   function RenderMonsterCircle(node) {
-    let monster = GET_MONSTER(node.monsterId, node.monsterName)
+    let monster = GET_MONSTER(node.monsterId, node.monsterName, gameSettings)
 
     return <Box sx={styles.circleContainer}>
       <LargeCustomTooltip leaveDelay={200} position={'top'} title={
@@ -296,7 +296,7 @@ function Structure(props) {
         <Box sx={[styles.monsterCircle, nodeStyle(node), (selectedNode?.nodeId === node.nodeId && node.active) && { boxShadow: '0 0 5px 1px rgba(255, 255, 255, 0.7)' }]}
           onClick={(event) => handleClick(event, node)}>
           <Box sx={styles.typeContainer}>
-            {fetchBeastTypeImage(monster.monsterType)}
+            {fetchCardTypeImage(monster.monsterType)}
           </Box>
 
           <Box sx={{ pt: '4%', width: '100%', height: '70%', display: 'flex', justifyContent: 'center', opacity: node.status !== 0 ? 0.5 : 1 }}>
@@ -380,7 +380,9 @@ function Structure(props) {
   }
 
   if (tree.length === 0) {
-    return <Box>Tree not generated</Box>
+    return <Box sx={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+      {RenderType(map[0])}
+    </Box>
   }
 
   return (

@@ -1,10 +1,8 @@
-use darkshuffle::constants::LAST_NODE_DEPTH;
 use dojo::event::EventStorage;
 use dojo::model::ModelStorage;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo::world::{WorldStorage, WorldStorageTrait};
+use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
 use openzeppelin_token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
-use starknet::{get_caller_address};
+use starknet::get_caller_address;
 use tournaments::components::interfaces::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -29,7 +27,6 @@ pub struct GameEffects {
     game_id: u64,
     first_attack: u8,
     first_health: u8,
-    first_creature_cost: u8,
     all_attack: u8,
     hunter_attack: u8,
     hunter_health: u8,
@@ -96,7 +93,7 @@ impl GameOwnerImpl of GameOwnerTrait {
 
     fn assert_generate_tree(self: Game) {
         assert(self.state.into() == GameState::Map, 'Not Map');
-        assert(self.map_depth == LAST_NODE_DEPTH, 'Tree Not Completed');
+        assert(self.map_depth == 0, 'Tree Not Completed');
     }
 
     fn assert_select_node(self: Game) {

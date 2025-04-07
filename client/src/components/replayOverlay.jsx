@@ -24,6 +24,10 @@ function ReplayOverlay(props) {
     };
   }, [replay]);
 
+  if (game.getState.loading || !game.values.gameId) {
+    return null;
+  }
+
   if (!game.values.replay && !replay.spectatingGame) {
     return null;
   }

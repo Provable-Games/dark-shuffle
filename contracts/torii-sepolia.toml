@@ -1,8 +1,10 @@
 [indexing]
 contracts = [
-    "erc721:0x0711a2ed50ba5442259950cf741b81f66f17b9b751e44d0368a87926a3233e3e"
+    "erc721:0x4359aee29873cd9603207d29b4140468bac3e042aa10daab2e1a8b2dd60ef7b"
 ]
+
+namespaces = ["ds_v1_2_0", "budokan_v_1_0_4"]
 
 [events]
 raw = true
-historical = ["ds-TrophyCreation", "ds-TrophyProgression"]
+historical = ["ds_v1_2_0-TrophyCreation", "ds_v1_2_0-TrophyProgression"]

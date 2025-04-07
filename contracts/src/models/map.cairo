@@ -1,5 +1,3 @@
-use darkshuffle::models::battle::{CreatureType};
-
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Map {
@@ -14,5 +12,5 @@ pub struct Map {
 pub struct MonsterNode {
     monster_id: u8,
     attack: u8,
-    health: u8,
+    health: u16,
 }

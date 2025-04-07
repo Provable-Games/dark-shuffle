@@ -1,29 +1,67 @@
 use starknet::ContractAddress;
 
-#[derive(Copy, Drop, Serde)]
+#[derive(Introspect, Drop, Serde)]
 #[dojo::model]
-pub struct WorldConfig {
+pub struct GameSettingsMetadata {
     #[key]
-    config_id: u8,
-    game_token_address: ContractAddress,
-    game_count: u256,
+    settings_id: u32,
+    name: felt252,
+    description: ByteArray,
+    created_by: ContractAddress,
+    created_at: u64,
 }
 
-#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[derive(Introspect, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct GameSettings {
     #[key]
     settings_id: u32,
-    start_health: u8,
-    start_energy: u8,
-    start_hand_size: u8,
-    draft_size: u8,
-    max_energy: u8,
-    max_hand_size: u8,
-    include_spells: bool,
+    starting_health: u8,
+    persistent_health: bool,
+    map: MapSettings,
+    battle: BattleSettings,
+    draft: DraftSettings,
 }
 
-#[derive(Copy, Drop, Serde)]
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
+pub struct MapSettings {
+    level_depth: u8,
+    possible_branches: u8,
+    enemy_attack_min: u8,
+    enemy_attack_max: u8,
+    enemy_health_min: u8,
+    enemy_health_max: u8,
+    enemy_attack_scaling: u8,
+    enemy_health_scaling: u8,
+}
+
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
+pub struct BattleSettings {
+    start_energy: u8,
+    start_hand_size: u8,
+    max_energy: u8,
+    max_hand_size: u8,
+    draw_amount: u8,
+}
+
+#[derive(Introspect, Copy, Drop, Serde)]
+pub struct DraftSettings {
+    draft_size: u8,
+    card_ids: Span<u64>,
+    card_rarity_weights: CardRarityWeights,
+    auto_draft: bool,
+}
+
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
+pub struct CardRarityWeights {
+    common: u8,
+    uncommon: u8,
+    rare: u8,
+    epic: u8,
+    legendary: u8,
+}
+
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct SettingsCounter {
     #[key]
@@ -31,9 +69,17 @@ pub struct SettingsCounter {
     count: u32,
 }
 
+#[derive(IntrospectPacked, Copy, Drop, Serde)]
+#[dojo::model]
+pub struct CardsCounter {
+    #[key]
+    id: felt252,
+    count: u64,
+}
+
 #[generate_trait]
 impl GameSettingsImpl of GameSettingsTrait {
     fn exists(self: GameSettings) -> bool {
-        self.start_health.is_non_zero()
+        self.starting_health.is_non_zero()
     }
 }

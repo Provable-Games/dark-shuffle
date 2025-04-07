@@ -1,4 +1,4 @@
-use achievement::types::task::{Task as BushidoTask};
+use achievement::types::task::Task as BushidoTask;
 use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 
 trait TrophyTrait {

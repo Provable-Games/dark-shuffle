@@ -1,5 +1,7 @@
 use alexandria_encoding::base64::Base64Encoder;
-use core::{array::{ArrayTrait, SpanTrait}, clone::Clone, traits::Into};
+use core::array::{ArrayTrait, SpanTrait};
+use core::clone::Clone;
+use core::traits::Into;
 use darkshuffle::utils::renderer::encoding::{U256BytesUsedTraitImpl, bytes_base64_encode};
 use graffiti::json::JsonImpl;
 
@@ -47,7 +49,7 @@ fn combine_elements(ref elements: Span<ByteArray>) -> ByteArray {
                 count += 1;
             },
             Option::None(()) => { break; },
-        }
+        };
     };
 
     combined
@@ -141,11 +143,11 @@ fn create_metadata(
 #[cfg(test)]
 mod tests {
     use core::array::ArrayTrait;
-    use super::{create_metadata};
+    use super::create_metadata;
 
     #[test]
     fn test_metadata() {
-        let current_1 = create_metadata(
+        let _current_1 = create_metadata(
             1000000,
             'Await',
             50,
@@ -176,15 +178,11 @@ mod tests {
                 .span(),
         );
 
-        let current_2 = create_metadata(
+        let _current_2 = create_metadata(
             999, 'Await', 50, 423, 0, array!['Wolf', 'Colossus', 'Ogre', 'Dragon', 'Sprite'].span(),
         );
 
-        let current_3 = create_metadata(999, 0, 0, 0, 0, array![].span());
-
-        println!("Current 1: {}", current_1);
-        println!("Current 2: {}", current_2);
-        println!("Current 3: {}", current_3);
+        let _current_3 = create_metadata(999, 0, 0, 0, 0, array![].span());
     }
 }
 

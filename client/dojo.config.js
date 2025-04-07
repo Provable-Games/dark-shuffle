@@ -14,7 +14,7 @@ const {
   VITE_PUBLIC_LORDS_ADDRESS,
   VITE_PUBLIC_NAMESPACE,
   VITE_PUBLIC_TOURNAMENT_NAMESPACE,
-  VITE_PUBLIC_GAME_TOKEN_ADDRESS,
+  VITE_PUBLIC_ALCHEMY_URL,
 } = import.meta.env;
 
 export const dojoConfig = {
@@ -23,6 +23,7 @@ export const dojoConfig = {
   chain: VITE_PUBLIC_CHAIN,
   namespace: VITE_PUBLIC_NAMESPACE,
   tournamentNamespace: VITE_PUBLIC_TOURNAMENT_NAMESPACE,
+  alchemyUrl: VITE_PUBLIC_ALCHEMY_URL,
   rpcUrl: VITE_PUBLIC_NODE_URL,
   toriiUrl: VITE_PUBLIC_TORII,
   masterAddress: VITE_PUBLIC_MASTER_ADDRESS,
@@ -31,7 +32,6 @@ export const dojoConfig = {
   feeTokenAddress: VITE_PUBLIC_FEE_TOKEN_ADDRESS || "0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
   ethAddress: VITE_PUBLIC_ETH_ADDRESS,
   lordsAddress: VITE_PUBLIC_LORDS_ADDRESS,
-  gameTokenAddress: VITE_PUBLIC_GAME_TOKEN_ADDRESS,
   manifest: VITE_PUBLIC_CHAIN === "mainnet" ? manifest_mainnet : manifest_sepolia,
   tournamentManifest: manifest_tournaments
 };

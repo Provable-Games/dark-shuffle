@@ -104,7 +104,7 @@ input:-webkit-autofill {
 
 .notistack-MuiContent-info {
   border: 1px solid #FFE97F;
-  background-color: rgba(0, 0, 0, 0.80) !important;
+  background-color: rgba(0, 0, 0, 0.95) !important;
 }
 
 .notistack-MuiContent-info #notistack-snackbar {
@@ -201,6 +201,11 @@ input:-webkit-autofill {
   background: radial-gradient(circle closest-side, #FFE97F 90%, #0000) 0/calc(100%/3) 100% space;
   clip-path: inset(0 100% 0 0);
   animation: l1 1s steps(4) infinite;
+}
+
+.dotLoader.white {
+  width: 12px;
+  background: radial-gradient(circle closest-side, rgba(255, 255, 255, 0.8) 90%, #0000) 0/calc(100%/3) 100% space;
 }
 
 @keyframes l1 {
@@ -315,8 +320,49 @@ input:-webkit-autofill {
   0% {
     opacity: 0;
   }
-
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 233, 127, 0.7);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(255, 233, 127, 0.9);
+  }
+  100% {
+    text-shadow: 0 0 5px rgba(255, 233, 127, 0.7);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }

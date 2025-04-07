@@ -10,7 +10,6 @@ import Battlefield from '../components/battle/battlefield';
 import Deck from '../components/battle/deck';
 import GameEffects from '../components/battle/gameEffects';
 import Hand from '../components/battle/hand';
-import RestoringBattleDialog from '../components/dialogs/restoringBattle';
 import { BattleContext } from '../contexts/battleContext';
 import { CustomTooltip } from '../helpers/styles';
 import { fadeVariant } from "../helpers/variants";
@@ -115,8 +114,6 @@ function BattleContainer() {
         </Box>
 
       </Box >
-
-      {battle.state.resettingState && <RestoringBattleDialog />}
     </motion.div>
   )
 }

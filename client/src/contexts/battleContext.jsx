@@ -1,19 +1,17 @@
 import { useSnackbar } from "notistack";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { isMobile } from 'react-device-detect';
-import { attackEffect } from "../battle/attackUtils";
-import { deathEffect } from "../battle/deathUtils";
-import { GET_MONSTER } from "../battle/monsterUtils";
+import { getBattleState } from "../api/indexer";
+import { applyCardEffect, requirementMet } from "../battle/cardUtils";
 import { endOfTurnMonsterEffect } from "../battle/monsterAbility";
+import { GET_MONSTER } from "../battle/monsterUtils";
 import { summonEffect } from "../battle/summonUtils";
-import { CARD_DETAILS, formatBoard, tags } from "../helpers/cards";
+import { tags } from "../helpers/cards";
 import { ADVENTURER_ID } from "../helpers/constants";
+import { delay } from "../helpers/utilities";
 import { AnimationContext } from "./animationHandler";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
-import { delay } from "../helpers/utilities";
-import { getBattleState } from "../api/indexer";
-import { spellEffect } from "../battle/spellUtils";
 
 export const BattleContext = createContext()
 
@@ -25,7 +23,6 @@ export const BattleProvider = ({ children }) => {
   const animationHandler = useContext(AnimationContext)
 
   const { enqueueSnackbar } = useSnackbar()
-  const [resettingState, setResettingState] = useState(false)
 
   const [values, setValues] = useState({})
   const [updatedValues, setUpdatedValues] = useState()
@@ -142,8 +139,8 @@ export const BattleProvider = ({ children }) => {
     const gameEffects = res.find(e => e.componentName === 'GameEffects')
     const leaderboard = res.find(e => e.componentName === 'Leaderboard')
     const battleValues = res.find(e => e.componentName === 'Battle')
-
-    setUpdatedValues(battleValues)
+    const battleResources = res.find(e => e.componentName === 'BattleResources')
+    setUpdatedValues({ ...battleValues, ...battleResources })
 
     if (gameValues) {
       setEndState({ gameValues, leaderboard, gameEffects })
@@ -172,21 +169,25 @@ export const BattleProvider = ({ children }) => {
     setTurnEnded(true)
   }
 
-  const startBattle = async (battle) => {
+  const startBattle = async (battle, battleResources) => {
     animationHandler.resetAnimationHandler()
 
     setValues({
       battleId: battle.battleId,
       round: battle.round,
-      deckIndex: battle.deckIndex,
       ...battle.hero,
       ...battle.monster,
       monsterType: GET_MONSTER(battle.monster.monsterId).monsterType
     })
     setBattleEffects({ ...battle.battleEffects })
-    setHand(battle.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
-    setDeck(battle.deck)
-    setBoard([])
+    setHand(battleResources.hand.map((card, i) => game.utils.getCard(card, i + 1)))
+    setDeck(battleResources.deck)
+    setBoard(battleResources.board.map((creature, i) => ({
+      ...game.utils.getCard(creature.cardIndex, i),
+      attack: creature.attack,
+      health: creature.health,
+    })))
+
     setActions([])
     setRoundStats({
       monsterStartHealth: battle.monster.monsterHealth,
@@ -204,11 +205,8 @@ export const BattleProvider = ({ children }) => {
       return enqueueSnackbar('Not enough energy', { variant: 'warning' })
     }
 
-    if (board.length > 5) {
-      return enqueueSnackbar('Board is full', { variant: 'warning' })
-    }
-
     setValues(prev => ({ ...prev, heroEnergy: prev.heroEnergy - cost }))
+    const startValues = { attack: creature.attack, health: creature.health }
 
     summonEffect({
       creature, values, board, battleEffects, setBattleEffects, gameEffects,
@@ -216,9 +214,9 @@ export const BattleProvider = ({ children }) => {
       damageHero, healHero, roundStats, setRoundStats
     })
 
-    setBoard(prev => [...prev, { ...creature, id: (prev[prev.length - 1]?.id || 0) + 1 }])
+    setBoard(prev => [...prev, { ...creature, id: (prev[prev.length - 1]?.id || 0) + 1, startValues }])
     setHand(prev => prev.filter(card => card.id !== creature.id))
-    setActions(prev => [...prev, [0, creature.cardId]])
+    setActions(prev => [...prev, [0, creature.cardIndex]])
   }
 
   const castSpell = (spell) => {
@@ -230,30 +228,44 @@ export const BattleProvider = ({ children }) => {
 
     setValues(prev => ({ ...prev, heroEnergy: prev.heroEnergy - cost }))
 
-    spellEffect({
-      spell, values, board, healHero, updateBoard, reduceMonsterAttack,
-      increaseEnergy, damageMonster, battleEffects, setBattleEffects
-    })
+    if (requirementMet(spell.effect.modifier.requirement, spell.cardType, board, values.monsterType, false)) {
+      applyCardEffect({
+        values, cardEffect: spell.effect, creature: spell, board, healHero,
+        increaseEnergy, battleEffects, setBattleEffects,
+        reduceMonsterAttack, damageMonster, updateBoard,
+        onBoard: false
+      })
+    }
+
+    if (spell.extraEffect?.modifier?._type !== 'None') {
+      if (requirementMet(spell.extraEffect.modifier.requirement, spell.cardType, board, values.monsterType, false)) {
+        applyCardEffect({
+          values, cardEffect: spell.extraEffect, creature: spell, board, healHero,
+          increaseEnergy, battleEffects, setBattleEffects,
+          reduceMonsterAttack, damageMonster, updateBoard,
+          onBoard: false
+        })
+      }
+    }
 
     setHand(prev => prev.filter(card => card.id !== spell.id))
-    setActions(prev => [...prev, [0, spell.cardId]])
+    setActions(prev => [...prev, [0, spell.cardIndex]])
   }
 
   const startNewTurn = () => {
     setValues({
       battleId: updatedValues.battleId,
       round: updatedValues.round,
-      deckIndex: updatedValues.deckIndex,
       ...updatedValues.hero,
       ...updatedValues.monster,
       monsterType: GET_MONSTER(updatedValues.monster.monsterId).monsterType
     })
 
     if (isMobile) {
-      setHand(updatedValues.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
+      setHand(updatedValues.hand.map((card, i) => game.utils.getCard(card, i + 1)))
     } else {
-      setHand(updatedValues.hand.slice(0, hand.length).map((card, i) => CARD_DETAILS(card, i + 1)))
-      setNewHandCards(updatedValues.hand.slice(hand.length).map((card, i) => CARD_DETAILS(card, hand.length + i + 1)))
+      setHand(updatedValues.hand.slice(0, hand.length).map((card, i) => game.utils.getCard(card, i + 1)))
+      setNewHandCards(updatedValues.hand.slice(hand.length).map((card, i) => game.utils.getCard(card, hand.length + i + 1)))
     }
 
     setBoard(prev => prev.map(creature => ({ ...creature, attacked: false })))
@@ -297,8 +309,8 @@ export const BattleProvider = ({ children }) => {
     setBoard(updatedBoard)
   }
 
-  const updateBoard = (creatureType, attack, health) => {
-    const updatedBoard = board.map(creature => (creature.creatureType === creatureType || creatureType === tags.ALL)
+  const updateBoard = (cardType, attack, health) => {
+    const updatedBoard = board.map(creature => (creature.cardType === cardType || cardType === tags.ALL)
       ? { ...creature, attack: creature.attack + attack, health: creature.health + health }
       : creature
     )
@@ -344,20 +356,12 @@ export const BattleProvider = ({ children }) => {
 
   // CREATURE UTILS
   const damageCreature = (creature, amount) => {
-    if (values.monsterId == 74 && creature.creatureType == tags.HUNTER) {
+    if (values.monsterId == 74 && creature.cardType == tags.HUNTER) {
       amount += 1;
-    } else if (values.monsterId == 69 && creature.creatureType == tags.MAGICAL) {
+    } else if (values.monsterId == 69 && creature.cardType == tags.MAGICAL) {
       amount += 1;
-    } else if (values.monsterId == 64 && creature.creatureType == tags.BRUTE) {
+    } else if (values.monsterId == 64 && creature.cardType == tags.BRUTE) {
       amount += 1;
-    }
-
-    if (creature.cardId == 27) {
-      amount -= 1;
-
-      if (board.filter(creature => creature.creatureType == tags.BRUTE).length > 1) {
-        amount -= 1;
-      }
     }
 
     creature.health -= amount;
@@ -367,25 +371,36 @@ export const BattleProvider = ({ children }) => {
   const creatureAttack = (creatureId) => {
     let creature = { ...board.find(creature => creature.id === creatureId) }
 
-    let extraDamage = attackEffect({ creature, values, board, setBattleEffects, reduceMonsterAttack, healHero })
-
-    damageMonster(creature.attack + extraDamage, creature.creatureType)
-
-    if (creature.cardId === 46) {
-      creature.attack += 1;
+    if (creature.attackEffect?.modifier?._type !== 'None') {
+      if (requirementMet(creature.attackEffect.modifier.requirement, creature.cardType, board, values.monsterType, true)) {
+        applyCardEffect({
+          values, cardEffect: creature.attackEffect, creature, board, healHero,
+          increaseEnergy, battleEffects, setBattleEffects,
+          reduceMonsterAttack, damageMonster, updateBoard,
+          onBoard: true
+        })
+      }
     }
 
-    creature.attacked = true;
+    damageMonster(creature.attack, creature.cardType)
 
+    creature.attacked = true;
     setRoundStats(prev => ({ ...prev, creatureAttackCount: prev.creatureAttackCount + 1 }))
+
     damageCreature(creature, values.monsterAttack)
   }
 
   const creatureDeathEffect = (creature) => {
-    deathEffect({
-      creature, values, board, battleEffects, setBattleEffects,
-      updateBoard, reduceMonsterAttack, healHero, damageMonster
-    })
+    if (creature.deathEffect?.modifier?._type !== 'None') {
+      if (requirementMet(creature.deathEffect.modifier.requirement, creature.cardType, board, values.monsterType, true)) {
+        applyCardEffect({
+          values, cardEffect: creature.deathEffect, creature, board, healHero,
+          increaseEnergy, battleEffects, setBattleEffects,
+          reduceMonsterAttack, damageMonster, updateBoard,
+          onBoard: true
+        })
+      }
+    }
   }
 
   // HERO UTILS
@@ -416,11 +431,6 @@ export const BattleProvider = ({ children }) => {
   // HAND UTILS
   const getCardCost = (card) => {
     let cost = card.cost
-
-    if (roundStats.creaturesPlayed < 1) {
-      cost -= gameEffects.firstCreatureCost ?? 0;
-    }
-
     return cost
   }
 
@@ -457,7 +467,6 @@ export const BattleProvider = ({ children }) => {
   }
 
   const fetchBattleState = async (battleId, gameId) => {
-    setResettingState(true)
     let data = await getBattleState(parseInt(battleId), parseInt(gameId))
 
     setValues({
@@ -480,30 +489,23 @@ export const BattleProvider = ({ children }) => {
       nextHunterHealthBonus: data.battle.battle_effects.next_hunter_health_bonus,
       nextBruteAttackBonus: data.battle.battle_effects.next_brute_attack_bonus,
       nextBruteHealthBonus: data.battle.battle_effects.next_brute_health_bonus,
+      nextMagicalAttackBonus: data.battle.battle_effects.next_magical_attack_bonus,
+      nextMagicalHealthBonus: data.battle.battle_effects.next_magical_health_bonus,
     })
 
-    setHand(data.battle.hand.map((card, i) => CARD_DETAILS(card, i + 1)))
-    setDeck(data.battle.deck)
-
-    if (data.board && Object.keys(data.board).length > 0) {
-      let board = Object.entries(data.board).reduce((acc, [key, creature]) => {
-        acc[key] = {
-          ...creature,
-          cardId: creature.card_id,
-        };
-        return acc;
-      }, {});
-
-      setBoard(formatBoard(board))
-    }
+    setHand(data.battleResources.hand.map((cardIndex, i) => game.utils.getCard(cardIndex, i + 1)))
+    setDeck(data.battleResources.deck)
+    setBoard(data.battleResources.board.map((creature, i) => ({
+      ...game.utils.getCard(creature.card_index, i),
+      attack: creature.attack,
+      health: creature.health,
+    })))
 
     setRoundStats({
       monsterStartHealth: data.battle.monster.health,
       creaturesPlayed: 0,
       creatureAttackCount: 0
     })
-
-    setResettingState(false)
   }
 
   return (
@@ -535,7 +537,6 @@ export const BattleProvider = ({ children }) => {
           board,
           deck,
           battleEffects,
-          resettingState,
           newHandCards,
         }
       }}
