@@ -55,7 +55,7 @@ const cartridge = new ControllerConnector({
     },
   ],
   namespace: dojoConfig.namespace,
-  slot: "darkshuffle-sepolia",
+  slot: dojoConfig.chain === "mainnet" ? "darkshuffle-mainnet" : "darkshuffle-sepolia",
   preset: "dark-shuffle",
   rpc: dojoConfig.rpcUrl,
   colorMode: "dark",

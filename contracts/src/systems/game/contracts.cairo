@@ -108,7 +108,7 @@ mod game_systems {
                 'Provable Games',
                 'Provable Games',
                 'Digital TCG / Deck Building',
-                "https://github.com/Provable-Games/dark-shuffle/blob/main/client/public/favicon.svg",
+                "https://darkshuffle.io/favicon.svg",
                 DEFAULT_NS(),
                 SCORE_MODEL(),
                 SCORE_ATTRIBUTE(),
