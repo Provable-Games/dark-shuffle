@@ -3,10 +3,10 @@ import InfoIcon from '@mui/icons-material/Info';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import { LoadingButton } from '@mui/lab';
-import { Box, Button, IconButton, LinearProgress, Typography } from '@mui/material';
+import { Box, Button, IconButton, Typography } from '@mui/material';
 import { useConnect } from "@starknet-react/core";
-import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate, useParams } from "react-router-dom";
 import logo from '../assets/images/logo.svg';
 import { BattleContext } from '../contexts/battleContext';
 import { DojoContext } from '../contexts/dojoContext';
@@ -16,7 +16,6 @@ import ChooseName from './dialogs/chooseName';
 import GameSettings from './dialogs/gameSettings';
 import GameSettingsList from './dialogs/gameSettingsList';
 import ProfileMenu from './header/profileMenu';
-import { useParams } from 'react-router-dom';
 
 const menuItems = [
   {
@@ -42,17 +41,6 @@ function Header(props) {
 
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const [questProgress, setQuestProgress] = useState(0);
-  const questTarget = 300;
-  const questCurrent = 150;
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setQuestProgress((questCurrent / questTarget) * 100);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [questCurrent, questTarget]);
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -72,7 +60,6 @@ function Header(props) {
   }
 
   const inGame = game.values.gameId && !game.values.replay
-  let quest = false
 
   return (
     <Box sx={[styles.header, { height: inGame ? '42px' : '55px', pl: inGame ? 1 : 3 }]}>
@@ -92,26 +79,6 @@ function Header(props) {
           </Link>
         })}
       </Box>
-
-      {quest && (
-        <Box sx={styles.questContainer}>
-          <Box sx={styles.questContent}>
-            <Typography variant="caption" sx={styles.questLabel}>
-              QUEST PROGRESS
-            </Typography>
-            <Box sx={styles.progressContainer}>
-              <LinearProgress
-                variant="determinate"
-                value={questProgress}
-                sx={styles.progressBar}
-              />
-              <Typography variant="caption" sx={styles.questText}>
-                {questCurrent}/{questTarget} XP
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-      )}
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {dojo.address
@@ -173,49 +140,4 @@ const styles = {
   menu: {
     width: 300
   },
-  questContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    background: 'rgba(0, 0, 0, 0.2)',
-    borderRadius: '12px',
-    padding: '4px 12px',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    transition: 'all 0.3s ease',
-  },
-  questContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '2px',
-  },
-  questLabel: {
-    color: '#FFD700',
-    fontWeight: 'bold',
-    letterSpacing: '1px',
-    fontSize: '10px',
-  },
-  progressContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    minWidth: '150px',
-  },
-  progressBar: {
-    flex: 1,
-    height: '6px',
-    borderRadius: '3px',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    '& .MuiLinearProgress-bar': {
-      background: 'linear-gradient(90deg, #FFD700 0%, #FFA500 100%)',
-      borderRadius: '3px',
-      transition: 'transform 0.5s ease-in-out',
-    }
-  },
-  questText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: '12px',
-    minWidth: '60px',
-    textAlign: 'right',
-  }
 };

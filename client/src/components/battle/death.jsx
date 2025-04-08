@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, LinearProgress } from "@mui/material";
 import { motion, useAnimationControls } from "framer-motion";
 import React, { useContext, useEffect, useState } from "react";
 import { isBrowser, isMobile } from 'react-device-detect';
@@ -31,6 +31,9 @@ function DeathDialog(props) {
     showText(true)
   }
 
+  const isQuestMode = game.values.questTarget;
+  const questProgress = isQuestMode ? Math.min((game.score / game.values.questTarget) * 100, 100) : 0;
+
   return <motion.div style={isMobile ? styles.mobileContainer : styles.container} animate={controls}>
 
     {text && <Box width={'800px'} sx={{ display: 'flex', flexDirection: 'column', 'alignItems': 'center', maxWidth: '90%' }}>
@@ -39,28 +42,64 @@ function DeathDialog(props) {
       </Typography>
 
       <Box display={'flex'} mt={6}>
-        <Box mr={10}>
-          <Typography variant="h4" color='primary'>
-            Beasts Slain
-          </Typography>
+        {!isQuestMode && (
+          <>
+            <Box mr={10}>
+              <Typography variant="h4" color='primary'>
+                Beasts Slain
+              </Typography>
 
-          <Typography variant="h1" mt={1} color='primary'>
-            {game.values.monstersSlain}
-          </Typography>
-        </Box>
+              <Typography variant="h1" mt={1} color='primary'>
+                {game.values.monstersSlain}
+              </Typography>
+            </Box>
 
-        <Box>
-          <Typography variant="h4" color='primary'>
-            Final Score
-          </Typography>
+            <Box>
+              <Typography variant="h4" color='primary'>
+                Final Score
+              </Typography>
 
-          <Typography variant="h1" mt={1} color='primary'>
-            {game.score}
-          </Typography>
-        </Box>
+              <Typography variant="h1" mt={1} color='primary'>
+                {game.score}
+              </Typography>
+            </Box>
+          </>
+        )}
       </Box>
 
-      {isBrowser && <>
+      {isQuestMode && (
+        <Box mt={1} width="100%" maxWidth="600px">
+          <Typography variant="h4" color='#f59100'>
+            Quest Failed
+          </Typography>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} mt={2}>
+            <Typography variant="body1" color="primary" sx={{ opacity: 0.7 }}>
+              {game.score} XP
+            </Typography>
+            <Typography variant="body1" color="primary" sx={{ opacity: 0.7 }}>
+              {questProgress.toFixed(1)}%
+            </Typography>
+            <Typography variant="body1" color="primary" sx={{ opacity: 0.7 }}>
+              {game.values.questTarget} XP
+            </Typography>
+          </Box>
+          <LinearProgress
+            variant="determinate"
+            value={questProgress}
+            sx={{
+              height: 10,
+              borderRadius: 5,
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              '& .MuiLinearProgress-bar': {
+                background: 'linear-gradient(90deg, #FFD700 0%, #FFA500 100%)',
+                borderRadius: 5,
+              }
+            }}
+          />
+        </Box>
+      )}
+
+      {isBrowser && !isQuestMode && <>
         <Typography mt={6}>
           Your journey ends here, brave hero, swallowed by the unforgiving darkness of the mist.
           In this silent tomb, your valor and strife are sealed away, a whisper lost among the echoes of countless others who dared to challenge the abyss.
@@ -71,14 +110,23 @@ function DeathDialog(props) {
         </Typography>
       </>}
 
-      <Box mt={6} display={'flex'} gap={3}>
-        <Button color='secondary' variant='outlined' size='large' sx={{ fontSize: '16px', letterSpacing: '1px' }}
-          component='a' href={'https://x.com/intent/tweet?text=' + tweetMsg} target='_blank'>
-          Share on X
-        </Button>
+      {isBrowser && isQuestMode && <>
+        <Typography mt={6}>
+          Better luck next time, brave hero. <br />
+          The darkness has claimed you this time, but your adventure in Eternum continues.
+        </Typography>
+      </>}
 
-        <Button variant='outlined' size='large' sx={{ fontSize: '16px', letterSpacing: '1px' }} onClick={backToMenu}>
-          Play again
+      <Box mt={6} display={'flex'} gap={3}>
+        {!isQuestMode && (
+          <Button color='secondary' variant='outlined' size='large' sx={{ fontSize: '16px', letterSpacing: '1px' }}
+            component='a' href={'https://x.com/intent/tweet?text=' + tweetMsg} target='_blank'>
+            Share on X
+          </Button>
+        )}
+
+        <Button variant='outlined' size='large' sx={{ fontSize: isQuestMode ? '14px' : '16px', letterSpacing: '1px' }} onClick={backToMenu}>
+          {isQuestMode ? "Play Dark Shuffle" : "Play again"}
         </Button>
       </Box>
     </Box>}
