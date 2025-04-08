@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { Box, Button, Typography, Container } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import './questComplete.css';
 import questImage from "../../assets/images/eternum_quest.png";
 import { GameContext } from '../../contexts/gameContext';
 
@@ -85,7 +84,7 @@ const QuestComplete = () => {
             <Typography variant="h2" sx={styles.title}>
               QUEST COMPLETED
             </Typography>
-            <Box sx={styles.titleUnderline} className="magical-border" />
+            <Box sx={styles.titleUnderline} />
           </Box>
         </motion.div>
 
