@@ -29,8 +29,6 @@ export const DojoProvider = ({ children }) => {
   const dojoprovider = new _dojoProvider(dojoConfig.manifest, dojoConfig.rpcUrl);
   let provider = new RpcProvider({ nodeUrl: dojoConfig.alchemyUrl });
 
-  let cartridgeConnector = connectors.find(conn => conn.id === "controller")
-
   const getBalances = async () => {
     let balanceData = await fetchBalances(address ?? "0x0", ethContract, lordsContract)
 
@@ -59,7 +57,7 @@ export const DojoProvider = ({ children }) => {
 
   const executeTx = async (txs, includeVRF) => {
     if (!account) {
-      connect({ connector: cartridgeConnector })
+      connect({ connector: connectors.find(conn => conn.id === "controller") })
       return
     }
 
@@ -90,8 +88,10 @@ export const DojoProvider = ({ children }) => {
       console.log('translatedEvents', translatedEvents)
       return translatedEvents.filter(Boolean)
     } catch (ex) {
-      console.log(ex)
-      enqueueSnackbar(ex.issues ? ex.issues[0].message : 'Something went wrong', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
+      if (ex) {
+        console.log(ex)
+        enqueueSnackbar(ex.issues ? ex.issues[0].message : 'Something went wrong', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
+      }
     }
   }
 
@@ -103,7 +103,7 @@ export const DojoProvider = ({ children }) => {
         network: chain.network,
         userName,
         customName,
-        playerName: customName || userName,
+        playerName: customName || userName || "None",
         balances,
         executeTx,
         getBalances,

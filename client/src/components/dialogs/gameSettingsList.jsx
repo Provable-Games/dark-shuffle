@@ -1,11 +1,10 @@
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, CircularProgress, Dialog, Divider, TextField, Typography } from '@mui/material';
-import { useAccount } from '@starknet-react/core';
+import { useAccount, useConnect } from '@starknet-react/core';
 import { motion } from "framer-motion";
 import React, { useContext, useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 import { getRecommendedSettings, getSettingsList } from '../../api/indexer';
-import { DraftContext } from '../../contexts/draftContext';
 import { GameContext } from '../../contexts/gameContext';
 import { fadeVariant } from "../../helpers/variants";
 import GameSettings from './gameSettings';
@@ -14,8 +13,8 @@ function GameSettingsList(props) {
   const { open, close } = props
 
   const gameContext = useContext(GameContext)
-  const draft = useContext(DraftContext)
-  const { address } = useAccount()
+  const { account, address } = useAccount()
+  const { connect, connectors } = useConnect();
 
   const [selectedSettings, setselectedSettings] = useState()
 
@@ -59,8 +58,16 @@ function GameSettingsList(props) {
   }, [settingsList])
 
   const startNewGame = async () => {
+    if (!account) {
+      connect({ connector: connectors.find(conn => conn.id === "controller") })
+      return
+    }
+
     const tokenData = await gameContext.actions.mintFreeGame(selectedSettings.settings_id)
-    await gameContext.actions.loadGameDetails(tokenData)
+
+    if (tokenData) {
+      await gameContext.actions.loadGameDetails(tokenData)
+    }
   }
 
   function renderSettingsOverview(settings) {

@@ -25,6 +25,12 @@ function ArenaPage() {
   const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
+    if (!watchGameId && !gameId) {
+      gameContext.setLoading(false)
+    }
+  }, [watchGameId, gameId])
+
+  useEffect(() => {
     async function watchGame() {
       gameContext.setLoading(true)
       gameContext.setLoadingProgress(10)
@@ -49,7 +55,7 @@ function ArenaPage() {
 
   useEffect(() => {
     async function loadGame() {
-      if (!Boolean(account)) {
+      if (!address) {
         connect({ connector: connectors.find(conn => conn.id === "controller") })
         return
       }
@@ -73,7 +79,7 @@ function ArenaPage() {
   return (
     <Scrollbars style={{ ...styles.container, border: showWatchBorder ? '1px solid #f59100' : 'none' }}>
       {gameContext.values.gameId === null && <>
-        {(watchGameId || gameId || gameContext.getState.loading)
+        {gameContext.getState.loading
           ? <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
             <LoadingContainer />
           </motion.div>
