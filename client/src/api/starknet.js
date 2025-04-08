@@ -1,5 +1,4 @@
 import { CallData } from "starknet";
-import { dojoConfig } from "../../dojo.config";
 
 export const fetchBalances = async (account, ethContract, lordsContract) => {
   const ethResult = await ethContract?.call(
@@ -16,4 +15,8 @@ export const fetchBalances = async (account, ethContract, lordsContract) => {
     eth: ethResult?.balance?.low ?? BigInt(0),
     lords: lordsBalanceResult ?? BigInt(0),
   };
+};
+
+export const fetchQuestTarget = async (questId) => {
+  return 300;
 };

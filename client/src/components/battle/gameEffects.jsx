@@ -1,14 +1,14 @@
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Box, Typography } from '@mui/material';
 import React, { useContext } from 'react';
-import cards from "../../assets/images/cards.png";
-import bolt from "../../assets/images/bolt.png";
+import { isMobile } from 'react-device-detect';
 import beast from "../../assets/images/beast.png";
+import bolt from "../../assets/images/bolt.png";
+import cards from "../../assets/images/cards.png";
 import hero from "../../assets/images/hero.png";
 import { GameContext } from '../../contexts/gameContext';
 import { fetchCardTypeImage, tags } from '../../helpers/cards';
 import { LargeCustomTooltip } from '../../helpers/styles';
-import { isMobile } from 'react-device-detect';
 
 export default function GameEffects(props) {
   const { overview } = props
@@ -196,6 +196,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     cursor: 'pointer',
+    mt: 1
   },
 
   effectText: {

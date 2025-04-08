@@ -6,16 +6,16 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { useConnect } from "@starknet-react/core";
 import React, { useContext, useState } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import logo from '../assets/images/logo.svg';
 import { BattleContext } from '../contexts/battleContext';
 import { DojoContext } from '../contexts/dojoContext';
 import { GameContext } from '../contexts/gameContext';
 import { ellipseAddress } from '../helpers/utilities';
 import ChooseName from './dialogs/chooseName';
+import GameSettings from './dialogs/gameSettings';
 import GameSettingsList from './dialogs/gameSettingsList';
 import ProfileMenu from './header/profileMenu';
-import GameSettings from './dialogs/gameSettings';
 
 const menuItems = [
   {
@@ -29,6 +29,7 @@ function Header(props) {
   const game = useContext(GameContext)
   const battle = useContext(BattleContext)
   const navigate = useNavigate()
+  const { watchGameId, gameId } = useParams()
 
   const { connect, connector, connectors } = useConnect();
   let cartridgeConnector = connectors.find(conn => conn.id === "controller")
@@ -54,7 +55,7 @@ function Header(props) {
     game.endGame()
   }
 
-  if (game.getState.loading) {
+  if (game.getState.loading || ((watchGameId || gameId) && !game.values.gameId)) {
     return null
   }
 
@@ -138,5 +139,5 @@ const styles = {
   },
   menu: {
     width: 300
-  }
+  },
 };

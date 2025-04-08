@@ -1,6 +1,6 @@
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Box, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import { default as React, useContext } from "react";
 import { GameContext } from "../../contexts/gameContext";
 import GameEffects from '../battle/gameEffects';
 
@@ -20,7 +20,6 @@ function HeroStats(props) {
   }
 
   return <Box sx={styles.container}>
-
     <Box display={'flex'} justifyContent={'space-between'}>
       <Typography color={'primary'} sx={{ width: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {game.values.playerName || 'Hero'}
@@ -33,7 +32,7 @@ function HeroStats(props) {
 
     <Box mt={0.5} display={'flex'} justifyContent={'space-between'}>
       <Typography>
-        Health left
+        Health
       </Typography>
 
       <Box display={'flex'}>
@@ -45,7 +44,7 @@ function HeroStats(props) {
       </Box>
     </Box>
 
-    <Box mt={1}>
+    <Box>
       <GameEffects overview={true} />
     </Box>
 
@@ -67,5 +66,5 @@ const styles = {
     background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5))',
     border: '1px solid rgba(255, 255, 255, 0.2)',
     borderRadius: '5px',
-  },
+  }
 }

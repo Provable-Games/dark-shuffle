@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getCardDetails, getRecommendedSettings, getSettings } from "../api/indexer";
 import { generateMapNodes } from "../helpers/map";
 import { DojoContext } from "./dojoContext";
+import { fetchQuestTarget } from "../api/starknet";
 
 export const GameContext = createContext()
 
@@ -51,6 +52,17 @@ export const GameProvider = ({ children }) => {
       setLoading(false);
     }
   }, [values.gameId])
+
+  useEffect(() => {
+    const getQuestTarget = async () => {
+      const questTarget = await fetchQuestTarget(tokenData.eternumQuest)
+      setGame({ questTarget })
+    }
+
+    if (tokenData.eternumQuest) {
+      getQuestTarget()
+    }
+  }, [tokenData.eternumQuest])
 
   const setGame = (values) => {
     if (!isNaN(values.state || 0)) {

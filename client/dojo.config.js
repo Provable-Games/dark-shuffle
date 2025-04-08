@@ -1,6 +1,5 @@
-import manifest_sepolia from "./manifest_sepolia.json";
 import manifest_mainnet from "./manifest_mainnet.json";
-import manifest_tournaments from "./manifest_tournaments.json";
+import manifest_sepolia from "./manifest_sepolia.json";
 
 const {
   VITE_PUBLIC_CHAIN,
@@ -15,6 +14,7 @@ const {
   VITE_PUBLIC_NAMESPACE,
   VITE_PUBLIC_TOURNAMENT_NAMESPACE,
   VITE_PUBLIC_ALCHEMY_URL,
+  VITE_PUBLIC_ETERNUM_QUEST_ADDRESS
 } = import.meta.env;
 
 export const dojoConfig = {
@@ -32,6 +32,6 @@ export const dojoConfig = {
   feeTokenAddress: VITE_PUBLIC_FEE_TOKEN_ADDRESS || "0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
   ethAddress: VITE_PUBLIC_ETH_ADDRESS,
   lordsAddress: VITE_PUBLIC_LORDS_ADDRESS,
+  eternumQuestAddress: VITE_PUBLIC_ETERNUM_QUEST_ADDRESS,
   manifest: VITE_PUBLIC_CHAIN === "mainnet" ? manifest_mainnet : manifest_sepolia,
-  tournamentManifest: manifest_tournaments
 };

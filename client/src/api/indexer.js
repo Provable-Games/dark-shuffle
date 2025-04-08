@@ -13,6 +13,7 @@ let SQL_ENDPOINT = dojoConfig.toriiUrl + "/sql"
 
 let TOURNAMENT_NS = dojoConfig.tournamentNamespace;
 let TOURNAMENT_NS_SHORT = get_short_namespace(TOURNAMENT_NS);
+let ETERNUM_QUEST_ADDRESS = dojoConfig.eternumQuestAddress.toLowerCase();
 
 export async function getTournament(tournament_id) {
   const document = gql`
@@ -403,6 +404,7 @@ export const populateGameTokens = async (tokenIds) => {
           token_id
           player_name
           settings_id
+          minted_by
           lifecycle {
             start {
               Some
@@ -453,7 +455,8 @@ export const populateGameTokens = async (tokenIds) => {
         xp: game?.hero_xp,
         tournament_id: parseInt(tournament?.tournament_id, 16),
         active: game?.hero_health !== 0 && (expires_at === 0 || expires_at > Date.now()),
-        gameStarted: Boolean(game?.hero_xp)
+        gameStarted: Boolean(game?.hero_xp),
+        eternumQuest: metaData.minted_by.toLowerCase() === ETERNUM_QUEST_ADDRESS,
       }
     })
 
@@ -702,6 +705,7 @@ export async function getTokenMetadata(game_id) {
           token_id
           player_name
           settings_id
+          minted_by
           lifecycle {
             start {
               Some
@@ -749,7 +753,8 @@ export async function getTokenMetadata(game_id) {
     expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
     available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000,
     active: game?.hero_health !== 0,
-    gameStarted: Boolean(game?.hero_xp)
+    gameStarted: Boolean(game?.hero_xp),
+    eternumQuest: !metadata.minted_by.toLowerCase() === ETERNUM_QUEST_ADDRESS,
   };
 }
 
