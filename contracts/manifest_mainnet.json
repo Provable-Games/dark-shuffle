@@ -1312,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x62cfee20a5be4b305f610a23291aa27f3fca7a5fd14bd8e2d0389556003e12",
-      "class_hash": "0x6ad209dc90640f1553ac6f6f47831d3b9416f92e8b6215c065f6ea99c5a9f7a",
+      "address": "0x6633dc0c8e3956fd8d87f68e5a4324cb20270b442a532f4d4179d85c389b324",
+      "class_hash": "0x1a50b1607e9c69ba867235d2114cd12da7a15159cb893c88a5cbc98a5fdd10b",
       "abi": [
         {
           "type": "impl",
@@ -1532,16 +1532,16 @@
         }
       ],
       "init_calldata": [],
-      "tag": "ds_v1_1_4-battle_systems",
-      "selector": "0x380ba0c091cd846e1dcf5a250c327eae1062e0ee091034a68bc2859a68695f9",
+      "tag": "ds_v1_2_0-battle_systems",
+      "selector": "0x76b546602bfd66e91f744f1b841949ecc5df451537918678873b327d2aa7255",
       "systems": [
         "battle_actions",
         "upgrade"
       ]
     },
     {
-      "address": "0x1e4351f21742c487c01a61436248540d7eeff990cab6c6955c035b6bc9a2fdc",
-      "class_hash": "0x6f290260ea125995c3c399d09b4cb90b2a9d0b7b7ac3d7a134ca4d6ec1f5c92",
+      "address": "0x5afdbe9b845946e021484fabc9941e97d87fa0ec2fadd757cfb00d16767093a",
+      "class_hash": "0x681c31137830b6838b120558fc949c272ffe39f2d826df0fdaaed8a62618aa0",
       "abi": [
         {
           "type": "impl",
@@ -1606,6 +1606,42 @@
           "interface_name": "darkshuffle::systems::config::contracts::IConfigSystems"
         },
         {
+          "type": "struct",
+          "name": "core::array::Span::<core::integer::u64>",
+          "members": [
+            {
+              "name": "snapshot",
+              "type": "@core::array::Array::<core::integer::u64>"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "darkshuffle::models::config::CardRarityWeights",
+          "members": [
+            {
+              "name": "common",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "uncommon",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "rare",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "epic",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "legendary",
+              "type": "core::integer::u8"
+            }
+          ]
+        },
+        {
           "type": "enum",
           "name": "core::bool",
           "variants": [
@@ -1621,26 +1657,102 @@
         },
         {
           "type": "struct",
-          "name": "darkshuffle::models::config::GameSettings",
+          "name": "darkshuffle::models::card::CardModifier",
           "members": [
             {
-              "name": "settings_id",
-              "type": "core::integer::u32"
-            },
-            {
-              "name": "start_health",
+              "name": "_type",
               "type": "core::integer::u8"
             },
+            {
+              "name": "value_type",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "value",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "requirement",
+              "type": "core::integer::u8"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "darkshuffle::models::card::EffectBonus",
+          "members": [
+            {
+              "name": "value",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "requirement",
+              "type": "core::integer::u8"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "darkshuffle::models::card::CardEffect",
+          "members": [
+            {
+              "name": "modifier",
+              "type": "darkshuffle::models::card::CardModifier"
+            },
+            {
+              "name": "bonus",
+              "type": "darkshuffle::models::card::EffectBonus"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "darkshuffle::models::config::MapSettings",
+          "members": [
+            {
+              "name": "level_depth",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "possible_branches",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_attack_min",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_attack_max",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_health_min",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_health_max",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_attack_scaling",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "enemy_health_scaling",
+              "type": "core::integer::u8"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "darkshuffle::models::config::BattleSettings",
+          "members": [
             {
               "name": "start_energy",
               "type": "core::integer::u8"
             },
             {
               "name": "start_hand_size",
-              "type": "core::integer::u8"
-            },
-            {
-              "name": "draft_size",
               "type": "core::integer::u8"
             },
             {
@@ -1652,8 +1764,60 @@
               "type": "core::integer::u8"
             },
             {
-              "name": "include_spells",
+              "name": "draw_amount",
+              "type": "core::integer::u8"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "darkshuffle::models::config::DraftSettings",
+          "members": [
+            {
+              "name": "draft_size",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "card_ids",
+              "type": "core::array::Span::<core::integer::u64>"
+            },
+            {
+              "name": "card_rarity_weights",
+              "type": "darkshuffle::models::config::CardRarityWeights"
+            },
+            {
+              "name": "auto_draft",
               "type": "core::bool"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "darkshuffle::models::config::GameSettings",
+          "members": [
+            {
+              "name": "settings_id",
+              "type": "core::integer::u32"
+            },
+            {
+              "name": "starting_health",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "persistent_health",
+              "type": "core::bool"
+            },
+            {
+              "name": "map",
+              "type": "darkshuffle::models::config::MapSettings"
+            },
+            {
+              "name": "battle",
+              "type": "darkshuffle::models::config::BattleSettings"
+            },
+            {
+              "name": "draft",
+              "type": "darkshuffle::models::config::DraftSettings"
             }
           ]
         },
@@ -1666,7 +1830,15 @@
               "name": "add_settings",
               "inputs": [
                 {
-                  "name": "start_health",
+                  "name": "name",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "description",
+                  "type": "core::byte_array::ByteArray"
+                },
+                {
+                  "name": "starting_health",
                   "type": "core::integer::u8"
                 },
                 {
@@ -1690,8 +1862,147 @@
                   "type": "core::integer::u8"
                 },
                 {
-                  "name": "include_spells",
+                  "name": "draw_amount",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "card_ids",
+                  "type": "core::array::Span::<core::integer::u64>"
+                },
+                {
+                  "name": "card_rarity_weights",
+                  "type": "darkshuffle::models::config::CardRarityWeights"
+                },
+                {
+                  "name": "auto_draft",
                   "type": "core::bool"
+                },
+                {
+                  "name": "persistent_health",
+                  "type": "core::bool"
+                },
+                {
+                  "name": "possible_branches",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "level_depth",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_attack_min",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_attack_max",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_health_min",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_health_max",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_attack_scaling",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "enemy_health_scaling",
+                  "type": "core::integer::u8"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "add_random_settings",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "add_creature_card",
+              "inputs": [
+                {
+                  "name": "name",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "rarity",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "cost",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "attack",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "health",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "card_type",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "play_effect",
+                  "type": "darkshuffle::models::card::CardEffect"
+                },
+                {
+                  "name": "attack_effect",
+                  "type": "darkshuffle::models::card::CardEffect"
+                },
+                {
+                  "name": "death_effect",
+                  "type": "darkshuffle::models::card::CardEffect"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "add_spell_card",
+              "inputs": [
+                {
+                  "name": "name",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "rarity",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "cost",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "card_type",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "effect",
+                  "type": "darkshuffle::models::card::CardEffect"
+                },
+                {
+                  "name": "extra_effect",
+                  "type": "darkshuffle::models::card::CardEffect"
                 }
               ],
               "outputs": [],
@@ -1867,220 +2178,19 @@
         }
       ],
       "init_calldata": [],
-      "tag": "ds_v1_1_4-config_systems",
-      "selector": "0x5404a52eb3e9f6bdcce3ba01572cce5a9e243fac37d81981c1cfd678727bbd",
+      "tag": "ds_v1_2_0-config_systems",
+      "selector": "0x39c10fec712357fc9947f12b4b3ec88e2a69623267c0558898940bcd980d7f3",
       "systems": [
         "add_settings",
+        "add_random_settings",
+        "add_creature_card",
+        "add_spell_card",
         "upgrade"
       ]
     },
     {
-      "address": "0xae7393b60ad9fd5c26851341b9a4afe61c6ae34326dee79cf5d096e9f55a36",
-      "class_hash": "0x7ba382af2ad101f2397283c3e30889bc4b6981946055c067c149488c2e35dc0",
-      "abi": [
-        {
-          "type": "impl",
-          "name": "draft_systems__ContractImpl",
-          "interface_name": "dojo::contract::interface::IContract"
-        },
-        {
-          "type": "interface",
-          "name": "dojo::contract::interface::IContract",
-          "items": []
-        },
-        {
-          "type": "impl",
-          "name": "draft_systems__DeployedContractImpl",
-          "interface_name": "dojo::meta::interface::IDeployedResource"
-        },
-        {
-          "type": "struct",
-          "name": "core::byte_array::ByteArray",
-          "members": [
-            {
-              "name": "data",
-              "type": "core::array::Array::<core::bytes_31::bytes31>"
-            },
-            {
-              "name": "pending_word",
-              "type": "core::felt252"
-            },
-            {
-              "name": "pending_word_len",
-              "type": "core::integer::u32"
-            }
-          ]
-        },
-        {
-          "type": "interface",
-          "name": "dojo::meta::interface::IDeployedResource",
-          "items": [
-            {
-              "type": "function",
-              "name": "dojo_name",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "core::byte_array::ByteArray"
-                }
-              ],
-              "state_mutability": "view"
-            }
-          ]
-        },
-        {
-          "type": "impl",
-          "name": "DraftSystemsImpl",
-          "interface_name": "darkshuffle::systems::draft::contracts::IDraftSystems"
-        },
-        {
-          "type": "interface",
-          "name": "darkshuffle::systems::draft::contracts::IDraftSystems",
-          "items": [
-            {
-              "type": "function",
-              "name": "pick_card",
-              "inputs": [
-                {
-                  "name": "game_id",
-                  "type": "core::integer::u64"
-                },
-                {
-                  "name": "option_id",
-                  "type": "core::integer::u8"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            }
-          ]
-        },
-        {
-          "type": "function",
-          "name": "dojo_init",
-          "inputs": [],
-          "outputs": [],
-          "state_mutability": "view"
-        },
-        {
-          "type": "impl",
-          "name": "WorldProviderImpl",
-          "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
-        },
-        {
-          "type": "struct",
-          "name": "dojo::world::iworld::IWorldDispatcher",
-          "members": [
-            {
-              "name": "contract_address",
-              "type": "core::starknet::contract_address::ContractAddress"
-            }
-          ]
-        },
-        {
-          "type": "interface",
-          "name": "dojo::contract::components::world_provider::IWorldProvider",
-          "items": [
-            {
-              "type": "function",
-              "name": "world_dispatcher",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "dojo::world::iworld::IWorldDispatcher"
-                }
-              ],
-              "state_mutability": "view"
-            }
-          ]
-        },
-        {
-          "type": "impl",
-          "name": "UpgradeableImpl",
-          "interface_name": "dojo::contract::components::upgradeable::IUpgradeable"
-        },
-        {
-          "type": "interface",
-          "name": "dojo::contract::components::upgradeable::IUpgradeable",
-          "items": [
-            {
-              "type": "function",
-              "name": "upgrade",
-              "inputs": [
-                {
-                  "name": "new_class_hash",
-                  "type": "core::starknet::class_hash::ClassHash"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            }
-          ]
-        },
-        {
-          "type": "constructor",
-          "name": "constructor",
-          "inputs": []
-        },
-        {
-          "type": "event",
-          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
-          "kind": "struct",
-          "members": [
-            {
-              "name": "class_hash",
-              "type": "core::starknet::class_hash::ClassHash",
-              "kind": "data"
-            }
-          ]
-        },
-        {
-          "type": "event",
-          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
-          "kind": "enum",
-          "variants": [
-            {
-              "name": "Upgraded",
-              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
-              "kind": "nested"
-            }
-          ]
-        },
-        {
-          "type": "event",
-          "name": "dojo::contract::components::world_provider::world_provider_cpt::Event",
-          "kind": "enum",
-          "variants": []
-        },
-        {
-          "type": "event",
-          "name": "darkshuffle::systems::draft::contracts::draft_systems::Event",
-          "kind": "enum",
-          "variants": [
-            {
-              "name": "UpgradeableEvent",
-              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
-              "kind": "nested"
-            },
-            {
-              "name": "WorldProviderEvent",
-              "type": "dojo::contract::components::world_provider::world_provider_cpt::Event",
-              "kind": "nested"
-            }
-          ]
-        }
-      ],
-      "init_calldata": [],
-      "tag": "ds_v1_1_4-draft_systems",
-      "selector": "0x35dadee42ec6df99fe2a483a8e393ec25d8b2ce6f7361776becf52b14423cc1",
-      "systems": [
-        "pick_card",
-        "upgrade"
-      ]
-    },
-    {
-      "address": "0x320f977f47f0885e376b781d9e244d9f59f10154ce844ae1815c919f0374726",
-      "class_hash": "0x324df9de9e32c19ade0585145522934c472677584df587878fcd272cf81e5e2",
+      "address": "0x444834e7b71749832f0db8c64f17ed1c3af8462c1682c10dcd6068b1c57494b",
+      "class_hash": "0x58247d1ac4b9a240db7830dd65242120cef599e59821ad39755e0e01019e977",
       "abi": [
         {
           "type": "impl",
@@ -2260,6 +2370,50 @@
                 {
                   "name": "game_id",
                   "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "pick_card",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "option_id",
+                  "type": "core::integer::u8"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "generate_tree",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "select_node",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "node_id",
+                  "type": "core::integer::u8"
                 }
               ],
               "outputs": [],
@@ -3288,11 +3442,14 @@
       "init_calldata": [
         "0x000B39b235b44c53a2E9F0c5D35939D9C8E8dAFDd0a2ba2E695b501Fc1e9fd2f"
       ],
-      "tag": "ds_v1_1_4-game_systems",
-      "selector": "0x66ee1c66fe50d4c032e76c62ebe6d377f8068e5819f894abab4568adac9bedb",
+      "tag": "ds_v1_2_0-game_systems",
+      "selector": "0x35bcd7b3c47338b5483ebad7aedd81f697cbbc89c0ade18e06668b90174d709",
       "systems": [
         "dojo_init",
         "start_game",
+        "pick_card",
+        "generate_tree",
+        "select_node",
         "upgrade",
         "mint",
         "emit_metadata_update",
@@ -3304,336 +3461,143 @@
         "transferFrom",
         "setApprovalForAll"
       ]
-    },
-    {
-      "address": "0x7c9a684813410b39c776c49544d8ecb2d39f0b91bd83ffec31ebc938e053e25",
-      "class_hash": "0x542869ec25e644140452fac067ede8c73922065400889c0ea79c42844ac34fc",
-      "abi": [
-        {
-          "type": "impl",
-          "name": "map_systems__ContractImpl",
-          "interface_name": "dojo::contract::interface::IContract"
-        },
-        {
-          "type": "interface",
-          "name": "dojo::contract::interface::IContract",
-          "items": []
-        },
-        {
-          "type": "impl",
-          "name": "map_systems__DeployedContractImpl",
-          "interface_name": "dojo::meta::interface::IDeployedResource"
-        },
-        {
-          "type": "struct",
-          "name": "core::byte_array::ByteArray",
-          "members": [
-            {
-              "name": "data",
-              "type": "core::array::Array::<core::bytes_31::bytes31>"
-            },
-            {
-              "name": "pending_word",
-              "type": "core::felt252"
-            },
-            {
-              "name": "pending_word_len",
-              "type": "core::integer::u32"
-            }
-          ]
-        },
-        {
-          "type": "interface",
-          "name": "dojo::meta::interface::IDeployedResource",
-          "items": [
-            {
-              "type": "function",
-              "name": "dojo_name",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "core::byte_array::ByteArray"
-                }
-              ],
-              "state_mutability": "view"
-            }
-          ]
-        },
-        {
-          "type": "impl",
-          "name": "MapSystemsImpl",
-          "interface_name": "darkshuffle::systems::map::contracts::IMapSystems"
-        },
-        {
-          "type": "interface",
-          "name": "darkshuffle::systems::map::contracts::IMapSystems",
-          "items": [
-            {
-              "type": "function",
-              "name": "generate_tree",
-              "inputs": [
-                {
-                  "name": "game_id",
-                  "type": "core::integer::u64"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "select_node",
-              "inputs": [
-                {
-                  "name": "game_id",
-                  "type": "core::integer::u64"
-                },
-                {
-                  "name": "node_id",
-                  "type": "core::integer::u8"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            }
-          ]
-        },
-        {
-          "type": "function",
-          "name": "dojo_init",
-          "inputs": [],
-          "outputs": [],
-          "state_mutability": "view"
-        },
-        {
-          "type": "impl",
-          "name": "WorldProviderImpl",
-          "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
-        },
-        {
-          "type": "struct",
-          "name": "dojo::world::iworld::IWorldDispatcher",
-          "members": [
-            {
-              "name": "contract_address",
-              "type": "core::starknet::contract_address::ContractAddress"
-            }
-          ]
-        },
-        {
-          "type": "interface",
-          "name": "dojo::contract::components::world_provider::IWorldProvider",
-          "items": [
-            {
-              "type": "function",
-              "name": "world_dispatcher",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "dojo::world::iworld::IWorldDispatcher"
-                }
-              ],
-              "state_mutability": "view"
-            }
-          ]
-        },
-        {
-          "type": "impl",
-          "name": "UpgradeableImpl",
-          "interface_name": "dojo::contract::components::upgradeable::IUpgradeable"
-        },
-        {
-          "type": "interface",
-          "name": "dojo::contract::components::upgradeable::IUpgradeable",
-          "items": [
-            {
-              "type": "function",
-              "name": "upgrade",
-              "inputs": [
-                {
-                  "name": "new_class_hash",
-                  "type": "core::starknet::class_hash::ClassHash"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            }
-          ]
-        },
-        {
-          "type": "constructor",
-          "name": "constructor",
-          "inputs": []
-        },
-        {
-          "type": "event",
-          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
-          "kind": "struct",
-          "members": [
-            {
-              "name": "class_hash",
-              "type": "core::starknet::class_hash::ClassHash",
-              "kind": "data"
-            }
-          ]
-        },
-        {
-          "type": "event",
-          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
-          "kind": "enum",
-          "variants": [
-            {
-              "name": "Upgraded",
-              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
-              "kind": "nested"
-            }
-          ]
-        },
-        {
-          "type": "event",
-          "name": "dojo::contract::components::world_provider::world_provider_cpt::Event",
-          "kind": "enum",
-          "variants": []
-        },
-        {
-          "type": "event",
-          "name": "darkshuffle::systems::map::contracts::map_systems::Event",
-          "kind": "enum",
-          "variants": [
-            {
-              "name": "UpgradeableEvent",
-              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
-              "kind": "nested"
-            },
-            {
-              "name": "WorldProviderEvent",
-              "type": "dojo::contract::components::world_provider::world_provider_cpt::Event",
-              "kind": "nested"
-            }
-          ]
-        }
-      ],
-      "init_calldata": [],
-      "tag": "ds_v1_1_4-map_systems",
-      "selector": "0x2fe8174e1f5266d03d45181ba1f786744c519d80b4862fd16c317aa064f4112",
-      "systems": [
-        "generate_tree",
-        "select_node",
-        "upgrade"
-      ]
     }
   ],
   "libraries": [],
   "models": [
     {
       "members": [],
-      "class_hash": "0x40ed4508325edfea8496fdad4f0c3fb90ae8d0b00cb4919a9505651b67f0b12",
-      "tag": "ds_v1_1_4-Battle",
-      "selector": "0x128b6e571cdfa5d39b7810a505d12903bfa8a1448ae0e8887509b6e018bdddd"
+      "class_hash": "0x2b084caae3121820303aa22e02995e0dea353451b0708ac7255627d8bbb4514",
+      "tag": "ds_v1_2_0-Battle",
+      "selector": "0x291c625aa877649d6e00fe736031bd96a98ca41337c91cd828eca2176b3c72e"
     },
     {
       "members": [],
-      "class_hash": "0x53e0128632081a231d6299cf76b5fe575d3874dd88b84104f3105020c8cf1a5",
-      "tag": "ds_v1_1_4-Board",
-      "selector": "0x667526bdce1839aa2c6be6e4bc251dec45a0a788fa9d5b7a874342e9c06c40c"
+      "class_hash": "0x13a73c4aaad2542e229bd198a9f9199d406ff0777fbde3a9d42d82b810a4eab",
+      "tag": "ds_v1_2_0-BattleResources",
+      "selector": "0x62eabd0b2825cba91cbe1e9ae4df89049b33d2a8766615326a1eaafc670c244"
+    },
+    {
+      "members": [],
+      "class_hash": "0x6e5d6a482ad9574113c0b8335358869de99c7e98f76500c62d43a5e76dfc8db",
+      "tag": "ds_v1_2_0-Card",
+      "selector": "0x3563b64c9849ebf240d13129a73401f121733afe85f32d2eb7ded1c192240a7"
+    },
+    {
+      "members": [],
+      "class_hash": "0x1ff08858fedb0c5f81df361265dcc7752f0ed0f255d2f599c623465db9507df",
+      "tag": "ds_v1_2_0-CardsCounter",
+      "selector": "0x3bb6ee0b48f7f07baa9bf9a47efdc32722366b9579e98cfb36a12605a0ddc7"
+    },
+    {
+      "members": [],
+      "class_hash": "0x3a384d5ff5cb7e2d661854f70e3f477d2ac91061d39ff09b1ea9ef6c03bc72e",
+      "tag": "ds_v1_2_0-CreatureCard",
+      "selector": "0x1f6960b539a2d74a0e8d07261aea0e2bff6f89cd47a26243df33497582fbb9d"
     },
     {
       "members": [],
       "class_hash": "0x1238b8869caa09cc90c64d05d83922e769b9b872fc26cf442b05df4ef0b461d",
-      "tag": "ds_v1_1_4-Draft",
-      "selector": "0x60a27bde1735aca12713d1571390ae7f5f7afaff6cddcae0067058a61bea89"
+      "tag": "ds_v1_2_0-Draft",
+      "selector": "0x24ddbb3b98b29eaf34a5ce80e669fe197cfda5b1b834fe55a374d891ef8b704"
     },
     {
       "members": [],
       "class_hash": "0x329347fa827136da16ee24f436686acc5d116abfcf73bf1535bedb38ffa92c9",
-      "tag": "ds_v1_1_4-Game",
-      "selector": "0x45f78a7a2ce8d40f80739f6dcdf73ca43f662735d438b17d48894392fbba48f"
+      "tag": "ds_v1_2_0-Game",
+      "selector": "0x5204599c7da123e9a99a67c195ce63807a9f65ac046b3c9e398aade9f25b034"
     },
     {
       "members": [],
       "class_hash": "0x2942c6bc2a7c32e8fc6388074538f83c5cd92006b120012fbf8d4a47d6aef1",
-      "tag": "ds_v1_1_4-GameCounter",
-      "selector": "0x49d221c60f32d5ded0f70e270cfd550b04b2f4009eb51b6b9789b21c8fc7946"
+      "tag": "ds_v1_2_0-GameCounter",
+      "selector": "0x5818a2af252a8723457437e02adf79d8988ca2ff5998bc12db94da226632674"
     },
     {
       "members": [],
-      "class_hash": "0x2a0002ad11b64ef4ef427db54f6641886dc2b67d337a4a1a6bd264ac57eccd",
-      "tag": "ds_v1_1_4-GameEffects",
-      "selector": "0x3fda9c5f751e141c0991bf56190de3ead57648a1b06f4ede3ace9046152e8f9"
+      "class_hash": "0x78935b5989b5dcc6928205f2b7b3b97a2a61cdbecb31fff5e1bf6d4e43397e1",
+      "tag": "ds_v1_2_0-GameEffects",
+      "selector": "0x21ab79e9ecdaed6b16ff5c92763c14eb3bdd38916e67752662e376695a3156d"
     },
     {
       "members": [],
       "class_hash": "0x7b821ba31e4a384100d02c71e21bc12f2c6b809dc28dd313d9b2fee2d7e78fb",
-      "tag": "ds_v1_1_4-GameMetadata",
-      "selector": "0x41fb6229f4c30d8cb7cf4991cce52011f62babced84949da29257bf15528f20"
+      "tag": "ds_v1_2_0-GameMetadata",
+      "selector": "0x15f4fdc5b14db949ce35e985c4224b83e7d0e479720cd4b197bf27b3380156e"
     },
     {
       "members": [],
-      "class_hash": "0x2b96348ce51d8dab9f43aed7adee792dd0e63aa5d77e5b9cfd7871231def4f6",
-      "tag": "ds_v1_1_4-GameSettings",
-      "selector": "0x79124e5319ad8d49dbb0a5c76b9b5056b6e1393331dc44add565acb7ec6b2cd"
+      "class_hash": "0x19d6bdab328b7c65199a429710432fac3d40cdb6604d1bb5b8229e62c05f4e3",
+      "tag": "ds_v1_2_0-GameSettings",
+      "selector": "0x40f76893af52af25c2dda8662449d83f52ad15151e90c7645bed03144f7b154"
+    },
+    {
+      "members": [],
+      "class_hash": "0x58fc9ebefeccc6ecd153781ad0b64c794ce4042dc0e03de7c347ee4d38f5ba3",
+      "tag": "ds_v1_2_0-GameSettingsMetadata",
+      "selector": "0x3c1e4c37dd780e19648d4999be5897db259efd01a1a75112ecf7a1d76f7e627"
     },
     {
       "members": [],
       "class_hash": "0x4fedf9b7068a2f07a0e92e1752af656c60d6193b7ccb5fdcf307049603da659",
-      "tag": "ds_v1_1_4-Map",
-      "selector": "0x34cfe98df67e6f11fc3b18f4fb4e872edac62816451b8aaaee23d3adad60390"
+      "tag": "ds_v1_2_0-Map",
+      "selector": "0x1960d24475531c7a7b2e9821ec6093352216d8d772f9d0b358a941fd3293a34"
     },
     {
       "members": [],
       "class_hash": "0xd4b859cbf8bef2d1e9f81a3e598e281ed855009341058328b10f43204f00ec",
-      "tag": "ds_v1_1_4-Score",
-      "selector": "0x17aed6f723f0a8768ab1268fa124b13a84a43c5f69e8a49cc9311a2328da7d5"
+      "tag": "ds_v1_2_0-Score",
+      "selector": "0x764867485c827fd7fb0a1ef25f0ce0f735739497ce8cd91824e068332adefbc"
     },
     {
       "members": [],
       "class_hash": "0x3f82fa61272a7c7513cf48e89ca431820f62a1560de657608aca5c8e6a58b9",
-      "tag": "ds_v1_1_4-Settings",
-      "selector": "0x49ddc4be4c89e89f5cc92bb89fc20c0f195803acfe880f9cddc1e44f533202b"
+      "tag": "ds_v1_2_0-Settings",
+      "selector": "0x40fe855844a37570fcd8b6125d48396bee123249a0068053436474bb503e46e"
     },
     {
       "members": [],
-      "class_hash": "0x71d049431ac7c5544291d65f8f1e4cae9f234bbfe0d8969e56a855468d0b29e",
-      "tag": "ds_v1_1_4-SettingsCounter",
-      "selector": "0xbe9b3770d6aa731167bfa9a549242ce35fd6b2291cd07c6fd15af78304146b"
+      "class_hash": "0x5d31167fd55c0fdc83b6d51549b117981a395a6c0d8738eae62061ee33c3df1",
+      "tag": "ds_v1_2_0-SettingsCounter",
+      "selector": "0x5b23c4031b676804c0cc3474dfb6f3f18794efde96149b5ecda2307222c7dac"
     },
     {
       "members": [],
       "class_hash": "0x4d2afc0312d98dc2223a44ae88223336bb0a59a1bf2bcdc50b6f3d8875fb66a",
-      "tag": "ds_v1_1_4-SettingsDetails",
-      "selector": "0xbd51143a5b548d0d5aafa0aa6531de82033ec70a8d1435de69754be55c07b2"
+      "tag": "ds_v1_2_0-SettingsDetails",
+      "selector": "0x127c1783c9a292361dc99114c80a3ee2df645829dd6f3ac9f9575ad3abd8ac2"
+    },
+    {
+      "members": [],
+      "class_hash": "0x489b0859e4cc7745c18bd530d1b719732e56f1793edd5ecb31d9b1dd3f1aee6",
+      "tag": "ds_v1_2_0-SpellCard",
+      "selector": "0x185b767087fffd938907d9790de909248fd7ced185ad1f02347968c0f94d696"
     },
     {
       "members": [],
       "class_hash": "0x6d1a541f4d6ccf4dce9c6f60a6e40c24dbc3a60b925a80eb0c9a924c7491f9f",
-      "tag": "ds_v1_1_4-TokenMetadata",
-      "selector": "0x7b6811482a1a14c930defb0507b2bc93e3c042f78005e449c683952b846a149"
-    },
-    {
-      "members": [],
-      "class_hash": "0x5a310bfacb581ee050781a562dd9fd86924d039063218fe3c0bee0fe52f3f63",
-      "tag": "ds_v1_1_4-WorldConfig",
-      "selector": "0x65e209c2e3c16ceb097b384bb3b942213c0b37c166417360b78672ff638a0f6"
+      "tag": "ds_v1_2_0-TokenMetadata",
+      "selector": "0x57d581ad570550f0a6cc3c14d220021eb69741f2aaaeaab21e3a7d7a80dd85a"
     }
   ],
   "events": [
     {
       "members": [],
       "class_hash": "0x7cdb31c38c1fde16a618de050c8c71af51a9369b4d66f489f3343f20589b596",
-      "tag": "ds_v1_1_4-GameActionEvent",
-      "selector": "0x17bbfdb22e4f95354949cd5178d685e065b2f2b5a49df8c388b797aa711c648"
+      "tag": "ds_v1_2_0-GameActionEvent",
+      "selector": "0x46cbaf9ca08bbe09c6040d3bd8d3690ebbeb9b8782fab1ada0c1617fc7716c0"
     },
     {
       "members": [],
       "class_hash": "0x19a5c06b3a8417ff3f9883be3acb0e33c835795bd81fb87a5a47e6ed7d2d3af",
-      "tag": "ds_v1_1_4-TrophyCreation",
-      "selector": "0x375d92225031872ff008baf8143fecee71ced4141f55b7229e7f6a1c9215492"
+      "tag": "ds_v1_2_0-TrophyCreation",
+      "selector": "0x737933c4161511c7809ddc147c6278cb88d696d4e2f64d942528e0b1e2d54f"
     },
     {
       "members": [],
       "class_hash": "0x1922d2cd8b63eccf66321673234a52126cd9f0ab1bf6298c5abee6ee80c8990",
-      "tag": "ds_v1_1_4-TrophyProgression",
-      "selector": "0x7747e5d10fadc59ce2dd8efb63d4e4378c4e5907253c0f330da359f34c9a609"
+      "tag": "ds_v1_2_0-TrophyProgression",
+      "selector": "0x620cf10a34caaf302accd82358cb9b55b9efa1345f8e09a6afbc7feb4a9a9b0"
     }
   ],
   "external_contracts": []

@@ -2,11 +2,11 @@
 world_address = "0x06a9e4c6f0799160ea8ddc43ff982a5f83d7f633e9732ce42701de1288ff705f"
 world_block = 1197343
 contracts = [
-    "erc721:0x320f977f47f0885e376b781d9e244d9f59f10154ce844ae1815c919f0374726"
+    "erc721:0x444834e7b71749832f0db8c64f17ed1c3af8462c1682c10dcd6068b1c57494b"
 ]
 
-namespaces = ["ds_v1_1_4", "budokan_v_1_0_4"]
+namespaces = ["ds_v1_2_0", "budokan_v_1_0_4"]
 
 [events]
 raw = true
-historical = ["ds_v1_1_4-TrophyCreation", "ds_v1_1_4-TrophyProgression"]
+historical = ["ds_v1_2_0-TrophyCreation", "ds_v1_2_0-TrophyProgression"]

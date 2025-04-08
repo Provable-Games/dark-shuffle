@@ -1,8 +1,8 @@
+import { useSnackbar } from "notistack";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { getCardDetails, getRecommendedSettings, getSettings } from "../api/indexer";
 import { generateMapNodes } from "../helpers/map";
 import { DojoContext } from "./dojoContext";
-import { getCardDetails, getRecommendedSettings, getSettings } from "../api/indexer";
-import { useSnackbar } from "notistack";
 
 export const GameContext = createContext()
 
@@ -23,7 +23,7 @@ export const GameProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
   const { enqueueSnackbar } = useSnackbar()
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [loadingProgress, setLoadingProgress] = useState(0)
 
   const [tokenData, setTokenData] = useState({})
@@ -90,6 +90,7 @@ export const GameProvider = ({ children }) => {
       const tokenMetadata = res.find(e => e.componentName === 'TokenMetadata')
       return tokenMetadata
     } catch (ex) {
+      console.log(ex)
       handleError()
     }
   }
@@ -107,6 +108,7 @@ export const GameProvider = ({ children }) => {
       setGameSettings(settings)
       setGameCards(cardDetails)
     } catch (ex) {
+      console.log(ex)
       handleError()
     }
 

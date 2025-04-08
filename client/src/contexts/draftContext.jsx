@@ -73,6 +73,8 @@ export const DraftProvider = ({ children }) => {
           </>
         )
       })
+    } else if (!game.values.gameId) {
+      game.utils.handleError();
     }
   }
 

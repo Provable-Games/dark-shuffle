@@ -9,10 +9,9 @@ import {
   useInjectedConnectors,
   voyager
 } from "@starknet-react/core";
-import React from "react";
+import React, { useCallback } from "react";
 import { dojoConfig } from "../../dojo.config";
 import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
-import { useCallback } from "react";
 
 const StarknetChainId = {
   SN_MAIN: "0x534e5f4d41494e",
@@ -55,7 +54,7 @@ const cartridge = new ControllerConnector({
     },
   ],
   namespace: dojoConfig.namespace,
-  slot: "darkshuffle-sepolia",
+  slot: dojoConfig.chain === "mainnet" ? "darkshuffle-mainnet" : "darkshuffle-sepolia",
   preset: "dark-shuffle",
   rpc: dojoConfig.rpcUrl,
   colorMode: "dark",
