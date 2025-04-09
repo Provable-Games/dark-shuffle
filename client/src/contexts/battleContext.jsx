@@ -114,12 +114,15 @@ export const BattleProvider = ({ children }) => {
     setValues({})
     setBattleEffects()
     setHand([])
+    setNewHandCards([])
     setDeck([])
     setBoard([])
     setActions([])
     setTurnEnded(false)
     setEndState()
     setRoundStats({})
+    setPendingTx(false)
+    setUpdatedValues()
   }
 
   const submitBattleActions = async () => {

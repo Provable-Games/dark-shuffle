@@ -32,7 +32,7 @@ function Battlefield(props) {
     {isMobile && <Box sx={{ m: 2, display: 'flex', justifyContent: 'flex-end' }}>
       <CustomTooltip title={<Box mb={1}>
         <Typography color="primary">End Turn</Typography>
-        <Typography mt={0.5}>Your creatures attack. Monster perform its ability and attack. Yoy replenish energy.</Typography>
+        <Typography mt={0.5}>Your creatures attack. Monster perform its ability and attack. You replenish energy.</Typography>
       </Box>
       }>
         <LoadingButton variant='outlined' size='large' sx={{ fontSize: '14px', letterSpacing: '1px' }}
