@@ -1,4 +1,4 @@
-import { LoadingButton, Skeleton } from '@mui/lab'
+import { LoadingButton } from '@mui/lab'
 import { Box, Button, Typography } from '@mui/material'
 import { useAccount } from '@starknet-react/core'
 import React, { useContext, useState } from 'react'
@@ -11,19 +11,15 @@ import Monsters from '../components/landing/monsters'
 import { GameContext } from '../contexts/gameContext'
 import { useTournament } from '../contexts/tournamentContext'
 import { _styles } from '../helpers/styles'
-import { formatTimeUntil } from '../helpers/utilities'
 
 function LandingContainer() {
   const tournamentProvider = useTournament()
-  const { season } = tournamentProvider
 
   const { address } = useAccount()
 
   const gameState = useContext(GameContext)
   const [gamesDialog, openGamesDialog] = useState(false)
   const [gameSettings, openGameSettings] = useState(false)
-
-  let currentTime = Date.now() / 1000
 
   return (
     <>

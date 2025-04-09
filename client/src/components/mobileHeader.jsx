@@ -24,7 +24,7 @@ function MobileHeader(props) {
   let cartridgeConnector = connectors.find(conn => conn.id === "controller")
 
   const [menu, toggleMenu] = useState(false)
-  const [gameSettings, openGameSettings] = useState(false)
+  const [gameSettingsHeader, openGameSettingsHeader] = useState(false)
 
   const inGame = game.values.gameId
 
@@ -75,7 +75,7 @@ function MobileHeader(props) {
 
         <Divider />
 
-        <MenuItem onClick={() => { openGameSettings(true); toggleMenu(false) }}>
+        <MenuItem onClick={() => { openGameSettingsHeader(true); toggleMenu(false) }}>
           <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
@@ -129,8 +129,8 @@ function MobileHeader(props) {
       </SwipeableDrawer>
     </Box>
 
-    {gameSettings && <GameSettingsList open={gameSettings} close={openGameSettings} />}
-    {(gameSettings && inGame) && <GameSettings settingsId={game.getState.tokenData.settingsId} view={true} close={() => openGameSettings(false)} />}
+    {(gameSettingsHeader && !inGame) && <GameSettingsList open={gameSettingsHeader} close={openGameSettingsHeader} />}
+    {(gameSettingsHeader && inGame) && <GameSettings settingsId={game.getState.tokenData.settingsId} view={true} close={() => openGameSettingsHeader(false)} />}
   </Box>
 }
 
