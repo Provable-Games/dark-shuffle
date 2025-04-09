@@ -63,6 +63,7 @@ function GameSettingsList(props) {
       return
     }
 
+    close(false);
     const tokenData = await gameContext.actions.mintFreeGame(selectedSettings.settings_id)
 
     if (tokenData) {

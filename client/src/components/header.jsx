@@ -37,7 +37,7 @@ function Header(props) {
   const dojo = useContext(DojoContext)
 
   const [nameDialog, openNameDialog] = useState(false)
-  const [gameSettingsHeader, openGameSettingsHeader] = useState(false)
+  const [gameSettings, openGameSettings] = useState(false)
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -104,11 +104,11 @@ function Header(props) {
         </IconButton>
       </Box>
 
-      <ProfileMenu handleClose={handleClose} anchorEl={anchorEl} openNameDialog={openNameDialog} openGameSettingsHeader={openGameSettingsHeader} inGame={inGame} backToMenu={backToMenu} />
+      <ProfileMenu handleClose={handleClose} anchorEl={anchorEl} openNameDialog={openNameDialog} openGameSettings={openGameSettings} inGame={inGame} backToMenu={backToMenu} />
       <ChooseName open={nameDialog} close={openNameDialog} />
 
-      {(gameSettingsHeader && !inGame) && <GameSettingsList open={gameSettingsHeader} close={openGameSettingsHeader} />}
-      {(gameSettingsHeader && inGame) && <GameSettings settingsId={game.getState.tokenData.settingsId} view={true} close={() => openGameSettingsHeader(false)} />}
+      {(gameSettings && !inGame) && <GameSettingsList open={gameSettings} close={openGameSettings} />}
+      {(gameSettings && inGame) && <GameSettings settingsId={game.getState.tokenData.settingsId} view={true} close={() => openGameSettings(false)} />}
     </Box>
   );
 }
