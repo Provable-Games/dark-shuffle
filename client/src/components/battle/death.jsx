@@ -70,7 +70,7 @@ function DeathDialog(props) {
       {isQuestMode && (
         <Box mt={1} width="100%" maxWidth="600px">
           <Typography variant="h4" color='#f59100'>
-            Quest Failed
+            Quest {game.score < game.values.questTarget ? 'Failed' : 'Completed'}
           </Typography>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} mt={2}>
             <Typography variant="body1" color="primary" sx={{ opacity: 0.7 }}>
@@ -112,7 +112,7 @@ function DeathDialog(props) {
 
       {isBrowser && isQuestMode && <>
         <Typography mt={6}>
-          Better luck next time, brave hero. <br />
+          {game.score < game.values.questTarget ? 'Better luck next time, brave hero.' : 'Return to Eternum to claim your reward.'} <br />
           The darkness has claimed you this time, but your adventure in Eternum continues.
         </Typography>
       </>}

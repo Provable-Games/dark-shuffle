@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import React, { useContext, useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 import { getGameTokens, getSettingsMetadata, populateGameTokens } from '../../api/indexer';
+import { fetchQuestTarget } from '../../api/starknet';
 import logo from '../../assets/images/logo.svg';
 import { GameContext } from '../../contexts/gameContext';
 import { useTournament } from '../../contexts/tournamentContext';
@@ -33,11 +34,12 @@ function GameTokens(props) {
       let games = await populateGameTokens(gameTokenIds)
       let settingsMetadata = await getSettingsMetadata(games.map(game => game.settingsId))
 
-      games = games.map(game => ({
+      games = await Promise.all(games.map(async (game) => ({
         ...game,
         settingsMetadata: settingsMetadata.find(metadata => metadata.settings_id === game.settingsId),
         tournament: tournaments?.find(tournament => tournament.id === game.tournament_id),
-      }))
+        targetScore: game.eternumQuest ? (await fetchQuestTarget(game.tokenId)) : null,
+      })))
 
       setSelectedGame()
       setGames(games ?? [])
@@ -129,8 +131,17 @@ function GameTokens(props) {
 
         {game.tournament_id ? <Typography sx={{ color: '#f59100', textAlign: 'right' }}>
           {game.tournament?.name}
-        </Typography> : <Typography sx={{ color: '#fff', opacity: 0.8 }}>
-          Free
+        </Typography>
+          : game.eternumQuest ? <Typography sx={{ color: '#f59100', textAlign: 'right' }}>
+            S1 Quest
+          </Typography> :
+            <Typography sx={{ color: '#fff', opacity: 0.8 }}>
+              Free
+            </Typography>
+        }
+
+        {game.targetScore && <Typography color='secondary' sx={{ fontSize: '12px' }}>
+          {game.targetScore} XP
         </Typography>}
       </Box>
     </Box >

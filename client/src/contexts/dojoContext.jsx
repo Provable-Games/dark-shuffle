@@ -1,5 +1,5 @@
 import { DojoProvider as _dojoProvider, getContractByName } from "@dojoengine/core";
-import { useAccount, useConnect, useContract, useNetwork } from "@starknet-react/core";
+import { useAccount, useConnect, useContract, useDisconnect, useNetwork } from "@starknet-react/core";
 import { useSnackbar } from "notistack";
 import React, { createContext, useEffect, useState } from "react";
 import { CallData } from 'starknet';
@@ -20,6 +20,7 @@ export const DojoProvider = ({ children }) => {
   const { chain } = useNetwork()
   const { account, address, isConnecting } = useAccount()
   const { connect, connector, connectors } = useConnect();
+  const { disconnect } = useDisconnect()
   const { enqueueSnackbar } = useSnackbar()
 
   const [balances, setBalances] = useState({ eth: BigInt(0), lords: BigInt(0) })
@@ -27,17 +28,22 @@ export const DojoProvider = ({ children }) => {
   const [customName, setCustomName] = useState(localStorage.getItem("customName"))
 
   const dojoprovider = new _dojoProvider(dojoConfig.manifest, dojoConfig.rpcUrl);
-  let provider = new RpcProvider({ nodeUrl: dojoConfig.alchemyUrl });
+  let provider = new RpcProvider({ nodeUrl: dojoConfig.rpcUrl });
+  let cartridge = connectors.find(conn => conn.id === "controller")
 
   const getBalances = async () => {
-    let balanceData = await fetchBalances(address ?? "0x0", ethContract, lordsContract)
+    let balanceData = await fetchBalances(address ?? "0x0", lordsContract)
 
     setBalances(balanceData)
   }
 
   useEffect(() => {
     if (account) {
-      getBalances();
+      if (account.walletProvider?.account?.channel?.nodeUrl && account.walletProvider.account.channel.nodeUrl !== dojoConfig.rpcUrl) {
+        disconnect()
+      } else {
+        getBalances();
+      }
     }
   }, [account]);
 
@@ -57,7 +63,7 @@ export const DojoProvider = ({ children }) => {
 
   const executeTx = async (txs, includeVRF) => {
     if (!account) {
-      connect({ connector: connectors.find(conn => conn.id === "controller") })
+      connect({ connector: cartridge })
       return
     }
 
@@ -76,7 +82,7 @@ export const DojoProvider = ({ children }) => {
 
     try {
       const tx = await dojoprovider.execute(account, txs, dojoConfig.namespace, { version: "1" });
-
+      await new Promise(resolve => setTimeout(resolve, 1000));
       const receipt = await provider.waitForTransaction(tx.transaction_hash, { retryInterval: 500 })
 
       if (receipt.execution_status === "REVERTED") {
@@ -98,6 +104,7 @@ export const DojoProvider = ({ children }) => {
   return (
     <DojoContext.Provider
       value={{
+        provider,
         address: address,
         connecting: isConnecting,
         network: chain.network,

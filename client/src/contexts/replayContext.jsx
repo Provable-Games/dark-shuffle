@@ -2,12 +2,12 @@ import { createClient } from "@dojoengine/torii-client";
 import { useSnackbar } from 'notistack';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { RpcProvider } from "starknet";
 import { dojoConfig } from "../../dojo.config";
 import { getGameTxs } from '../api/indexer';
 import { translateEvent } from '../helpers/events';
 import { generateMapNodes } from '../helpers/map';
 import { BattleContext } from './battleContext';
+import { DojoContext } from './dojoContext';
 import { DraftContext } from './draftContext';
 import { GAME_STATES, GameContext } from './gameContext';
 
@@ -16,6 +16,7 @@ const ReplayContext = createContext();
 
 // Create a provider component
 export const ReplayProvider = ({ children }) => {
+  const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
   const draft = useContext(DraftContext)
   const battle = useContext(BattleContext)
@@ -23,8 +24,6 @@ export const ReplayProvider = ({ children }) => {
   const { enqueueSnackbar } = useSnackbar()
   const navigate = useNavigate()
   const [toriiClient, setToriiClient] = useState(null)
-
-  let provider = new RpcProvider({ nodeUrl: dojoConfig.alchemyUrl });
 
   const [txHashes, setTxHashes] = useState([]);
   const [step, setStep] = useState(0)
@@ -50,7 +49,7 @@ export const ReplayProvider = ({ children }) => {
       return
     }
 
-    const receipt = await provider.waitForTransaction(txHash || txHashes[step], { retryInterval: 500 })
+    const receipt = await dojo.provider.waitForTransaction(txHash || txHashes[step], { retryInterval: 200 })
     if (!receipt) {
       enqueueSnackbar('Failed to load replay', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
       endReplay()
