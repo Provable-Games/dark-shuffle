@@ -11,15 +11,19 @@ import Monsters from '../components/landing/monsters'
 import { GameContext } from '../contexts/gameContext'
 import { useTournament } from '../contexts/tournamentContext'
 import { _styles } from '../helpers/styles'
+import { useParams } from 'react-router-dom'
+import GameSettings from '../components/dialogs/gameSettings'
 
 function LandingContainer() {
   const tournamentProvider = useTournament()
 
+  const { showSettingsId } = useParams()
   const { address } = useAccount()
 
   const gameState = useContext(GameContext)
   const [gamesDialog, openGamesDialog] = useState(false)
-  const [gameSettings, openGameSettings] = useState(false)
+  const [gameSettingsList, openGameSettingsList] = useState(false)
+  const [gameSettings, openGameSettings] = useState(Boolean(showSettingsId))
 
   return (
     <>
@@ -61,7 +65,7 @@ function LandingContainer() {
             Call to Arms
           </Typography>
 
-          <LoadingButton variant='outlined' loading={gameState.getState.startStatus} onClick={() => openGameSettings(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
+          <LoadingButton variant='outlined' loading={gameState.getState.startStatus} onClick={() => openGameSettingsList(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
             Play Game
           </LoadingButton>
 
@@ -165,7 +169,7 @@ function LandingContainer() {
 
               <Box mt={4} display={'flex'} alignItems={'center'} gap={1.5}>
                 <LoadingButton variant='outlined' loading={gameState.getState.startStatus}
-                  onClick={() => openGameSettings(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
+                  onClick={() => openGameSettingsList(true)} sx={{ fontSize: '20px', letterSpacing: '2px', textTransform: 'none' }}>
                   Play Game
                 </LoadingButton>
 
@@ -191,7 +195,8 @@ function LandingContainer() {
       </BrowserView>
 
       {gamesDialog && <GameTokens open={gamesDialog} close={openGamesDialog} address={address} />}
-      {gameSettings && <GameSettingsList open={gameSettings} close={openGameSettings} />}
+      {gameSettingsList && <GameSettingsList open={gameSettingsList} close={openGameSettingsList} />}
+      {gameSettings && <GameSettings settingsId={showSettingsId} view={true} close={() => openGameSettings(false)} />}
     </>
   )
 }

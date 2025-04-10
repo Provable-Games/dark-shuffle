@@ -13,4 +13,12 @@ export const routes = [
     path: '/play/:gameId',
     content: <ArenaPage />
   },
+  {
+    path: '/newgame/:newGameSettingsId',
+    content: <ArenaPage />
+  },
+  {
+    path: '/settings/:showSettingsId',
+    content: <ArenaPage />
+  },
 ]

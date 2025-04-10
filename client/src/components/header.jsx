@@ -29,7 +29,7 @@ function Header(props) {
   const game = useContext(GameContext)
   const battle = useContext(BattleContext)
   const navigate = useNavigate()
-  const { watchGameId, gameId } = useParams()
+  const { showSettingsId } = useParams()
 
   const { connect, connector, connectors } = useConnect();
   let cartridgeConnector = connectors.find(conn => conn.id === "controller")
@@ -37,7 +37,7 @@ function Header(props) {
   const dojo = useContext(DojoContext)
 
   const [nameDialog, openNameDialog] = useState(false)
-  const [gameSettings, openGameSettings] = useState(false)
+  const [gameSettings, openGameSettings] = useState(Boolean(showSettingsId))
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -55,7 +55,7 @@ function Header(props) {
     game.endGame()
   }
 
-  if (game.getState.loading || ((watchGameId || gameId) && !game.values.gameId)) {
+  if (game.getState.loading) {
     return null
   }
 
@@ -109,6 +109,7 @@ function Header(props) {
 
       {(gameSettings && !inGame) && <GameSettingsList open={gameSettings} close={openGameSettings} />}
       {(gameSettings && inGame) && <GameSettings settingsId={game.getState.tokenData.settingsId} view={true} close={() => openGameSettings(false)} />}
+      {(showSettingsId && gameSettings) && <GameSettings settingsId={showSettingsId} view={true} close={() => { openGameSettings(false); navigate(`/`) }} />}
     </Box>
   );
 }

@@ -19,16 +19,16 @@ function ArenaPage() {
   const { state } = gameContext.values
 
   const replay = useReplay()
-  const { watchGameId, gameId } = useParams()
-  const { account, address } = useAccount()
+  const { watchGameId, gameId, newGameSettingsId } = useParams()
+  const { address } = useAccount()
   const { connect, connectors, isPending } = useConnect();
   const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
-    if (!watchGameId && !gameId) {
+    if (!watchGameId && !gameId && !newGameSettingsId) {
       gameContext.setLoading(false)
     }
-  }, [watchGameId, gameId])
+  }, [watchGameId, gameId, newGameSettingsId])
 
   useEffect(() => {
     async function watchGame() {
@@ -60,19 +60,36 @@ function ArenaPage() {
         return
       }
 
-      if (gameId) {
-        gameContext.setLoading(true)
-        gameContext.setLoadingProgress(10)
+      gameContext.setLoading(true)
+      gameContext.setLoadingProgress(10)
 
-        let tokenData = await getTokenMetadata(gameId)
-        gameContext.actions.loadGameDetails(tokenData)
-      }
+      let tokenData = await getTokenMetadata(gameId)
+      gameContext.actions.loadGameDetails(tokenData)
     }
 
     if (gameId && !isPending) {
       loadGame()
     }
   }, [gameId, address, isPending])
+
+  useEffect(() => {
+    async function startNewGame() {
+      if (!address) {
+        connect({ connector: connectors.find(conn => conn.id === "controller") })
+        return
+      }
+
+      const tokenData = await gameContext.actions.mintFreeGame(newGameSettingsId)
+
+      if (tokenData) {
+        await gameContext.actions.loadGameDetails(tokenData)
+      }
+    }
+
+    if (newGameSettingsId && !isPending) {
+      startNewGame()
+    }
+  }, [newGameSettingsId, address, isPending])
 
   const showWatchBorder = gameContext.values.replay && !gameContext.getState.loading
 
