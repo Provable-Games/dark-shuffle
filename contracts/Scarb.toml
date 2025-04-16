@@ -23,6 +23,8 @@ dojo_cairo_test = { git = "https://github.com/dojoengine/dojo.git", tag = "v1.2.
 cairo_test = "2.9.2"
 
 [[target.starknet-contract]]
+sierra = true
+casm = true
 build-external-contracts = [
     "dojo::world::world_contract::world",
     "achievement::events::index::e_TrophyCreation",

@@ -98,7 +98,7 @@ mod game_systems {
     }
 
     fn dojo_init(ref self: ContractState, creator_address: ContractAddress) {
-        self.erc721.initializer("Dark Shuffle", "DARK", "darkshuffle.dev");
+        self.erc721.initializer("Dark Shuffle", "DARK", "darkshuffle.io");
         self
             .game
             .initializer(
