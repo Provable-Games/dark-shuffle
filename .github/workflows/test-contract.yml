@@ -49,3 +49,13 @@ jobs:
       - name: Run Tests
         run: |
           cd contracts && sozo test --print-resource-usage
+          
+  scarb-fmt:
+    needs: [setup-environment]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: ${{ env.SCARB_VERSION }}
+      - run: cd contracts && scarb fmt --check

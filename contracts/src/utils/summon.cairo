@@ -94,13 +94,7 @@ impl SummonUtilsImpl of SummonUtilsTrait {
                 creature_card.play_effect.modifier.requirement.into(), card_type, board_stats, false,
             ) {
                 CardUtilsImpl::apply_card_effect(
-                    card_type,
-                    creature_card.play_effect,
-                    ref creature,
-                    ref battle,
-                    ref board,
-                    board_stats,
-                    false,
+                    card_type, creature_card.play_effect, ref creature, ref battle, ref board, board_stats, false,
                 );
             }
         }

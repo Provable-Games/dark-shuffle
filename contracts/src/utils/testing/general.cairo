@@ -1,5 +1,5 @@
 use darkshuffle::models::battle::{Battle, BattleEffects, BattleResources, Hero, Monster};
-use darkshuffle::models::config::{GameSettings, CardRarityWeights, MapSettings, BattleSettings, DraftSettings};
+use darkshuffle::models::config::{BattleSettings, CardRarityWeights, DraftSettings, GameSettings, MapSettings};
 use darkshuffle::models::draft::Draft;
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::models::map::Map;
@@ -91,6 +91,10 @@ fn create_battle_resources(ref world: WorldStorage, game_id: u64, hand: Span<u8>
     world.write_model_test(@BattleResources { battle_id: 1, game_id, hand, deck, board: array![].span() });
 }
 
+fn create_battle_resources_with_board(ref world: WorldStorage, game_id: u64, hand: Span<u8>, deck: Span<u8>, board: Span<u8>) {
+    world.write_model_test(@BattleResources { battle_id: 1, game_id, hand, deck, board });
+}
+
 fn create_custom_settings(
     ref world: WorldStorage,
     starting_health: u8,
@@ -131,19 +135,8 @@ fn create_custom_settings(
                     enemy_attack_scaling,
                     enemy_health_scaling,
                 },
-                battle: BattleSettings {
-                    start_energy,
-                    start_hand_size,
-                    max_energy,
-                    max_hand_size,
-                    draw_amount,
-                },
-                draft: DraftSettings {
-                    draft_size,
-                    card_ids,
-                    card_rarity_weights,
-                    auto_draft,
-                },
+                battle: BattleSettings { start_energy, start_hand_size, max_energy, max_hand_size, draw_amount },
+                draft: DraftSettings { draft_size, card_ids, card_rarity_weights, auto_draft },
             },
         );
 
