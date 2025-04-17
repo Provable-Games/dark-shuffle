@@ -151,13 +151,16 @@ mod battle_systems {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
             } else {
                 battle_resources.board = BoardUtilsImpl::get_packed_board(ref board);
-                
+
                 let energy = game_settings.battle.start_energy + battle.round;
-                battle.hero.energy = if energy > game_settings.battle.max_energy {
-                    game_settings.battle.max_energy
-                } else {
-                    energy
-                };
+                battle
+                    .hero
+                    .energy =
+                        if energy > game_settings.battle.max_energy {
+                            game_settings.battle.max_energy
+                        } else {
+                            energy
+                        };
 
                 battle.round += 1;
                 HandUtilsImpl::draw_cards(

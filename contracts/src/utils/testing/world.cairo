@@ -6,9 +6,9 @@ use darkshuffle::models::config::{m_CardsCounter, m_GameSettings, m_GameSettings
 use darkshuffle::models::draft::m_Draft;
 use darkshuffle::models::game::{m_Game, m_GameEffects};
 use darkshuffle::models::map::m_Map;
-use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
 use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait, battle_systems};
 use darkshuffle::systems::config::contracts::{IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait, config_systems};
+use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
 use darkshuffle::utils::testing::systems::deploy_game_systems;
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
@@ -32,7 +32,6 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_Card::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_CreatureCard::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_SpellCard::TEST_CLASS_HASH.try_into().unwrap()),
-
             TestResource::Model(m_CardsCounter::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(
                 tournaments::components::models::game::m_GameMetadata::TEST_CLASS_HASH.try_into().unwrap(),
