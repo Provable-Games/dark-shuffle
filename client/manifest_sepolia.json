@@ -1,7 +1,7 @@
 {
   "world": {
-    "class_hash": "0x7c9469d45a9cdbab775035afb48e1fa73fb35ab059fcb9dfb0a301aa973e783",
-    "address": "0x1bfa92665fb815c9ec5f37c562a5c9a06fdf23ce022c1d33d4ac07cef5ad80c",
+    "class_hash": "0x75fc75bcd1a7f8b4bf64b74978b0f89c8cee44bb755c1dae6f82284756451ec",
+    "address": "0x1d0d23b2987c55cedda17e57e72d0cdcd2cf375a1de5f21c5682eb2afa0fa0f",
     "seed": "DNC",
     "name": "Provable Games",
     "entrypoints": [
@@ -1312,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x2e79e1fbd6705d11804f486d900755ecf42ee3434653b0e6e0ec6be02ee469",
-      "class_hash": "0x1a50b1607e9c69ba867235d2114cd12da7a15159cb893c88a5cbc98a5fdd10b",
+      "address": "0x90990babac99ccb9696d35fe4f325b3c0e0c21594e24902b76936118c6992b",
+      "class_hash": "0x539b523a1b399f7236380180d0087c830b78f604fe50e9b5367bb89ce01cc97",
       "abi": [
         {
           "type": "impl",
@@ -1540,8 +1540,8 @@
       ]
     },
     {
-      "address": "0x5f22b67f2c6fc96c688f7c7d827e2c631d88fc5916e6a5fd4d1c20f20be9d12",
-      "class_hash": "0x2cc804c09d6cd66a0bcd8a7045136edce4728bf68a19a1aaa6b0e80a60c26cc",
+      "address": "0x106af3742561ab1e1cf3ef12c87997063e6acce175137c3ea7d46c654492000",
+      "class_hash": "0x3ada36b4d21242b0fbce32d78d168729e26822fe51eee570583f1984a578749",
       "abi": [
         {
           "type": "impl",
@@ -2189,8 +2189,8 @@
       ]
     },
     {
-      "address": "0x4359aee29873cd9603207d29b4140468bac3e042aa10daab2e1a8b2dd60ef7b",
-      "class_hash": "0x58247d1ac4b9a240db7830dd65242120cef599e59821ad39755e0e01019e977",
+      "address": "0x5af07053c097793e43c4dffbc26990c5d8b08ee59381163037720dff1f8aa60",
+      "class_hash": "0x536b4f8d5d142ce54a1254679357465f5ad7419b69747cbcc1b5f065d2a09bd",
       "abi": [
         {
           "type": "impl",
@@ -3440,7 +3440,7 @@
         }
       ],
       "init_calldata": [
-        "0x0238df9Efd27Aba2ccB0bdC97a4cf440caA403e9ed3f1883294Ab6CDBA6C5282"
+        "0x065d2AB17338b5AffdEbAF95E2D79834B5f30Bac596fF55563c62C3c98700150"
       ],
       "tag": "ds_v1_2_0-game_systems",
       "selector": "0x35bcd7b3c47338b5483ebad7aedd81f697cbbc89c0ade18e06668b90174d709",
@@ -3467,115 +3467,115 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x2b084caae3121820303aa22e02995e0dea353451b0708ac7255627d8bbb4514",
+      "class_hash": "0x59b0c8d986b06e8d848b1b527d1104314065f6beb79c5dfaef735e4cf3379ff",
       "tag": "ds_v1_2_0-Battle",
       "selector": "0x291c625aa877649d6e00fe736031bd96a98ca41337c91cd828eca2176b3c72e"
     },
     {
       "members": [],
-      "class_hash": "0x13a73c4aaad2542e229bd198a9f9199d406ff0777fbde3a9d42d82b810a4eab",
+      "class_hash": "0x72b6cd41fb4cd54849ce04278d6ab24468145f4c5b65ea3c87aa04fc9c0c024",
       "tag": "ds_v1_2_0-BattleResources",
       "selector": "0x62eabd0b2825cba91cbe1e9ae4df89049b33d2a8766615326a1eaafc670c244"
     },
     {
       "members": [],
-      "class_hash": "0x6e5d6a482ad9574113c0b8335358869de99c7e98f76500c62d43a5e76dfc8db",
+      "class_hash": "0x681cbb66370f3980d0fbcb0e233053277d4f229dd5c8dbc584b17d1d9d7dd01",
       "tag": "ds_v1_2_0-Card",
       "selector": "0x3563b64c9849ebf240d13129a73401f121733afe85f32d2eb7ded1c192240a7"
     },
     {
       "members": [],
-      "class_hash": "0x1ff08858fedb0c5f81df361265dcc7752f0ed0f255d2f599c623465db9507df",
+      "class_hash": "0x3b148e016adec7160043c471937c17c9dc3bdd39b9f8717f9b505930ecb1c9e",
       "tag": "ds_v1_2_0-CardsCounter",
       "selector": "0x3bb6ee0b48f7f07baa9bf9a47efdc32722366b9579e98cfb36a12605a0ddc7"
     },
     {
       "members": [],
-      "class_hash": "0x3a384d5ff5cb7e2d661854f70e3f477d2ac91061d39ff09b1ea9ef6c03bc72e",
+      "class_hash": "0xd4f640a50756169259a15daf7a36a8f45298c2aef16dd374cb51221e7bdf1c",
       "tag": "ds_v1_2_0-CreatureCard",
       "selector": "0x1f6960b539a2d74a0e8d07261aea0e2bff6f89cd47a26243df33497582fbb9d"
     },
     {
       "members": [],
-      "class_hash": "0x1238b8869caa09cc90c64d05d83922e769b9b872fc26cf442b05df4ef0b461d",
+      "class_hash": "0x3803be3eadf86c4d229269c64e162097e061535fb3482b00672f2077f2069b2",
       "tag": "ds_v1_2_0-Draft",
       "selector": "0x24ddbb3b98b29eaf34a5ce80e669fe197cfda5b1b834fe55a374d891ef8b704"
     },
     {
       "members": [],
-      "class_hash": "0x329347fa827136da16ee24f436686acc5d116abfcf73bf1535bedb38ffa92c9",
+      "class_hash": "0x4b723939b9a3963d79a6ac5567f69375b75a8390d20bf63f6152c05475b3016",
       "tag": "ds_v1_2_0-Game",
       "selector": "0x5204599c7da123e9a99a67c195ce63807a9f65ac046b3c9e398aade9f25b034"
     },
     {
       "members": [],
-      "class_hash": "0x2942c6bc2a7c32e8fc6388074538f83c5cd92006b120012fbf8d4a47d6aef1",
+      "class_hash": "0xdc2e5bb9a031c39c331e7452da6001f874a496eedab97472fa7f5c911a8ec2",
       "tag": "ds_v1_2_0-GameCounter",
       "selector": "0x5818a2af252a8723457437e02adf79d8988ca2ff5998bc12db94da226632674"
     },
     {
       "members": [],
-      "class_hash": "0x78935b5989b5dcc6928205f2b7b3b97a2a61cdbecb31fff5e1bf6d4e43397e1",
+      "class_hash": "0x35d37c838aec0d1456a75508561f744ae2fff299af4734b53b35b6bb122b0c9",
       "tag": "ds_v1_2_0-GameEffects",
       "selector": "0x21ab79e9ecdaed6b16ff5c92763c14eb3bdd38916e67752662e376695a3156d"
     },
     {
       "members": [],
-      "class_hash": "0x7b821ba31e4a384100d02c71e21bc12f2c6b809dc28dd313d9b2fee2d7e78fb",
+      "class_hash": "0x32268509eabc1bd319688f1fca9d8151159dbb09b9cf26734dc23e0afffafe4",
       "tag": "ds_v1_2_0-GameMetadata",
       "selector": "0x15f4fdc5b14db949ce35e985c4224b83e7d0e479720cd4b197bf27b3380156e"
     },
     {
       "members": [],
-      "class_hash": "0x19d6bdab328b7c65199a429710432fac3d40cdb6604d1bb5b8229e62c05f4e3",
+      "class_hash": "0x640aa8745685ebcae9755aca97bf7e42da3dc0432aeb20b2eca00e84df9a5ad",
       "tag": "ds_v1_2_0-GameSettings",
       "selector": "0x40f76893af52af25c2dda8662449d83f52ad15151e90c7645bed03144f7b154"
     },
     {
       "members": [],
-      "class_hash": "0x58fc9ebefeccc6ecd153781ad0b64c794ce4042dc0e03de7c347ee4d38f5ba3",
+      "class_hash": "0x1256bcd0259b1d09e4edb0cf9fe8c1a2ae188c4d9c42620dfdecb0550b8b375",
       "tag": "ds_v1_2_0-GameSettingsMetadata",
       "selector": "0x3c1e4c37dd780e19648d4999be5897db259efd01a1a75112ecf7a1d76f7e627"
     },
     {
       "members": [],
-      "class_hash": "0x4fedf9b7068a2f07a0e92e1752af656c60d6193b7ccb5fdcf307049603da659",
+      "class_hash": "0x4246a8f9d608c989bdb3d09cb49b7f91aa91a20a374377ff57e0a16707ccf19",
       "tag": "ds_v1_2_0-Map",
       "selector": "0x1960d24475531c7a7b2e9821ec6093352216d8d772f9d0b358a941fd3293a34"
     },
     {
       "members": [],
-      "class_hash": "0xd4b859cbf8bef2d1e9f81a3e598e281ed855009341058328b10f43204f00ec",
+      "class_hash": "0x18fc1c720db350bed92a902bee4a63a7df92b49569eabfcf5d46fc6bb73628a",
       "tag": "ds_v1_2_0-Score",
       "selector": "0x764867485c827fd7fb0a1ef25f0ce0f735739497ce8cd91824e068332adefbc"
     },
     {
       "members": [],
-      "class_hash": "0x3f82fa61272a7c7513cf48e89ca431820f62a1560de657608aca5c8e6a58b9",
+      "class_hash": "0xfe76028a63cb7cb179e39108da14dfc7a2a0b86ee2d32363dd9cf796d81fe7",
       "tag": "ds_v1_2_0-Settings",
       "selector": "0x40fe855844a37570fcd8b6125d48396bee123249a0068053436474bb503e46e"
     },
     {
       "members": [],
-      "class_hash": "0x5d31167fd55c0fdc83b6d51549b117981a395a6c0d8738eae62061ee33c3df1",
+      "class_hash": "0x1540d593f7b6d0ec355e68e7d066ad39cbb99c32c96a46d572c758c70f40c02",
       "tag": "ds_v1_2_0-SettingsCounter",
       "selector": "0x5b23c4031b676804c0cc3474dfb6f3f18794efde96149b5ecda2307222c7dac"
     },
     {
       "members": [],
-      "class_hash": "0x4d2afc0312d98dc2223a44ae88223336bb0a59a1bf2bcdc50b6f3d8875fb66a",
+      "class_hash": "0x7289d1d56a6e92ff99925fdfac1f70d7829a991211281fdda7e6f4bb15b4453",
       "tag": "ds_v1_2_0-SettingsDetails",
       "selector": "0x127c1783c9a292361dc99114c80a3ee2df645829dd6f3ac9f9575ad3abd8ac2"
     },
     {
       "members": [],
-      "class_hash": "0x489b0859e4cc7745c18bd530d1b719732e56f1793edd5ecb31d9b1dd3f1aee6",
+      "class_hash": "0x1108c66facaec53cd93ae2c20ae10a22ae681a26a5423f51772c1cf29cb5fc0",
       "tag": "ds_v1_2_0-SpellCard",
       "selector": "0x185b767087fffd938907d9790de909248fd7ced185ad1f02347968c0f94d696"
     },
     {
       "members": [],
-      "class_hash": "0x6d1a541f4d6ccf4dce9c6f60a6e40c24dbc3a60b925a80eb0c9a924c7491f9f",
+      "class_hash": "0x33d1fab3b617046a970045ee9e236a70a7585a8938b9c54eddd2b1ef9979b9a",
       "tag": "ds_v1_2_0-TokenMetadata",
       "selector": "0x57d581ad570550f0a6cc3c14d220021eb69741f2aaaeaab21e3a7d7a80dd85a"
     }
@@ -3583,19 +3583,19 @@
   "events": [
     {
       "members": [],
-      "class_hash": "0x7cdb31c38c1fde16a618de050c8c71af51a9369b4d66f489f3343f20589b596",
+      "class_hash": "0x69b6b21085d523bb6e7751453ac064b88947b4cf929386c65f82660001f0e1a",
       "tag": "ds_v1_2_0-GameActionEvent",
       "selector": "0x46cbaf9ca08bbe09c6040d3bd8d3690ebbeb9b8782fab1ada0c1617fc7716c0"
     },
     {
       "members": [],
-      "class_hash": "0x19a5c06b3a8417ff3f9883be3acb0e33c835795bd81fb87a5a47e6ed7d2d3af",
+      "class_hash": "0x5139e06eeffddd491a7563f9e4c10799f98fddfd6f26047e94413e374a19fcf",
       "tag": "ds_v1_2_0-TrophyCreation",
       "selector": "0x737933c4161511c7809ddc147c6278cb88d696d4e2f64d942528e0b1e2d54f"
     },
     {
       "members": [],
-      "class_hash": "0x1922d2cd8b63eccf66321673234a52126cd9f0ab1bf6298c5abee6ee80c8990",
+      "class_hash": "0x95f31367acd360680f16e74f712470bd3faf98aede3393644dad7d6d9c12cb",
       "tag": "ds_v1_2_0-TrophyProgression",
       "selector": "0x620cf10a34caaf302accd82358cb9b55b9efa1345f8e09a6afbc7feb4a9a9b0"
     }
