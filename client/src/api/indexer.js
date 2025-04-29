@@ -754,7 +754,7 @@ export async function getTokenMetadata(game_id) {
     available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000,
     active: game?.hero_health !== 0,
     gameStarted: Boolean(game?.hero_xp),
-    eternumQuest: !metadata.minted_by.toLowerCase() === ETERNUM_QUEST_ADDRESS,
+    eternumQuest: metadata.minted_by.toLowerCase() === ETERNUM_QUEST_ADDRESS,
   };
 }
 

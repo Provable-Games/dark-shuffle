@@ -55,14 +55,14 @@ export const GameProvider = ({ children }) => {
 
   useEffect(() => {
     const getQuestTarget = async () => {
-      const questTarget = await fetchQuestTarget(tokenData.eternumQuest)
-      setGame({ questTarget })
+      const questTarget = await fetchQuestTarget(values.gameId)
+      setValues(prev => ({ ...prev, questTarget }))
     }
 
-    if (tokenData.eternumQuest) {
+    if (values.gameId && tokenData.eternumQuest) {
       getQuestTarget()
     }
-  }, [tokenData.eternumQuest])
+  }, [tokenData.eternumQuest, values.gameId])
 
   const setGame = (values) => {
     if (!isNaN(values.state || 0)) {

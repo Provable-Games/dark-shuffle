@@ -43,5 +43,5 @@ export const fetchQuestTarget = async (questId) => {
     console.log('error', error)
   }
 
-  return 300;
+  return null;
 };
