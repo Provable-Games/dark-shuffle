@@ -1,5 +1,8 @@
 import { CallData } from "starknet";
 import { dojoConfig } from "../../dojo.config";
+import { getContractByName } from "@dojoengine/core";
+
+const GAME_ADDRESS = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
 
 export const fetchBalances = async (account, lordsContract) => {
   const lordsBalanceResult = await lordsContract?.call(
@@ -25,8 +28,8 @@ export const fetchQuestTarget = async (questId) => {
         params: [
           {
             contract_address: dojoConfig.eternumQuestAddress,
-            entry_point_selector: "0xb0d944377304e5d17e57a0404b4c1714845736851cfe18cc171a33868091be",
-            calldata: [questId.toString(16), "0x0"],
+            entry_point_selector: "0xb6164a78459165f0920db46e2adcae170df7e54c223fe9c265345b5dc36149",
+            calldata: [questId.toString(16), GAME_ADDRESS],
           },
           "pending",
         ],
@@ -35,7 +38,7 @@ export const fetchQuestTarget = async (questId) => {
     });
 
     const data = await response.json();
-    return data?.result[0].target_score;
+    return parseInt(data?.result[0], 16);
   } catch (error) {
     console.log('error', error)
   }

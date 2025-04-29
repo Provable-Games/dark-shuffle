@@ -140,7 +140,7 @@ function GameTokens(props) {
             </Typography>
         }
 
-        {game.targetScore && <Typography color='secondary' sx={{ fontSize: '12px' }}>
+        {game.targetScore && <Typography color='#f59100' sx={{ fontSize: '12px' }}>
           {game.targetScore} XP
         </Typography>}
       </Box>
