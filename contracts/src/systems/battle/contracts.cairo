@@ -131,6 +131,7 @@ mod battle_systems {
 
             if GameUtilsImpl::is_battle_over(battle) {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
+                game.update_metadata(world);
                 return;
             }
 
