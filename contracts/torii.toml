@@ -7,7 +7,7 @@ contracts = [
     "erc721:0x444834e7b71749832f0db8c64f17ed1c3af8462c1682c10dcd6068b1c57494b"
 ]
 
-namespaces = ["ds_v1_2_0", "budokan_v_1_0_4"]
+namespaces = ["ds_v1_2_0", "budokan_v_1_0_7"]
 
 [events]
 raw = true
