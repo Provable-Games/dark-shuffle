@@ -2,20 +2,17 @@ import { DojoProvider as _dojoProvider, getContractByName } from "@dojoengine/co
 import { useAccount, useConnect, useContract, useDisconnect, useNetwork } from "@starknet-react/core";
 import { useSnackbar } from "notistack";
 import React, { createContext, useEffect, useState } from "react";
-import { CallData } from 'starknet';
+import { CallData, RpcProvider } from 'starknet';
 import { dojoConfig } from "../../dojo.config";
-import EthBalanceFragment from "../abi/EthBalanceFragment.json";
 import Lords from "../abi/Lords.json";
 import { fetchBalances } from "../api/starknet";
 import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
 import { translateEvent } from "../helpers/events";
-import { RpcProvider } from "starknet";
 
 export const DojoContext = createContext()
 
 export const DojoProvider = ({ children }) => {
   const { contract: lordsContract } = useContract({ address: dojoConfig.lordsAddress, abi: Lords });
-  const { contract: ethContract } = useContract({ address: dojoConfig.ethAddress, abi: EthBalanceFragment });
 
   const { chain } = useNetwork()
   const { account, address, isConnecting } = useAccount()

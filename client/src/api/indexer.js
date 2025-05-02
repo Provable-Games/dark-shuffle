@@ -428,6 +428,15 @@ export const populateGameTokens = async (tokenIds) => {
         }
       }
     }
+
+    ${TOURNAMENT_NS_SHORT}RegistrationModels(limit: 10000, where:{game_address:"${GAME_ADDRESS}", game_token_idIN:[${tokenIds}]}) {
+      edges {
+        node {
+          game_token_id
+          tournament_id
+        }
+      }
+    }
   }`
 
   try {
