@@ -1,6 +1,7 @@
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { LoadingButton } from '@mui/lab';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
 import { motion } from "framer-motion";
 import React, { useContext } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -19,9 +20,27 @@ function BattleContainer() {
 
   const anyActionsLeft = battle.state.hand.find(card => battle.utils.getCardCost(card) <= battle.state.values.heroEnergy)
 
+  const ResetButton = () => {
+    return <Box sx={{ position: 'absolute', left: '10px', top: isMobile ? '40px' : '20px' }}>
+      <CustomTooltip title="Reset Turn" position='right'>
+        <IconButton
+          onClick={() => battle.utils.undoBattleActions()}
+          sx={{
+            bgcolor: 'rgba(0, 0, 0, 0.5)',
+            '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.7)' }
+          }}
+        >
+          <RestartAltIcon color='primary' />
+        </IconButton>
+      </CustomTooltip>
+    </Box>
+
+  }
+
   if (isMobile) {
     return <Box style={styles.mobileContainer}>
       <Box style={styles.mobileBoard}>
+        <ResetButton />
         <Battlefield />
       </Box>
 
@@ -70,6 +89,9 @@ function BattleContainer() {
       <Box sx={styles.container}>
 
         <Box sx={styles.board}>
+
+          <ResetButton />
+
           <Battlefield />
 
           <Box sx={{ position: 'absolute', right: '20px' }}>

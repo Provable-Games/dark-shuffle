@@ -469,10 +469,10 @@ export const populateGameTokens = async (tokenIds) => {
         playerName: hexToAscii(metaData.player_name),
         expires_at,
         available_at,
-        settingsId: parseInt(metaData.settings_id, 16),
+        settingsId: metaData.settings_id,
         health: game?.hero_health,
         xp: game?.hero_xp,
-        tournament_id: parseInt(tournament?.tournament_id, 16),
+        tournament_id: tournament?.tournament_id ? parseInt(tournament?.tournament_id, 16) : null,
         active: game?.hero_health !== 0 && (expires_at === 0 || expires_at > Date.now()),
         gameStarted: Boolean(game?.hero_xp),
         eternumQuest: metaData.minted_by.toLowerCase() === ETERNUM_QUEST_ADDRESS,
@@ -768,7 +768,7 @@ export async function getTokenMetadata(game_id) {
     id: tokenId,
     tokenId,
     playerName: hexToAscii(metadata.player_name),
-    settingsId: parseInt(metadata.settings_id, 16),
+    settingsId: metadata.settings_id,
     expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
     available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000,
     active: game?.hero_health !== 0,
@@ -794,7 +794,7 @@ export async function getRecommendedSettings() {
     });
 
     const data = await response.json();
-    const topSettingsIds = data.map(item => parseInt(item.settings_id, 16));
+    const topSettingsIds = data.map(item => item.settings_id);
 
     return await getSettingsList(null, topSettingsIds);
   } catch (error) {
