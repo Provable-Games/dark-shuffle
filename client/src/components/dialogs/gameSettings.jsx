@@ -14,6 +14,9 @@ import sword from '../../assets/images/sword.png';
 import { DojoContext } from '../../contexts/dojoContext';
 import { tierColors } from '../../helpers/cards';
 import DeckBuilder from './deckBuilder';
+import { GameContext } from '../../contexts/gameContext';
+import { useAccount, useConnect } from '@starknet-react/core';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 const DEFAULT_SETTINGS = {
   name: '',
@@ -46,10 +49,13 @@ const DEFAULT_SETTINGS = {
 }
 
 function GameSettings(props) {
-  const { view, settingsId } = props
+  const { view, settingsId, closeList, inGame } = props
 
   const dojo = useContext(DojoContext)
   const { enqueueSnackbar } = useSnackbar()
+  const gameContext = useContext(GameContext)
+  const { account } = useAccount()
+  const { connect, connectors } = useConnect()
 
   const [gameSettings, setGameSettings] = useState(DEFAULT_SETTINGS)
   const [loading, setLoading] = useState(view)
@@ -244,6 +250,24 @@ function GameSettings(props) {
     openDeckBuilder(false)
   }
 
+  const trySettings = async () => {
+    if (!account) {
+      connect({ connector: connectors.find(conn => conn.id === "controller") })
+      return
+    }
+
+    props.close()
+    if (closeList) {
+      closeList()
+    }
+
+    const tokenData = await gameContext.actions.mintFreeGame(settingsId)
+
+    if (tokenData) {
+      await gameContext.actions.loadGameDetails(tokenData)
+    }
+  }
+
   return (
     <Dialog
       open={true}
@@ -258,6 +282,12 @@ function GameSettings(props) {
         <Box sx={{ position: 'absolute', top: '10px', right: '10px' }} onClick={props.close}>
           <CloseIcon htmlColor='#FFF' sx={{ fontSize: '24px' }} />
         </Box>
+
+        {(view && !inGame) && <Box sx={{ position: 'absolute', top: '7px', right: '50px' }} onClick={trySettings}>
+          <Button variant='outlined' color='primary' size='small' startIcon={<PlayArrowIcon color='primary' />}>
+            Try Settings
+          </Button>
+        </Box>}
 
         <Typography variant='h4' color={'primary'}>
           {view ? gameSettings.name : step === 2 ? 'Create Settings' : ``}

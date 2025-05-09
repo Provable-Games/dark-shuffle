@@ -469,6 +469,11 @@ export const BattleProvider = ({ children }) => {
     }
   }
 
+  const undoBattleActions = async () => {
+    const battleId = values.battleId
+    fetchBattleState(battleId, game.values.gameId)
+  }
+
   const fetchBattleState = async (battleId, gameId) => {
     let data = await getBattleState(parseInt(battleId), parseInt(gameId))
 
@@ -509,6 +514,13 @@ export const BattleProvider = ({ children }) => {
       creaturesPlayed: 0,
       creatureAttackCount: 0
     })
+
+    setNewHandCards([])
+    setActions([])
+    setTurnEnded(false)
+    setEndState()
+    setPendingTx(false)
+    setUpdatedValues()
   }
 
   return (
@@ -531,6 +543,7 @@ export const BattleProvider = ({ children }) => {
           getCardCost,
           setHand,
           setNewHandCards,
+          undoBattleActions,
         },
 
         state: {

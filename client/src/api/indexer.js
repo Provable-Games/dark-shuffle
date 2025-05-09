@@ -4,6 +4,7 @@ import { gql, request } from 'graphql-request';
 import { dojoConfig } from '../../dojo.config';
 import { cardTypes, formatCardEffect, rarities, types } from "../helpers/cards";
 import { get_short_namespace } from '../helpers/components';
+import { delay } from "../helpers/utilities";
 
 let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace(NS);
@@ -134,7 +135,7 @@ export async function getSettings(settings_id) {
   }
 }
 
-export async function getActiveGame(game_id) {
+export async function getActiveGame(game_id, retry = 0) {
   const document = gql`
   {
     ${NS_SHORT}GameModels (where:{
@@ -158,6 +159,15 @@ export async function getActiveGame(game_id) {
   }`
 
   const res = await request(GQL_ENDPOINT, document)
+
+  if (!res?.[`${NS_SHORT}GameModels`]?.edges || res?.[`${NS_SHORT}GameModels`]?.edges.length === 0) {
+    if (retry < 3) {
+      await delay(500);
+      return getActiveGame(game_id, retry + 1);
+    }
+
+    return null
+  }
 
   return res?.[`${NS_SHORT}GameModels`]?.edges[0]?.node;
 }
@@ -450,10 +460,10 @@ export const populateGameTokens = async (tokenIds) => {
         playerName: hexToAscii(metaData.player_name),
         expires_at,
         available_at,
-        settingsId: parseInt(metaData.settings_id, 16),
+        settingsId: metaData.settings_id,
         health: game?.hero_health,
         xp: game?.hero_xp,
-        tournament_id: parseInt(tournament?.tournament_id, 16),
+        tournament_id: tournament?.tournament_id ? parseInt(tournament?.tournament_id, 16) : null,
         active: game?.hero_health !== 0 && (expires_at === 0 || expires_at > Date.now()),
         gameStarted: Boolean(game?.hero_xp),
         eternumQuest: metaData.minted_by.toLowerCase() === ETERNUM_QUEST_ADDRESS,
@@ -749,7 +759,7 @@ export async function getTokenMetadata(game_id) {
     id: tokenId,
     tokenId,
     playerName: hexToAscii(metadata.player_name),
-    settingsId: parseInt(metadata.settings_id, 16),
+    settingsId: metadata.settings_id,
     expires_at: parseInt(metadata.lifecycle.end.Some || 0, 16) * 1000,
     available_at: parseInt(metadata.lifecycle.start.Some || 0, 16) * 1000,
     active: game?.hero_health !== 0,
@@ -775,7 +785,7 @@ export async function getRecommendedSettings() {
     });
 
     const data = await response.json();
-    const topSettingsIds = data.map(item => parseInt(item.settings_id, 16));
+    const topSettingsIds = data.map(item => item.settings_id);
 
     return await getSettingsList(null, topSettingsIds);
   } catch (error) {

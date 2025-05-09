@@ -16,6 +16,7 @@ import ChooseName from './dialogs/chooseName';
 import GameSettings from './dialogs/gameSettings';
 import GameSettingsList from './dialogs/gameSettingsList';
 import ProfileMenu from './header/profileMenu';
+import { CustomTooltip } from '../helpers/styles';
 
 const menuItems = [
   {
@@ -65,9 +66,11 @@ function Header(props) {
     <Box sx={[styles.header, { height: inGame ? '42px' : '55px', pl: inGame ? 1 : 3 }]}>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-        <Box sx={{ height: '32px', opacity: 1, cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={backToMenu}>
-          {inGame ? <CloseIcon fontSize='medium' htmlColor='white' /> : <img alt='' src={logo} height='32' />}
-        </Box>
+        <CustomTooltip title="Exit Game" position='right'>
+          <Box sx={{ height: '32px', opacity: 1, cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={backToMenu}>
+            {inGame ? <CloseIcon fontSize='medium' htmlColor='white' /> : <img alt='' src={logo} height='32' />}
+          </Box>
+        </CustomTooltip>
 
         {!inGame && menuItems.map(item => {
           return <Link to={item.path} key={item.name} sx={styles.item}>
@@ -107,8 +110,8 @@ function Header(props) {
       <ProfileMenu handleClose={handleClose} anchorEl={anchorEl} openNameDialog={openNameDialog} openGameSettings={openGameSettings} inGame={inGame} backToMenu={backToMenu} />
       <ChooseName open={nameDialog} close={openNameDialog} />
 
-      {(gameSettings && !inGame) && <GameSettingsList open={gameSettings} close={openGameSettings} />}
-      {(gameSettings && inGame) && <GameSettings settingsId={game.getState.tokenData.settingsId} view={true} close={() => openGameSettings(false)} />}
+      {(gameSettings && !inGame) && <GameSettingsList open={gameSettings} close={() => openGameSettings(false)} />}
+      {(gameSettings && inGame) && <GameSettings inGame={inGame} settingsId={game.getState.tokenData.settingsId} view={true} close={() => openGameSettings(false)} />}
       {(showSettingsId && gameSettings) && <GameSettings settingsId={showSettingsId} view={true} close={() => { openGameSettings(false); navigate(`/`) }} />}
     </Box>
   );

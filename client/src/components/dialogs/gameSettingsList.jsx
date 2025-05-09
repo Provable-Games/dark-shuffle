@@ -63,7 +63,7 @@ function GameSettingsList(props) {
       return
     }
 
-    close(false);
+    close();
     const tokenData = await gameContext.actions.mintFreeGame(selectedSettings.settings_id)
 
     if (tokenData) {
@@ -95,7 +95,7 @@ function GameSettingsList(props) {
   return (
     <Dialog
       open={open}
-      onClose={() => close(false)}
+      onClose={() => close()}
       maxWidth={'lg'}
       PaperProps={{
         sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F', maxWidth: '98vw' }
@@ -183,6 +183,7 @@ function GameSettingsList(props) {
         settingsId={selectedSettings?.settings_id}
         view={gameSettings === 'view'}
         close={() => openGameSettings(false)}
+        closeList={() => close()}
         refetch={() => {
           if (tab === 'my') {
             fetchSettings()

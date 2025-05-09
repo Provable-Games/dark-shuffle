@@ -1,6 +1,6 @@
 [indexing]
 contracts = [
-    "erc721:0x3a8380c0b59277df5b268cd6b7ab88883d6d6c79d34018a58a71b186558392"
+    "erc721:0x25dd1faa4f94d1ddd523d7db4697c10a34a09d7b55b4758995a070fd9d61498"
 ]
 
 namespaces = ["ds_v1_2_0", "budokan_v_1_0_4"]
