@@ -4,6 +4,7 @@ import { gql, request } from 'graphql-request';
 import { dojoConfig } from '../../dojo.config';
 import { cardTypes, formatCardEffect, rarities, types } from "../helpers/cards";
 import { get_short_namespace } from '../helpers/components';
+import { delay } from "../helpers/utilities";
 
 let NS = dojoConfig.namespace;
 let NS_SHORT = get_short_namespace(NS);
@@ -134,7 +135,7 @@ export async function getSettings(settings_id) {
   }
 }
 
-export async function getActiveGame(game_id) {
+export async function getActiveGame(game_id, retry = 0) {
   const document = gql`
   {
     ${NS_SHORT}GameModels (where:{
@@ -158,6 +159,15 @@ export async function getActiveGame(game_id) {
   }`
 
   const res = await request(GQL_ENDPOINT, document)
+
+  if (!res?.[`${NS_SHORT}GameModels`]?.edges || res?.[`${NS_SHORT}GameModels`]?.edges.length === 0) {
+    if (retry < 3) {
+      await delay(500);
+      return getActiveGame(game_id, retry + 1);
+    }
+
+    return null
+  }
 
   return res?.[`${NS_SHORT}GameModels`]?.edges[0]?.node;
 }

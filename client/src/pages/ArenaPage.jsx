@@ -1,17 +1,17 @@
+import { useAccount, useConnect } from '@starknet-react/core'
+import { motion } from 'framer-motion'
 import { useSnackbar } from 'notistack'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useReducer } from 'react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { useParams } from 'react-router-dom'
 import { getTokenMetadata } from '../api/indexer'
 import BattleContainer from '../container/BattleContainer'
 import DraftContainer from '../container/DraftContainer'
+import LandingContainer from '../container/LandingContainer'
+import LoadingContainer from '../container/LoadingContainer'
 import MapContainer from '../container/MapContainer'
 import { GameContext } from '../contexts/gameContext'
 import { useReplay } from '../contexts/replayContext'
-import { useAccount, useConnect } from '@starknet-react/core'
-import LandingContainer from '../container/LandingContainer'
-import LoadingContainer from '../container/LoadingContainer'
-import { motion } from 'framer-motion'
 import { fadeVariant } from '../helpers/variants'
 
 function ArenaPage() {
@@ -20,9 +20,10 @@ function ArenaPage() {
 
   const replay = useReplay()
   const { watchGameId, gameId, newGameSettingsId } = useParams()
-  const { address } = useAccount()
+  const { address, account } = useAccount()
   const { connect, connectors, isPending } = useConnect();
   const { enqueueSnackbar } = useSnackbar()
+  const [update, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
     if (!watchGameId && !gameId && !newGameSettingsId) {
@@ -60,6 +61,11 @@ function ArenaPage() {
         return
       }
 
+      if (!account) {
+        forceUpdate()
+        return
+      }
+
       gameContext.setLoading(true)
       gameContext.setLoadingProgress(10)
 
@@ -70,12 +76,17 @@ function ArenaPage() {
     if (gameId && !isPending) {
       loadGame()
     }
-  }, [gameId, address, isPending])
+  }, [gameId, address, isPending, update])
 
   useEffect(() => {
     async function startNewGame() {
       if (!address) {
         connect({ connector: connectors.find(conn => conn.id === "controller") })
+        return
+      }
+
+      if (!account) {
+        forceUpdate()
         return
       }
 
@@ -89,7 +100,7 @@ function ArenaPage() {
     if (newGameSettingsId && !isPending) {
       startNewGame()
     }
-  }, [newGameSettingsId, address, isPending])
+  }, [newGameSettingsId, address, isPending, update])
 
   const showWatchBorder = gameContext.values.replay && !gameContext.getState.loading
 
