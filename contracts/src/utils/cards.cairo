@@ -1,8 +1,7 @@
 use achievement::store::{Store, StoreTrait};
 use darkshuffle::models::battle::{Battle, BattleEffects, BoardStats, Creature, CreatureDetails, RoundStats};
 use darkshuffle::models::card::{
-    Card, CardEffect, CardModifier, CardType, CreatureCard, Modifier, Requirement, SpellCard,
-    ValueType, EffectBonus
+    Card, CardEffect, CardModifier, CardType, CreatureCard, EffectBonus, Modifier, Requirement, SpellCard, ValueType,
 };
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::battle::BattleUtilsImpl;
@@ -33,7 +32,8 @@ impl CardUtilsImpl of CardUtilsTrait {
             if Self::_is_requirement_met(card_effect.bonus.requirement.into(), card_type, board_stats, on_board) {
                 match value_type {
                     ValueType::Fixed => modifier_value += card_effect.bonus.value,
-                    ValueType::PerAlly => modifier_value += card_effect.bonus.value * Self::_ally_count(card_type, board_stats),
+                    ValueType::PerAlly => modifier_value += card_effect.bonus.value
+                        * Self::_ally_count(card_type, board_stats),
                     _ => {},
                 }
             }

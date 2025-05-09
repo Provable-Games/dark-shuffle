@@ -1,5 +1,5 @@
-use darkshuffle::models::card::{CardRarity, CardType, CardEffect};
-use darkshuffle::models::config::{GameSettingsMetadata, GameSettings, CardRarityWeights};
+use darkshuffle::models::card::{CardEffect, CardRarity, CardType};
+use darkshuffle::models::config::{CardRarityWeights, GameSettings, GameSettingsMetadata};
 use starknet::ContractAddress;
 
 #[starknet::interface]
@@ -30,8 +30,21 @@ trait IConfigSystems<T> {
     ) -> u32;
 
     fn add_random_settings(ref self: T) -> u32;
-    fn add_creature_card(ref self: T, name: felt252, rarity: u8, cost: u8, attack: u8, health: u8, card_type: u8, play_effect: CardEffect, attack_effect: CardEffect, death_effect: CardEffect);
-    fn add_spell_card(ref self: T, name: felt252, rarity: u8, cost: u8, card_type: u8, effect: CardEffect, extra_effect: CardEffect);
+    fn add_creature_card(
+        ref self: T,
+        name: felt252,
+        rarity: u8,
+        cost: u8,
+        attack: u8,
+        health: u8,
+        card_type: u8,
+        play_effect: CardEffect,
+        attack_effect: CardEffect,
+        death_effect: CardEffect,
+    );
+    fn add_spell_card(
+        ref self: T, name: felt252, rarity: u8, cost: u8, card_type: u8, effect: CardEffect, extra_effect: CardEffect,
+    );
 
     fn setting_details(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
@@ -43,15 +56,18 @@ mod config_systems {
     use achievement::components::achievable::AchievableComponent;
     use darkshuffle::constants::DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS;
     use darkshuffle::constants::{DEFAULT_NS, VERSION};
-    use darkshuffle::models::card::{CardRarity, CardType, CardEffect};
-    use darkshuffle::models::config::{GameSettingsMetadata, GameSettings, GameSettingsTrait, SettingsCounter, CardRarityWeights, MapSettings, BattleSettings, DraftSettings};
+    use darkshuffle::models::card::{CardEffect, CardRarity, CardType};
+    use darkshuffle::models::config::{
+        BattleSettings, CardRarityWeights, DraftSettings, GameSettings, GameSettingsMetadata, GameSettingsTrait,
+        MapSettings, SettingsCounter,
+    };
     use darkshuffle::utils::config::ConfigUtilsImpl;
+    use darkshuffle::utils::random;
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
-    use starknet::{ContractAddress, get_caller_address, get_block_timestamp};
+    use starknet::{ContractAddress, get_block_timestamp, get_caller_address};
     use tournaments::components::models::game::TokenMetadata;
-    use darkshuffle::utils::random;
 
     component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
     impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
@@ -99,13 +115,16 @@ mod config_systems {
         // initialize game with default settings
         let settings: GameSettings = GET_DEFAULT_SETTINGS();
         world.write_model(@settings);
-        world.write_model(@GameSettingsMetadata {
-            settings_id: 0,
-            name: 'Default',
-            description: "Default settings",
-            created_by: get_caller_address(),
-            created_at: get_block_timestamp(),
-        });
+        world
+            .write_model(
+                @GameSettingsMetadata {
+                    settings_id: 0,
+                    name: 'Default',
+                    description: "Default settings",
+                    created_by: get_caller_address(),
+                    created_at: get_block_timestamp(),
+                },
+            );
         ConfigUtilsImpl::create_genesis_cards(ref world);
     }
 
@@ -155,32 +174,24 @@ mod config_systems {
                     enemy_attack_scaling,
                     enemy_health_scaling,
                 },
-                battle: BattleSettings {
-                    start_energy,
-                    start_hand_size,
-                    max_energy,
-                    max_hand_size,
-                    draw_amount,
-                },
-                draft: DraftSettings {
-                    draft_size,
-                    card_ids,
-                    card_rarity_weights,
-                    auto_draft,
-                },
+                battle: BattleSettings { start_energy, start_hand_size, max_energy, max_hand_size, draw_amount },
+                draft: DraftSettings { draft_size, card_ids, card_rarity_weights, auto_draft },
             };
 
             self.validate_settings(settings);
 
             world.write_model(@settings);
             world.write_model(@settings_count);
-            world.write_model(@GameSettingsMetadata {
-                settings_id: settings_count.count,
-                name,
-                description,
-                created_by: get_caller_address(),
-                created_at: get_block_timestamp(),
-            });
+            world
+                .write_model(
+                    @GameSettingsMetadata {
+                        settings_id: settings_count.count,
+                        name,
+                        description,
+                        created_by: get_caller_address(),
+                        created_at: get_block_timestamp(),
+                    },
+                );
 
             settings_count.count
         }
@@ -196,23 +207,47 @@ mod config_systems {
             let settings: GameSettings = ConfigUtilsImpl::random_settings(settings_count.count, seed);
             world.write_model(@settings);
             world.write_model(@settings_count);
-            world.write_model(@GameSettingsMetadata {
-                settings_id: settings_count.count,
-                name: 'Random',
-                description: "Random settings",
-                created_by: get_caller_address(),
-                created_at: get_block_timestamp(),
-            });
+            world
+                .write_model(
+                    @GameSettingsMetadata {
+                        settings_id: settings_count.count,
+                        name: 'Random',
+                        description: "Random settings",
+                        created_by: get_caller_address(),
+                        created_at: get_block_timestamp(),
+                    },
+                );
 
             settings_count.count
         }
 
-        fn add_creature_card(ref self: ContractState, name: felt252, rarity: u8, cost: u8, attack: u8, health: u8, card_type: u8, play_effect: CardEffect, attack_effect: CardEffect, death_effect: CardEffect) {
-            let mut world: WorldStorage = self.world(@DEFAULT_NS());            
-            ConfigUtilsImpl::create_creature_card(ref world, name, rarity, cost, attack, health, card_type, play_effect, attack_effect, death_effect);
+        fn add_creature_card(
+            ref self: ContractState,
+            name: felt252,
+            rarity: u8,
+            cost: u8,
+            attack: u8,
+            health: u8,
+            card_type: u8,
+            play_effect: CardEffect,
+            attack_effect: CardEffect,
+            death_effect: CardEffect,
+        ) {
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
+            ConfigUtilsImpl::create_creature_card(
+                ref world, name, rarity, cost, attack, health, card_type, play_effect, attack_effect, death_effect,
+            );
         }
 
-        fn add_spell_card(ref self: ContractState, name: felt252, rarity: u8, cost: u8, card_type: u8, effect: CardEffect, extra_effect: CardEffect) {
+        fn add_spell_card(
+            ref self: ContractState,
+            name: felt252,
+            rarity: u8,
+            cost: u8,
+            card_type: u8,
+            effect: CardEffect,
+            extra_effect: CardEffect,
+        ) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
             ConfigUtilsImpl::create_spell_card(ref world, name, rarity, cost, card_type, effect, extra_effect);
         }
@@ -254,7 +289,9 @@ mod config_systems {
             assert!(settings.battle.start_energy <= 50, "Maximum starting energy cannot be greater than 50");
 
             assert!(settings.battle.start_hand_size > 0, "Starting hand size must be greater than 0 cards");
-            assert!(settings.battle.start_hand_size <= 10, "Maximum starting hand size cannot be greater than 10 cards");
+            assert!(
+                settings.battle.start_hand_size <= 10, "Maximum starting hand size cannot be greater than 10 cards",
+            );
 
             assert!(settings.battle.max_hand_size > 0, "Maximum hand size must be greater than 0 cards");
             assert!(settings.battle.max_hand_size <= 10, "Maximum hand size cannot be greater than 10 cards");
@@ -265,10 +302,14 @@ mod config_systems {
             assert!(settings.battle.draw_amount <= 5, "Maximum draw amount cannot be greater than 5");
 
             assert!(settings.draft.card_rarity_weights.common <= 10, "Common rarity weight cannot be greater than 10");
-            assert!(settings.draft.card_rarity_weights.uncommon <= 10, "Uncommon rarity weight cannot be greater than 10");
+            assert!(
+                settings.draft.card_rarity_weights.uncommon <= 10, "Uncommon rarity weight cannot be greater than 10",
+            );
             assert!(settings.draft.card_rarity_weights.rare <= 10, "Rare rarity weight cannot be greater than 10");
             assert!(settings.draft.card_rarity_weights.epic <= 10, "Epic rarity weight cannot be greater than 10");
-            assert!(settings.draft.card_rarity_weights.legendary <= 10, "Legendary rarity weight cannot be greater than 10");
+            assert!(
+                settings.draft.card_rarity_weights.legendary <= 10, "Legendary rarity weight cannot be greater than 10",
+            );
 
             assert!(settings.map.possible_branches > 0, "Maximum branches must be greater than 0");
             assert!(settings.map.possible_branches <= 3, "Maximum branches cannot be greater than 3");
@@ -278,14 +319,20 @@ mod config_systems {
 
             assert!(settings.map.enemy_attack_min > 0, "Enemy attack minimum must be greater than 0");
             assert!(settings.map.enemy_attack_min <= 10, "Enemy attack minimum cannot be greater than 10");
-            assert!(settings.map.enemy_attack_max >= settings.map.enemy_attack_min, "Enemy attack cannot be less than minimum");
+            assert!(
+                settings.map.enemy_attack_max >= settings.map.enemy_attack_min,
+                "Enemy attack cannot be less than minimum",
+            );
             assert!(settings.map.enemy_attack_max <= 10, "Enemy attack maximum cannot be greater than 10");
-            
+
             assert!(settings.map.enemy_health_min >= 10, "Enemy health minimum cannot be less than 10");
             assert!(settings.map.enemy_health_min <= 200, "Enemy health minimum cannot be greater than 200");
-            assert!(settings.map.enemy_health_max >= settings.map.enemy_health_min, "Enemy health cannot be less than minimum");
+            assert!(
+                settings.map.enemy_health_max >= settings.map.enemy_health_min,
+                "Enemy health cannot be less than minimum",
+            );
             assert!(settings.map.enemy_health_max <= 200, "Enemy health maximum cannot be greater than 200");
-            
+
             assert!(settings.map.enemy_attack_scaling <= 10, "Enemy attack scaling cannot be greater than 10");
             assert!(settings.map.enemy_health_scaling <= 50, "Enemy health scaling cannot be greater than 50");
         }

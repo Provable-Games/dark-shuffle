@@ -9,10 +9,19 @@ impl DeathUtilsImpl of DeathUtilsTrait {
     ) {
         if creature.creature_card.death_effect.modifier._type.into() != Modifier::None {
             if CardUtilsImpl::_is_requirement_met(
-                creature.creature_card.death_effect.modifier.requirement.into(), creature.creature_card.card_type.into(), board_stats, true,
+                creature.creature_card.death_effect.modifier.requirement.into(),
+                creature.creature_card.card_type.into(),
+                board_stats,
+                true,
             ) {
                 CardUtilsImpl::apply_card_effect(
-                    creature.creature_card.card_type.into(), creature.creature_card.death_effect, ref creature, ref battle, ref board, board_stats, true,
+                    creature.creature_card.card_type.into(),
+                    creature.creature_card.death_effect,
+                    ref creature,
+                    ref battle,
+                    ref board,
+                    board_stats,
+                    true,
                 );
             }
         }

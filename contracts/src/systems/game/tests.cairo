@@ -1,12 +1,14 @@
 use darkshuffle::models::battle::{Battle, BattleResources};
 use darkshuffle::models::card::{Card, CreatureCard};
 use darkshuffle::models::draft::Draft;
-use darkshuffle::models::game::{Game, GameState, GameOwnerTrait};
+use darkshuffle::models::game::{Game, GameOwnerTrait, GameState};
 use darkshuffle::models::map::Map;
 use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait, game_systems};
-use darkshuffle::utils::testing::general::{mint_game_token, create_game, create_draft, create_battle, create_battle_resources, create_map};
-use darkshuffle::utils::testing::systems::{deploy_game_systems};
 use darkshuffle::utils::cards::CardUtilsImpl;
+use darkshuffle::utils::testing::general::{
+    create_battle, create_battle_resources, create_draft, create_game, create_map, mint_game_token,
+};
+use darkshuffle::utils::testing::systems::{deploy_game_systems};
 use darkshuffle::utils::testing::world::spawn_darkshuffle;
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};

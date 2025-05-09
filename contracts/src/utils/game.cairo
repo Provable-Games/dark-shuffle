@@ -59,7 +59,7 @@ impl GameUtilsImpl of GameUtilsTrait {
 
         game.monsters_slain += 1;
         game.state = GameState::Map.into();
-        
+
         if game_settings.map.level_depth == game.map_depth {
             game.map_depth = 0;
         } else {

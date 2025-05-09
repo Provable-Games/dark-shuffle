@@ -1,13 +1,13 @@
-use darkshuffle::constants::{VERSION, DEFAULT_SETTINGS};
+use darkshuffle::constants::{DEFAULT_SETTINGS, VERSION};
 use darkshuffle::models::card::{
     Card, CardCategory, CardEffect, CardModifier, CardRarity, CardType, CreatureCard, EffectBonus, Modifier,
     Requirement, SpellCard, ValueType,
 };
-use darkshuffle::models::config::{CardsCounter, GameSettings, MapSettings, BattleSettings, DraftSettings};
+use darkshuffle::models::config::{BattleSettings, CardsCounter, DraftSettings, GameSettings, MapSettings};
+use darkshuffle::utils::random::{LCG, get_random_number};
 use dojo::model::ModelStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
 use tournaments::components::models::game::TokenMetadata;
-use darkshuffle::utils::random::{get_random_number, LCG};
 
 #[generate_trait]
 impl ConfigUtilsImpl of ConfigUtilsTrait {
@@ -18,10 +18,18 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
     }
 
     fn random_settings(settings_id: u32, mut seed: u128) -> GameSettings {
-        let PERSISTENT_HEALTH: bool = if get_random_number(seed, 2) == 1 { true } else { false };
+        let PERSISTENT_HEALTH: bool = if get_random_number(seed, 2) == 1 {
+            true
+        } else {
+            false
+        };
 
         seed = LCG(seed);
-        let AUTO_DRAFT: bool = if get_random_number(seed, 4) == 1 { true } else { false };
+        let AUTO_DRAFT: bool = if get_random_number(seed, 4) == 1 {
+            true
+        } else {
+            false
+        };
 
         seed = LCG(seed);
         let START_ENERGY: u8 = get_random_number(seed, 10);
@@ -31,7 +39,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
 
         seed = LCG(seed);
         let START_HAND_SIZE: u8 = get_random_number(seed, 10);
-        
+
         seed = LCG(seed);
         let mut MAX_HAND_SIZE: u8 = get_random_number(seed, 6) + 4;
         if MAX_HAND_SIZE < START_HAND_SIZE {
@@ -39,7 +47,11 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         }
 
         seed = LCG(seed);
-        let DRAW_AMOUNT: u8 = if get_random_number(seed, 5) == 1 { 2 } else { 1 };
+        let DRAW_AMOUNT: u8 = if get_random_number(seed, 5) == 1 {
+            2
+        } else {
+            1
+        };
 
         seed = LCG(seed);
         let POSSIBLE_BRANCHES: u8 = get_random_number(seed, 3);
@@ -125,10 +137,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
         let creature_card = CreatureCard {
             id: cards_count.count, attack, health, card_type, play_effect, attack_effect, death_effect,
         };
-        
+
         // Validate the card before writing to storage
         assert(Self::validate_card(card, Option::Some(creature_card), Option::None), 'Invalid creature card');
-        
+
         world.write_model(@card);
         world.write_model(@creature_card);
     }
@@ -148,10 +160,10 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
 
         let card = Card { id: cards_count.count, name, rarity, cost, category: CardCategory::Spell.into() };
         let spell_card = SpellCard { id: cards_count.count, card_type, effect, extra_effect };
-        
+
         // Validate the card before writing to storage
         assert(Self::validate_card(card, Option::None, Option::Some(spell_card)), 'Invalid spell card');
-        
+
         world.write_model(@card);
         world.write_model(@spell_card);
     }
@@ -159,9 +171,14 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
     fn validate_card(card: Card, creature_card: Option<CreatureCard>, spell_card: Option<SpellCard>) -> bool {
         // Validate basic card attributes
         assert!(card.name != 0, "Card name cannot be empty");
-        assert!(card.rarity > CardRarity::None.into() && card.rarity <= CardRarity::Legendary.into(), "Invalid card rarity");
+        assert!(
+            card.rarity > CardRarity::None.into() && card.rarity <= CardRarity::Legendary.into(), "Invalid card rarity",
+        );
         assert!(card.cost > 0, "Card cost must be positive");
-        assert!(card.category > CardCategory::None.into() && card.category <= CardCategory::Spell.into(), "Invalid card category");
+        assert!(
+            card.category > CardCategory::None.into() && card.category <= CardCategory::Spell.into(),
+            "Invalid card category",
+        );
 
         // Validate based on card category
         let category: CardCategory = card.category.into();
@@ -170,33 +187,39 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
                 // Ensure creature card exists
                 assert!(creature_card.is_some(), "Creature card must exist for creature category");
                 let creature = creature_card.unwrap();
-                
+
                 // Validate creature card attributes
                 assert!(creature.id == card.id, "Creature card ID must match card ID");
                 assert!(creature.attack > 0, "Creature attack must be positive");
                 assert!(creature.health > 0, "Creature health must be positive");
-                assert!(creature.card_type > CardType::None.into() && creature.card_type <= CardType::Magical.into(), "Invalid creature card type");
-                
+                assert!(
+                    creature.card_type > CardType::None.into() && creature.card_type <= CardType::Magical.into(),
+                    "Invalid creature card type",
+                );
+
                 // Validate creature card effects
                 Self::validate_card_effect(creature.play_effect);
                 Self::validate_card_effect(creature.attack_effect);
                 Self::validate_card_effect(creature.death_effect);
-                
+
                 true
             },
             CardCategory::Spell => {
                 // Ensure spell card exists
                 assert!(spell_card.is_some(), "Spell card must exist for spell category");
                 let spell = spell_card.unwrap();
-                
+
                 // Validate spell card attributes
                 assert!(spell.id == card.id, "Spell card ID must match card ID");
-                assert!(spell.card_type > CardType::None.into() && spell.card_type <= CardType::Magical.into(), "Invalid spell card type");
-                
+                assert!(
+                    spell.card_type > CardType::None.into() && spell.card_type <= CardType::Magical.into(),
+                    "Invalid spell card type",
+                );
+
                 // Validate spell card effects
                 Self::validate_card_effect(spell.effect);
                 Self::validate_card_effect(spell.extra_effect);
-                
+
                 true
             },
             _ => false,
@@ -205,15 +228,30 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
 
     fn validate_card_effect(effect: CardEffect) -> bool {
         // Validate modifier
-        assert!(effect.modifier._type >= Modifier::None.into() && effect.modifier._type <= Modifier::SelfHealth.into(), "Invalid modifier type");
-        assert!(effect.modifier.value_type >= ValueType::None.into() && effect.modifier.value_type <= ValueType::PerAlly.into(), "Invalid value type");
-        assert!(effect.modifier.requirement >= Requirement::None.into() && effect.modifier.requirement <= Requirement::NoAlly.into(), "Invalid requirement");
-        
+        assert!(
+            effect.modifier._type >= Modifier::None.into() && effect.modifier._type <= Modifier::SelfHealth.into(),
+            "Invalid modifier type",
+        );
+        assert!(
+            effect.modifier.value_type >= ValueType::None.into()
+                && effect.modifier.value_type <= ValueType::PerAlly.into(),
+            "Invalid value type",
+        );
+        assert!(
+            effect.modifier.requirement >= Requirement::None.into()
+                && effect.modifier.requirement <= Requirement::NoAlly.into(),
+            "Invalid requirement",
+        );
+
         // Validate bonus
-        assert!(effect.bonus.requirement >= Requirement::None.into() && effect.bonus.requirement <= Requirement::NoAlly.into(), "Invalid bonus requirement");
-        
+        assert!(
+            effect.bonus.requirement >= Requirement::None.into()
+                && effect.bonus.requirement <= Requirement::NoAlly.into(),
+            "Invalid bonus requirement",
+        );
+
         true
-    } 
+    }
 
     fn create_genesis_cards(ref world: WorldStorage) {
         // Card 1: Warlock
@@ -300,10 +338,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             },
             CardEffect {
                 modifier: CardModifier {
-                    _type: Modifier::AllyAttack.into(),
-                    value: 2,
-                    value_type: ValueType::Fixed.into(),
-                    requirement: 0,
+                    _type: Modifier::AllyAttack.into(), value: 2, value_type: ValueType::Fixed.into(), requirement: 0,
                 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
@@ -435,10 +470,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             },
             CardEffect {
                 modifier: CardModifier {
-                    _type: Modifier::SelfAttack.into(),
-                    value: 1,
-                    value_type: ValueType::PerAlly.into(),
-                    requirement: 0,
+                    _type: Modifier::SelfAttack.into(), value: 1, value_type: ValueType::PerAlly.into(), requirement: 0,
                 },
                 bonus: EffectBonus { value: 0, requirement: 0 },
             },
@@ -2357,10 +2389,7 @@ impl ConfigUtilsImpl of ConfigUtilsTrait {
             CardType::Magical.into(),
             CardEffect {
                 modifier: CardModifier {
-                    _type: Modifier::EnemyHealth.into(),
-                    value: 4,
-                    value_type: ValueType::Fixed.into(),
-                    requirement: 0,
+                    _type: Modifier::EnemyHealth.into(), value: 4, value_type: ValueType::Fixed.into(), requirement: 0,
                 },
                 bonus: EffectBonus { value: 4, requirement: Requirement::EnemyWeak.into() },
             },
