@@ -17,6 +17,7 @@ import DeckBuilder from './deckBuilder';
 import { GameContext } from '../../contexts/gameContext';
 import { useAccount, useConnect } from '@starknet-react/core';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import EditIcon from '@mui/icons-material/Edit';
 
 const DEFAULT_SETTINGS = {
   name: '',
@@ -65,6 +66,7 @@ function GameSettings(props) {
   const [showError, setShowError] = useState(false)
   const [description, setDescription] = useState('')
   const [deckBuilder, openDeckBuilder] = useState(false)
+  const [editing, setEditing] = useState(view ? false : true)
 
   useEffect(() => {
     if (view) {
@@ -167,7 +169,7 @@ function GameSettings(props) {
           {label} {type === 'cards' && `(${gameSettings[field].length})`}
         </Typography>}
 
-        {type === 'boolean' && <Box height={'38px'} sx={styles.settingValueContainer} onClick={() => !view && setGameSettings({ ...gameSettings, [field]: !gameSettings[field] })}>
+        {type === 'boolean' && <Box height={'38px'} sx={styles.settingValueContainer} onClick={() => editing && setGameSettings({ ...gameSettings, [field]: !gameSettings[field] })}>
           <Typography color={'primary'}>{gameSettings[field] ? 'Yes' : 'No'}</Typography>
         </Box>}
 
@@ -175,7 +177,7 @@ function GameSettings(props) {
           <Input disableUnderline={true} sx={{ color: '#FFE97F', width: '50px' }}
             inputProps={{ style: { textAlign: 'center', border: '1px solid #ffffff50', padding: '0', fontSize: '14px' } }}
             value={gameSettings[field]}
-            disabled={view}
+            disabled={!editing}
             onChange={(e) => setGameSettings({ ...gameSettings, [field]: e.target.value })}
             onBlur={() => setGameSettings({ ...gameSettings, [field]: Math.max(range[0], Math.min(range[1], gameSettings[field])) })}
           />
@@ -185,7 +187,7 @@ function GameSettings(props) {
           <Input disableUnderline={true} sx={{ color: '#FFE97F', width: '50px' }}
             inputProps={{ style: { textAlign: 'center', border: '1px solid #ffffff50', padding: '0', fontSize: '14px' } }}
             value={gameSettings[field[0]]}
-            disabled={view}
+            disabled={!editing}
             onChange={(e) => setGameSettings({ ...gameSettings, [field[0]]: e.target.value })}
             onBlur={() => setGameSettings({ ...gameSettings, [field[0]]: Math.max(range[0], Math.min(range[1], gameSettings[field[0]])) })}
           />
@@ -193,7 +195,7 @@ function GameSettings(props) {
           <Input disableUnderline={true} sx={{ color: '#FFE97F', width: '50px' }}
             inputProps={{ style: { textAlign: 'center', border: '1px solid #ffffff50', padding: '0', fontSize: '14px' } }}
             value={gameSettings[field[1]]}
-            disabled={view}
+            disabled={!editing}
             onChange={(e) => setGameSettings({ ...gameSettings, [field[1]]: e.target.value })}
             onBlur={() => setGameSettings({ ...gameSettings, [field[1]]: Math.max(range[0], Math.min(range[1], gameSettings[field[1]])) })}
           />
@@ -203,7 +205,7 @@ function GameSettings(props) {
           <Input disableUnderline={true} sx={{ color: '#FFE97F', width: '50px' }}
             inputProps={{ style: { textAlign: 'center', border: '1px solid #ffffff50', padding: '0', fontSize: '14px' } }}
             value={gameSettings[field[0]]}
-            disabled={view}
+            disabled={!editing}
             onChange={(e) => setGameSettings({ ...gameSettings, [field[0]]: e.target.value })}
             onBlur={() => setGameSettings({ ...gameSettings, [field[0]]: Math.max(range[0][0], Math.min(range[0][1], gameSettings[field[0]])) })}
             startAdornment={<img src={sword} alt='sword' style={{ width: '15px', height: '15px', paddingRight: '2px' }} />}
@@ -211,7 +213,7 @@ function GameSettings(props) {
           <Input disableUnderline={true} sx={{ color: '#FFE97F', width: '50px' }}
             inputProps={{ style: { textAlign: 'center', border: '1px solid #ffffff50', padding: '0', fontSize: '14px' } }}
             value={gameSettings[field[1]]}
-            disabled={view}
+            disabled={!editing}
             onChange={(e) => setGameSettings({ ...gameSettings, [field[1]]: e.target.value })}
             onBlur={() => setGameSettings({ ...gameSettings, [field[1]]: Math.max(range[1][0], Math.min(range[1][1], gameSettings[field[1]])) })}
             startAdornment={<FavoriteIcon htmlColor={'red'} sx={{ fontSize: '16px', pr: '2px' }} />}
@@ -233,7 +235,7 @@ function GameSettings(props) {
                 <Typography color={'primary'} fontSize={'13px'} sx={{ width: '33px' }}>
                   {`${Math.round((weight / Object.values(gameSettings.card_rarity_weights).reduce((a, b) => a + b, 0)) * 100)}%`}
                 </Typography>
-                {!view && <Box sx={styles.arrowContainer}>
+                {editing && <Box sx={styles.arrowContainer}>
                   <ArrowDropUpIcon htmlColor={tierColors[item]} fontSize='small' onClick={() => handleRarityWeightChange(item, weight + 1)} />
                   <ArrowDropDownIcon htmlColor={tierColors[item]} fontSize='small' onClick={() => handleRarityWeightChange(item, weight - 1)} />
                 </Box>}
@@ -271,7 +273,7 @@ function GameSettings(props) {
   return (
     <Dialog
       open={true}
-      onClose={view ? props.close : () => { }}
+      onClose={!editing ? props.close : () => { }}
       maxWidth={'xl'}
       PaperProps={{
         sx: { background: 'rgba(0, 0, 0, 1)', border: '1px solid #FFE97F', maxWidth: '98vw' }
@@ -283,14 +285,18 @@ function GameSettings(props) {
           <CloseIcon htmlColor='#FFF' sx={{ fontSize: '24px' }} />
         </Box>
 
-        {(view && !inGame) && <Box sx={{ position: 'absolute', top: '7px', right: '50px' }} onClick={trySettings}>
+        {(!editing && !inGame) && <Box sx={{ position: 'absolute', top: '7px', right: '50px', display: 'flex', gap: 1 }} onClick={() => setEditing(true)}>
+          <Button variant='outlined' color='primary' size='small' startIcon={<EditIcon color='primary' />}>
+            Edit
+          </Button>
+
           <Button variant='outlined' color='primary' size='small' startIcon={<PlayArrowIcon color='primary' />}>
             Try Settings
           </Button>
         </Box>}
 
         <Typography variant='h4' color={'primary'}>
-          {view ? gameSettings.name : step === 2 ? 'Create Settings' : ``}
+          {!editing ? gameSettings.name : step === 2 ? 'Create Settings' : ``}
         </Typography>
 
         {loading && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px', width: '800px' }}>
@@ -363,7 +369,7 @@ function GameSettings(props) {
           </Box>
         </>}
 
-        {!view && <Box sx={styles.footer}>
+        {editing && <Box sx={styles.footer}>
           {step === 1 && <Button variant='contained' color='primary' onClick={() => setStep(2)} sx={{ width: '200px' }}>
             Continue
           </Button>}
@@ -382,7 +388,7 @@ function GameSettings(props) {
         </Box>}
       </Box>
 
-      {deckBuilder && <DeckBuilder open={deckBuilder} close={() => openDeckBuilder(false)} cardIds={gameSettings.card_ids} view={view} save={saveDeck} />}
+      {deckBuilder && <DeckBuilder open={deckBuilder} close={() => openDeckBuilder(false)} cardIds={gameSettings.card_ids} view={!editing} save={saveDeck} />}
     </Dialog>
   )
 }

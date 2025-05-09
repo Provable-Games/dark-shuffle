@@ -71,7 +71,7 @@ function ArenaPage() {
 
       let tokenData = await getTokenMetadata(gameId)
 
-      if (!tokenData.eternumQuest && !tokenData.gameStarted) {
+      if (tokenData.eternumQuest && !tokenData.gameStarted) {
         await gameContext.actions.startBattleDirectly(gameId)
         tokenData.gameStarted = true
       }

@@ -115,10 +115,10 @@ const QuestComplete = () => {
             variant="outlined"
             color="primary"
             size="large"
-            onClick={handlePlayDarkShuffle}
+            onClick={() => window.close()}
             sx={{ fontSize: '14px' }}
           >
-            Play Dark Shuffle
+            Done
           </Button>
         </motion.div>
       </motion.div>
