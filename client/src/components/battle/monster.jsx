@@ -46,6 +46,8 @@ function Monster(props) {
     if (battle.state.battleEffects.enemyMarks > marks) {
       markEnemy.play()
       setMarks(battle.state.battleEffects.enemyMarks)
+    } else if (battle.state.battleEffects.enemyMarks < marks) {
+      setMarks(battle.state.battleEffects.enemyMarks)
     }
   }, [battle.state.battleEffects.enemyMarks])
 
