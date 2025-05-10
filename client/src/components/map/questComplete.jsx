@@ -116,7 +116,7 @@ const QuestComplete = () => {
             color="primary"
             size="large"
             onClick={() => window.close()}
-            sx={{ fontSize: '14px' }}
+            sx={{ fontSize: '14px', minWidth: '135px' }}
           >
             Done
           </Button>

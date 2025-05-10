@@ -145,7 +145,7 @@ const styles = {
     zIndex: 999,
     boxSizing: 'border-box',
     width: '100%',
-    height: 'calc(100% - 55px)',
+    height: 'calc(100% - 42px)',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
