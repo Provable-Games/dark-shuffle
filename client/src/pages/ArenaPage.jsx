@@ -70,6 +70,12 @@ function ArenaPage() {
       gameContext.setLoadingProgress(10)
 
       let tokenData = await getTokenMetadata(gameId)
+
+      if (tokenData.eternumQuest && !tokenData.gameStarted) {
+        await gameContext.actions.startBattleDirectly(gameId)
+        tokenData.gameStarted = true
+      }
+
       gameContext.actions.loadGameDetails(tokenData)
     }
 

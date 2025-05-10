@@ -4,6 +4,10 @@ import { getCardDetails, getRecommendedSettings, getSettings } from "../api/inde
 import { generateMapNodes } from "../helpers/map";
 import { DojoContext } from "./dojoContext";
 import { fetchQuestTarget } from "../api/starknet";
+import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
+import { CallData } from "starknet";
+import { getContractByName } from "@dojoengine/core";
+import { dojoConfig } from "../../dojo.config";
 
 export const GameContext = createContext()
 
@@ -105,6 +109,31 @@ export const GameProvider = ({ children }) => {
       console.log(ex)
       handleError()
     }
+  }
+
+  const startBattleDirectly = async (gameId) => {
+    setLoadingProgress(50)
+
+    let game_address = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
+    let requestRandom = {
+      contractAddress: VRF_PROVIDER_ADDRESS,
+      entrypoint: 'request_random',
+      calldata: CallData.compile({
+        caller: game_address,
+        source: { type: 0, address: dojo.address }
+      })
+    }
+
+    const txs = [
+      requestRandom,
+      { contractName: "game_systems", entrypoint: "start_game", calldata: [gameId] },
+      requestRandom,
+      { contractName: "game_systems", entrypoint: "generate_tree", calldata: [gameId] },
+      requestRandom,
+      { contractName: "game_systems", entrypoint: "select_node", calldata: [gameId, 1] }
+    ]
+
+    await dojo.executeTx(txs, false)
   }
 
   const loadGameDetails = async (tokenData) => {
@@ -210,7 +239,8 @@ export const GameProvider = ({ children }) => {
           generateMap,
           updateMapStatus,
           loadGameDetails,
-          mintFreeGame
+          mintFreeGame,
+          startBattleDirectly
         }
       }}
     >

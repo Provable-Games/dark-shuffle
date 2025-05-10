@@ -125,8 +125,8 @@ function DeathDialog(props) {
           </Button>
         )}
 
-        <Button variant='outlined' size='large' sx={{ fontSize: isQuestMode ? '14px' : '16px', letterSpacing: '1px' }} onClick={backToMenu}>
-          {isQuestMode ? "Play Dark Shuffle" : "Play again"}
+        <Button variant='outlined' size='large' sx={{ fontSize: isQuestMode ? '14px' : '16px', letterSpacing: '1px' }} onClick={isQuestMode ? () => window.close() : backToMenu}>
+          {isQuestMode ? "Done" : "Play again"}
         </Button>
       </Box>
     </Box>}
@@ -145,7 +145,7 @@ const styles = {
     zIndex: 999,
     boxSizing: 'border-box',
     width: '100%',
-    height: 'calc(100% - 55px)',
+    height: 'calc(100% - 42px)',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
