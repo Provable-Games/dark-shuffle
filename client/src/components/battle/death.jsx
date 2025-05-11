@@ -25,7 +25,7 @@ function DeathDialog(props) {
   async function startAnimation() {
     await controls.start({
       opacity: 1,
-      transition: { duration: 3, delay: 1 }
+      transition: { duration: props.skipAnimation ? 1 : 3, delay: 1 }
     })
 
     showText(true)

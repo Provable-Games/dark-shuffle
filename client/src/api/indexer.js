@@ -161,7 +161,7 @@ export async function getActiveGame(game_id, retry = 0) {
   const res = await request(GQL_ENDPOINT, document)
 
   if (!res?.[`${NS_SHORT}GameModels`]?.edges || res?.[`${NS_SHORT}GameModels`]?.edges.length === 0) {
-    if (retry < 3) {
+    if (retry < 20) {
       await delay(500);
       return getActiveGame(game_id, retry + 1);
     }

@@ -470,6 +470,10 @@ export const BattleProvider = ({ children }) => {
   }
 
   const undoBattleActions = async () => {
+    if (game.values.replay) {
+      return
+    }
+
     const battleId = values.battleId
     fetchBattleState(battleId, game.values.gameId)
   }

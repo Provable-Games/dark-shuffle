@@ -290,7 +290,7 @@ function GameSettings(props) {
             Edit
           </Button>
 
-          <Button variant='outlined' color='primary' size='small' startIcon={<PlayArrowIcon color='primary' />}>
+          <Button variant='outlined' color='primary' size='small' startIcon={<PlayArrowIcon color='primary' />} onClick={trySettings}>
             Try Settings
           </Button>
         </Box>}

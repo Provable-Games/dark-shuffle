@@ -13,6 +13,8 @@ import MapContainer from '../container/MapContainer'
 import { GameContext } from '../contexts/gameContext'
 import { useReplay } from '../contexts/replayContext'
 import { fadeVariant } from '../helpers/variants'
+import DeathDialog from '../components/battle/death'
+import { Box, Typography } from '@mui/material'
 
 function ArenaPage() {
   const gameContext = useContext(GameContext)
@@ -138,6 +140,17 @@ function ArenaPage() {
       {state === 'Map' &&
         <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
           <MapContainer />
+        </motion.div>
+      }
+
+      {(state === 'None' && gameContext.values.heroHealth === 0) &&
+        <motion.div style={styles.container} variants={fadeVariant} initial="initial" animate="enter" exit="exit">
+          {gameContext.values.replay
+            ? <Box sx={styles.container} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+              <Typography variant='h1' color={'primary'}>Game Over</Typography>
+            </Box>
+            : <DeathDialog skipAnimation={true} />
+          }
         </motion.div>
       }
     </Scrollbars>

@@ -27,7 +27,7 @@ function LoadingContainer() {
 
 
   useEffect(() => {
-    if (tokenData.gameStarted && gameSettings?.starting_health && gameCards?.length > 0) {
+    if (!replay.loadingReplay && tokenData.gameStarted && gameSettings?.starting_health && gameCards?.length > 0) {
       loadActiveGame()
     }
   }, [tokenData, gameSettings, gameCards])
@@ -81,6 +81,10 @@ function LoadingContainer() {
     try {
       let data = await getActiveGame(tokenData.id)
       data.state = GAME_STATES[data.state]
+
+      if (data.state === 'None') {
+        gameContext.setScore(data.hero_xp)
+      }
 
       await draft.actions.fetchDraft(data.game_id)
 
