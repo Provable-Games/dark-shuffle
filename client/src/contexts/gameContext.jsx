@@ -123,7 +123,7 @@ export const GameProvider = ({ children }) => {
   }
 
   const startBattleDirectly = async (gameId) => {
-    setLoadingProgress(50)
+    setLoadingProgress(80)
 
     let game_address = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
     let requestRandom = {

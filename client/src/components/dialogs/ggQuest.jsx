@@ -52,8 +52,8 @@ const QUEST_LEVELS = [
   {
     name: 'Nightmare',
     difficulty: 5,
-    settingsId: 8,
-    targetScore: 675,
+    settingsId: 5,
+    targetScore: 101,
     color: '#F44336',
     image: nightmareImage
   }

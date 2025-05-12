@@ -20,9 +20,18 @@ export const DraftProvider = ({ children }) => {
   const [cards, setCards] = useState([])
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
+  const startQuestGame = async () => {
+    await game.actions.startBattleDirectly(tokenData.tokenId)
+    game.setTokenData(prev => ({ ...prev, gameStarted: true, id: tokenData.tokenId }))
+  }
+
   useEffect(() => {
     if (!tokenData.gameStarted && gameSettings?.starting_health && gameCards?.length > 0) {
-      startDraft()
+      if (game.getState.GG_questMode) {
+        startQuestGame()
+      } else {
+        startDraft()
+      }
     }
   }, [tokenData, gameSettings, gameCards])
 
