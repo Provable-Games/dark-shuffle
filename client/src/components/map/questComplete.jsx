@@ -38,7 +38,9 @@ const QuestComplete = () => {
   const game = useContext(GameContext);
   const [tweetMsg] = useState(`Just completed an Eternum quest by gaining ${game.values.questTarget}XP in Dark Shuffle! 🎮\n\nThis is what a deconstructed MMO looks like - completing quests across different games.\n\nEmbeddable Game Standard in action! 🔗\n\n@RealmsEternum @darkshuffle_gg @provablegames`);
 
-  const handlePlayDarkShuffle = () => {
+  const isGGQuest = game.getState.GG_questMode;
+
+  const backToMenu = () => {
     navigate('/');
     game.endGame();
   };
@@ -92,13 +94,13 @@ const QuestComplete = () => {
         <motion.div variants={elementVariant}>
           <Box sx={styles.subtitleContainer}>
             <Typography variant="h5" sx={styles.subtitle}>
-              Return to Eternum to claim your reward
+              {isGGQuest ? 'Your legend grows stronger' : 'Return to Eternum to claim your reward'}
             </Typography>
           </Box>
         </motion.div>
 
         {/* Buttons */}
-        <motion.div variants={elementVariant} style={{ marginTop: '40px', display: 'flex', gap: '20px', zIndex: 2 }}>
+        {!isGGQuest && <motion.div variants={elementVariant} style={{ marginTop: '40px', display: 'flex', gap: '20px', zIndex: 2 }}>
           <Button
             color='warning'
             variant='outlined'
@@ -120,7 +122,19 @@ const QuestComplete = () => {
           >
             Done
           </Button>
-        </motion.div>
+        </motion.div>}
+
+        {isGGQuest && <motion.div variants={elementVariant} style={{ marginTop: '40px', display: 'flex', gap: '20px', zIndex: 2 }}>
+          <Button
+            variant="outlined"
+            color="primary"
+            size="large"
+            onClick={backToMenu}
+            sx={{ fontSize: '14px', minWidth: '135px' }}
+          >
+            Back to Quests
+          </Button>
+        </motion.div>}
       </motion.div>
     </Container>
   );

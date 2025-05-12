@@ -785,7 +785,9 @@ export async function getRecommendedSettings() {
     });
 
     const data = await response.json();
-    const topSettingsIds = data.map(item => item.settings_id);
+    // Filter out settings_id 0 if it exists and add it to the beginning
+    const filteredData = data.filter(item => item.settings_id !== 0);
+    const topSettingsIds = [0, ...filteredData.map(item => item.settings_id)];
 
     return await getSettingsList(null, topSettingsIds);
   } catch (error) {

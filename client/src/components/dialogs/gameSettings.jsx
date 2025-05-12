@@ -263,11 +263,7 @@ function GameSettings(props) {
       closeList()
     }
 
-    const tokenData = await gameContext.actions.mintFreeGame(settingsId)
-
-    if (tokenData) {
-      await gameContext.actions.loadGameDetails(tokenData)
-    }
+    gameContext.actions.mintFreeGame(settingsId)
   }
 
   return (

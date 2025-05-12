@@ -31,6 +31,9 @@ export const GameProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const [loadingProgress, setLoadingProgress] = useState(0)
 
+  const [GG_questMode, setQuestMode] = useState(false)
+  const [GG_questTargetScore, setQuestTargetScore] = useState(0)
+
   const [tokenData, setTokenData] = useState({})
   const [values, setValues] = useState({ ...GAME_VALUES })
   const [gameSettings, setGameSettings] = useState({})
@@ -68,6 +71,12 @@ export const GameProvider = ({ children }) => {
     }
   }, [tokenData.eternumQuest, values.gameId])
 
+  useEffect(() => {
+    if (values.gameId && GG_questMode) {
+      setValues(prev => ({ ...prev, questTarget: GG_questTargetScore }))
+    }
+  }, [GG_questMode, values.gameId, GG_questTargetScore])
+
   const setGame = (values) => {
     if (!isNaN(values.state || 0)) {
       values.state = GAME_STATES[values.state]
@@ -104,6 +113,8 @@ export const GameProvider = ({ children }) => {
       }])
 
       const tokenMetadata = res.find(e => e.componentName === 'TokenMetadata')
+      await loadGameDetails(tokenMetadata)
+
       return tokenMetadata
     } catch (ex) {
       console.log(ex)
@@ -213,7 +224,9 @@ export const GameProvider = ({ children }) => {
           gameCards,
           loading,
           tokenData,
-          loadingProgress
+          loadingProgress,
+          GG_questMode,
+          GG_questTargetScore
         },
 
         values,
@@ -232,7 +245,9 @@ export const GameProvider = ({ children }) => {
 
         utils: {
           getCard,
-          handleError
+          handleError,
+          setQuestMode,
+          setQuestTargetScore
         },
 
         actions: {

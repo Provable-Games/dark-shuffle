@@ -15,17 +15,27 @@ import { useReplay } from '../contexts/replayContext'
 import { fadeVariant } from '../helpers/variants'
 import DeathDialog from '../components/battle/death'
 import { Box, Typography } from '@mui/material'
+import { useSearchParams } from 'react-router-dom'
 
 function ArenaPage() {
   const gameContext = useContext(GameContext)
   const { state } = gameContext.values
 
   const replay = useReplay()
-  const { watchGameId, gameId, newGameSettingsId } = useParams()
   const { address, account } = useAccount()
   const { connect, connectors, isPending } = useConnect();
   const { enqueueSnackbar } = useSnackbar()
   const [update, forceUpdate] = useReducer(x => x + 1, 0);
+
+  const { watchGameId, gameId, newGameSettingsId } = useParams()
+  const [searchParams] = useSearchParams();
+  const referenceId = searchParams.get('ref');
+
+  useEffect(() => {
+    if (referenceId === 'ggquest') {
+      gameContext.utils.setQuestMode(true)
+    }
+  }, [referenceId])
 
   useEffect(() => {
     if (!watchGameId && !gameId && !newGameSettingsId) {
@@ -98,11 +108,7 @@ function ArenaPage() {
         return
       }
 
-      const tokenData = await gameContext.actions.mintFreeGame(newGameSettingsId)
-
-      if (tokenData) {
-        await gameContext.actions.loadGameDetails(tokenData)
-      }
+      gameContext.actions.mintFreeGame(newGameSettingsId)
     }
 
     if (newGameSettingsId && !isPending) {

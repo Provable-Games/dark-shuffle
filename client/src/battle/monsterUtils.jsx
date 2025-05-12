@@ -45,9 +45,9 @@ const getMonsterAbilities = (monsterId, persistentHealth) => {
         reward: "Your Magical beasts get +1 health when played."
       })
     case 71:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 5 health."
-      })
+      }) : null;
     case 70:
       return formatAbility({
         effect: "Rat takes one less damage from Magical beasts.",
@@ -69,9 +69,9 @@ const getMonsterAbilities = (monsterId, persistentHealth) => {
         reward: "Your Brutes get +1 health when played."
       })
     case 66:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 5 health."
-      })
+      }) : null;
     case 65:
       return formatAbility({
         effect: "Gnome takes one less damage from Brutes.",
@@ -93,9 +93,9 @@ const getMonsterAbilities = (monsterId, persistentHealth) => {
         reward: "Your Hunters get +1 health when played."
       })
     case 61:
-      return formatAbility({
+      return persistentHealth ? formatAbility({
         reward: "Your hero restores 5 health."
-      })
+      }) : null;
     case 60:
       return formatAbility({
         effect: "Ent gains +1 attack each time a Brute is played.",

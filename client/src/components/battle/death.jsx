@@ -22,6 +22,13 @@ function DeathDialog(props) {
     game.endGame()
   }
 
+  const tryAgain = () => {
+    let settingsId = game.getState.tokenData.settingsId
+    battle.utils.resetBattleState()
+    game.endGame()
+    game.actions.mintFreeGame(settingsId)
+  }
+
   async function startAnimation() {
     await controls.start({
       opacity: 1,
@@ -32,6 +39,7 @@ function DeathDialog(props) {
   }
 
   const isQuestMode = game.values.questTarget;
+  const isGGQuest = game.getState.GG_questMode;
   const questProgress = isQuestMode ? Math.min((game.score / game.values.questTarget) * 100, 100) : 0;
 
   return <motion.div style={isMobile ? styles.mobileContainer : styles.container} animate={controls}>
@@ -110,14 +118,21 @@ function DeathDialog(props) {
         </Typography>
       </>}
 
-      {isBrowser && isQuestMode && <>
+      {!isGGQuest && isBrowser && isQuestMode && <>
         <Typography mt={6}>
           {game.score < game.values.questTarget ? 'Better luck next time, brave hero.' : 'Return to Eternum to claim your reward.'} <br />
           The darkness has claimed you this time, but your adventure in Eternum continues.
         </Typography>
       </>}
 
-      <Box mt={6} display={'flex'} gap={3}>
+      {isGGQuest && isBrowser && isQuestMode && <>
+        <Typography mt={6}>
+          {game.score < game.values.questTarget ? 'Better luck next time, brave hero.' : ''} <br />
+          The darkness has claimed you this time, but your adventure continues.
+        </Typography>
+      </>}
+
+      {!isGGQuest && <Box mt={6} display={'flex'} gap={3}>
         {!isQuestMode && (
           <Button color='secondary' variant='outlined' size='large' sx={{ fontSize: '16px', letterSpacing: '1px' }}
             component='a' href={'https://x.com/intent/tweet?text=' + tweetMsg} target='_blank'>
@@ -128,7 +143,17 @@ function DeathDialog(props) {
         <Button variant='outlined' size='large' sx={{ fontSize: isQuestMode ? '14px' : '16px', letterSpacing: '1px' }} onClick={isQuestMode ? () => window.close() : backToMenu}>
           {isQuestMode ? "Done" : "Play again"}
         </Button>
-      </Box>
+      </Box>}
+
+      {isGGQuest && <Box mt={6} display={'flex'} gap={3}>
+        <Button color='secondary' variant='outlined' size='large' sx={{ fontSize: '16px', letterSpacing: '1px' }} onClick={backToMenu}>
+          Back to Quests
+        </Button>
+
+        <Button variant='outlined' size='large' sx={{ fontSize: '16px', letterSpacing: '1px' }} onClick={tryAgain}>
+          Try Again
+        </Button>
+      </Box>}
     </Box>}
 
   </motion.div>

@@ -13,6 +13,7 @@ import { useTournament } from '../contexts/tournamentContext'
 import { _styles } from '../helpers/styles'
 import { useParams } from 'react-router-dom'
 import GameSettings from '../components/dialogs/gameSettings'
+import GGQuest from '../components/dialogs/ggQuest'
 
 function LandingContainer() {
   const tournamentProvider = useTournament()
@@ -197,6 +198,8 @@ function LandingContainer() {
       {gamesDialog && <GameTokens open={gamesDialog} close={openGamesDialog} address={address} />}
       {gameSettingsList && <GameSettingsList open={gameSettingsList} close={openGameSettingsList} />}
       {gameSettings && <GameSettings settingsId={showSettingsId} view={true} close={() => openGameSettings(false)} />}
+
+      <GGQuest open={gameState.getState.GG_questMode} />
     </>
   )
 }
