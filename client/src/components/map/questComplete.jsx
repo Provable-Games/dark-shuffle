@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Box, Button, Typography, Container } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -40,10 +40,22 @@ const QuestComplete = () => {
 
   const isGGQuest = game.getState.GG_questMode;
 
+  useEffect(() => {
+    const completedQuests = JSON.parse(localStorage.getItem('completedQuests') || '[]');
+    const currentSettingsId = game.getState.tokenData.settingsId;
+
+    if (!completedQuests.includes(currentSettingsId)) {
+      completedQuests.push(currentSettingsId);
+      localStorage.setItem('completedQuests', JSON.stringify(completedQuests));
+    }
+  }, [game.getState.tokenData.settingsId]);
+
   const backToMenu = () => {
     navigate('/');
     game.endGame();
   };
+
+
 
   return (
     <Container maxWidth="lg" sx={styles.container}>

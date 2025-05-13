@@ -32,6 +32,10 @@ function MapContainer() {
   }, [game.values.heroXp, game.values.questTarget]);
 
   useEffect(() => {
+    if (game.values.questTarget && game.values.heroXp >= game.values.questTarget) {
+      return
+    }
+
     if (game.values.mapDepth === 0 && !game.values.replay) {
       game.actions.generateMap()
     }

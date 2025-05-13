@@ -1,8 +1,9 @@
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Box, Button, Dialog, Typography } from '@mui/material';
 import { motion } from "framer-motion";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { isMobile } from 'react-device-detect';
 import { GameContext } from '../../contexts/gameContext';
 import { fadeVariant } from "../../helpers/variants";
@@ -23,7 +24,7 @@ const QUEST_LEVELS = [
     settingsId: 3,
     targetScore: 26,
     color: '#4CAF50',
-    image: newbieImage
+    image: newbieImage,
   },
   {
     name: 'Easy',
@@ -31,7 +32,7 @@ const QUEST_LEVELS = [
     settingsId: 6,
     targetScore: 26,
     color: '#8BC34A',
-    image: easyImage
+    image: easyImage,
   },
   {
     name: 'Medium',
@@ -39,7 +40,7 @@ const QUEST_LEVELS = [
     settingsId: 4,
     targetScore: 26,
     color: '#FFC107',
-    image: mediumImage
+    image: mediumImage,
   },
   {
     name: 'Hard',
@@ -47,7 +48,7 @@ const QUEST_LEVELS = [
     settingsId: 1,
     targetScore: 51,
     color: '#FF9800',
-    image: hardImage
+    image: hardImage,
   },
   {
     name: 'Nightmare',
@@ -55,7 +56,7 @@ const QUEST_LEVELS = [
     settingsId: 5,
     targetScore: 101,
     color: '#F44336',
-    image: nightmareImage
+    image: nightmareImage,
   }
 ];
 
@@ -68,6 +69,20 @@ function GGQuest(props) {
 
   const gameContext = useContext(GameContext);
   const [selectedQuest, setSelectedQuest] = useState(null);
+  const [questLevels, setQuestLevels] = useState(QUEST_LEVELS);
+
+  useEffect(() => {
+    // Get completed quests from localStorage
+    const completedQuests = JSON.parse(localStorage.getItem('completedQuests') || '[]');
+    
+    // Update quest levels with completion status
+    const updatedQuestLevels = QUEST_LEVELS.map(quest => ({
+      ...quest,
+      isCompleted: completedQuests.includes(quest.settingsId)
+    }));
+    
+    setQuestLevels(updatedQuestLevels);
+  }, []);
 
   const startQuest = async (quest) => {
     if (!account) {
@@ -114,7 +129,7 @@ function GGQuest(props) {
           </Typography>
 
           <Box sx={styles.questGrid}>
-            {QUEST_LEVELS.map((quest) => (
+            {questLevels.map((quest) => (
               <Box
                 key={quest.name}
                 sx={{
@@ -131,11 +146,26 @@ function GGQuest(props) {
                 }}
                 onClick={() => setSelectedQuest(quest)}
               >
+                {quest.isCompleted && (
+                  <CheckCircleIcon 
+                    sx={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      color: '#4CAF50',
+                      fontSize: '26px',
+                      zIndex: 1
+                    }}
+                  />
+                )}
                 <Box
                   component="img"
                   src={quest.image}
                   alt={quest.name}
-                  sx={styles.questImage}
+                  sx={{
+                    ...styles.questImage,
+                    opacity: quest.isCompleted ? 0.6 : 0.8,
+                  }}
                 />
                 <Typography variant='h5' color='primary' sx={{ color: quest.color }}>
                   {quest.name}
