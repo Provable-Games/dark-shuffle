@@ -33,10 +33,27 @@ const elementVariant = {
   }
 };
 
+const getQuestName = (settingsId) => {
+  switch (settingsId) {
+    case 3:
+      return 'Newbie';
+    case 6:
+      return 'Easy';
+    case 4:
+      return 'Medium';
+    case 1:
+      return 'Hard';
+    case 5:
+      return 'Nightmare';
+    default:
+      return '';
+  }
+}
+
 const QuestComplete = () => {
   const navigate = useNavigate();
   const game = useContext(GameContext);
-  const [tweetMsg] = useState(`Just completed an Eternum quest by gaining ${game.values.questTarget}XP in Dark Shuffle! 🎮\n\nThis is what a deconstructed MMO looks like - completing quests across different games.\n\nEmbeddable Game Standard in action! 🔗\n\n@RealmsEternum @darkshuffle_gg @provablegames`);
+  const [tweetMsg] = useState(`I just earned resources in @RealmsEternum by completing a @darkshuffle_gg ${getQuestName(game.getState.tokenData.settingsId)} Quest! 🎮\n\nWant to experience the power of open & composable gaming?\n\nJoin Eternum S1 today and see for yourself why players and builders are choosing onchain!`);
 
   const isGGQuest = game.getState.GG_questMode;
 
