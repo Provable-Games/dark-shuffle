@@ -175,11 +175,13 @@ export async function getActiveGame(game_id, retry = 0) {
 export async function getDraft(game_id) {
   const document = gql`
     {
-    entity (id:"${getEntityIdFromKeys([BigInt(game_id)])}") {
-      models {
-        ... on ${NS}_Draft {
-          game_id,
-          options,
+      ${NS_SHORT}DraftModels (where:{
+      game_id:"${game_id}"
+    }) {
+      edges {
+        node {
+          game_id
+          options
           cards
         }
       }
@@ -187,8 +189,7 @@ export async function getDraft(game_id) {
   }`
 
   const res = await request(GQL_ENDPOINT, document)
-
-  return res?.entity.models.find(x => x.game_id)
+  return res?.[`${NS_SHORT}DraftModels`]?.edges[0]?.node;
 }
 
 export async function getGameEffects(game_id) {
