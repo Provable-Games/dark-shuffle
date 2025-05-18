@@ -115,7 +115,7 @@ export const ReplayProvider = ({ children }) => {
   const applyEvents = () => {
     if (appliedStep === step && !spectatingGame) return;
 
-    const events = translatedEvents[step]
+    const events = translatedEvents[step].reverse()
 
     const gameValues = events.find(e => e.componentName === 'Game')
     if (gameValues) {
