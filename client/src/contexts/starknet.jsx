@@ -54,7 +54,7 @@ const cartridge = new ControllerConnector({
     },
   ],
   namespace: dojoConfig.namespace,
-  slot: dojoConfig.chain === "mainnet" ? "budokan-mainnet" : "darkshuffle-sepolia",
+  slot: dojoConfig.chain === "mainnet" ? "budokan-mainnet-2" : "darkshuffle-sepolia",
   preset: "dark-shuffle",
   tokens: {
     erc20: [dojoConfig.lordsAddress],
