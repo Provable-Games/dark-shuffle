@@ -1,5 +1,5 @@
 use darkshuffle::models::battle::{Battle, BattleEffects, BattleResources, Hero, Monster};
-use darkshuffle::models::config::{GameSettings, CardRarityWeights, MapSettings, BattleSettings, DraftSettings};
+use darkshuffle::models::config::{BattleSettings, CardRarityWeights, DraftSettings, GameSettings, MapSettings};
 use darkshuffle::models::draft::Draft;
 use darkshuffle::models::game::{Game, GameState};
 use darkshuffle::models::map::Map;
@@ -131,19 +131,8 @@ fn create_custom_settings(
                     enemy_attack_scaling,
                     enemy_health_scaling,
                 },
-                battle: BattleSettings {
-                    start_energy,
-                    start_hand_size,
-                    max_energy,
-                    max_hand_size,
-                    draw_amount,
-                },
-                draft: DraftSettings {
-                    draft_size,
-                    card_ids,
-                    card_rarity_weights,
-                    auto_draft,
-                },
+                battle: BattleSettings { start_energy, start_hand_size, max_energy, max_hand_size, draw_amount },
+                draft: DraftSettings { draft_size, card_ids, card_rarity_weights, auto_draft },
             },
         );
 
