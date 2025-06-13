@@ -4,7 +4,7 @@ version = 1
 [[package]]
 name = "achievement"
 version = "0.0.0"
-source = "git+https://github.com/cartridge-gg/arcade?rev=cb9837b6e554e85b5145f33a0f06c147163f04e8#cb9837b6e554e85b5145f33a0f06c147163f04e8"
+source = "git+https://github.com/cartridge-gg/arcade?rev=1353aab3dec66c2de7aad7f37f91b4002d86b2b8#1353aab3dec66c2de7aad7f37f91b4002d86b2b8"
 dependencies = [
  "dojo",
 ]
@@ -73,8 +73,8 @@ dependencies = [
 
 [[package]]
 name = "dojo"
-version = "1.4.0"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.4.0#22ef7101e84429f4f06fa634f927dd6ad2c48752"
+version = "1.5.0"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.5.0#812f17c9c57fd057d0bf1e648a591ea0ca9ea718"
 dependencies = [
  "dojo_plugin",
 ]
@@ -82,15 +82,15 @@ dependencies = [
 [[package]]
 name = "dojo_cairo_test"
 version = "1.0.12"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.4.0#22ef7101e84429f4f06fa634f927dd6ad2c48752"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.5.0#812f17c9c57fd057d0bf1e648a591ea0ca9ea718"
 dependencies = [
  "dojo",
 ]
 
 [[package]]
 name = "dojo_plugin"
-version = "2.9.4"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.4.0#22ef7101e84429f4f06fa634f927dd6ad2c48752"
+version = "2.10.1"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.5.0#812f17c9c57fd057d0bf1e648a591ea0ca9ea718"
 
 [[package]]
 name = "graffiti"
@@ -139,7 +139,7 @@ source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v1.0.0#755
 [[package]]
 name = "tournaments"
 version = "0.0.1"
-source = "git+https://github.com/Provable-Games/tournaments.git?tag=v0.1.5#0425fbb55d1832b4064f3b237f5a2bf761792e9e"
+source = "git+https://github.com/Provable-Games/tournaments.git?tag=v1.5.1#b3de627b40f2bf66aeebd186bbc8559805650723"
 dependencies = [
  "dojo",
  "openzeppelin_introspection",

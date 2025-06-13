@@ -1,5 +1,5 @@
 [package]
-cairo-version = "=2.9.4"
+cairo-version = "=2.10.1"
 edition = "2023_01"
 name = "darkshuffle"
 version = "1.1.0"
@@ -8,19 +8,19 @@ version = "1.1.0"
 sierra-replace-ids = true
 
 [dependencies]
-starknet = "2.9.4"
+starknet = "2.10.1"
 openzeppelin_token = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v1.0.0" }
 openzeppelin_introspection = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v1.0.0" }
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.4.0" }
-achievement = { git = "https://github.com/cartridge-gg/arcade", rev = "cb9837b6e554e85b5145f33a0f06c147163f04e8" }
-tournaments = { git = "https://github.com/Provable-Games/tournaments.git", tag = "v0.1.5" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.5.0" }
+achievement = { git = "https://github.com/cartridge-gg/arcade", rev = "1353aab3dec66c2de7aad7f37f91b4002d86b2b8" }
+tournaments = { git = "https://github.com/Provable-Games/tournaments.git", tag = "v1.5.1"}
 alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git", tag = "v0.3.0" }
 alexandria_encoding = { git = "https://github.com/keep-starknet-strange/alexandria.git", tag = "v0.3.0" }
 graffiti = { git = "https://github.com/ponderingdemocritus/graffiti", rev = "bc569531791dbc71c6cd8d9bc154c34eedad31fe" }
 
 [dev-dependencies]
-dojo_cairo_test = { git = "https://github.com/dojoengine/dojo.git", tag = "v1.4.0" }
-cairo_test = "2.9.4"
+dojo_cairo_test = { git = "https://github.com/dojoengine/dojo.git", tag = "v1.5.0" }
+cairo_test = "2.10.1"
 
 [[target.starknet-contract]]
 sierra = true

@@ -1,8 +1,8 @@
 name: test-contracts
 
 env:
-  SCARB_VERSION: 2.9.4
-  DOJO_VERSION: 1.4.0
+  SCARB_VERSION: 2.10.1
+  DOJO_VERSION: 1.5.0
 
 on:
   pull_request:
