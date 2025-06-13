@@ -34,7 +34,7 @@ fn SETTINGS_MODEL() -> ByteArray {
 }
 
 pub mod DEFAULT_SETTINGS {
-    use darkshuffle::models::config::{GameSettings, CardRarityWeights, MapSettings, BattleSettings, DraftSettings};
+    use darkshuffle::models::config::{BattleSettings, CardRarityWeights, DraftSettings, GameSettings, MapSettings};
 
     const PERSISTENT_HEALTH: bool = true;
     const AUTO_DRAFT: bool = false;
@@ -67,13 +67,7 @@ pub mod DEFAULT_SETTINGS {
     }
 
     fn GET_DEFAULT_WEIGHTS() -> CardRarityWeights {
-        CardRarityWeights {
-            common: 5,
-            uncommon: 4,
-            rare: 3,
-            epic: 2,
-            legendary: 1,
-        }
+        CardRarityWeights { common: 5, uncommon: 4, rare: 3, epic: 2, legendary: 1 }
     }
 
     fn GET_DEFAULT_SETTINGS() -> GameSettings {

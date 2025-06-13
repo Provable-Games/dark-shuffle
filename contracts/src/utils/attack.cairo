@@ -14,7 +14,13 @@ impl AttackUtilsImpl of AttackUtilsTrait {
                 creature.creature_card.attack_effect.modifier.requirement.into(), card_type, board_stats, true,
             ) {
                 CardUtilsImpl::apply_card_effect(
-                    card_type, creature.creature_card.attack_effect, ref creature, ref battle, ref board, board_stats, true,
+                    card_type,
+                    creature.creature_card.attack_effect,
+                    ref creature,
+                    ref battle,
+                    ref board,
+                    board_stats,
+                    true,
                 );
             }
         }

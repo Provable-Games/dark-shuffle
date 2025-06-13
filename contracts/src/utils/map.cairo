@@ -118,11 +118,13 @@ impl MapUtilsImpl of MapUtilsTrait {
         let monster_id = random::get_random_number(seed, 75 - monster_range) + monster_range;
 
         seed = random::LCG(seed);
-        let mut attack = random::get_random_number(seed, map_settings.enemy_attack_max - map_settings.enemy_attack_min) + map_settings.enemy_attack_min;
+        let mut attack = random::get_random_number(seed, map_settings.enemy_attack_max - map_settings.enemy_attack_min)
+            + map_settings.enemy_attack_min;
         attack += (map.level - 1) * map_settings.enemy_attack_scaling;
 
         seed = random::LCG(seed);
-        let mut _health = random::get_random_number(seed, map_settings.enemy_health_max - map_settings.enemy_health_min) + map_settings.enemy_health_min;
+        let mut _health = random::get_random_number(seed, map_settings.enemy_health_max - map_settings.enemy_health_min)
+            + map_settings.enemy_health_min;
         let health: u16 = ((map.level - 1) * map_settings.enemy_health_scaling).into() + _health.into();
 
         MonsterNode { monster_id, attack, health }
