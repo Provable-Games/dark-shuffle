@@ -61,13 +61,13 @@ mod config_systems {
         BattleSettings, CardRarityWeights, DraftSettings, GameSettings, GameSettingsMetadata, GameSettingsTrait,
         MapSettings, SettingsCounter,
     };
+    use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait};
     use darkshuffle::utils::config::ConfigUtilsImpl;
     use darkshuffle::utils::random;
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
     use starknet::{ContractAddress, get_block_timestamp, get_caller_address};
-    use tournaments::components::models::game::TokenMetadata;
 
     component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
     impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
@@ -266,8 +266,10 @@ mod config_systems {
 
         fn game_settings(self: @ContractState, game_id: u64) -> GameSettings {
             let world: WorldStorage = self.world(@DEFAULT_NS());
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            let game_settings: GameSettings = world.read_model(token_metadata.settings_id);
+            let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
+            let game_systems = IGameSystemsDispatcher { contract_address: game_systems_address };
+            let settings_id: u32 = game_systems.settings_id(game_id);
+            let game_settings: GameSettings = world.read_model(settings_id);
             game_settings
         }
     }

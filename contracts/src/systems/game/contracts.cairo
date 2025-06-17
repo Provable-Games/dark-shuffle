@@ -7,6 +7,9 @@ trait IGameSystems<T> {
     fn pick_card(ref self: T, game_id: u64, option_id: u8);
     fn generate_tree(ref self: T, game_id: u64);
     fn select_node(ref self: T, game_id: u64, node_id: u8);
+    fn validate_playable(self: @T, game_id: u64);
+    fn update_game(self: @T, game_id: u64);
+    fn settings_id(self: @T, game_id: u64) -> u32;
     fn action_count(self: @T, game_id: u64) -> u16;
     fn cards(self: @T, game_id: u64) -> Span<felt252>;
     fn game_state(self: @T, game_id: u64) -> GameState;
@@ -15,7 +18,7 @@ trait IGameSystems<T> {
     fn level(self: @T, game_id: u64) -> u8;
     fn map_depth(self: @T, game_id: u64) -> u8;
     fn monsters_slain(self: @T, game_id: u64) -> u16;
-    fn player_name(self: @T, game_id: u64) -> felt252;
+    // fn player_name(self: @T, game_id: u64) -> felt252;
     fn xp(self: @T, game_id: u64) -> u16;
 }
 
@@ -24,9 +27,9 @@ mod game_systems {
     use achievement::store::{Store, StoreTrait};
     use darkshuffle::constants::{DEFAULT_NS, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
     use darkshuffle::models::{
-        card::{Card, CardCategory, CreatureCard, SpellCard}, config::{GameSettings, GameSettingsTrait},
+        card::{Card, CardCategory, CreatureCard, SpellCard}, config::{GameSettings, GameSettingsTrait, GameSettingsMetadata},
         draft::{Draft, DraftOwnerTrait}, game::{Game, GameActionEvent, GameOwnerTrait, GameState},
-        map::{Map, MonsterNode},
+        map::{Map, MonsterNode}, objectives::{ScoreObjective, ScoreObjectiveCount},
     };
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 
@@ -47,25 +50,17 @@ mod game_systems {
 
     use starknet::{ContractAddress, get_block_timestamp, get_caller_address, get_tx_info};
 
-    use tournaments::components::game::game_component;
-    use tournaments::components::interfaces::{IGameDetails, IGameToken, ISettings};
-    use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
-    use tournaments::components::models::game::TokenMetadata;
-    use tournaments::components::models::lifecycle::Lifecycle;
+    use game_components_minigame::minigame::minigame_component;
+    use game_components_minigame::interface::{IMinigameDetails, IMinigameSettings, IMinigameObjectives, IMinigameTokenUri};
+    use game_components_minigame::models::settings::{GameSetting, GameSettingDetails};
+    use game_components_minigame::models::objectives::{GameObjective};
 
-    component!(path: game_component, storage: game, event: GameEvent);
+    component!(path: minigame_component, storage: minigame, event: MinigameEvent);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
-    component!(path: ERC721Component, storage: erc721, event: ERC721Event);
 
     #[abi(embed_v0)]
-    impl GameImpl = game_component::GameImpl<ContractState>;
-    impl GameInternalImpl = game_component::InternalImpl<ContractState>;
-
-    #[abi(embed_v0)]
-    impl ERC721Impl = ERC721Component::ERC721Impl<ContractState>;
-    #[abi(embed_v0)]
-    impl ERC721CamelOnlyImpl = ERC721Component::ERC721CamelOnlyImpl<ContractState>;
-    impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
+    impl MinigameImpl = minigame_component::MinigameImpl<ContractState>;
+    impl MinigameInternalImpl = minigame_component::InternalImpl<ContractState>;
 
     #[abi(embed_v0)]
     impl SRC5Impl = SRC5Component::SRC5Impl<ContractState>;
@@ -73,9 +68,7 @@ mod game_systems {
     #[storage]
     struct Storage {
         #[substorage(v0)]
-        game: game_component::Storage,
-        #[substorage(v0)]
-        erc721: ERC721Component::Storage,
+        minigame: minigame_component::Storage,
         #[substorage(v0)]
         src5: SRC5Component::Storage,
     }
@@ -84,17 +77,14 @@ mod game_systems {
     #[derive(Drop, starknet::Event)]
     enum Event {
         #[flat]
-        GameEvent: game_component::Event,
-        #[flat]
-        ERC721Event: ERC721Component::Event,
+        MinigameEvent: minigame_component::Event,
         #[flat]
         SRC5Event: SRC5Component::Event,
     }
 
-    fn dojo_init(ref self: ContractState, creator_address: ContractAddress) {
-        self.erc721.initializer("Dark Shuffle", "DARK", "darkshuffle.io");
+    fn dojo_init(ref self: ContractState, creator_address: ContractAddress, denshokan_address: ContractAddress) {
         self
-            .game
+            .minigame
             .initializer(
                 creator_address,
                 'Dark Shuffle',
@@ -103,27 +93,117 @@ mod game_systems {
                 'Provable Games',
                 'Digital TCG / Deck Building',
                 "https://darkshuffle.io/favicon.svg",
+                Option::None,
                 DEFAULT_NS(),
-                SCORE_MODEL(),
-                SCORE_ATTRIBUTE(),
-                SETTINGS_MODEL(),
+                denshokan_address,
             );
     }
 
     #[abi(embed_v0)]
-    impl SettingsImpl of ISettings<ContractState> {
+    impl SettingsImpl of IMinigameSettings<ContractState> {
         fn setting_exists(self: @ContractState, settings_id: u32) -> bool {
             let world: WorldStorage = self.world(@DEFAULT_NS());
             let settings: GameSettings = world.read_model(settings_id);
             settings.exists()
         }
+        fn settings(self: @ContractState, settings_id: u32) -> GameSettingDetails {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let settings: GameSettings = world.read_model(settings_id);
+            let settings_details: GameSettingsMetadata = world.read_model(settings_id);
+            GameSettingDetails {
+                name: format!("{}", settings_details.name),
+                description: settings_details.description,
+                settings: array![
+                    GameSetting {
+                        name: "Starting Health",
+                        value: format!("{}", settings.starting_health),
+                    },
+                    GameSetting {
+                        name: "Persistent Health",
+                        value: format!("{}", settings.persistent_health),
+                    },
+                    GameSetting {
+                        name: "Level Depth",
+                        value: format!("{}", settings.map.level_depth),
+                    },
+                    GameSetting {
+                        name: "Possible Branches",
+                        value: format!("{}", settings.map.possible_branches),
+                    },
+                    GameSetting {
+                        name: "Enemy Attack Min",
+                        value: format!("{}", settings.map.enemy_attack_min),
+                    },
+                    GameSetting {
+                        name: "Enemy Attack Max",
+                        value: format!("{}", settings.map.enemy_attack_max),
+                    },
+                    GameSetting {
+                        name: "Enemy Health Min",
+                        value: format!("{}", settings.map.enemy_health_min),
+                    },
+                    GameSetting {
+                        name: "Enemy Health Max",
+                        value: format!("{}", settings.map.enemy_health_max),
+                    },
+                    GameSetting {
+                        name: "Enemy Attack Scaling",
+                        value: format!("{}", settings.map.enemy_attack_scaling),
+                    },
+                    GameSetting {
+                        name: "Enemy Health Scaling",
+                        value: format!("{}", settings.map.enemy_health_scaling),
+                    },
+                    GameSetting {
+                        name: "Auto Draft",
+                        value: format!("{}", settings.draft.auto_draft),
+                    },
+                    GameSetting {
+                        name: "Draft Size",
+                        value: format!("{}", settings.draft.draft_size),
+                    },    
+                ].span(),
+            }
+        }
     }
 
     #[abi(embed_v0)]
-    impl GameDetailsImpl of IGameDetails<ContractState> {
-        fn score(self: @ContractState, game_id: u64) -> u32 {
+    impl ObjectivesImpl of IMinigameObjectives<ContractState> {
+        fn objective_exists(self: @ContractState, objective_id: u32) -> bool {
             let world: WorldStorage = self.world(@DEFAULT_NS());
-            let game: Game = world.read_model(game_id);
+            let objective_score: ScoreObjective = world.read_model(objective_id);
+            objective_score.exists
+        }
+        fn completed_objective(self: @ContractState, token_id: u64, objective_id: u32) -> bool {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let objective_score: ScoreObjective = world.read_model(objective_id);
+            let game: Game = world.read_model(token_id);
+            game.hero_xp.into() >= objective_score.score
+        }
+        fn objectives(self: @ContractState, token_id: u64) -> Span<GameObjective> {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let objective_ids = self.minigame.get_objective_ids(token_id);
+            let mut objective_index = 0;
+            let mut objectives = array![];
+            loop {
+                if objective_index == objective_ids.len() {
+                    break;
+                }
+                let objective_id = *objective_ids.at(objective_index);
+                let objective_score: ScoreObjective = world.read_model(objective_id);
+                objectives.append(GameObjective { name: "Score Target", value: format!("Score Above {}", objective_score.score) });
+                objective_index += 1;
+            };
+            objectives.span()
+        }
+    }
+
+
+    #[abi(embed_v0)]
+    impl GameDetailsImpl of IMinigameDetails<ContractState> {
+        fn score(self: @ContractState, token_id: u64) -> u32 {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
             game.hero_xp.into()
         }
     }
@@ -133,8 +213,7 @@ mod game_systems {
         fn start_game(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            self.validate_start_conditions(game_id, @token_metadata);
+            self.minigame.validate_playable(game_id);
 
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let random_hash = random::get_random_hash();
@@ -170,17 +249,15 @@ mod game_systems {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count,
                     },
                 );
-            game.update_metadata(world);
+            self.minigame.update_game(game_id);
         }
 
         fn pick_card(ref self: ContractState, game_id: u64, option_id: u8) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
+            self.minigame.validate_playable(game_id);
 
             let mut game: Game = world.read_model(game_id);
-            game.assert_owner(world);
             game.assert_draft();
 
             let mut draft: Draft = world.read_model(game_id);
@@ -209,17 +286,15 @@ mod game_systems {
                         count: current_draft_size.try_into().unwrap(),
                     },
                 );
-            game.update_metadata(world);
+            self.minigame.update_game(game_id);
         }
 
         fn generate_tree(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
+            self.minigame.validate_playable(game_id);
 
             let mut game: Game = world.read_model(game_id);
-            game.assert_owner(world);
             game.assert_generate_tree();
 
             let random_hash = random::get_random_hash();
@@ -253,11 +328,9 @@ mod game_systems {
         fn select_node(ref self: ContractState, game_id: u64, node_id: u8) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
+            self.minigame.validate_playable(game_id);
 
             let mut game: Game = world.read_model(game_id);
-            game.assert_owner(world);
             game.assert_select_node();
 
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
@@ -281,14 +354,26 @@ mod game_systems {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
                     },
                 );
-            game.update_metadata(world);
+            self.minigame.update_game(game_id);
         }
 
-        fn player_name(self: @ContractState, game_id: u64) -> felt252 {
-            let world: WorldStorage = self.world(@DEFAULT_NS());
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            token_metadata.player_name
+        fn validate_playable(self: @ContractState, game_id: u64) {
+            self.minigame.validate_playable(game_id);
         }
+
+        fn update_game(self: @ContractState, game_id: u64) {
+            self.minigame.update_game(game_id);
+        }
+
+        fn settings_id(self: @ContractState, game_id: u64) -> u32 {
+            self.minigame.get_settings_id(game_id)
+        }
+
+        // fn player_name(self: @ContractState, game_id: u64) -> felt252 {
+        //     let world: WorldStorage = self.world(@DEFAULT_NS());
+        //     let token_metadata: TokenMetadata = world.read_model(game_id);
+        //     token_metadata.player_name
+        // }
 
         fn health(self: @ContractState, game_id: u64) -> u8 {
             let world: WorldStorage = self.world(@DEFAULT_NS());
@@ -355,17 +440,7 @@ mod game_systems {
     }
 
     #[abi(embed_v0)]
-    impl ERC721Metadata of IERC721Metadata<ContractState> {
-        /// Returns the NFT name.
-        fn name(self: @ContractState) -> ByteArray {
-            self.erc721.ERC721_name.read()
-        }
-
-        /// Returns the NFT symbol.
-        fn symbol(self: @ContractState) -> ByteArray {
-            self.erc721.ERC721_symbol.read()
-        }
-
+    impl MinigameTokenUriImpl of IMinigameTokenUri<ContractState> {
         /// Returns the Uniform Resource Identifier (URI) for the `token_id` token.
         /// If the URI is not set, the return value will be an empty ByteArray.
         ///
@@ -373,11 +448,10 @@ mod game_systems {
         ///
         /// - `token_id` exists.
         fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
-            self.erc721._require_owned(token_id);
-
             let token_id_u64 = token_id.try_into().unwrap();
 
-            let hero_name = self.player_name(token_id_u64);
+            // let hero_name = self.player_name(token_id_u64);
+            let hero_name = 'Test Player';
             let hero_health = self.health(token_id_u64);
             let hero_xp = self.xp(token_id_u64);
             let game_state = self.game_state(token_id_u64);
@@ -389,23 +463,6 @@ mod game_systems {
 
     #[generate_trait]
     impl InternalImpl of InternalTrait {
-        #[inline(always)]
-        fn validate_start_conditions(self: @ContractState, token_id: u64, token_metadata: @TokenMetadata) {
-            self.assert_token_ownership(token_id);
-            self.assert_game_not_started(token_id);
-            token_metadata.lifecycle.assert_is_playable(token_id, starknet::get_block_timestamp());
-        }
-
-        #[inline(always)]
-        fn assert_token_ownership(self: @ContractState, token_id: u64) {
-            let token_owner = ERC721Impl::owner_of(self, token_id.into());
-            assert!(
-                token_owner == starknet::get_caller_address(),
-                "Dark Shuffle: Caller is not owner of token {}",
-                token_id,
-            );
-        }
-
         #[inline(always)]
         fn assert_game_not_started(self: @ContractState, game_id: u64) {
             let game: Game = self.world(@DEFAULT_NS()).read_model(game_id);

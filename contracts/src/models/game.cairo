@@ -3,7 +3,6 @@ use dojo::model::ModelStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
 use openzeppelin_token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
 use starknet::get_caller_address;
-use tournaments::components::interfaces::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
@@ -75,18 +74,6 @@ impl IntoU8GameState of Into<u8, GameState> {
 
 #[generate_trait]
 impl GameOwnerImpl of GameOwnerTrait {
-    fn update_metadata(self: Game, world: WorldStorage) {
-        let (contract_address, _) = world.dns(@"game_systems").unwrap();
-        let game_token_dispatcher = IGameTokenDispatcher { contract_address };
-        game_token_dispatcher.emit_metadata_update(self.game_id.into());
-    }
-
-    fn assert_owner(self: Game, world: WorldStorage) {
-        let (contract_address, _) = world.dns(@"game_systems").unwrap();
-        let game_token = IERC721Dispatcher { contract_address };
-        assert(game_token.owner_of(self.game_id.into()) == get_caller_address(), 'Not Owner');
-    }
-
     fn assert_draft(self: Game) {
         assert(self.state.into() == GameState::Draft, 'Not Draft');
     }

@@ -7,6 +7,7 @@ trait IBattleSystems<T> {
 mod battle_systems {
     use achievement::store::{Store, StoreTrait};
     use darkshuffle::constants::DEFAULT_NS;
+    use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait};
     use darkshuffle::models::battle::{
         Battle, BattleOwnerTrait, BattleResources, BoardStats, Creature, CreatureDetails, RoundStats,
     };
@@ -28,10 +29,7 @@ mod battle_systems {
     use darkshuffle::utils::summon::SummonUtilsImpl;
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
-    use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
-    use tournaments::components::models::game::TokenMetadata;
-    use tournaments::components::models::lifecycle::Lifecycle;
+    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
 
     #[abi(embed_v0)]
     impl BattleSystemsImpl of super::IBattleSystems<ContractState> {
@@ -40,11 +38,10 @@ mod battle_systems {
 
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
-
-            let mut game: Game = world.read_model(game_id);
-            game.assert_owner(world);
+            // Get game systems contract address and make cross-contract call to validate playable
+            let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
+            let game_systems = IGameSystemsDispatcher { contract_address: game_systems_address };
+            game_systems.validate_playable(game_id);
 
             let mut battle: Battle = world.read_model((battle_id, game_id));
             battle.assert_battle();
@@ -117,6 +114,8 @@ mod battle_systems {
                 action_index += 1;
             };
 
+            let mut game: Game = world.read_model(game_id);
+
             world
                 .emit_event(
                     @GameActionEvent {
@@ -131,7 +130,7 @@ mod battle_systems {
 
             if GameUtilsImpl::is_battle_over(battle) {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
-                game.update_metadata(world);
+                game_systems.update_game(game_id);
                 return;
             }
 
@@ -175,7 +174,7 @@ mod battle_systems {
                 world.write_model(@battle_resources);
             }
 
-            game.update_metadata(world);
+            game_systems.update_game(game_id);
         }
     }
 }
