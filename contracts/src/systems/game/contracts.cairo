@@ -7,8 +7,8 @@ trait IGameSystems<T> {
     fn pick_card(ref self: T, game_id: u64, option_id: u8);
     fn generate_tree(ref self: T, game_id: u64);
     fn select_node(ref self: T, game_id: u64, node_id: u8);
-    fn validate_playable(self: @T, game_id: u64);
-    fn update_game(self: @T, game_id: u64);
+    fn pre_action(self: @T, game_id: u64);
+    fn post_action(self: @T, game_id: u64, game_over: bool);
     fn settings_id(self: @T, game_id: u64) -> u32;
     fn action_count(self: @T, game_id: u64) -> u16;
     fn cards(self: @T, game_id: u64) -> Span<felt252>;
@@ -51,7 +51,8 @@ mod game_systems {
     use starknet::{ContractAddress, get_block_timestamp, get_caller_address, get_tx_info};
 
     use game_components_minigame::minigame::minigame_component;
-    use game_components_minigame::interface::{IMinigameDetails, IMinigameSettings, IMinigameObjectives, IMinigameTokenUri};
+    use game_components_minigame::interface::{IMinigameScore, IMinigameDetails, IMinigameSettings, IMinigameObjectives, IMinigameTokenUri};
+    use game_components_minigame::models::game_details::{GameDetail};
     use game_components_minigame::models::settings::{GameSetting, GameSettingDetails};
     use game_components_minigame::models::objectives::{GameObjective};
 
@@ -97,6 +98,30 @@ mod game_systems {
                 DEFAULT_NS(),
                 denshokan_address,
             );
+    }
+
+    #[abi(embed_v0)]
+    impl GameScoreImpl of IMinigameScore<ContractState> {
+        fn score(self: @ContractState, token_id: u64) -> u32 {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
+            game.hero_xp.into()
+        }
+    }
+
+    #[abi(embed_v0)]
+    impl GameDetailsImpl of IMinigameDetails<ContractState> {
+        fn token_description(self: @ContractState, token_id: u64) -> ByteArray {
+            format!("Test Token Description for token {}", token_id)
+        }
+        fn game_details(self: @ContractState, token_id: u64) -> Span<GameDetail> {
+            array![
+                GameDetail {
+                    name: "Test Game Detail",
+                    value: format!("Test Value for token {}", token_id),
+                },
+            ].span()
+        }
     }
 
     #[abi(embed_v0)]
@@ -198,22 +223,12 @@ mod game_systems {
         }
     }
 
-
-    #[abi(embed_v0)]
-    impl GameDetailsImpl of IMinigameDetails<ContractState> {
-        fn score(self: @ContractState, token_id: u64) -> u32 {
-            let world: WorldStorage = self.world(@DEFAULT_NS());
-            let game: Game = world.read_model(token_id);
-            game.hero_xp.into()
-        }
-    }
-
     #[abi(embed_v0)]
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
         fn start_game(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            self.minigame.validate_playable(game_id);
+            self.minigame.pre_action(game_id);
 
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let random_hash = random::get_random_hash();
@@ -249,13 +264,13 @@ mod game_systems {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count,
                     },
                 );
-            self.minigame.update_game(game_id);
+            self.minigame.post_action(game_id, false);
         }
 
         fn pick_card(ref self: ContractState, game_id: u64, option_id: u8) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            self.minigame.validate_playable(game_id);
+            self.minigame.pre_action(game_id);
 
             let mut game: Game = world.read_model(game_id);
             game.assert_draft();
@@ -286,13 +301,13 @@ mod game_systems {
                         count: current_draft_size.try_into().unwrap(),
                     },
                 );
-            self.minigame.update_game(game_id);
+            self.minigame.post_action(game_id, false);
         }
 
         fn generate_tree(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            self.minigame.validate_playable(game_id);
+            self.minigame.pre_action(game_id);
 
             let mut game: Game = world.read_model(game_id);
             game.assert_generate_tree();
@@ -328,7 +343,7 @@ mod game_systems {
         fn select_node(ref self: ContractState, game_id: u64, node_id: u8) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            self.minigame.validate_playable(game_id);
+            self.minigame.pre_action(game_id);
 
             let mut game: Game = world.read_model(game_id);
             game.assert_select_node();
@@ -354,15 +369,15 @@ mod game_systems {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
                     },
                 );
-            self.minigame.update_game(game_id);
+            self.minigame.post_action(game_id, false);
         }
 
-        fn validate_playable(self: @ContractState, game_id: u64) {
-            self.minigame.validate_playable(game_id);
+        fn pre_action(self: @ContractState, game_id: u64) {
+            self.minigame.pre_action(game_id);
         }
 
-        fn update_game(self: @ContractState, game_id: u64) {
-            self.minigame.update_game(game_id);
+        fn post_action(self: @ContractState, game_id: u64, game_over: bool) {
+            self.minigame.post_action(game_id, game_over);
         }
 
         fn settings_id(self: @ContractState, game_id: u64) -> u32 {

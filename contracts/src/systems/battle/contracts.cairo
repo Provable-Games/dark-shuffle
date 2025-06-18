@@ -41,7 +41,7 @@ mod battle_systems {
             // Get game systems contract address and make cross-contract call to validate playable
             let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
             let game_systems = IGameSystemsDispatcher { contract_address: game_systems_address };
-            game_systems.validate_playable(game_id);
+            game_systems.pre_action(game_id);
 
             let mut battle: Battle = world.read_model((battle_id, game_id));
             battle.assert_battle();
@@ -130,7 +130,7 @@ mod battle_systems {
 
             if GameUtilsImpl::is_battle_over(battle) {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
-                game_systems.update_game(game_id);
+                game_systems.post_action(game_id, false);
                 return;
             }
 
@@ -174,7 +174,7 @@ mod battle_systems {
                 world.write_model(@battle_resources);
             }
 
-            game_systems.update_game(game_id);
+            game_systems.post_action(game_id, false);
         }
     }
 }
