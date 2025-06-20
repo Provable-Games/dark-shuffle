@@ -63,10 +63,28 @@ dependencies = [
  "achievement",
  "alexandria_encoding",
  "alexandria_math",
+ "denshokan",
  "dojo",
  "dojo_cairo_test",
+ "game_components_denshokan",
+ "game_components_metagame",
  "game_components_minigame",
+ "game_components_utils",
  "graffiti",
+ "openzeppelin_introspection",
+ "openzeppelin_token",
+]
+
+[[package]]
+name = "denshokan"
+version = "1.5.0"
+source = "git+https://github.com/Provable-Games/denshokan?tag=v1.5.0#b085cc36b8871c6a1f747e68efc5396b874e5ccb"
+dependencies = [
+ "alexandria_encoding",
+ "dojo",
+ "game_components_metagame",
+ "game_components_minigame",
+ "game_components_utils",
  "openzeppelin_introspection",
  "openzeppelin_token",
 ]
@@ -95,12 +113,12 @@ source = "git+https://github.com/dojoengine/dojo?tag=v1.5.0#812f17c9c57fd057d0bf
 [[package]]
 name = "game_components_denshokan"
 version = "0.0.1"
-source = "git+https://github.com/Provable-Games/game-components?tag=v1.5.0#eafa5edad8da0a9b918b8c465a2e9fb253539c11"
+source = "git+https://github.com/Provable-Games/game-components?tag=v1.5.0#ac933b6c32cc99cd25d5e068db4d5a2493bea86d"
 
 [[package]]
 name = "game_components_metagame"
 version = "0.0.1"
-source = "git+https://github.com/Provable-Games/game-components?tag=v1.5.0#eafa5edad8da0a9b918b8c465a2e9fb253539c11"
+source = "git+https://github.com/Provable-Games/game-components?tag=v1.5.0#ac933b6c32cc99cd25d5e068db4d5a2493bea86d"
 dependencies = [
  "dojo",
  "game_components_denshokan",
@@ -111,7 +129,7 @@ dependencies = [
 [[package]]
 name = "game_components_minigame"
 version = "0.0.1"
-source = "git+https://github.com/Provable-Games/game-components?tag=v1.5.0#eafa5edad8da0a9b918b8c465a2e9fb253539c11"
+source = "git+https://github.com/Provable-Games/game-components?tag=v1.5.0#ac933b6c32cc99cd25d5e068db4d5a2493bea86d"
 dependencies = [
  "dojo",
  "game_components_denshokan",
@@ -123,7 +141,7 @@ dependencies = [
 [[package]]
 name = "game_components_utils"
 version = "0.0.1"
-source = "git+https://github.com/Provable-Games/game-components?tag=v1.5.0#eafa5edad8da0a9b918b8c465a2e9fb253539c11"
+source = "git+https://github.com/Provable-Games/game-components?tag=v1.5.0#ac933b6c32cc99cd25d5e068db4d5a2493bea86d"
 dependencies = [
  "alexandria_encoding",
  "game_components_metagame",

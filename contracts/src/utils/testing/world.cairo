@@ -33,23 +33,6 @@ fn namespace_def() -> NamespaceDef {
             TestResource::Model(m_CreatureCard::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_SpellCard::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_CardsCounter::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(
-                tournaments::components::models::game::m_GameMetadata::TEST_CLASS_HASH.try_into().unwrap(),
-            ),
-            TestResource::Model(
-                tournaments::components::models::game::m_TokenMetadata::TEST_CLASS_HASH.try_into().unwrap(),
-            ),
-            TestResource::Model(
-                tournaments::components::models::game::m_GameCounter::TEST_CLASS_HASH.try_into().unwrap(),
-            ),
-            TestResource::Model(tournaments::components::models::game::m_Score::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(tournaments::components::models::game::m_Settings::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Model(
-                tournaments::components::models::game::m_SettingsDetails::TEST_CLASS_HASH.try_into().unwrap(),
-            ),
-            TestResource::Model(
-                tournaments::components::models::game::m_SettingsCounter::TEST_CLASS_HASH.try_into().unwrap(),
-            ),
             TestResource::Event(darkshuffle::models::game::e_GameActionEvent::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyCreation::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(achievement::events::index::e_TrophyProgression::TEST_CLASS_HASH.try_into().unwrap()),
@@ -63,11 +46,14 @@ fn namespace_def() -> NamespaceDef {
     ndef
 }
 
-fn contract_defs() -> Span<ContractDef> {
+fn contract_defs(denshokan_address: ContractAddress) -> Span<ContractDef> {
+    let mut game_init_calldata = array![];
+    game_init_calldata.append(contract_address_const::<'player1'>().into()); // safe_mode
+    game_init_calldata.append(denshokan_address.into()); // denshokan_address
     [
         ContractDefTrait::new(@DEFAULT_NS(), @"game_systems")
             .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span())
-            .with_init_calldata(array![contract_address_const::<'player1'>().into()].span()),
+            .with_init_calldata(game_init_calldata.span()),
         ContractDefTrait::new(@DEFAULT_NS(), @"config_systems")
             .with_writer_of([dojo::utils::bytearray_hash(@DEFAULT_NS())].span()),
         ContractDefTrait::new(@DEFAULT_NS(), @"battle_systems")
@@ -79,9 +65,10 @@ fn contract_defs() -> Span<ContractDef> {
 
 // used to spawn a test world with all the models and systems registered
 fn spawn_darkshuffle() -> (dojo::world::WorldStorage, IGameSystemsDispatcher) {
+    let denshokan_contracts = darkshuffle::utils::testing::setup_denshokan::setup();
     let ndef = namespace_def();
     let mut world = spawn_test_world([ndef].span());
-    world.sync_perms_and_inits(contract_defs());
+    world.sync_perms_and_inits(contract_defs(denshokan_contracts.denshokan.contract_address));
 
     world.dispatcher.grant_owner(dojo::utils::bytearray_hash(@DEFAULT_NS()), contract_address_const::<'player1'>());
 

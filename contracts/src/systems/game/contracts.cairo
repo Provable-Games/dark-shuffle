@@ -1,5 +1,6 @@
 use darkshuffle::models::game::{GameState};
 use starknet::ContractAddress;
+use darkshuffle::models::config::CardRarityWeights;
 
 #[starknet::interface]
 trait IGameSystems<T> {
@@ -7,8 +8,32 @@ trait IGameSystems<T> {
     fn pick_card(ref self: T, game_id: u64, option_id: u8);
     fn generate_tree(ref self: T, game_id: u64);
     fn select_node(ref self: T, game_id: u64, node_id: u8);
-    fn pre_action(self: @T, game_id: u64);
-    fn post_action(self: @T, game_id: u64, game_over: bool);
+    fn battle_actions(ref self: T, game_id: u64, battle_id: u16, actions: Span<Span<u8>>);
+    fn add_settings(
+        ref self: T,
+        name: felt252,
+        description: ByteArray,
+        starting_health: u8,
+        start_energy: u8,
+        start_hand_size: u8,
+        draft_size: u8,
+        max_energy: u8,
+        max_hand_size: u8,
+        draw_amount: u8,
+        card_ids: Span<u64>,
+        card_rarity_weights: CardRarityWeights,
+        auto_draft: bool,
+        persistent_health: bool,
+        possible_branches: u8,
+        level_depth: u8,
+        enemy_attack_min: u8,
+        enemy_attack_max: u8,
+        enemy_health_min: u8,
+        enemy_health_max: u8,
+        enemy_attack_scaling: u8,
+        enemy_health_scaling: u8,
+    ) -> u32;
+    fn add_random_settings(ref self: T) -> u32;
     fn settings_id(self: @T, game_id: u64) -> u32;
     fn action_count(self: @T, game_id: u64) -> u16;
     fn cards(self: @T, game_id: u64) -> Span<felt252>;
@@ -27,11 +52,13 @@ mod game_systems {
     use achievement::store::{Store, StoreTrait};
     use darkshuffle::constants::{DEFAULT_NS, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
     use darkshuffle::models::{
-        card::{Card, CardCategory, CreatureCard, SpellCard}, config::{GameSettings, GameSettingsTrait, GameSettingsMetadata},
+        card::{Card, CardCategory, CreatureCard, SpellCard}, config::{GameSettings, GameSettingsTrait, GameSettingsMetadata, CardRarityWeights},
         draft::{Draft, DraftOwnerTrait}, game::{Game, GameActionEvent, GameOwnerTrait, GameState},
         map::{Map, MonsterNode}, objectives::{ScoreObjective, ScoreObjectiveCount},
     };
     use darkshuffle::utils::tasks::index::{Task, TaskTrait};
+    use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait};
+    use darkshuffle::systems::config::contracts::{IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait};
 
     use darkshuffle::utils::{
         cards::CardUtilsImpl, config::ConfigUtilsImpl, draft::DraftUtilsImpl, map::MapUtilsImpl, random,
@@ -40,7 +67,7 @@ mod game_systems {
 
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
-    use dojo::world::WorldStorage;
+    use dojo::world::{WorldStorage, WorldStorageTrait};
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
     use openzeppelin_introspection::src5::SRC5Component;
@@ -94,6 +121,7 @@ mod game_systems {
                 'Provable Games',
                 'Digital TCG / Deck Building',
                 "https://darkshuffle.io/favicon.svg",
+                Option::None,
                 Option::None,
                 DEFAULT_NS(),
                 denshokan_address,
@@ -229,6 +257,7 @@ mod game_systems {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
             self.minigame.pre_action(game_id);
+            self.assert_game_not_started(game_id);
 
             let game_settings: GameSettings = ConfigUtilsImpl::get_game_settings(world, game_id);
             let random_hash = random::get_random_hash();
@@ -372,12 +401,54 @@ mod game_systems {
             self.minigame.post_action(game_id, false);
         }
 
-        fn pre_action(self: @ContractState, game_id: u64) {
+        fn battle_actions(ref self: ContractState, game_id: u64, battle_id: u16, actions: Span<Span<u8>>){
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
             self.minigame.pre_action(game_id);
+            let (battle_systems_address, _) = world.dns(@"battle_systems").unwrap();
+            let battle_systems = IBattleSystemsDispatcher { contract_address: battle_systems_address };
+            let hero_is_dead = battle_systems.battle_actions(game_id, battle_id, actions);
+            self.minigame.post_action(game_id, hero_is_dead);
         }
 
-        fn post_action(self: @ContractState, game_id: u64, game_over: bool) {
-            self.minigame.post_action(game_id, game_over);
+        fn add_settings(
+            ref self: ContractState,
+            name: felt252,
+            description: ByteArray,
+            starting_health: u8,
+            start_energy: u8,
+            start_hand_size: u8,
+            draft_size: u8,
+            max_energy: u8,
+            max_hand_size: u8,
+            draw_amount: u8,
+            card_ids: Span<u64>,
+            card_rarity_weights: CardRarityWeights,
+            auto_draft: bool,
+            persistent_health: bool,
+            possible_branches: u8,
+            level_depth: u8,
+            enemy_attack_min: u8,
+            enemy_attack_max: u8,
+            enemy_health_min: u8,
+            enemy_health_max: u8,
+            enemy_attack_scaling: u8,
+            enemy_health_scaling: u8,
+        ) -> u32 {
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
+            let (config_systems_address, _) = world.dns(@"config_systems").unwrap();
+            let config_systems = IConfigSystemsDispatcher { contract_address: config_systems_address };
+            let (settings_id, settings_json) = config_systems.add_settings(name, description, starting_health, start_energy, start_hand_size, draft_size, max_energy, max_hand_size, draw_amount, card_ids, card_rarity_weights, auto_draft, persistent_health, possible_branches, level_depth, enemy_attack_min, enemy_attack_max, enemy_health_min, enemy_health_max, enemy_attack_scaling, enemy_health_scaling);
+            self.minigame.create_settings(settings_id, settings_json);
+            settings_id
+        }
+
+        fn add_random_settings(ref self: ContractState) -> u32 {
+            let mut world: WorldStorage = self.world(@DEFAULT_NS());
+            let (config_systems_address, _) = world.dns(@"config_systems").unwrap();
+            let config_systems = IConfigSystemsDispatcher { contract_address: config_systems_address };
+            let (settings_id, settings_json) = config_systems.add_random_settings();
+            self.minigame.create_settings(settings_id, settings_json);
+            settings_id
         }
 
         fn settings_id(self: @ContractState, game_id: u64) -> u32 {

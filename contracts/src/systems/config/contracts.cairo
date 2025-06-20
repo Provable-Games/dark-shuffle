@@ -1,6 +1,6 @@
 use darkshuffle::models::card::{CardEffect, CardRarity, CardType};
 use darkshuffle::models::config::{CardRarityWeights, GameSettings, GameSettingsMetadata};
-use starknet::ContractAddress;
+use starknet::{ContractAddress, get_contract_address};
 
 #[starknet::interface]
 trait IConfigSystems<T> {
@@ -27,9 +27,9 @@ trait IConfigSystems<T> {
         enemy_health_max: u8,
         enemy_attack_scaling: u8,
         enemy_health_scaling: u8,
-    ) -> u32;
+    ) -> (u32, ByteArray);
 
-    fn add_random_settings(ref self: T) -> u32;
+    fn add_random_settings(ref self: T) -> (u32, ByteArray);
     fn add_creature_card(
         ref self: T,
         name: felt252,
@@ -68,6 +68,11 @@ mod config_systems {
     use dojo::model::ModelStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
     use starknet::{ContractAddress, get_block_timestamp, get_caller_address};
+
+    use game_components_minigame::interface::{IMinigameDispatcher, IMinigameDispatcherTrait};
+    use game_components_minigame::models::settings::GameSetting;
+    use game_components_minigame::libs::{settings};
+    use game_components_utils::json::create_settings_json;
 
     component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
     impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
@@ -153,7 +158,7 @@ mod config_systems {
             enemy_health_max: u8,
             enemy_attack_scaling: u8,
             enemy_health_scaling: u8,
-        ) -> u32 {
+        ) -> (u32, ByteArray) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
             // increment settings counter
@@ -187,16 +192,77 @@ mod config_systems {
                     @GameSettingsMetadata {
                         settings_id: settings_count.count,
                         name,
-                        description,
+                        description: description.clone(),
                         created_by: get_caller_address(),
                         created_at: get_block_timestamp(),
                     },
                 );
 
-            settings_count.count
+            
+            let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
+            let minigame_dispatcher = IMinigameDispatcher { contract_address: game_systems_address };
+            let denshokan_address = minigame_dispatcher.denshokan_address();
+            let game_settings: Span<GameSetting> = array![
+                GameSetting {
+                    name: "Starting Health",
+                    value: format!("{}", starting_health),
+                },
+                GameSetting {
+                    name: "Persistent Health",
+                    value: format!("{}", persistent_health),
+                },
+                GameSetting {
+                    name: "Level Depth",
+                    value: format!("{}", level_depth),
+                },
+                GameSetting {
+                    name: "Possible Branches",
+                    value: format!("{}", possible_branches),
+                },
+                GameSetting {
+                    name: "Enemy Attack Min",
+                    value: format!("{}", enemy_attack_min),
+                },
+                GameSetting {
+                    name: "Enemy Attack Max",
+                    value: format!("{}", enemy_attack_max),
+                },
+                GameSetting {
+                    name: "Enemy Health Min",
+                    value: format!("{}", enemy_health_min),
+                },
+                GameSetting {
+                    name: "Enemy Health Max",
+                    value: format!("{}", enemy_health_max),
+                },
+                GameSetting {
+                    name: "Enemy Attack Scaling",
+                    value: format!("{}", enemy_attack_scaling),
+                },
+                GameSetting {
+                    name: "Enemy Health Scaling",
+                    value: format!("{}", enemy_health_scaling),
+                },
+                GameSetting {
+                    name: "Auto Draft",
+                    value: format!("{}", auto_draft),
+                },
+                GameSetting {
+                    name: "Draft Size",
+                    value: format!("{}", draft_size),
+                }, 
+            ].span();
+            let settings_json = create_settings_json(
+                format!("{}", name),
+                description.clone(),
+                game_settings,
+            );
+            settings::create_settings(denshokan_address, game_systems_address, settings_count.count, settings_json.clone());
+
+            (settings_count.count, settings_json.clone())
         }
 
-        fn add_random_settings(ref self: ContractState) -> u32 {
+        fn add_random_settings(ref self: ContractState) -> (u32, ByteArray) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
             let mut settings_count: SettingsCounter = world.read_model(VERSION);
             settings_count.count += 1;
@@ -218,7 +284,7 @@ mod config_systems {
                     },
                 );
 
-            settings_count.count
+            (settings_count.count, "")
         }
 
         fn add_creature_card(

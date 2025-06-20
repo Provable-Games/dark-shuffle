@@ -22,11 +22,16 @@ fn setup() -> (WorldStorage, u64, IBattleSystemsDispatcher) {
     let game_id = mint_game_token(
         world,
         game_systems_dispatcher.contract_address,
-        'player1',
-        settings_id,
-        Option::None,
-        Option::None,
-        contract_address_const::<'player1'>(),
+        Option::Some('player1'), // player_name
+        Option::Some(settings_id), // settings_id
+        Option::None, // start
+        Option::None, // end
+        Option::None, // objective_ids
+        Option::None, // context
+        Option::None, // client_url
+        Option::None, // renderer_address
+        contract_address_const::<'player1'>(), // to
+        false, // soulbound
     );
     create_game(ref world, game_id, GameState::Battle);
 

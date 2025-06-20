@@ -1,6 +1,6 @@
 #[starknet::interface]
 trait IBattleSystems<T> {
-    fn battle_actions(ref self: T, game_id: u64, battle_id: u16, actions: Span<Span<u8>>);
+    fn battle_actions(ref self: T, game_id: u64, battle_id: u16, actions: Span<Span<u8>>) -> bool;
 }
 
 #[dojo::contract]
@@ -30,18 +30,15 @@ mod battle_systems {
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
+    // use game_components_minigame::interface::{IMinigameDispatcher, IMinigameDispatcherTrait};
+    // use game_components_minigame::libs::game;
 
     #[abi(embed_v0)]
     impl BattleSystemsImpl of super::IBattleSystems<ContractState> {
-        fn battle_actions(ref self: ContractState, game_id: u64, battle_id: u16, actions: Span<Span<u8>>) {
+        fn battle_actions(ref self: ContractState, game_id: u64, battle_id: u16, actions: Span<Span<u8>>) -> bool {
             assert(*(*actions.at(actions.len() - 1)).at(0) == 1, 'Must end turn');
 
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
-
-            // Get game systems contract address and make cross-contract call to validate playable
-            let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
-            let game_systems = IGameSystemsDispatcher { contract_address: game_systems_address };
-            game_systems.pre_action(game_id);
 
             let mut battle: Battle = world.read_model((battle_id, game_id));
             battle.assert_battle();
@@ -130,8 +127,7 @@ mod battle_systems {
 
             if GameUtilsImpl::is_battle_over(battle) {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
-                game_systems.post_action(game_id, false);
-                return;
+                return battle.hero.health == 0;
             }
 
             if game_effects.hero_card_heal {
@@ -149,6 +145,7 @@ mod battle_systems {
 
             if GameUtilsImpl::is_battle_over(battle) {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
+                return battle.hero.health == 0;
             } else {
                 battle_resources.board = BoardUtilsImpl::get_packed_board(ref board);
 
@@ -174,7 +171,7 @@ mod battle_systems {
                 world.write_model(@battle_resources);
             }
 
-            game_systems.post_action(game_id, false);
+            false // Hero is alive, battle continues
         }
     }
 }

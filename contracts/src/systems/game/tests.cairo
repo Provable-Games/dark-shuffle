@@ -22,11 +22,16 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
     let game_id = mint_game_token(
         world,
         game_systems_dispatcher.contract_address,
-        'player1',
-        settings_id,
-        Option::None,
-        Option::None,
-        contract_address_const::<'player1'>(),
+        Option::Some('player1'), // player_name
+        Option::Some(settings_id), // settings_id
+        Option::None, // start
+        Option::None, // end
+        Option::None, // objective_ids
+        Option::None, // context
+        Option::None, // client_url
+        Option::None, // renderer_address
+        contract_address_const::<'player1'>(), // to
+        false, // soulbound
     );
 
     (world, game_id, game_systems_dispatcher)
@@ -81,7 +86,7 @@ fn game_test_start_game() {
 }
 
 #[test]
-#[should_panic(expected: ("Dark Shuffle: Game 1 has already started", 'ENTRYPOINT_FAILED'))]
+#[should_panic(expected: ("Dark Shuffle: Game 3 has already started", 'ENTRYPOINT_FAILED'))]
 fn test_cannot_start_game_twice() {
     let (_, game_id, game_systems_dispatcher) = setup();
 
@@ -93,7 +98,7 @@ fn test_cannot_start_game_twice() {
 }
 
 #[test]
-#[should_panic(expected: ("Dark Shuffle: Caller is not owner of token 1", 'ENTRYPOINT_FAILED'))]
+#[should_panic(expected: ("Caller is not owner of token 3", 'ENTRYPOINT_FAILED'))]
 fn test_only_owner_can_start_game() {
     let (_, game_id, game_systems_dispatcher) = setup();
 

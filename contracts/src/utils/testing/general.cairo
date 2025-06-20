@@ -8,22 +8,25 @@ use darkshuffle::utils::testing::systems::deploy_game_token_mock;
 use dojo::model::{ModelStorage, ModelStorageTest, ModelValueStorage};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
 use starknet::{ContractAddress, contract_address_const, get_caller_address};
-use tournaments::components::game::game_component;
-use tournaments::components::interfaces::{
-    IGameDetails, IGameToken, IGameTokenDispatcher, IGameTokenDispatcherTrait, ISettings,
-};
+use game_components_minigame::minigame::minigame_component;
+use game_components_minigame::interface::{IMinigameDispatcher, IMinigameDispatcherTrait};
 
 fn mint_game_token(
     world: WorldStorage,
     token_address: ContractAddress,
-    player_name: felt252,
-    settings_id: u32,
-    available_at: Option<u64>,
-    expires_at: Option<u64>,
+    player_name: Option<felt252>,
+    settings_id: Option<u32>,
+    start: Option<u64>,
+    end: Option<u64>,
+    objective_ids: Option<Span<u32>>,
+    context: Option<ByteArray>,
+    client_url: Option<ByteArray>,
+    renderer_address: Option<ContractAddress>,
     to: ContractAddress,
+    soulbound: bool,
 ) -> u64 {
-    let game_systems_dispatcher = IGameTokenDispatcher { contract_address: token_address };
-    game_systems_dispatcher.mint(player_name, settings_id, available_at, expires_at, to)
+    let minigame_dispatcher = IMinigameDispatcher { contract_address: token_address };
+    minigame_dispatcher.mint(player_name, settings_id, start, end, objective_ids, context, client_url, renderer_address, to, soulbound)
 }
 
 fn create_game(ref world: WorldStorage, game_id: u64, state: GameState) {
