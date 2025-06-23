@@ -48,7 +48,7 @@ fn namespace_def() -> NamespaceDef {
 
 fn contract_defs(denshokan_address: ContractAddress) -> Span<ContractDef> {
     let mut game_init_calldata = array![];
-    game_init_calldata.append(contract_address_const::<'player1'>().into()); // safe_mode
+    game_init_calldata.append(contract_address_const::<'player1'>().into()); // creator_address
     game_init_calldata.append(denshokan_address.into()); // denshokan_address
     [
         ContractDefTrait::new(@DEFAULT_NS(), @"game_systems")

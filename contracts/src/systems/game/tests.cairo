@@ -86,7 +86,7 @@ fn game_test_start_game() {
 }
 
 #[test]
-#[should_panic(expected: ("Dark Shuffle: Game 3 has already started", 'ENTRYPOINT_FAILED'))]
+#[should_panic(expected: ("Dark Shuffle: Game 2 has already started", 'ENTRYPOINT_FAILED'))]
 fn test_cannot_start_game_twice() {
     let (_, game_id, game_systems_dispatcher) = setup();
 
@@ -98,7 +98,7 @@ fn test_cannot_start_game_twice() {
 }
 
 #[test]
-#[should_panic(expected: ("Caller is not owner of token 3", 'ENTRYPOINT_FAILED'))]
+#[should_panic(expected: ("Caller is not owner of token 2", 'ENTRYPOINT_FAILED'))]
 fn test_only_owner_can_start_game() {
     let (_, game_id, game_systems_dispatcher) = setup();
 
