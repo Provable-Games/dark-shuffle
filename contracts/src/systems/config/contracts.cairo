@@ -27,9 +27,9 @@ trait IConfigSystems<T> {
         enemy_health_max: u8,
         enemy_attack_scaling: u8,
         enemy_health_scaling: u8,
-    ) -> (u32, ByteArray);
+    ) -> u32;
 
-    fn add_random_settings(ref self: T) -> (u32, ByteArray);
+    fn add_random_settings(ref self: T) -> u32;
     fn add_creature_card(
         ref self: T,
         name: felt252,
@@ -49,6 +49,7 @@ trait IConfigSystems<T> {
     fn setting_details(self: @T, settings_id: u32) -> GameSettings;
     fn settings_exists(self: @T, settings_id: u32) -> bool;
     fn game_settings(self: @T, game_id: u64) -> GameSettings;
+    fn settings_id(self: @T, game_id: u64) -> u32;
 }
 
 #[dojo::contract]
@@ -67,20 +68,34 @@ mod config_systems {
     use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
     use dojo::model::ModelStorage;
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
-    use starknet::{ContractAddress, get_block_timestamp, get_caller_address};
 
     use game_components_minigame::interface::{IMinigameDispatcher, IMinigameDispatcherTrait};
-    use game_components_minigame::models::settings::GameSetting;
-    use game_components_minigame::libs::{settings};
+    use game_components_minigame_settings::settings::settings_component;
+    use game_components_minigame_settings::interface::{IMinigameSettings};
+    use game_components_minigame_settings::structs::{GameSetting, GameSettingDetails};
     use game_components_utils::json::create_settings_json;
 
+    use openzeppelin_introspection::src5::SRC5Component;
+    use starknet::{ContractAddress, get_block_timestamp, get_caller_address};
+
     component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
+    component!(path: settings_component, storage: settings, event: SettingsEvent);
+    component!(path: SRC5Component, storage: src5, event: SRC5Event);
+    
     impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
+    impl SettingsInternalImpl = settings_component::InternalImpl<ContractState>;
+
+    #[abi(embed_v0)]
+    impl SRC5Impl = SRC5Component::SRC5Impl<ContractState>;
 
     #[storage]
     struct Storage {
         #[substorage(v0)]
         achievable: AchievableComponent::Storage,
+        #[substorage(v0)]
+        settings: settings_component::Storage,
+        #[substorage(v0)]
+        src5: SRC5Component::Storage,
     }
 
     #[event]
@@ -88,9 +103,13 @@ mod config_systems {
     enum Event {
         #[flat]
         AchievableEvent: AchievableComponent::Event,
+        #[flat]
+        SettingsEvent: settings_component::Event,
+        #[flat]
+        SRC5Event: SRC5Component::Event,
     }
 
-    fn dojo_init(self: @ContractState) {
+    fn dojo_init(ref self: ContractState) {
         let mut world: WorldStorage = self.world(@DEFAULT_NS());
         let mut trophy_id: u8 = TROPHY_COUNT;
 
@@ -131,6 +150,45 @@ mod config_systems {
                 },
             );
         ConfigUtilsImpl::create_genesis_cards(ref world);
+
+        self.settings.initializer();
+    }
+
+    #[abi(embed_v0)]
+    impl SettingsImpl of IMinigameSettings<ContractState> {
+        fn setting_exists(self: @ContractState, settings_id: u32) -> bool {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let settings: GameSettings = world.read_model(settings_id);
+            settings.exists()
+        }
+        fn settings(self: @ContractState, settings_id: u32) -> GameSettingDetails {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let settings: GameSettings = world.read_model(settings_id);
+            let settings_details: GameSettingsMetadata = world.read_model(settings_id);
+            GameSettingDetails {
+                name: format!("{}", settings_details.name),
+                description: settings_details.description,
+                settings: array![
+                    GameSetting { name: "Starting Health", value: format!("{}", settings.starting_health) },
+                    GameSetting { name: "Persistent Health", value: format!("{}", settings.persistent_health) },
+                    GameSetting { name: "Level Depth", value: format!("{}", settings.map.level_depth) },
+                    GameSetting { name: "Possible Branches", value: format!("{}", settings.map.possible_branches) },
+                    GameSetting { name: "Enemy Attack Min", value: format!("{}", settings.map.enemy_attack_min) },
+                    GameSetting { name: "Enemy Attack Max", value: format!("{}", settings.map.enemy_attack_max) },
+                    GameSetting { name: "Enemy Health Min", value: format!("{}", settings.map.enemy_health_min) },
+                    GameSetting { name: "Enemy Health Max", value: format!("{}", settings.map.enemy_health_max) },
+                    GameSetting {
+                        name: "Enemy Attack Scaling", value: format!("{}", settings.map.enemy_attack_scaling),
+                    },
+                    GameSetting {
+                        name: "Enemy Health Scaling", value: format!("{}", settings.map.enemy_health_scaling),
+                    },
+                    GameSetting { name: "Auto Draft", value: format!("{}", settings.draft.auto_draft) },
+                    GameSetting { name: "Draft Size", value: format!("{}", settings.draft.draft_size) },
+                ]
+                    .span(),
+            }
+        }
     }
 
     #[abi(embed_v0)]
@@ -158,7 +216,7 @@ mod config_systems {
             enemy_health_max: u8,
             enemy_attack_scaling: u8,
             enemy_health_scaling: u8,
-        ) -> (u32, ByteArray) {
+        ) -> u32 {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
             // increment settings counter
@@ -198,71 +256,31 @@ mod config_systems {
                     },
                 );
 
-            
+            let game_settings: Span<GameSetting> = array![
+                GameSetting { name: "Starting Health", value: format!("{}", starting_health) },
+                GameSetting { name: "Persistent Health", value: format!("{}", persistent_health) },
+                GameSetting { name: "Level Depth", value: format!("{}", level_depth) },
+                GameSetting { name: "Possible Branches", value: format!("{}", possible_branches) },
+                GameSetting { name: "Enemy Attack Min", value: format!("{}", enemy_attack_min) },
+                GameSetting { name: "Enemy Attack Max", value: format!("{}", enemy_attack_max) },
+                GameSetting { name: "Enemy Health Min", value: format!("{}", enemy_health_min) },
+                GameSetting { name: "Enemy Health Max", value: format!("{}", enemy_health_max) },
+                GameSetting { name: "Enemy Attack Scaling", value: format!("{}", enemy_attack_scaling) },
+                GameSetting { name: "Enemy Health Scaling", value: format!("{}", enemy_health_scaling) },
+                GameSetting { name: "Auto Draft", value: format!("{}", auto_draft) },
+                GameSetting { name: "Draft Size", value: format!("{}", draft_size) },
+            ]
+                .span();
+
             let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
             let minigame_dispatcher = IMinigameDispatcher { contract_address: game_systems_address };
-            let denshokan_address = minigame_dispatcher.denshokan_address();
-            let game_settings: Span<GameSetting> = array![
-                GameSetting {
-                    name: "Starting Health",
-                    value: format!("{}", starting_health),
-                },
-                GameSetting {
-                    name: "Persistent Health",
-                    value: format!("{}", persistent_health),
-                },
-                GameSetting {
-                    name: "Level Depth",
-                    value: format!("{}", level_depth),
-                },
-                GameSetting {
-                    name: "Possible Branches",
-                    value: format!("{}", possible_branches),
-                },
-                GameSetting {
-                    name: "Enemy Attack Min",
-                    value: format!("{}", enemy_attack_min),
-                },
-                GameSetting {
-                    name: "Enemy Attack Max",
-                    value: format!("{}", enemy_attack_max),
-                },
-                GameSetting {
-                    name: "Enemy Health Min",
-                    value: format!("{}", enemy_health_min),
-                },
-                GameSetting {
-                    name: "Enemy Health Max",
-                    value: format!("{}", enemy_health_max),
-                },
-                GameSetting {
-                    name: "Enemy Attack Scaling",
-                    value: format!("{}", enemy_attack_scaling),
-                },
-                GameSetting {
-                    name: "Enemy Health Scaling",
-                    value: format!("{}", enemy_health_scaling),
-                },
-                GameSetting {
-                    name: "Auto Draft",
-                    value: format!("{}", auto_draft),
-                },
-                GameSetting {
-                    name: "Draft Size",
-                    value: format!("{}", draft_size),
-                }, 
-            ].span();
-            let settings_json = create_settings_json(
-                format!("{}", name),
-                description.clone(),
-                game_settings,
-            );
-            settings::create_settings(denshokan_address, game_systems_address, settings_count.count, settings_json.clone());
+            let minigame_token_address = minigame_dispatcher.minigame_token_address();
+            self.settings.create_settings(settings_count.count, format!("{}", name), format!("{}", description), game_settings, minigame_token_address);
 
-            (settings_count.count, settings_json.clone())
+            settings_count.count
         }
 
-        fn add_random_settings(ref self: ContractState) -> (u32, ByteArray) {
+        fn add_random_settings(ref self: ContractState) -> u32 {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
             let mut settings_count: SettingsCounter = world.read_model(VERSION);
             settings_count.count += 1;
@@ -283,8 +301,29 @@ mod config_systems {
                         created_at: get_block_timestamp(),
                     },
                 );
+            
+            let game_settings: Span<GameSetting> = array![
+                GameSetting { name: "Starting Health", value: format!("{}", settings.starting_health) },
+                GameSetting { name: "Persistent Health", value: format!("{}", settings.persistent_health) },
+                GameSetting { name: "Level Depth", value: format!("{}", settings.map.level_depth) },
+                GameSetting { name: "Possible Branches", value: format!("{}", settings.map.possible_branches) },
+                GameSetting { name: "Enemy Attack Min", value: format!("{}", settings.map.enemy_attack_min) },
+                GameSetting { name: "Enemy Attack Max", value: format!("{}", settings.map.enemy_attack_max) },
+                GameSetting { name: "Enemy Health Min", value: format!("{}", settings.map.enemy_health_min) },
+                GameSetting { name: "Enemy Health Max", value: format!("{}", settings.map.enemy_health_max) },
+                GameSetting { name: "Enemy Attack Scaling", value: format!("{}", settings.map.enemy_attack_scaling) },
+                GameSetting { name: "Enemy Health Scaling", value: format!("{}", settings.map.enemy_health_scaling) },
+                GameSetting { name: "Auto Draft", value: format!("{}", settings.draft.auto_draft) },
+                GameSetting { name: "Draft Size", value: format!("{}", settings.draft.draft_size) },
+            ]
+                .span();
 
-            (settings_count.count, "")
+            let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
+            let minigame_dispatcher = IMinigameDispatcher { contract_address: game_systems_address };
+            let minigame_token_address = minigame_dispatcher.minigame_token_address();
+            self.settings.create_settings(settings_count.count, "Random", "Random settings", game_settings, minigame_token_address);
+
+            settings_count.count
         }
 
         fn add_creature_card(
@@ -333,10 +372,19 @@ mod config_systems {
         fn game_settings(self: @ContractState, game_id: u64) -> GameSettings {
             let world: WorldStorage = self.world(@DEFAULT_NS());
             let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
-            let game_systems = IGameSystemsDispatcher { contract_address: game_systems_address };
-            let settings_id: u32 = game_systems.settings_id(game_id);
+            let minigame_dispatcher = IMinigameDispatcher { contract_address: game_systems_address };
+            let minigame_token_address = minigame_dispatcher.minigame_token_address();
+            let settings_id: u32 = self.settings.get_settings_id(game_id, minigame_token_address);
             let game_settings: GameSettings = world.read_model(settings_id);
             game_settings
+        }
+
+        fn settings_id(self: @ContractState, game_id: u64) -> u32 {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
+            let minigame_dispatcher = IMinigameDispatcher { contract_address: game_systems_address };
+            let minigame_token_address = minigame_dispatcher.minigame_token_address();
+            self.settings.get_settings_id(game_id, minigame_token_address)
         }
     }
 

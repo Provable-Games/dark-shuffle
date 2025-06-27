@@ -76,7 +76,7 @@ fn setup() -> (WorldStorage, u64, IGameSystemsDispatcher) {
         Option::None, // client_url
         Option::None, // renderer_address
         contract_address_const::<'player1'>(), // to
-        false, // soulbound
+        false // soulbound
     );
 
     (world, game_id, game_systems_dispatcher)

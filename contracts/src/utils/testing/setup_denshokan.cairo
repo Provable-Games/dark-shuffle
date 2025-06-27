@@ -1,21 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
 
 use core::option::Option;
-use starknet::{ContractAddress, testing, contract_address_const};
-use dojo::world::{WorldStorage, WorldStorageTrait};
-use dojo_cairo_test::{
-    spawn_test_world, NamespaceDef, TestResource, ContractDefTrait, ContractDef,
-    WorldStorageTestTrait,
-};
 
 use denshokan::constants::DEFAULT_NS;
-use game_components_denshokan::interface::{IDenshokanDispatcher};
 
+use denshokan::interface::{IDenshokanDispatcher};
 use denshokan::models::denshokan::{
-    m_GameMetadata, m_GameRegistry, m_GameRegistryId, m_GameCounter, m_MinterRegistry,
-    m_MinterRegistryId, m_MinterCounter, m_TokenMetadata, m_TokenCounter, m_TokenPlayerName,
-    m_TokenObjective,
+    m_GameCounter, m_GameMetadata, m_GameRegistry, m_GameRegistryId, m_MinterCounter, m_MinterRegistry,
+    m_MinterRegistryId, m_TokenCounter, m_TokenMetadata, m_TokenObjective, m_TokenPlayerName,
 };
+use dojo::world::{WorldStorage, WorldStorageTrait};
+use dojo_cairo_test::{
+    ContractDef, ContractDefTrait, NamespaceDef, TestResource, WorldStorageTestTrait, spawn_test_world,
+};
+use starknet::{ContractAddress, contract_address_const, testing};
 
 // use denshokan::tests::utils;
 
@@ -71,26 +69,12 @@ fn setup_uninitialized() -> WorldStorage {
             TestResource::Model(m_TokenPlayerName::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Model(m_TokenObjective::TEST_CLASS_HASH.try_into().unwrap()),
             // Events
+            TestResource::Event(denshokan::denshokan::denshokan::e_Owners::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Event(denshokan::denshokan::denshokan::e_ScoreUpdate::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Event(denshokan::denshokan::denshokan::e_ObjectiveData::TEST_CLASS_HASH.try_into().unwrap()),
+            TestResource::Event(denshokan::denshokan::denshokan::e_SettingsData::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Event(
-                denshokan::denshokan::denshokan::e_Owners::TEST_CLASS_HASH.try_into().unwrap(),
-            ),
-            TestResource::Event(
-                denshokan::denshokan::denshokan::e_ScoreUpdate::TEST_CLASS_HASH.try_into().unwrap(),
-            ),
-            TestResource::Event(
-                denshokan::denshokan::denshokan::e_ObjectiveData::TEST_CLASS_HASH
-                    .try_into()
-                    .unwrap(),
-            ),
-            TestResource::Event(
-                denshokan::denshokan::denshokan::e_SettingsData::TEST_CLASS_HASH
-                    .try_into()
-                    .unwrap(),
-            ),
-            TestResource::Event(
-                denshokan::denshokan::denshokan::e_TokenContextData::TEST_CLASS_HASH
-                    .try_into()
-                    .unwrap(),
+                denshokan::denshokan::denshokan::e_TokenContextData::TEST_CLASS_HASH.try_into().unwrap(),
             ),
             // Contracts
             TestResource::Contract(denshokan::denshokan::denshokan::TEST_CLASS_HASH),

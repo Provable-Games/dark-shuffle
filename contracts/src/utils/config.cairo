@@ -4,7 +4,7 @@ use darkshuffle::models::card::{
     Requirement, SpellCard, ValueType,
 };
 use darkshuffle::models::config::{BattleSettings, CardsCounter, DraftSettings, GameSettings, MapSettings};
-use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait};
+use darkshuffle::systems::config::contracts::{IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait};
 use darkshuffle::utils::random::{LCG, get_random_number};
 use dojo::model::ModelStorage;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
@@ -12,9 +12,9 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldSt
 #[generate_trait]
 impl ConfigUtilsImpl of ConfigUtilsTrait {
     fn get_game_settings(world: WorldStorage, game_id: u64) -> GameSettings {
-        let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
-        let game_systems = IGameSystemsDispatcher { contract_address: game_systems_address };
-        let settings_id: u32 = game_systems.settings_id(game_id);
+        let (config_systems_address, _) = world.dns(@"config_systems").unwrap();
+        let config_systems = IConfigSystemsDispatcher { contract_address: config_systems_address };
+        let settings_id: u32 = config_systems.settings_id(game_id);
         let game_settings: GameSettings = world.read_model(settings_id);
         game_settings
     }

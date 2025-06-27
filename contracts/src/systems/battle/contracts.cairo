@@ -7,7 +7,6 @@ trait IBattleSystems<T> {
 mod battle_systems {
     use achievement::store::{Store, StoreTrait};
     use darkshuffle::constants::DEFAULT_NS;
-    use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait};
     use darkshuffle::models::battle::{
         Battle, BattleOwnerTrait, BattleResources, BoardStats, Creature, CreatureDetails, RoundStats,
     };
@@ -15,6 +14,7 @@ mod battle_systems {
     use darkshuffle::models::config::GameSettings;
     use darkshuffle::models::game::{Game, GameActionEvent, GameEffects, GameOwnerTrait};
     use darkshuffle::models::map::{Map, MonsterNode};
+    use darkshuffle::systems::game::contracts::{IGameSystemsDispatcher, IGameSystemsDispatcherTrait};
     use darkshuffle::utils::achievements::AchievementsUtilsImpl;
     use darkshuffle::utils::battle::BattleUtilsImpl;
     use darkshuffle::utils::board::BoardUtilsImpl;

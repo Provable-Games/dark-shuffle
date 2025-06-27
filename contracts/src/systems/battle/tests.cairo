@@ -31,7 +31,7 @@ fn setup() -> (WorldStorage, u64, IBattleSystemsDispatcher) {
         Option::None, // client_url
         Option::None, // renderer_address
         contract_address_const::<'player1'>(), // to
-        false, // soulbound
+        false // soulbound
     );
     create_game(ref world, game_id, GameState::Battle);
 

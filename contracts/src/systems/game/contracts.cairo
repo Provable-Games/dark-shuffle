@@ -1,6 +1,6 @@
+use darkshuffle::models::config::CardRarityWeights;
 use darkshuffle::models::game::{GameState};
 use starknet::ContractAddress;
-use darkshuffle::models::config::CardRarityWeights;
 
 #[starknet::interface]
 trait IGameSystems<T> {
@@ -9,32 +9,6 @@ trait IGameSystems<T> {
     fn generate_tree(ref self: T, game_id: u64);
     fn select_node(ref self: T, game_id: u64, node_id: u8);
     fn battle_actions(ref self: T, game_id: u64, battle_id: u16, actions: Span<Span<u8>>);
-    fn add_settings(
-        ref self: T,
-        name: felt252,
-        description: ByteArray,
-        starting_health: u8,
-        start_energy: u8,
-        start_hand_size: u8,
-        draft_size: u8,
-        max_energy: u8,
-        max_hand_size: u8,
-        draw_amount: u8,
-        card_ids: Span<u64>,
-        card_rarity_weights: CardRarityWeights,
-        auto_draft: bool,
-        persistent_health: bool,
-        possible_branches: u8,
-        level_depth: u8,
-        enemy_attack_min: u8,
-        enemy_attack_max: u8,
-        enemy_health_min: u8,
-        enemy_health_max: u8,
-        enemy_attack_scaling: u8,
-        enemy_health_scaling: u8,
-    ) -> u32;
-    fn add_random_settings(ref self: T) -> u32;
-    fn settings_id(self: @T, game_id: u64) -> u32;
     fn action_count(self: @T, game_id: u64) -> u16;
     fn cards(self: @T, game_id: u64) -> Span<felt252>;
     fn game_state(self: @T, game_id: u64) -> GameState;
@@ -52,13 +26,14 @@ mod game_systems {
     use achievement::store::{Store, StoreTrait};
     use darkshuffle::constants::{DEFAULT_NS, SCORE_ATTRIBUTE, SCORE_MODEL, SETTINGS_MODEL};
     use darkshuffle::models::{
-        card::{Card, CardCategory, CreatureCard, SpellCard}, config::{GameSettings, GameSettingsTrait, GameSettingsMetadata, CardRarityWeights},
+        card::{Card, CardCategory, CreatureCard, SpellCard},
+        config::{CardRarityWeights, GameSettings, GameSettingsMetadata, GameSettingsTrait},
         draft::{Draft, DraftOwnerTrait}, game::{Game, GameActionEvent, GameOwnerTrait, GameState},
         map::{Map, MonsterNode}, objectives::{ScoreObjective, ScoreObjectiveCount},
     };
-    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
     use darkshuffle::systems::battle::contracts::{IBattleSystemsDispatcher, IBattleSystemsDispatcherTrait};
     use darkshuffle::systems::config::contracts::{IConfigSystemsDispatcher, IConfigSystemsDispatcherTrait};
+    use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 
     use darkshuffle::utils::{
         cards::CardUtilsImpl, config::ConfigUtilsImpl, draft::DraftUtilsImpl, map::MapUtilsImpl, random,
@@ -67,8 +42,20 @@ mod game_systems {
 
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
-    use dojo::world::{WorldStorage, WorldStorageTrait};
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use dojo::world::{WorldStorage, WorldStorageTrait};
+    use game_components_minigame::interface::{
+        IMinigameDetails, IMinigameTokenData, IMinigameTokenUri,
+    };
+    use game_components_minigame::libs::assert_token_ownership;
+    use game_components_minigame_objectives::interface::{IMinigameObjectives};
+    use game_components_minigame_settings::interface::{IMinigameSettings};
+
+    use game_components_minigame::minigame::minigame_component;
+    use game_components_minigame_objectives::objectives::objectives_component;
+    use game_components_minigame::structs::{GameDetail};
+    use game_components_minigame_objectives::structs::{GameObjective};
+    use game_components_minigame_settings::structs::{GameSetting, GameSettingDetails};
 
     use openzeppelin_introspection::src5::SRC5Component;
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
@@ -77,18 +64,14 @@ mod game_systems {
 
     use starknet::{ContractAddress, get_block_timestamp, get_caller_address, get_tx_info};
 
-    use game_components_minigame::minigame::minigame_component;
-    use game_components_minigame::interface::{IMinigameScore, IMinigameDetails, IMinigameSettings, IMinigameObjectives, IMinigameTokenUri};
-    use game_components_minigame::models::game_details::{GameDetail};
-    use game_components_minigame::models::settings::{GameSetting, GameSettingDetails};
-    use game_components_minigame::models::objectives::{GameObjective};
-
     component!(path: minigame_component, storage: minigame, event: MinigameEvent);
+    component!(path: objectives_component, storage: objectives, event: ObjectivesEvent);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
 
     #[abi(embed_v0)]
     impl MinigameImpl = minigame_component::MinigameImpl<ContractState>;
     impl MinigameInternalImpl = minigame_component::InternalImpl<ContractState>;
+    impl MinigameObjectivesInternalImpl = objectives_component::InternalImpl<ContractState>;
 
     #[abi(embed_v0)]
     impl SRC5Impl = SRC5Component::SRC5Impl<ContractState>;
@@ -97,6 +80,8 @@ mod game_systems {
     struct Storage {
         #[substorage(v0)]
         minigame: minigame_component::Storage,
+        #[substorage(v0)]
+        objectives: objectives_component::Storage,
         #[substorage(v0)]
         src5: SRC5Component::Storage,
     }
@@ -107,10 +92,15 @@ mod game_systems {
         #[flat]
         MinigameEvent: minigame_component::Event,
         #[flat]
+        ObjectivesEvent: objectives_component::Event,
+        #[flat]
         SRC5Event: SRC5Component::Event,
     }
 
     fn dojo_init(ref self: ContractState, creator_address: ContractAddress, denshokan_address: ContractAddress) {
+        let mut world: WorldStorage = self.world(@DEFAULT_NS());
+        let (settings_systems_address, _) = world.dns(@"config_systems").unwrap();
+
         self
             .minigame
             .initializer(
@@ -121,19 +111,27 @@ mod game_systems {
                 'Provable Games',
                 'Digital TCG / Deck Building',
                 "https://darkshuffle.io/favicon.svg",
-                Option::None,
-                Option::None,
-                DEFAULT_NS(),
+                Option::None, // color
+                Option::None, // client_url
+                Option::None, // renderer address
+                Option::Some(settings_systems_address), // settings_address
+                Option::None, // objectives_address
                 denshokan_address,
             );
     }
 
     #[abi(embed_v0)]
-    impl GameScoreImpl of IMinigameScore<ContractState> {
+    impl GameTokenDataImpl of IMinigameTokenData<ContractState> {
         fn score(self: @ContractState, token_id: u64) -> u32 {
             let world: WorldStorage = self.world(@DEFAULT_NS());
             let game: Game = world.read_model(token_id);
             game.hero_xp.into()
+        }
+
+        fn game_over(self: @ContractState, token_id: u64) -> bool {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let game: Game = world.read_model(token_id);
+            game.hero_health == 0
         }
     }
 
@@ -143,80 +141,7 @@ mod game_systems {
             format!("Test Token Description for token {}", token_id)
         }
         fn game_details(self: @ContractState, token_id: u64) -> Span<GameDetail> {
-            array![
-                GameDetail {
-                    name: "Test Game Detail",
-                    value: format!("Test Value for token {}", token_id),
-                },
-            ].span()
-        }
-    }
-
-    #[abi(embed_v0)]
-    impl SettingsImpl of IMinigameSettings<ContractState> {
-        fn setting_exists(self: @ContractState, settings_id: u32) -> bool {
-            let world: WorldStorage = self.world(@DEFAULT_NS());
-            let settings: GameSettings = world.read_model(settings_id);
-            settings.exists()
-        }
-        fn settings(self: @ContractState, settings_id: u32) -> GameSettingDetails {
-            let world: WorldStorage = self.world(@DEFAULT_NS());
-            let settings: GameSettings = world.read_model(settings_id);
-            let settings_details: GameSettingsMetadata = world.read_model(settings_id);
-            GameSettingDetails {
-                name: format!("{}", settings_details.name),
-                description: settings_details.description,
-                settings: array![
-                    GameSetting {
-                        name: "Starting Health",
-                        value: format!("{}", settings.starting_health),
-                    },
-                    GameSetting {
-                        name: "Persistent Health",
-                        value: format!("{}", settings.persistent_health),
-                    },
-                    GameSetting {
-                        name: "Level Depth",
-                        value: format!("{}", settings.map.level_depth),
-                    },
-                    GameSetting {
-                        name: "Possible Branches",
-                        value: format!("{}", settings.map.possible_branches),
-                    },
-                    GameSetting {
-                        name: "Enemy Attack Min",
-                        value: format!("{}", settings.map.enemy_attack_min),
-                    },
-                    GameSetting {
-                        name: "Enemy Attack Max",
-                        value: format!("{}", settings.map.enemy_attack_max),
-                    },
-                    GameSetting {
-                        name: "Enemy Health Min",
-                        value: format!("{}", settings.map.enemy_health_min),
-                    },
-                    GameSetting {
-                        name: "Enemy Health Max",
-                        value: format!("{}", settings.map.enemy_health_max),
-                    },
-                    GameSetting {
-                        name: "Enemy Attack Scaling",
-                        value: format!("{}", settings.map.enemy_attack_scaling),
-                    },
-                    GameSetting {
-                        name: "Enemy Health Scaling",
-                        value: format!("{}", settings.map.enemy_health_scaling),
-                    },
-                    GameSetting {
-                        name: "Auto Draft",
-                        value: format!("{}", settings.draft.auto_draft),
-                    },
-                    GameSetting {
-                        name: "Draft Size",
-                        value: format!("{}", settings.draft.draft_size),
-                    },    
-                ].span(),
-            }
+            array![GameDetail { name: "Test Game Detail", value: format!("Test Value for token {}", token_id) }].span()
         }
     }
 
@@ -235,7 +160,7 @@ mod game_systems {
         }
         fn objectives(self: @ContractState, token_id: u64) -> Span<GameObjective> {
             let world: WorldStorage = self.world(@DEFAULT_NS());
-            let objective_ids = self.minigame.get_objective_ids(token_id);
+            let objective_ids = self.objectives.get_objective_ids(token_id, self.minigame_token_address());
             let mut objective_index = 0;
             let mut objectives = array![];
             loop {
@@ -244,7 +169,10 @@ mod game_systems {
                 }
                 let objective_id = *objective_ids.at(objective_index);
                 let objective_score: ScoreObjective = world.read_model(objective_id);
-                objectives.append(GameObjective { name: "Score Target", value: format!("Score Above {}", objective_score.score) });
+                objectives
+                    .append(
+                        GameObjective { name: "Score Target", value: format!("Score Above {}", objective_score.score) },
+                    );
                 objective_index += 1;
             };
             objectives.span()
@@ -255,6 +183,8 @@ mod game_systems {
     impl GameSystemsImpl of super::IGameSystems<ContractState> {
         fn start_game(ref self: ContractState, game_id: u64) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
+
+            assert_token_ownership(self.minigame.minigame_token_address(), game_id);
 
             self.minigame.pre_action(game_id);
             self.assert_game_not_started(game_id);
@@ -293,7 +223,7 @@ mod game_systems {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: action_count,
                     },
                 );
-            self.minigame.post_action(game_id, false);
+            self.minigame.post_action(game_id);
         }
 
         fn pick_card(ref self: ContractState, game_id: u64, option_id: u8) {
@@ -330,7 +260,7 @@ mod game_systems {
                         count: current_draft_size.try_into().unwrap(),
                     },
                 );
-            self.minigame.post_action(game_id, false);
+            self.minigame.post_action(game_id);
         }
 
         fn generate_tree(ref self: ContractState, game_id: u64) {
@@ -398,61 +328,16 @@ mod game_systems {
                         game_id, tx_hash: starknet::get_tx_info().unbox().transaction_hash, count: game.action_count,
                     },
                 );
-            self.minigame.post_action(game_id, false);
+            self.minigame.post_action(game_id);
         }
 
-        fn battle_actions(ref self: ContractState, game_id: u64, battle_id: u16, actions: Span<Span<u8>>){
+        fn battle_actions(ref self: ContractState, game_id: u64, battle_id: u16, actions: Span<Span<u8>>) {
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
             self.minigame.pre_action(game_id);
             let (battle_systems_address, _) = world.dns(@"battle_systems").unwrap();
             let battle_systems = IBattleSystemsDispatcher { contract_address: battle_systems_address };
-            let hero_is_dead = battle_systems.battle_actions(game_id, battle_id, actions);
-            self.minigame.post_action(game_id, hero_is_dead);
-        }
-
-        fn add_settings(
-            ref self: ContractState,
-            name: felt252,
-            description: ByteArray,
-            starting_health: u8,
-            start_energy: u8,
-            start_hand_size: u8,
-            draft_size: u8,
-            max_energy: u8,
-            max_hand_size: u8,
-            draw_amount: u8,
-            card_ids: Span<u64>,
-            card_rarity_weights: CardRarityWeights,
-            auto_draft: bool,
-            persistent_health: bool,
-            possible_branches: u8,
-            level_depth: u8,
-            enemy_attack_min: u8,
-            enemy_attack_max: u8,
-            enemy_health_min: u8,
-            enemy_health_max: u8,
-            enemy_attack_scaling: u8,
-            enemy_health_scaling: u8,
-        ) -> u32 {
-            let mut world: WorldStorage = self.world(@DEFAULT_NS());
-            let (config_systems_address, _) = world.dns(@"config_systems").unwrap();
-            let config_systems = IConfigSystemsDispatcher { contract_address: config_systems_address };
-            let (settings_id, settings_json) = config_systems.add_settings(name, description, starting_health, start_energy, start_hand_size, draft_size, max_energy, max_hand_size, draw_amount, card_ids, card_rarity_weights, auto_draft, persistent_health, possible_branches, level_depth, enemy_attack_min, enemy_attack_max, enemy_health_min, enemy_health_max, enemy_attack_scaling, enemy_health_scaling);
-            self.minigame.create_settings(settings_id, settings_json);
-            settings_id
-        }
-
-        fn add_random_settings(ref self: ContractState) -> u32 {
-            let mut world: WorldStorage = self.world(@DEFAULT_NS());
-            let (config_systems_address, _) = world.dns(@"config_systems").unwrap();
-            let config_systems = IConfigSystemsDispatcher { contract_address: config_systems_address };
-            let (settings_id, settings_json) = config_systems.add_random_settings();
-            self.minigame.create_settings(settings_id, settings_json);
-            settings_id
-        }
-
-        fn settings_id(self: @ContractState, game_id: u64) -> u32 {
-            self.minigame.get_settings_id(game_id)
+            battle_systems.battle_actions(game_id, battle_id, actions);
+            self.minigame.post_action(game_id);
         }
 
         // fn player_name(self: @ContractState, game_id: u64) -> felt252 {
