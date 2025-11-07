@@ -1,48 +1,24 @@
-import { DojoProvider as _dojoProvider, getContractByName } from "@dojoengine/core";
-import { useAccount, useConnect, useContract, useDisconnect, useNetwork } from "@starknet-react/core";
+import { getContractByName } from "@dojoengine/core";
+import { useAccount, useConnect } from "@starknet-react/core";
 import { useSnackbar } from "notistack";
 import React, { createContext, useEffect, useState } from "react";
-import { CallData, RpcProvider } from 'starknet';
-import { dojoConfig } from "../../dojo.config";
-import Lords from "../abi/Lords.json";
-import { fetchBalances } from "../api/starknet";
+import { CallData } from 'starknet';
 import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
 import { translateEvent } from "../helpers/events";
+import { useDynamicConnector } from "./starknet";
 
 export const DojoContext = createContext()
 
 export const DojoProvider = ({ children }) => {
-  const { contract: lordsContract } = useContract({ address: dojoConfig.lordsAddress, abi: Lords });
-
-  const { chain } = useNetwork()
+  const { currentNetworkConfig } = useDynamicConnector();
   const { account, address, isConnecting } = useAccount()
   const { connect, connector, connectors } = useConnect();
-  const { disconnect } = useDisconnect()
   const { enqueueSnackbar } = useSnackbar()
 
-  const [balances, setBalances] = useState({ eth: BigInt(0), lords: BigInt(0) })
   const [userName, setUserName] = useState()
   const [customName, setCustomName] = useState(localStorage.getItem("customName"))
 
-  const dojoprovider = new _dojoProvider(dojoConfig.manifest, dojoConfig.rpcUrl);
-  let provider = new RpcProvider({ nodeUrl: dojoConfig.rpcUrl });
   let cartridge = connectors.find(conn => conn.id === "controller")
-
-  const getBalances = async () => {
-    let balanceData = await fetchBalances(address ?? "0x0", lordsContract)
-
-    setBalances(balanceData)
-  }
-
-  useEffect(() => {
-    if (account) {
-      if (account.walletProvider?.account?.channel?.nodeUrl && account.walletProvider.account.channel.nodeUrl !== dojoConfig.rpcUrl) {
-        disconnect()
-      } else {
-        getBalances();
-      }
-    }
-  }, [account]);
 
   useEffect(() => {
     async function controllerName() {
@@ -65,7 +41,7 @@ export const DojoProvider = ({ children }) => {
     }
 
     if (includeVRF) {
-      let contractAddress = getContractByName(dojoConfig.manifest, dojoConfig.namespace, txs[txs.length - 1].contractName)?.address
+      let contractAddress = getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, txs[txs.length - 1].contractName)?.address
 
       txs.unshift({
         contractAddress: VRF_PROVIDER_ADDRESS,
@@ -78,9 +54,9 @@ export const DojoProvider = ({ children }) => {
     }
 
     try {
-      const tx = await dojoprovider.execute(account, txs, dojoConfig.namespace, { version: "1" });
+      const tx = await account.execute(txs);
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const receipt = await provider.waitForTransaction(tx.transaction_hash, { retryInterval: 500 })
+      const receipt = await account.waitForTransaction(tx.transaction_hash, { retryInterval: 500 })
 
       if (receipt.execution_status === "REVERTED") {
         console.log('contract error', receipt)
@@ -104,13 +80,11 @@ export const DojoProvider = ({ children }) => {
         provider,
         address: address,
         connecting: isConnecting,
-        network: chain.network,
+        network: currentNetworkConfig.chainId,
         userName,
         customName,
         playerName: customName || userName || "None",
-        balances,
         executeTx,
-        getBalances,
         setCustomName,
       }}
     >

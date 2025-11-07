@@ -1,9 +1,8 @@
-use darkshuffle::models::card::{CardEffect, CardRarity, CardType};
-use darkshuffle::models::config::{CardRarityWeights, GameSettings, GameSettingsMetadata};
-use starknet::ContractAddress;
+use darkshuffle::models::card::{CardEffect};
+use darkshuffle::models::config::{CardRarityWeights, GameSettings};
 
 #[starknet::interface]
-trait IConfigSystems<T> {
+pub trait IConfigSystems<T> {
     fn add_settings(
         ref self: T,
         name: felt252,
@@ -47,74 +46,64 @@ trait IConfigSystems<T> {
     );
 
     fn setting_details(self: @T, settings_id: u32) -> GameSettings;
-    fn settings_exists(self: @T, settings_id: u32) -> bool;
     fn game_settings(self: @T, game_id: u64) -> GameSettings;
 }
 
 #[dojo::contract]
-mod config_systems {
-    use achievement::components::achievable::AchievableComponent;
+pub mod config_systems {
     use darkshuffle::constants::DEFAULT_SETTINGS::GET_DEFAULT_SETTINGS;
     use darkshuffle::constants::{DEFAULT_NS, VERSION};
-    use darkshuffle::models::card::{CardEffect, CardRarity, CardType};
+    use darkshuffle::models::card::{CardEffect};
     use darkshuffle::models::config::{
         BattleSettings, CardRarityWeights, DraftSettings, GameSettings, GameSettingsMetadata, GameSettingsTrait,
         MapSettings, SettingsCounter,
     };
     use darkshuffle::utils::config::ConfigUtilsImpl;
     use darkshuffle::utils::random;
-    use darkshuffle::utils::trophies::index::{TROPHY_COUNT, Trophy, TrophyTrait};
-    use dojo::model::ModelStorage;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
-    use starknet::{ContractAddress, get_block_timestamp, get_caller_address};
-    use tournaments::components::models::game::TokenMetadata;
+    use darkshuffle::utils::settings::generate_settings_array;
+    use darkshuffle::utils::renderer::encoding::U256BytesUsedTraitImpl;
 
-    component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
-    impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
+    use dojo::model::ModelStorage;
+    use dojo::world::{WorldStorage, WorldStorageTrait};
+    use game_components_minigame::extensions::settings::interface::{IMinigameSettings, IMinigameSettingsDetails};
+    use game_components_minigame::extensions::settings::settings::SettingsComponent;
+    use game_components_minigame::extensions::settings::structs::{GameSetting, GameSettingDetails};
+
+    use game_components_minigame::interface::{IMinigameDispatcher, IMinigameDispatcherTrait};
+
+    use openzeppelin_introspection::src5::SRC5Component;
+    use starknet::{get_block_timestamp, get_caller_address};
+
+    component!(path: SettingsComponent, storage: settings, event: SettingsEvent);
+    component!(path: SRC5Component, storage: src5, event: SRC5Event);
+
+    impl SettingsInternalImpl = SettingsComponent::InternalImpl<ContractState>;
+
+    #[abi(embed_v0)]
+    impl SRC5Impl = SRC5Component::SRC5Impl<ContractState>;
 
     #[storage]
     struct Storage {
         #[substorage(v0)]
-        achievable: AchievableComponent::Storage,
+        settings: SettingsComponent::Storage,
+        #[substorage(v0)]
+        src5: SRC5Component::Storage,
     }
 
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
         #[flat]
-        AchievableEvent: AchievableComponent::Event,
+        SettingsEvent: SettingsComponent::Event,
+        #[flat]
+        SRC5Event: SRC5Component::Event,
     }
 
     fn dojo_init(self: @ContractState) {
         let mut world: WorldStorage = self.world(@DEFAULT_NS());
-        let mut trophy_id: u8 = TROPHY_COUNT;
-
-        while trophy_id > 0 {
-            let trophy: Trophy = trophy_id.into();
-            self
-                .achievable
-                .create(
-                    world,
-                    id: trophy.identifier(),
-                    hidden: trophy.hidden(),
-                    index: trophy.index(),
-                    points: trophy.points(),
-                    start: 0,
-                    end: 0,
-                    group: trophy.group(),
-                    icon: trophy.icon(),
-                    title: trophy.title(),
-                    description: trophy.description(),
-                    tasks: trophy.tasks(),
-                    data: trophy.data(),
-                );
-
-            trophy_id -= 1;
-        };
-
         // initialize game with default settings
-        let settings: GameSettings = GET_DEFAULT_SETTINGS();
-        world.write_model(@settings);
+        let default_settings: GameSettings = GET_DEFAULT_SETTINGS();
+        world.write_model(@default_settings);
         world
             .write_model(
                 @GameSettingsMetadata {
@@ -125,7 +114,54 @@ mod config_systems {
                     created_at: get_block_timestamp(),
                 },
             );
+
         ConfigUtilsImpl::create_genesis_cards(ref world);
+
+        let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
+        let minigame_dispatcher = IMinigameDispatcher { contract_address: game_systems_address };
+        let minigame_token_address = minigame_dispatcher.token_address();
+
+        let settings: Span<GameSetting> = generate_settings_array(default_settings);
+
+        self
+            .settings
+            .create_settings(
+                game_systems_address,
+                0,
+                "Default",
+                "These are the default Dark Shuffle settings",
+                settings,
+                minigame_token_address,
+            );
+    }
+
+    #[abi(embed_v0)]
+    impl GameSettingsImpl of IMinigameSettings<ContractState> {
+        fn settings_exist(self: @ContractState, settings_id: u32) -> bool {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let settings: GameSettings = world.read_model(settings_id);
+            settings.exists()
+        }
+    }
+
+    #[abi(embed_v0)]
+    impl GameSettingsDetailsImpl of IMinigameSettingsDetails<ContractState> {
+        fn settings_details(self: @ContractState, settings_id: u32) -> GameSettingDetails {
+            let world: WorldStorage = self.world(@DEFAULT_NS());
+            let settings: GameSettings = world.read_model(settings_id);
+            let settings_details: GameSettingsMetadata = world.read_model(settings_id);
+            let settings: Span<GameSetting> = generate_settings_array(settings);
+
+            let mut _settings_name = Default::default();
+            if settings_details.name != 0 {
+                _settings_name
+                    .append_word(
+                        settings_details.name, U256BytesUsedTraitImpl::bytes_used(settings_details.name.into()).into(),
+                    );
+            }
+
+            GameSettingDetails { name: _settings_name, description: settings_details.description, settings }
+        }
     }
 
     #[abi(embed_v0)]
@@ -258,16 +294,13 @@ mod config_systems {
             settings
         }
 
-        fn settings_exists(self: @ContractState, settings_id: u32) -> bool {
-            let world: WorldStorage = self.world(@DEFAULT_NS());
-            let settings: GameSettings = world.read_model(settings_id);
-            settings.exists()
-        }
-
         fn game_settings(self: @ContractState, game_id: u64) -> GameSettings {
             let world: WorldStorage = self.world(@DEFAULT_NS());
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            let game_settings: GameSettings = world.read_model(token_metadata.settings_id);
+            let (game_token_systems_address, _) = world.dns(@"game_token_systems").unwrap();
+            let minigame_dispatcher = IMinigameDispatcher { contract_address: game_token_systems_address };
+            let minigame_token_address = minigame_dispatcher.token_address();
+            let settings_id = self.settings.get_settings_id(game_id, minigame_token_address);
+            let game_settings: GameSettings = world.read_model(settings_id);
             game_settings
         }
     }

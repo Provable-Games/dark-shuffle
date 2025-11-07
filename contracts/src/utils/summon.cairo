@@ -1,14 +1,12 @@
-use achievement::store::{Store, StoreTrait};
-use darkshuffle::models::battle::{Battle, BoardStats, Creature, CreatureDetails, RoundStats};
+use darkshuffle::models::battle::{Battle, BoardStats, CreatureDetails, RoundStats};
 use darkshuffle::models::card::{CardType, CreatureCard, Modifier};
 use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::battle::BattleUtilsImpl;
 use darkshuffle::utils::board::BoardUtilsImpl;
 use darkshuffle::utils::cards::CardUtilsImpl;
-use darkshuffle::utils::tasks::index::{Task, TaskTrait};
 
 #[generate_trait]
-impl SummonUtilsImpl of SummonUtilsTrait {
+pub impl SummonUtilsImpl of SummonUtilsTrait {
     fn summon_creature(
         card_index: u8,
         creature_card: CreatureCard,

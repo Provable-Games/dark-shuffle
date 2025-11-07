@@ -5,7 +5,7 @@ use darkshuffle::models::card::{Card, CardType};
 use darkshuffle::models::game::GameEffects;
 
 #[generate_trait]
-impl BattleUtilsImpl of BattleUtilsTrait {
+pub impl BattleUtilsImpl of BattleUtilsTrait {
     fn reduce_monster_attack(ref battle: Battle, amount: u8) {
         if battle.monster.attack < amount {
             battle.monster.attack = 1;

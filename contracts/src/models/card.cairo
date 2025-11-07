@@ -2,54 +2,54 @@
 #[dojo::model]
 pub struct Card {
     #[key]
-    id: u64,
-    name: felt252,
-    rarity: u8,
-    cost: u8,
-    category: u8,
+    pub id: u64,
+    pub name: felt252,
+    pub rarity: u8,
+    pub cost: u8,
+    pub category: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct CreatureCard {
     #[key]
-    id: u64,
-    attack: u8,
-    health: u8,
-    card_type: u8,
-    play_effect: CardEffect,
-    death_effect: CardEffect,
-    attack_effect: CardEffect,
+    pub id: u64,
+    pub attack: u8,
+    pub health: u8,
+    pub card_type: u8,
+    pub play_effect: CardEffect,
+    pub death_effect: CardEffect,
+    pub attack_effect: CardEffect,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct SpellCard {
     #[key]
-    id: u64,
-    card_type: u8,
-    effect: CardEffect,
-    extra_effect: CardEffect,
+    pub id: u64,
+    pub card_type: u8,
+    pub effect: CardEffect,
+    pub extra_effect: CardEffect,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct CardEffect {
-    modifier: CardModifier,
-    bonus: EffectBonus,
+    pub modifier: CardModifier,
+    pub bonus: EffectBonus,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct CardModifier {
-    _type: u8,
-    value_type: u8,
-    value: u8,
-    requirement: u8,
+    pub _type: u8,
+    pub value_type: u8,
+    pub value: u8,
+    pub requirement: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct EffectBonus {
-    value: u8,
-    requirement: u8,
+    pub value: u8,
+    pub requirement: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
@@ -112,7 +112,7 @@ pub enum CardType {
     Magical,
 }
 
-impl U8IntoCardCategory of Into<u8, CardCategory> {
+pub impl U8IntoCardCategory of Into<u8, CardCategory> {
     fn into(self: u8) -> CardCategory {
         let card_category: felt252 = self.into();
         match card_category {
@@ -124,7 +124,7 @@ impl U8IntoCardCategory of Into<u8, CardCategory> {
     }
 }
 
-impl CardCategoryIntoU8 of Into<CardCategory, u8> {
+pub impl CardCategoryIntoU8 of Into<CardCategory, u8> {
     fn into(self: CardCategory) -> u8 {
         match self {
             CardCategory::None => 0,
@@ -134,7 +134,7 @@ impl CardCategoryIntoU8 of Into<CardCategory, u8> {
     }
 }
 
-impl U8IntoCardRarity of Into<u8, CardRarity> {
+pub impl U8IntoCardRarity of Into<u8, CardRarity> {
     fn into(self: u8) -> CardRarity {
         let rarity: felt252 = self.into();
         match rarity {
@@ -149,7 +149,7 @@ impl U8IntoCardRarity of Into<u8, CardRarity> {
     }
 }
 
-impl CardRarityIntoU8 of Into<CardRarity, u8> {
+pub impl CardRarityIntoU8 of Into<CardRarity, u8> {
     fn into(self: CardRarity) -> u8 {
         match self {
             CardRarity::None => 0,
@@ -162,7 +162,7 @@ impl CardRarityIntoU8 of Into<CardRarity, u8> {
     }
 }
 
-impl CardTypeIntoU8 of Into<CardType, u8> {
+pub impl CardTypeIntoU8 of Into<CardType, u8> {
     fn into(self: CardType) -> u8 {
         match self {
             CardType::None => 0,
@@ -173,7 +173,7 @@ impl CardTypeIntoU8 of Into<CardType, u8> {
     }
 }
 
-impl U8IntoCardType of Into<u8, CardType> {
+pub impl U8IntoCardType of Into<u8, CardType> {
     fn into(self: u8) -> CardType {
         let card_type: felt252 = self.into();
         match card_type {
@@ -186,7 +186,7 @@ impl U8IntoCardType of Into<u8, CardType> {
     }
 }
 
-impl ModifierIntoU8 of Into<Modifier, u8> {
+pub impl ModifierIntoU8 of Into<Modifier, u8> {
     fn into(self: Modifier) -> u8 {
         match self {
             Modifier::None => 0,
@@ -209,7 +209,7 @@ impl ModifierIntoU8 of Into<Modifier, u8> {
     }
 }
 
-impl U8IntoModifier of Into<u8, Modifier> {
+pub impl U8IntoModifier of Into<u8, Modifier> {
     fn into(self: u8) -> Modifier {
         let modifier: felt252 = self.into();
         match modifier {
@@ -234,7 +234,7 @@ impl U8IntoModifier of Into<u8, Modifier> {
     }
 }
 
-impl ValueTypeIntoU8 of Into<ValueType, u8> {
+pub impl ValueTypeIntoU8 of Into<ValueType, u8> {
     fn into(self: ValueType) -> u8 {
         match self {
             ValueType::None => 0,
@@ -244,7 +244,7 @@ impl ValueTypeIntoU8 of Into<ValueType, u8> {
     }
 }
 
-impl U8IntoValueType of Into<u8, ValueType> {
+pub impl U8IntoValueType of Into<u8, ValueType> {
     fn into(self: u8) -> ValueType {
         let value_type: felt252 = self.into();
         match value_type {
@@ -256,7 +256,7 @@ impl U8IntoValueType of Into<u8, ValueType> {
     }
 }
 
-impl RequirementIntoU8 of Into<Requirement, u8> {
+pub impl RequirementIntoU8 of Into<Requirement, u8> {
     fn into(self: Requirement) -> u8 {
         match self {
             Requirement::None => 0,
@@ -267,7 +267,7 @@ impl RequirementIntoU8 of Into<Requirement, u8> {
     }
 }
 
-impl U8IntoRequirement of Into<u8, Requirement> {
+pub impl U8IntoRequirement of Into<u8, Requirement> {
     fn into(self: u8) -> Requirement {
         let requirement: felt252 = self.into();
         match requirement {

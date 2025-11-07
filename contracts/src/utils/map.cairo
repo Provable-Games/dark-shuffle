@@ -8,10 +8,10 @@ use darkshuffle::utils::hand::HandUtilsImpl;
 use darkshuffle::utils::monsters::MonsterUtilsImpl;
 use darkshuffle::utils::random;
 use dojo::model::ModelStorage;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
+use dojo::world::WorldStorage;
 
 #[generate_trait]
-impl MapUtilsImpl of MapUtilsTrait {
+pub impl MapUtilsImpl of MapUtilsTrait {
     fn node_available(game: Game, map: Map, node_id: u8, map_settings: MapSettings) -> bool {
         if game.map_depth == 1 && node_id == 1 {
             return true;

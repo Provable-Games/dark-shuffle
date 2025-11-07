@@ -2,13 +2,13 @@
 #[dojo::model]
 pub struct Draft {
     #[key]
-    game_id: u64,
-    options: Span<u8>,
-    cards: Span<u8>,
+    pub game_id: u64,
+    pub options: Span<u8>,
+    pub cards: Span<u8>,
 }
 
 #[generate_trait]
-impl DraftOwnerImpl of DraftOwnerTrait {
+pub impl DraftOwnerImpl of DraftOwnerTrait {
     fn add_card(ref self: Draft, card_index: u8) {
         let mut new_cards = array![];
 

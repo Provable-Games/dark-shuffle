@@ -1,9 +1,9 @@
+use core::traits::DivRem;
 use core::num::traits::Bounded;
-use integer::{U32TryIntoNonZero, u32_as_non_zero};
-use keccak::{cairo_keccak, u128_split};
+use darkshuffle::constants::U64_MAX_NZ;
 
 #[inline(always)]
-fn get_base64_char_set() -> Span<u8> {
+pub fn get_base64_char_set() -> Span<u8> {
     let mut result = array![
         'A',
         'B',
@@ -73,12 +73,12 @@ fn get_base64_char_set() -> Span<u8> {
     result.span()
 }
 
-fn bytes_base64_encode(_bytes: ByteArray) -> ByteArray {
+pub fn bytes_base64_encode(_bytes: ByteArray) -> ByteArray {
     encode_bytes(_bytes, get_base64_char_set())
 }
 
 
-fn encode_bytes(mut bytes: ByteArray, base64_chars: Span<u8>) -> ByteArray {
+pub fn encode_bytes(mut bytes: ByteArray, base64_chars: Span<u8>) -> ByteArray {
     let mut result: ByteArray = "";
     if bytes.len() == 0 {
         return result;
@@ -140,7 +140,7 @@ fn encode_bytes(mut bytes: ByteArray, base64_chars: Span<u8>) -> ByteArray {
 }
 
 
-trait BytesUsedTrait<T> {
+pub trait BytesUsedTrait<T> {
     /// Returns the number of bytes used to represent a `T` value.
     /// # Arguments
     /// * `self` - The value to check.
@@ -149,7 +149,7 @@ trait BytesUsedTrait<T> {
     fn bytes_used(self: T) -> u8;
 }
 
-impl U8BytesUsedTraitImpl of BytesUsedTrait<u8> {
+pub impl U8BytesUsedTraitImpl of BytesUsedTrait<u8> {
     fn bytes_used(self: u8) -> u8 {
         if self == 0 {
             return 0;
@@ -159,7 +159,7 @@ impl U8BytesUsedTraitImpl of BytesUsedTrait<u8> {
     }
 }
 
-impl USizeBytesUsedTraitImpl of BytesUsedTrait<usize> {
+pub impl USizeBytesUsedTraitImpl of BytesUsedTrait<usize> {
     fn bytes_used(self: usize) -> u8 {
         if self < 0x10000 { // 256^2
             if self < 0x100 { // 256^1
@@ -179,7 +179,7 @@ impl USizeBytesUsedTraitImpl of BytesUsedTrait<usize> {
     }
 }
 
-impl U64BytesUsedTraitImpl of BytesUsedTrait<u64> {
+pub impl U64BytesUsedTraitImpl of BytesUsedTrait<u64> {
     fn bytes_used(self: u64) -> u8 {
         if self <= Bounded::<u32>::MAX.into() { // 256^4
             return BytesUsedTrait::<u32>::bytes_used(self.try_into().unwrap());
@@ -204,9 +204,9 @@ impl U64BytesUsedTraitImpl of BytesUsedTrait<u64> {
 }
 
 
-impl U128BytesTraitUsedImpl of BytesUsedTrait<u128> {
+pub impl U128BytesTraitUsedImpl of BytesUsedTrait<u128> {
     fn bytes_used(self: u128) -> u8 {
-        let (u64high, u64low) = u128_split(self);
+        let (u64high, u64low) = DivRem::div_rem(self, U64_MAX_NZ);
         if u64high == 0 {
             return BytesUsedTrait::<u64>::bytes_used(u64low.try_into().unwrap());
         } else {
@@ -215,7 +215,7 @@ impl U128BytesTraitUsedImpl of BytesUsedTrait<u128> {
     }
 }
 
-impl U256BytesUsedTraitImpl of BytesUsedTrait<u256> {
+pub impl U256BytesUsedTraitImpl of BytesUsedTrait<u256> {
     fn bytes_used(self: u256) -> u8 {
         if self.high == 0 {
             return BytesUsedTrait::<u128>::bytes_used(self.low.try_into().unwrap());

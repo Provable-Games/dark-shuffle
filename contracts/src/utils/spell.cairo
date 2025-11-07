@@ -3,7 +3,7 @@ use darkshuffle::models::card::{Modifier, SpellCard};
 use darkshuffle::utils::cards::CardUtilsImpl;
 
 #[generate_trait]
-impl SpellUtilsImpl of SpellUtilsTrait {
+pub impl SpellUtilsImpl of SpellUtilsTrait {
     fn cast_spell(
         spell_card: SpellCard, ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats,
     ) {

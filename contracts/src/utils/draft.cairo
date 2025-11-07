@@ -5,7 +5,7 @@ use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 
 #[generate_trait]
-impl DraftUtilsImpl of DraftUtilsTrait {
+pub impl DraftUtilsImpl of DraftUtilsTrait {
     fn get_weighted_draft_list(world: WorldStorage, game_settings: GameSettings) -> Span<u8> {
         let mut draft_list = array![];
 

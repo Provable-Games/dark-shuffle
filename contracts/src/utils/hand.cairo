@@ -2,7 +2,7 @@ use darkshuffle::models::battle::BattleResources;
 use darkshuffle::utils::random;
 
 #[generate_trait]
-impl HandUtilsImpl of HandUtilsTrait {
+pub impl HandUtilsImpl of HandUtilsTrait {
     /// Removes the first occurrence of a specific card from the player's hand.
     ///
     /// This function iterates through the `hand` span within the provided `battle_resources`.

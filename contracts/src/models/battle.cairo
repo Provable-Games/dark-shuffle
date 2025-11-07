@@ -1,91 +1,87 @@
-use darkshuffle::models::card::{Card, CardType, CreatureCard};
-use darkshuffle::models::game::{Game, GameOwnerTrait};
-use dojo::model::ModelStorage;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
-use starknet::{ContractAddress, get_caller_address};
+use darkshuffle::models::card::{CardType, CreatureCard};
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Battle {
     #[key]
-    battle_id: u16,
+    pub battle_id: u16,
     #[key]
-    game_id: u64,
-    round: u8,
-    hero: Hero,
-    monster: Monster,
-    battle_effects: BattleEffects,
+    pub game_id: u64,
+    pub round: u8,
+    pub hero: Hero,
+    pub monster: Monster,
+    pub battle_effects: BattleEffects,
 }
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
 pub struct BattleResources {
     #[key]
-    battle_id: u16,
+    pub battle_id: u16,
     #[key]
-    game_id: u64,
-    hand: Span<u8>,
-    deck: Span<u8>,
-    board: Span<Creature>,
+    pub game_id: u64,
+    pub hand: Span<u8>,
+    pub deck: Span<u8>,
+    pub board: Span<Creature>,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Hero {
-    health: u8,
-    energy: u8,
+    pub health: u8,
+    pub energy: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Monster {
-    monster_id: u8,
-    attack: u8,
-    health: u16,
+    pub monster_id: u8,
+    pub attack: u8,
+    pub health: u16,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct Creature {
-    card_index: u8,
-    attack: u8,
-    health: u8,
+    pub card_index: u8,
+    pub attack: u8,
+    pub health: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 pub struct BattleEffects {
-    enemy_marks: u8,
-    hero_dmg_reduction: u8,
-    next_hunter_attack_bonus: u8,
-    next_hunter_health_bonus: u8,
-    next_brute_attack_bonus: u8,
-    next_brute_health_bonus: u8,
-    next_magical_attack_bonus: u8,
-    next_magical_health_bonus: u8,
+    pub enemy_marks: u8,
+    pub hero_dmg_reduction: u8,
+    pub next_hunter_attack_bonus: u8,
+    pub next_hunter_health_bonus: u8,
+    pub next_brute_attack_bonus: u8,
+    pub next_brute_health_bonus: u8,
+    pub next_magical_attack_bonus: u8,
+    pub next_magical_health_bonus: u8,
 }
 
 #[derive(Copy, Drop, Serde)]
 pub struct CreatureDetails {
-    card_index: u8,
-    attack: u8,
-    health: u8,
-    creature_card: CreatureCard,
+    pub card_index: u8,
+    pub attack: u8,
+    pub health: u8,
+    pub creature_card: CreatureCard,
 }
 
 #[derive(Copy, Drop, Serde)]
 pub struct BoardStats {
-    magical_count: u8,
-    brute_count: u8,
-    hunter_count: u8,
-    monster_type: CardType,
+    pub magical_count: u8,
+    pub brute_count: u8,
+    pub hunter_count: u8,
+    pub monster_type: CardType,
 }
 
 #[derive(Copy, Drop, Serde)]
 pub struct RoundStats {
-    monster_start_health: u16,
-    creatures_played: u8,
-    creature_attack_count: u8,
+    pub monster_start_health: u16,
+    pub creatures_played: u8,
+    pub creature_attack_count: u8,
 }
 
 #[generate_trait]
-impl BattleOwnerImpl of BattleOwnerTrait {
+pub impl BattleOwnerImpl of BattleOwnerTrait {
     fn assert_battle(self: Battle) {
         assert(self.hero.health > 0, 'Battle over');
         assert(self.monster.health > 0, 'Battle over');

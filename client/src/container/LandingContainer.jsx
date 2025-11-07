@@ -106,7 +106,7 @@ function LandingContainer() {
               </Box>
 
               <Typography variant='h6'>
-                A Provable Roguelike Deck-building Game on Starknet, powered by $LORDS.
+                A Provable Roguelike Deck-building Game on Starknet
               </Typography>
             </Box>
 

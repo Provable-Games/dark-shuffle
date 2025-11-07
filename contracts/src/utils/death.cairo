@@ -3,7 +3,7 @@ use darkshuffle::models::card::{Modifier};
 use darkshuffle::utils::cards::CardUtilsImpl;
 
 #[generate_trait]
-impl DeathUtilsImpl of DeathUtilsTrait {
+pub impl DeathUtilsImpl of DeathUtilsTrait {
     fn creature_death(
         ref creature: CreatureDetails, ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats,
     ) {

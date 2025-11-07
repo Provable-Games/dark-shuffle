@@ -13,3 +13,6 @@ pub mod config {
     #[cfg(test)]
     pub mod tests;
 }
+pub mod renderer {
+    pub mod contracts;
+}

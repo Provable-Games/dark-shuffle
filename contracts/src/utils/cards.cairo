@@ -1,9 +1,7 @@
-use achievement::store::{Store, StoreTrait};
-use darkshuffle::models::battle::{Battle, BattleEffects, BoardStats, Creature, CreatureDetails, RoundStats};
+use darkshuffle::models::battle::{Battle, BoardStats, CreatureDetails};
 use darkshuffle::models::card::{
     Card, CardEffect, CardModifier, CardType, CreatureCard, EffectBonus, Modifier, Requirement, SpellCard, ValueType,
 };
-use darkshuffle::models::game::GameEffects;
 use darkshuffle::utils::battle::BattleUtilsImpl;
 use darkshuffle::utils::board::BoardUtilsImpl;
 use darkshuffle::utils::config::ConfigUtilsImpl;
@@ -11,7 +9,7 @@ use dojo::model::ModelStorage;
 use dojo::world::WorldStorage;
 
 #[generate_trait]
-impl CardUtilsImpl of CardUtilsTrait {
+pub impl CardUtilsImpl of CardUtilsTrait {
     fn apply_card_effect(
         card_type: CardType,
         card_effect: CardEffect,

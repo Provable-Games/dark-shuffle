@@ -51,8 +51,6 @@ fn namespace_def() -> NamespaceDef {
                 tournaments::components::models::game::m_SettingsCounter::TEST_CLASS_HASH.try_into().unwrap(),
             ),
             TestResource::Event(darkshuffle::models::game::e_GameActionEvent::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Event(achievement::events::index::e_TrophyCreation::TEST_CLASS_HASH.try_into().unwrap()),
-            TestResource::Event(achievement::events::index::e_TrophyProgression::TEST_CLASS_HASH.try_into().unwrap()),
             TestResource::Contract(game_systems::TEST_CLASS_HASH),
             TestResource::Contract(config_systems::TEST_CLASS_HASH),
             TestResource::Contract(battle_systems::TEST_CLASS_HASH),

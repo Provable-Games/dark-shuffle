@@ -1,20 +1,18 @@
 #[starknet::interface]
-trait IBattleSystems<T> {
+pub trait IBattleSystems<T> {
     fn battle_actions(ref self: T, game_id: u64, battle_id: u16, actions: Span<Span<u8>>);
 }
 
 #[dojo::contract]
-mod battle_systems {
-    use achievement::store::{Store, StoreTrait};
+pub mod battle_systems {
+    use starknet::ContractAddress;
     use darkshuffle::constants::DEFAULT_NS;
     use darkshuffle::models::battle::{
-        Battle, BattleOwnerTrait, BattleResources, BoardStats, Creature, CreatureDetails, RoundStats,
+        Battle, BattleOwnerTrait, BattleResources, BoardStats, CreatureDetails, RoundStats,
     };
     use darkshuffle::models::card::{Card, CardCategory, CreatureCard, SpellCard};
     use darkshuffle::models::config::GameSettings;
-    use darkshuffle::models::game::{Game, GameActionEvent, GameEffects, GameOwnerTrait};
-    use darkshuffle::models::map::{Map, MonsterNode};
-    use darkshuffle::utils::achievements::AchievementsUtilsImpl;
+    use darkshuffle::models::game::{Game, GameActionEvent, GameEffects};
     use darkshuffle::utils::battle::BattleUtilsImpl;
     use darkshuffle::utils::board::BoardUtilsImpl;
     use darkshuffle::utils::cards::CardUtilsImpl;
@@ -28,10 +26,9 @@ mod battle_systems {
     use darkshuffle::utils::summon::SummonUtilsImpl;
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
-    use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
-    use tournaments::components::libs::lifecycle::{LifecycleAssertionsImpl, LifecycleAssertionsTrait};
-    use tournaments::components::models::game::TokenMetadata;
-    use tournaments::components::models::lifecycle::Lifecycle;
+    use dojo::world::{WorldStorage, WorldStorageTrait};
+    use game_components_minigame::interface::{IMinigameDispatcher, IMinigameDispatcherTrait};
+    use game_components_minigame::libs::{assert_token_ownership, post_action, pre_action};
 
     #[abi(embed_v0)]
     impl BattleSystemsImpl of super::IBattleSystems<ContractState> {
@@ -40,11 +37,11 @@ mod battle_systems {
 
             let mut world: WorldStorage = self.world(@DEFAULT_NS());
 
-            let token_metadata: TokenMetadata = world.read_model(game_id);
-            token_metadata.lifecycle.assert_is_playable(game_id, starknet::get_block_timestamp());
+            let token_address = _get_token_address(world);
+            assert_token_ownership(token_address, game_id);
+            pre_action(token_address, game_id);
 
             let mut game: Game = world.read_model(game_id);
-            game.assert_owner(world);
 
             let mut battle: Battle = world.read_model((battle_id, game_id));
             battle.assert_battle();
@@ -86,7 +83,6 @@ mod battle_systems {
                                     ref round_stats,
                                     game_effects,
                                 );
-                                AchievementsUtilsImpl::play_creature(ref world, creature_card);
                             },
                             CardCategory::Spell => {
                                 let spell_card: SpellCard = CardUtilsImpl::get_spell_card(world, card.id);
@@ -102,10 +98,6 @@ mod battle_systems {
                         BoardUtilsImpl::attack_monster(ref battle, ref board, board_stats, ref round_stats);
                         BoardUtilsImpl::remove_dead_creatures(ref battle, ref board, board_stats);
                         board_stats = BoardUtilsImpl::get_board_stats(ref board, battle.monster.monster_id);
-
-                        if battle.monster.health + 25 <= round_stats.monster_start_health {
-                            AchievementsUtilsImpl::big_hit(ref world);
-                        }
                     },
                     _ => { assert(false, 'Invalid action'); },
                 }
@@ -131,7 +123,7 @@ mod battle_systems {
 
             if GameUtilsImpl::is_battle_over(battle) {
                 GameUtilsImpl::end_battle(ref world, ref battle, ref game_effects, game_settings);
-                game.update_metadata(world);
+                post_action(token_address, game_id);
                 return;
             }
 
@@ -175,7 +167,13 @@ mod battle_systems {
                 world.write_model(@battle_resources);
             }
 
-            game.update_metadata(world);
+            post_action(token_address, game_id);
         }
+    }
+
+    fn _get_token_address(world: WorldStorage) -> ContractAddress {
+        let (game_token_systems_address, _) = world.dns(@"game_token_systems").unwrap();
+        let minigame_dispatcher = IMinigameDispatcher { contract_address: game_token_systems_address };
+        minigame_dispatcher.token_address()
     }
 }

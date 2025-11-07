@@ -1,4 +1,3 @@
-pub mod achievements;
 pub mod attack;
 pub mod battle;
 pub mod board;
@@ -15,7 +14,6 @@ pub mod random;
 pub mod renderer;
 pub mod spell;
 pub mod summon;
-pub mod tasks;
+pub mod settings;
 #[cfg(test)]
 pub mod testing;
-pub mod trophies;

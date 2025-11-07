@@ -2,14 +2,6 @@
 version = 1
 
 [[package]]
-name = "achievement"
-version = "0.0.0"
-source = "git+https://github.com/cartridge-gg/arcade?rev=1353aab3dec66c2de7aad7f37f91b4002d86b2b8#1353aab3dec66c2de7aad7f37f91b4002d86b2b8"
-dependencies = [
- "dojo",
-]
-
-[[package]]
 name = "alexandria_bytes"
 version = "0.3.0"
 source = "git+https://github.com/keep-starknet-strange/alexandria.git?tag=v0.3.0#e3715428c990665afc495b5428ef08ab9a2089cd"
@@ -60,29 +52,30 @@ dependencies = [
 name = "darkshuffle"
 version = "1.1.0"
 dependencies = [
- "achievement",
  "alexandria_encoding",
- "alexandria_math",
  "dojo",
  "dojo_cairo_test",
+ "game_components_metagame",
+ "game_components_minigame",
+ "game_components_test_starknet",
+ "game_components_token",
  "graffiti",
  "openzeppelin_introspection",
  "openzeppelin_token",
- "tournaments",
 ]
 
 [[package]]
 name = "dojo"
-version = "1.5.0"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.5.0#812f17c9c57fd057d0bf1e648a591ea0ca9ea718"
+version = "1.6.0"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.6.0#c7d8b321abc711c14bddcf76f41587f6ef21c356"
 dependencies = [
  "dojo_plugin",
 ]
 
 [[package]]
 name = "dojo_cairo_test"
-version = "1.0.12"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.5.0#812f17c9c57fd057d0bf1e648a591ea0ca9ea718"
+version = "1.6.0"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.6.0#c7d8b321abc711c14bddcf76f41587f6ef21c356"
 dependencies = [
  "dojo",
 ]
@@ -90,7 +83,69 @@ dependencies = [
 [[package]]
 name = "dojo_plugin"
 version = "2.10.1"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.5.0#812f17c9c57fd057d0bf1e648a591ea0ca9ea718"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.6.0#c7d8b321abc711c14bddcf76f41587f6ef21c356"
+
+[[package]]
+name = "game_components_metagame"
+version = "1.5.1"
+source = "git+https://github.com/Provable-Games/game-components?tag=0.0.10#6c31321731571c6019df5a70dffca569ab273961"
+dependencies = [
+ "game_components_minigame",
+ "game_components_token",
+ "game_components_utils",
+ "openzeppelin_introspection",
+ "openzeppelin_token",
+]
+
+[[package]]
+name = "game_components_minigame"
+version = "1.5.1"
+source = "git+https://github.com/Provable-Games/game-components?tag=0.0.10#6c31321731571c6019df5a70dffca569ab273961"
+dependencies = [
+ "game_components_metagame",
+ "game_components_token",
+ "game_components_utils",
+ "openzeppelin_introspection",
+ "openzeppelin_token",
+]
+
+[[package]]
+name = "game_components_test_starknet"
+version = "1.5.1"
+source = "git+https://github.com/Provable-Games/game-components?tag=0.0.10#6c31321731571c6019df5a70dffca569ab273961"
+dependencies = [
+ "game_components_metagame",
+ "game_components_minigame",
+ "game_components_token",
+ "game_components_utils",
+ "openzeppelin_introspection",
+ "openzeppelin_token",
+]
+
+[[package]]
+name = "game_components_token"
+version = "1.5.1"
+source = "git+https://github.com/Provable-Games/game-components?tag=0.0.10#6c31321731571c6019df5a70dffca569ab273961"
+dependencies = [
+ "game_components_metagame",
+ "game_components_minigame",
+ "game_components_test_starknet",
+ "game_components_utils",
+ "openzeppelin_introspection",
+ "openzeppelin_token",
+]
+
+[[package]]
+name = "game_components_utils"
+version = "1.5.1"
+source = "git+https://github.com/Provable-Games/game-components?tag=0.0.10#6c31321731571c6019df5a70dffca569ab273961"
+dependencies = [
+ "alexandria_encoding",
+ "game_components_metagame",
+ "game_components_minigame",
+ "game_components_token",
+ "graffiti",
+]
 
 [[package]]
 name = "graffiti"
@@ -100,7 +155,8 @@ source = "git+https://github.com/ponderingdemocritus/graffiti?rev=bc569531791dbc
 [[package]]
 name = "openzeppelin_access"
 version = "1.0.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v1.0.0#755ce1adbf8d89ed23fbb8daa328fcbeab7c6424"
+source = "registry+https://scarbs.xyz/"
+checksum = "sha256:a39a4ea1582916c637bf7e3aee0832c3fe1ea3a3e39191955e8dc39d08327f9b"
 dependencies = [
  "openzeppelin_introspection",
  "openzeppelin_utils",
@@ -109,7 +165,8 @@ dependencies = [
 [[package]]
 name = "openzeppelin_account"
 version = "1.0.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v1.0.0#755ce1adbf8d89ed23fbb8daa328fcbeab7c6424"
+source = "registry+https://scarbs.xyz/"
+checksum = "sha256:7e943a2de32ddca4d48e467e52790e380ab1f49c4daddbbbc4634dd930d0243f"
 dependencies = [
  "openzeppelin_introspection",
  "openzeppelin_utils",
@@ -118,12 +175,14 @@ dependencies = [
 [[package]]
 name = "openzeppelin_introspection"
 version = "1.0.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v1.0.0#755ce1adbf8d89ed23fbb8daa328fcbeab7c6424"
+source = "registry+https://scarbs.xyz/"
+checksum = "sha256:34e088ecf19e0b3012481a29f1fbb20e600540cb9a5db1c3002a97ebb7f5a32a"
 
 [[package]]
 name = "openzeppelin_token"
 version = "1.0.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v1.0.0#755ce1adbf8d89ed23fbb8daa328fcbeab7c6424"
+source = "registry+https://scarbs.xyz/"
+checksum = "sha256:33fcb84a1a76d2d3fff9302094ff564f78d45b743548fd7568c130b272473f66"
 dependencies = [
  "openzeppelin_access",
  "openzeppelin_account",
@@ -134,14 +193,5 @@ dependencies = [
 [[package]]
 name = "openzeppelin_utils"
 version = "1.0.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v1.0.0#755ce1adbf8d89ed23fbb8daa328fcbeab7c6424"
-
-[[package]]
-name = "tournaments"
-version = "0.0.1"
-source = "git+https://github.com/Provable-Games/tournaments.git?tag=v1.5.1#b3de627b40f2bf66aeebd186bbc8559805650723"
-dependencies = [
- "dojo",
- "openzeppelin_introspection",
- "openzeppelin_token",
-]
+source = "registry+https://scarbs.xyz/"
+checksum = "sha256:fd348b31c4a4407add33adc3c2b8f26dca71dbd7431faaf726168f37a91db0c1"

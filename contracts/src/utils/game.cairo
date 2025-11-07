@@ -2,14 +2,13 @@ use darkshuffle::models::battle::Battle;
 use darkshuffle::models::config::GameSettings;
 use darkshuffle::models::game::{Game, GameEffects, GameState};
 use darkshuffle::models::map::{Map, MonsterNode};
-use darkshuffle::utils::achievements::AchievementsUtilsImpl;
 use darkshuffle::utils::battle::BattleUtilsImpl;
 use darkshuffle::utils::map::MapUtilsImpl;
 use dojo::model::ModelStorage;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage};
+use dojo::world::WorldStorage;
 
 #[generate_trait]
-impl GameUtilsImpl of GameUtilsTrait {
+pub impl GameUtilsImpl of GameUtilsTrait {
     fn is_battle_over(battle: Battle) -> bool {
         if battle.monster.health > 0 && battle.hero.health > 0 {
             return false;
@@ -44,17 +43,6 @@ impl GameUtilsImpl of GameUtilsTrait {
         monster_node: MonsterNode,
         game_settings: GameSettings,
     ) {
-        // [Achievement] Defeat enemy
-        AchievementsUtilsImpl::defeat_enemy(ref world, battle, monster_node.monster_id);
-        // [Achievement] Survivor
-        if battle.hero.health == 1 {
-            AchievementsUtilsImpl::survivor(ref world);
-        }
-        // [Achievement] Heroic
-        if battle.hero.health > game.hero_health {
-            AchievementsUtilsImpl::heroic(ref world);
-        }
-
         Self::add_monster_reward(ref game_effects, ref battle, monster_node.monster_id);
 
         game.monsters_slain += 1;

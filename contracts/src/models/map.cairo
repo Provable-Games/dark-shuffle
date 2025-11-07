@@ -2,15 +2,15 @@
 #[dojo::model]
 pub struct Map {
     #[key]
-    game_id: u64,
+    pub game_id: u64,
     #[key]
-    level: u8,
-    seed: u128,
+    pub level: u8,
+    pub seed: u128,
 }
 
 #[derive(Copy, Drop, Serde)]
 pub struct MonsterNode {
-    monster_id: u8,
-    attack: u8,
-    health: u16,
+    pub monster_id: u8,
+    pub attack: u8,
+    pub health: u16,
 }

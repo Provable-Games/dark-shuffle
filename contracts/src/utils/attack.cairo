@@ -4,7 +4,7 @@ use darkshuffle::utils::battle::BattleUtilsImpl;
 use darkshuffle::utils::cards::CardUtilsImpl;
 
 #[generate_trait]
-impl AttackUtilsImpl of AttackUtilsTrait {
+pub impl AttackUtilsImpl of AttackUtilsTrait {
     fn creature_attack(
         ref creature: CreatureDetails, ref battle: Battle, ref board: Array<CreatureDetails>, board_stats: BoardStats,
     ) {

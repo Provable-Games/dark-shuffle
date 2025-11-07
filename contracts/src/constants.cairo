@@ -1,35 +1,35 @@
-const MAINNET_CHAIN_ID: felt252 = 0x534e5f4d41494e;
-const SEPOLIA_CHAIN_ID: felt252 = 0x534e5f5345504f4c4941;
-const KATANA_CHAIN_ID: felt252 = 0x4b4154414e41;
+pub const MAINNET_CHAIN_ID: felt252 = 0x534e5f4d41494e;
+pub const SEPOLIA_CHAIN_ID: felt252 = 0x534e5f5345504f4c4941;
 
-mod Messages {
-    const NOT_OWNER: felt252 = 'Not authorized to act';
-    const NOT_IN_DRAFT: felt252 = 'Not in draft';
-    const GAME_OVER: felt252 = 'Game over';
-    const IN_BATTLE: felt252 = 'Already in battle';
-    const IN_DRAFT: felt252 = 'Draft not over';
-    const BLOCK_REVEAL: felt252 = 'Block not revealed';
-    const SCORE_SUBMITTED: felt252 = 'Score already submitted';
+pub mod Messages {
+    pub const NOT_OWNER: felt252 = 'Not authorized to act';
+    pub const NOT_IN_DRAFT: felt252 = 'Not in draft';
+    pub const GAME_OVER: felt252 = 'Game over';
+    pub const IN_BATTLE: felt252 = 'Already in battle';
+    pub const IN_DRAFT: felt252 = 'Draft not over';
+    pub const BLOCK_REVEAL: felt252 = 'Block not revealed';
+    pub const SCORE_SUBMITTED: felt252 = 'Score already submitted';
 }
 
-const U8_MAX: u8 = 255;
-const U128_MAX: u128 = 340282366920938463463374607431768211455;
-const LCG_PRIME: u128 = 281474976710656;
-const VERSION: felt252 = '0.0.1';
+pub const U8_MAX: u8 = 255;
+pub const U64_MAX_NZ: NonZero<u128> = 18446744073709551615;
+pub const U128_MAX_NZ: NonZero<u128> = 340282366920938463463374607431768211455;
+pub const LCG_PRIME: u128 = 281474976710656;
+pub const VERSION: felt252 = '0.0.1';
 
-fn DEFAULT_NS() -> ByteArray {
+pub fn DEFAULT_NS() -> ByteArray {
     "ds_v1_2_0"
 }
 
-fn SCORE_MODEL() -> ByteArray {
+pub fn SCORE_MODEL() -> ByteArray {
     "Game"
 }
 
-fn SCORE_ATTRIBUTE() -> ByteArray {
+pub fn SCORE_ATTRIBUTE() -> ByteArray {
     "hero_xp"
 }
 
-fn SETTINGS_MODEL() -> ByteArray {
+pub fn SETTINGS_MODEL() -> ByteArray {
     "GameSettings"
 }
 
@@ -54,7 +54,7 @@ pub mod DEFAULT_SETTINGS {
     const ENEMY_ATTACK_SCALING: u8 = 1;
     const ENEMY_HEALTH_SCALING: u8 = 5;
 
-    fn GET_GENESIS_CARD_IDS() -> Span<u64> {
+    pub fn GET_GENESIS_CARD_IDS() -> Span<u64> {
         let mut card_ids = array![];
 
         let mut i = 1;
@@ -66,11 +66,11 @@ pub mod DEFAULT_SETTINGS {
         card_ids.span()
     }
 
-    fn GET_DEFAULT_WEIGHTS() -> CardRarityWeights {
+    pub fn GET_DEFAULT_WEIGHTS() -> CardRarityWeights {
         CardRarityWeights { common: 5, uncommon: 4, rare: 3, epic: 2, legendary: 1 }
     }
 
-    fn GET_DEFAULT_SETTINGS() -> GameSettings {
+    pub fn GET_DEFAULT_SETTINGS() -> GameSettings {
         GameSettings {
             settings_id: 0,
             starting_health: STARTING_HEALTH,

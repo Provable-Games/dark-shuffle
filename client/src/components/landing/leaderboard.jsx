@@ -1,12 +1,10 @@
-import CheckIcon from '@mui/icons-material/Check';
 import TheatersIcon from '@mui/icons-material/Theaters';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Box, IconButton, Pagination, Tab, Tabs, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { isMobile } from 'react-device-detect';
-import { dojoConfig } from '../../../dojo.config';
-import { getActiveLeaderboard, getLeaderboard, getTournamentRegistrations, populateGameTokens } from '../../api/indexer';
+import { getActiveLeaderboard, getLeaderboard, populateGameTokens } from '../../api/indexer';
 import { useReplay } from '../../contexts/replayContext';
 import { useTournament } from "../../contexts/tournamentContext";
 import { formatNumber } from '../../helpers/utilities';
@@ -33,15 +31,6 @@ function Leaderboard() {
     setLoading(true)
     setPage(newValue);
   };
-
-  useEffect(() => {
-    async function fetchRegistrations() {
-      const data = await getTournamentRegistrations(dojoConfig.seasonTournamentId)
-      setRegistrations(data)
-    }
-
-    fetchRegistrations()
-  }, [])
 
   useEffect(() => {
     async function fetchLeaderboard() {

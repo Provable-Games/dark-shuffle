@@ -9,7 +9,7 @@ use darkshuffle::utils::monsters::MonsterUtilsImpl;
 use dojo::world::WorldStorage;
 
 #[generate_trait]
-impl BoardUtilsImpl of BoardUtilsTrait {
+pub impl BoardUtilsImpl of BoardUtilsTrait {
     fn get_packed_board(ref board: Array<CreatureDetails>) -> Span<Creature> {
         let mut packed_board = array![];
 

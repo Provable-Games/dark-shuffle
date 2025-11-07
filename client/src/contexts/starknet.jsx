@@ -1,69 +1,45 @@
-import { ControllerConnector } from "@cartridge/connector";
-import { getContractByName } from "@dojoengine/core";
-import { mainnet, sepolia } from "@starknet-react/chains";
 import {
-  StarknetConfig,
-  argent,
-  braavos,
-  jsonRpcProvider,
-  useInjectedConnectors,
-  voyager
-} from "@starknet-react/core";
-import React, { useCallback } from "react";
-import { dojoConfig } from "../../dojo.config";
-import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
+  getNetworkConfig
+} from "@/utils/networkConfig";
+import { stringToFelt } from "@/utils/utils";
+import ControllerConnector from "@cartridge/connector/controller";
+import { mainnet, sepolia } from "@starknet-react/chains";
+import { argent, braavos, jsonRpcProvider, StarknetConfig, useInjectedConnectors, voyager } from "@starknet-react/core";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useState
+} from "react";
 
-const StarknetChainId = {
-  SN_MAIN: "0x534e5f4d41494e",
-  SN_SEPOLIA: "0x534e5f5345504f4c4941",
-}
+const DynamicConnectorContext = createContext(
+  null
+);
 
-const game_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
-const battle_systems = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "battle_systems")?.address
+const controllerConfig = getNetworkConfig(import.meta.env.VITE_PUBLIC_CHAIN);
+const cartridgeController =
+  typeof window !== "undefined"
+    ? new ControllerConnector({
+      policies: controllerConfig.policies,
+      namespace: controllerConfig.namespace,
+      slot: controllerConfig.slot,
+      preset: controllerConfig.preset,
+      chains: controllerConfig.chains,
+      defaultChainId: stringToFelt(controllerConfig.chainId).toString(),
+      tokens: {
+        erc20: controllerConfig.tokens.erc20.map(token => token.address),
+      },
+    })
+    : null;
 
-const cartridge = new ControllerConnector({
-  policies: [
-    {
-      target: game_systems,
-      method: "mint",
-    },
-    {
-      target: game_systems,
-      method: "start_game",
-    },
-    {
-      target: game_systems,
-      method: "pick_card",
-    },
-    {
-      target: game_systems,
-      method: "generate_tree",
-    },
-    {
-      target: game_systems,
-      method: "select_node",
-    },
-    {
-      target: battle_systems,
-      method: "battle_actions",
-    },
-    {
-      target: VRF_PROVIDER_ADDRESS,
-      method: "request_random",
-      description: "Allows requesting random numbers from the VRF provider",
-    },
-  ],
-  namespace: dojoConfig.namespace,
-  slot: dojoConfig.chain === "mainnet" ? "pg-mainnet" : "darkshuffle-sepolia",
-  preset: "dark-shuffle",
-  tokens: {
-    erc20: [dojoConfig.lordsAddress],
-  },
-  chains: [{ rpcUrl: dojoConfig.rpcUrl }],
-  defaultChainId: dojoConfig.chain === "mainnet" ? StarknetChainId.SN_MAIN : StarknetChainId.SN_SEPOLIA,
-})
+export function DynamicConnectorProvider({ children }) {
+  const getInitialNetwork = () => {
+    return getNetworkConfig(import.meta.env.VITE_PUBLIC_CHAIN);
+  };
 
-export function StarknetProvider({ children }) {
+  const [currentNetworkConfig, setCurrentNetworkConfig] =
+    useState(getInitialNetwork);
+
   const { connectors } = useInjectedConnectors({
     recommended: [
       argent(),
@@ -73,18 +49,35 @@ export function StarknetProvider({ children }) {
   });
 
   const rpc = useCallback(() => {
-    return { nodeUrl: dojoConfig.rpcUrl };
+    return { nodeUrl: controllerConfig.chains[0].rpcUrl };
   }, []);
 
   return (
-    <StarknetConfig
-      chains={[mainnet, sepolia]}
-      provider={jsonRpcProvider({ rpc })}
-      connectors={[...connectors, cartridge]}
-      explorer={voyager}
-      autoConnect
+    <DynamicConnectorContext.Provider
+      value={{
+        setCurrentNetworkConfig,
+        currentNetworkConfig,
+      }}
     >
-      {children}
-    </StarknetConfig>
+      <StarknetConfig
+        chains={[mainnet, sepolia]}
+        provider={jsonRpcProvider({ rpc })}
+        connectors={[...connectors, cartridgeController]}
+        explorer={voyager}
+        autoConnect
+      >
+        {children}
+      </StarknetConfig>
+    </DynamicConnectorContext.Provider>
   );
+}
+
+export function useDynamicConnector() {
+  const context = useContext(DynamicConnectorContext);
+  if (!context) {
+    throw new Error(
+      "useDynamicConnector must be used within a DynamicConnectorProvider"
+    );
+  }
+  return context;
 }

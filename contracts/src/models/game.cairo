@@ -1,44 +1,37 @@
-use dojo::event::EventStorage;
-use dojo::model::ModelStorage;
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait, WorldStorage, WorldStorageTrait};
-use openzeppelin_token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
-use starknet::get_caller_address;
-use tournaments::components::interfaces::{IGameTokenDispatcher, IGameTokenDispatcherTrait};
-
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Game {
     #[key]
-    game_id: u64,
-    hero_health: u8,
-    hero_xp: u16,
-    monsters_slain: u16,
-    map_level: u8,
-    map_depth: u8,
-    last_node_id: u8,
-    action_count: u16,
-    state: u8,
+    pub game_id: u64,
+    pub hero_health: u8,
+    pub hero_xp: u16,
+    pub monsters_slain: u16,
+    pub map_level: u8,
+    pub map_depth: u8,
+    pub last_node_id: u8,
+    pub action_count: u16,
+    pub state: u8,
 }
 
 #[derive(IntrospectPacked, Copy, Drop, Serde)]
 #[dojo::model]
 pub struct GameEffects {
     #[key]
-    game_id: u64,
-    first_attack: u8,
-    first_health: u8,
-    all_attack: u8,
-    hunter_attack: u8,
-    hunter_health: u8,
-    magical_attack: u8,
-    magical_health: u8,
-    brute_attack: u8,
-    brute_health: u8,
-    hero_dmg_reduction: u8,
-    hero_card_heal: bool,
-    card_draw: u8,
-    play_creature_heal: u8,
-    start_bonus_energy: u8,
+    pub game_id: u64,
+    pub first_attack: u8,
+    pub first_health: u8,
+    pub all_attack: u8,
+    pub hunter_attack: u8,
+    pub hunter_health: u8,
+    pub magical_attack: u8,
+    pub magical_health: u8,
+    pub brute_attack: u8,
+    pub brute_health: u8,
+    pub hero_dmg_reduction: u8,
+    pub hero_card_heal: bool,
+    pub card_draw: u8,
+    pub play_creature_heal: u8,
+    pub start_bonus_energy: u8,
 }
 
 #[derive(PartialEq, Introspect, Copy, Drop, Serde)]
@@ -49,7 +42,7 @@ pub enum GameState {
     Over,
 }
 
-impl GameStateIntoU8 of Into<GameState, u8> {
+pub impl GameStateIntoU8 of Into<GameState, u8> {
     fn into(self: GameState) -> u8 {
         match self {
             GameState::Draft => 0,
@@ -60,7 +53,7 @@ impl GameStateIntoU8 of Into<GameState, u8> {
     }
 }
 
-impl IntoU8GameState of Into<u8, GameState> {
+pub impl IntoU8GameState of Into<u8, GameState> {
     fn into(self: u8) -> GameState {
         let state: felt252 = self.into();
         match state {
@@ -74,19 +67,7 @@ impl IntoU8GameState of Into<u8, GameState> {
 }
 
 #[generate_trait]
-impl GameOwnerImpl of GameOwnerTrait {
-    fn update_metadata(self: Game, world: WorldStorage) {
-        let (contract_address, _) = world.dns(@"game_systems").unwrap();
-        let game_token_dispatcher = IGameTokenDispatcher { contract_address };
-        game_token_dispatcher.emit_metadata_update(self.game_id.into());
-    }
-
-    fn assert_owner(self: Game, world: WorldStorage) {
-        let (contract_address, _) = world.dns(@"game_systems").unwrap();
-        let game_token = IERC721Dispatcher { contract_address };
-        assert(game_token.owner_of(self.game_id.into()) == get_caller_address(), 'Not Owner');
-    }
-
+pub impl GameOwnerImpl of GameOwnerTrait {
     fn assert_draft(self: Game) {
         assert(self.state.into() == GameState::Draft, 'Not Draft');
     }
@@ -101,7 +82,7 @@ impl GameOwnerImpl of GameOwnerTrait {
     }
 
     fn exists(self: Game) -> bool {
-        self.hero_xp.is_non_zero()
+        self.hero_xp != 0
     }
 }
 
@@ -109,7 +90,7 @@ impl GameOwnerImpl of GameOwnerTrait {
 #[dojo::event(historical: true)]
 pub struct GameActionEvent {
     #[key]
-    tx_hash: felt252,
-    game_id: u64,
-    count: u16,
+    pub tx_hash: felt252,
+    pub game_id: u64,
+    pub count: u16,
 }
