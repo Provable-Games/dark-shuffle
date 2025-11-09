@@ -2,7 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Button, CircularProgress, Dialog, IconButton, Typography } from '@mui/material';
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from 'react';
-import { getCardDetails } from '../../api/indexer';
+import { useIndexer } from '../../api/indexer';
 import { CardSize } from '../../helpers/cards';
 import { fadeVariant } from "../../helpers/variants";
 import Card from '../card';
@@ -11,6 +11,8 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 function DeckBuilder(props) {
   const { open, close, cardIds, save, view } = props
+
+  const { getCardDetails } = useIndexer()
 
   const [loading, setLoading] = useState(true)
   const [availableCards, setAvailableCards] = useState([])

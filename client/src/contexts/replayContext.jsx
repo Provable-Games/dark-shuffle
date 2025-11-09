@@ -1,9 +1,7 @@
-import { createClient } from "@dojoengine/torii-client";
 import { useSnackbar } from 'notistack';
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { dojoConfig } from "../../dojo.config";
-import { getGameTxs } from '../api/indexer';
+import { useIndexer } from '../api/indexer';
 import { translateEvent } from '../helpers/events';
 import { generateMapNodes } from '../helpers/map';
 import { BattleContext } from './battleContext';
@@ -21,9 +19,10 @@ export const ReplayProvider = ({ children }) => {
   const draft = useContext(DraftContext)
   const battle = useContext(BattleContext)
 
+  const { getGameTxs } = useIndexer()
+
   const { enqueueSnackbar } = useSnackbar()
   const navigate = useNavigate()
-  const [toriiClient, setToriiClient] = useState(null)
 
   const [txHashes, setTxHashes] = useState([]);
   const [step, setStep] = useState(0)
@@ -189,58 +188,6 @@ export const ReplayProvider = ({ children }) => {
 
     return battleValues.hand.filter(cardIndex => !nextBattleValues.hand.includes(cardIndex))
   }
-
-  const setupToriiClient = async () => {
-    const client = await createClient({
-      rpcUrl: dojoConfig.rpcUrl,
-      toriiUrl: dojoConfig.toriiUrl,
-      relayUrl: "",
-      worldAddress: dojoConfig.manifest.world.address || "",
-    });
-
-    setToriiClient(client);
-  };
-
-  const setupEntitySync = useCallback(async () => {
-    try {
-      return await toriiClient?.onEventMessageUpdated(
-        [],
-        false,
-        (_, data) => {
-          if (Boolean(data[`${dojoConfig.namespace}-GameActionEvent`])) {
-            let gameId = data[`${dojoConfig.namespace}-GameActionEvent`]["game_id"].value
-
-            if (parseInt(gameId, 16) === spectatingGame?.id) {
-              fetchEvents(step, data[`${dojoConfig.namespace}-GameActionEvent`]["tx_hash"].value)
-            }
-          }
-        }
-      );
-    } catch (error) {
-      console.log(error)
-      throw error;
-    }
-  }, [toriiClient, spectatingGame?.id]);
-
-  useEffect(() => {
-    let unsubscribe = undefined;
-
-    setupEntitySync().then((sync) => {
-      unsubscribe = sync;
-    }).catch((error) => {
-      console.error("Error setting up entity sync:", error);
-    });
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe.cancel();
-      }
-    };
-  }, [setupEntitySync]);
-
-  useEffect(() => {
-    setupToriiClient()
-  }, [])
 
   return (
     <ReplayContext.Provider value={{

@@ -2,7 +2,7 @@ import { getContractByName } from "@dojoengine/core";
 import { useAccount, useConnect } from "@starknet-react/core";
 import { useSnackbar } from "notistack";
 import React, { createContext, useEffect, useState } from "react";
-import { CallData } from 'starknet';
+import { CallData, RpcProvider } from 'starknet';
 import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
 import { translateEvent } from "../helpers/events";
 import { useDynamicConnector } from "./starknet";
@@ -19,6 +19,7 @@ export const DojoProvider = ({ children }) => {
   const [customName, setCustomName] = useState(localStorage.getItem("customName"))
 
   let cartridge = connectors.find(conn => conn.id === "controller")
+  let provider = new RpcProvider({ nodeUrl: currentNetworkConfig.rpcUrl });
 
   useEffect(() => {
     async function controllerName() {
@@ -63,7 +64,7 @@ export const DojoProvider = ({ children }) => {
         return
       }
 
-      const translatedEvents = receipt.events.map(event => translateEvent(event))
+      const translatedEvents = receipt.events.map(event => translateEvent(event, currentNetworkConfig.manifest))
       console.log('translatedEvents', translatedEvents)
       return translatedEvents.filter(Boolean)
     } catch (ex) {

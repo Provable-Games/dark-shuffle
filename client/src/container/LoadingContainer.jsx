@@ -1,6 +1,6 @@
 import { Box, LinearProgress, Typography } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
-import { getActiveGame, getGameEffects, getMap } from '../api/indexer'
+import { useIndexer } from '../api/indexer'
 import { BattleContext } from '../contexts/battleContext'
 import { DraftContext } from '../contexts/draftContext'
 import { GAME_STATES, GameContext } from '../contexts/gameContext'
@@ -13,7 +13,7 @@ const loadingBeasts = ["Warlock", "Anansi", "Manticore", "Phoenix", "Minotaur", 
 
 function LoadingContainer() {
   const replay = useReplay()
-
+  const { getActiveGame, getGameEffects, getMap } = useIndexer()
   const gameContext = useContext(GameContext)
   const { gameSettings, tokenData, gameCards, loadingProgress } = gameContext.getState;
 

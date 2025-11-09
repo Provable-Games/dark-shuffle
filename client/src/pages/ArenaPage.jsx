@@ -1,10 +1,12 @@
+import { Box, Typography } from '@mui/material'
 import { useAccount, useConnect } from '@starknet-react/core'
 import { motion } from 'framer-motion'
 import { useSnackbar } from 'notistack'
 import React, { useContext, useEffect, useReducer } from 'react'
 import { Scrollbars } from 'react-custom-scrollbars'
-import { useParams } from 'react-router-dom'
-import { getTokenMetadata } from '../api/indexer'
+import { useParams, useSearchParams } from 'react-router-dom'
+import { useStarknetApi } from '../api/starknet'
+import DeathDialog from '../components/battle/death'
 import BattleContainer from '../container/BattleContainer'
 import DraftContainer from '../container/DraftContainer'
 import LandingContainer from '../container/LandingContainer'
@@ -13,13 +15,14 @@ import MapContainer from '../container/MapContainer'
 import { GameContext } from '../contexts/gameContext'
 import { useReplay } from '../contexts/replayContext'
 import { fadeVariant } from '../helpers/variants'
-import DeathDialog from '../components/battle/death'
-import { Box, Typography } from '@mui/material'
-import { useSearchParams } from 'react-router-dom'
+import { useIndexer } from '../api/indexer'
 
 function ArenaPage() {
   const gameContext = useContext(GameContext)
   const { state } = gameContext.values
+
+  const { getTokenMetadata } = useStarknetApi()
+  const { getActiveGame } = useIndexer()
 
   const replay = useReplay()
   const { address, account } = useAccount()
@@ -51,11 +54,7 @@ function ArenaPage() {
       let game = await getTokenMetadata(watchGameId)
 
       if (game) {
-        if (game.active) {
-          replay.spectateGame(game)
-        } else {
-          replay.startReplay(game)
-        }
+        replay.startReplay(game)
       } else {
         enqueueSnackbar('Game not found', { variant: 'error', anchorOrigin: { vertical: 'top', horizontal: 'center' } })
       }
@@ -81,12 +80,21 @@ function ArenaPage() {
       gameContext.setLoading(true)
       gameContext.setLoadingProgress(10)
 
-      let tokenData = await getTokenMetadata(gameId)
+      let tokenMetaData = await getTokenMetadata(gameId)
+      let tokenGameData = await getActiveGame(gameId)
 
-      if (tokenData.eternumQuest && !tokenData.gameStarted) {
-        await gameContext.actions.startBattleDirectly(gameId)
-        tokenData.gameStarted = true
+      let tokenData = {
+        ...tokenMetaData,
+        health: tokenGameData?.hero_health,
+        xp: tokenGameData?.hero_xp,
+        active: tokenGameData?.hero_health !== 0 && (tokenMetaData.expires_at === 0 || tokenMetaData.expires_at > Date.now()),
+        gameStarted: Boolean(tokenGameData?.hero_xp),
       }
+
+      // if (tokenData.eternumQuest && !tokenData.gameStarted) {
+      //   await gameContext.actions.startBattleDirectly(gameId)
+      //   tokenData.gameStarted = true
+      // }
 
       gameContext.actions.loadGameDetails(tokenData)
     }

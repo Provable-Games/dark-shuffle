@@ -1,4 +1,3 @@
-import { dojoConfig } from "../../dojo.config"
 
 export const get_short_namespace = (namespace) => {
   let parts = namespace.split('_');
@@ -6,8 +5,8 @@ export const get_short_namespace = (namespace) => {
   return short;
 }
 
-export const translateName = (selector) => {
-  const model = dojoConfig.manifest.models.find(model => model.selector === selector);
+export const translateName = (selector, manifest) => {
+  const model = manifest.models.find(model => model.selector === selector);
   return model?.tag?.split('-')[1];
 }
 

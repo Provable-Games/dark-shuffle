@@ -9,15 +9,12 @@ import GameTokens from '../components/dialogs/gameTokens'
 import Leaderboard from '../components/landing/leaderboard'
 import Monsters from '../components/landing/monsters'
 import { GameContext } from '../contexts/gameContext'
-import { useTournament } from '../contexts/tournamentContext'
 import { _styles } from '../helpers/styles'
 import { useParams } from 'react-router-dom'
 import GameSettings from '../components/dialogs/gameSettings'
 import GGQuest from '../components/dialogs/ggQuest'
 
 function LandingContainer() {
-  const tournamentProvider = useTournament()
-
   const { showSettingsId } = useParams()
   const { address } = useAccount()
 
@@ -50,15 +47,6 @@ function LandingContainer() {
             </Typography>
             <Typography variant='h5' color='primary'>
               Free
-            </Typography>
-          </Box>
-
-          <Box sx={[styles.kpi, { width: '100%', height: '90px', mb: 1 }]}>
-            <Typography>
-              Active Tournaments
-            </Typography>
-            <Typography variant='h5' color='primary'>
-              {tournamentProvider.tournaments.length}
             </Typography>
           </Box>
 
@@ -120,14 +108,7 @@ function LandingContainer() {
                 </Typography>
               </Box>
 
-              <Box sx={[styles.kpi]}>
-                <Typography>
-                  Active Tournaments
-                </Typography>
-                <Typography variant='h5' color='primary'>
-                  {tournamentProvider.tournaments.length}
-                </Typography>
-              </Box>
+
             </Box>
           </Box>
 

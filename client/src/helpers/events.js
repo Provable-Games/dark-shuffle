@@ -16,8 +16,8 @@ function parseData(value, type) {
   }
 }
 
-export function translateEvent(event) {
-  const name = translateName(event.keys[1]);
+export function translateEvent(event, manifest) {
+  const name = translateName(event.keys[1], manifest);
   const data = event.data;
 
   const keysNumber = parseInt(data[0]);

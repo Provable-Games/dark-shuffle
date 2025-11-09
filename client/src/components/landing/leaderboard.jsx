@@ -4,14 +4,11 @@ import { Box, IconButton, Pagination, Tab, Tabs, Typography } from '@mui/materia
 import React, { useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { isMobile } from 'react-device-detect';
-import { getActiveLeaderboard, getLeaderboard, populateGameTokens } from '../../api/indexer';
+import { useIndexer } from '../../api/indexer';
 import { useReplay } from '../../contexts/replayContext';
-import { useTournament } from "../../contexts/tournamentContext";
-import { formatNumber } from '../../helpers/utilities';
 
 function Leaderboard() {
-  const tournamentProvider = useTournament()
-  const { season } = tournamentProvider
+  const { getLeaderboard, getActiveLeaderboard, populateGameTokens } = useIndexer();
 
   const replay = useReplay()
 
@@ -52,9 +49,6 @@ function Leaderboard() {
       fetchLeaderboard()
     }
   }, [page, tab, registrations])
-
-  const seasonPool = Math.floor(season.rewardPool / 1e18 * 1)
-  const cashPrizes = [300]
 
   return (
     <Box sx={styles.container}>
@@ -123,17 +117,9 @@ function Leaderboard() {
                 </Box>
 
                 <Box width='90px' display={'flex'} gap={0.5} alignItems={'center'}>
-                  {tab === 'one' && rank <= season.distribution?.length && <>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#FFE97F" height={10}><path d="M0 12v2h1v2h6V4h2v12h6v-2h1v-2h-2v2h-3V4h2V0h-2v2H9V0H7v2H5V0H3v4h2v10H2v-2z"></path></svg>
-
-                    <Typography color={'primary'} sx={{ fontSize: '12px' }}>
-                      {formatNumber(seasonPool * season.distribution[rank - 1] / 100)}
-                    </Typography>
-
-                    {!isMobile && cashPrizes[i] && <Typography color={'#f59100'} sx={{ fontSize: '12px' }}>
-                      +${cashPrizes[i]}
-                    </Typography>}
-                  </>}
+                  {tab === 'one' && <Typography color={'primary'} sx={{ fontSize: '12px' }}>
+                    {game.xp}
+                  </Typography>}
                 </Box>
               </Box>
             </>

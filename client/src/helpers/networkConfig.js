@@ -8,6 +8,7 @@ export const NETWORKS = {
     slot: "pg-mainnet-10",
     rpcUrl: "https://api.cartridge.gg/x/starknet/mainnet/rpc/v0_9",
     torii: "https://api.cartridge.gg/x/pg-mainnet-10/torii",
+    denshokan: "0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd",
   },
 };
 
@@ -25,5 +26,6 @@ export function getNetworkConfig(networkKey) {
     rpcUrl: network.rpcUrl,
     toriiUrl: network.torii,
     chains: [{ rpcUrl: network.rpcUrl }],
+    denshokan: network.denshokan,
   };
 }

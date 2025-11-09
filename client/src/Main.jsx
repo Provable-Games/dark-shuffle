@@ -1,78 +1,70 @@
-import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import { AnimatePresence } from "framer-motion";
-import { isBrowser, isMobile } from 'react-device-detect';
-import { BrowserRouter, Route, Routes, } from "react-router-dom";
+import { createRoot } from "react-dom/client";
 
-import Box from '@mui/material/Box';
-import { SnackbarProvider } from 'notistack';
-import Header from "./components/header";
-import { BattleProvider } from "./contexts/battleContext";
-import { DojoProvider } from "./contexts/dojoContext";
-import { DraftProvider } from "./contexts/draftContext";
-import { GameProvider } from "./contexts/gameContext";
-import { TournamentProvider } from "./contexts/tournamentContext";
-import { routes } from './helpers/routes';
-import { mainTheme } from './helpers/themes';
+import App from "./App";
 
-import MobileHeader from './components/mobileHeader';
-import ReplayOverlay from './components/replayOverlay';
-import { AnimationHandler } from "./contexts/animationHandler";
-import { ReplayProvider } from './contexts/replayContext';
-import { StarknetProvider } from "./contexts/starknet";
+// Dojo related imports
+import { createDojoConfig } from "@dojoengine/core";
+import { init } from "@dojoengine/sdk";
+import { DojoSdkProvider } from "@dojoengine/sdk/react";
+import { useEffect, useState } from "react";
+import { MetagameProvider } from "./contexts/metagame";
+import {
+  DynamicConnectorProvider,
+  useDynamicConnector,
+} from "./contexts/starknet";
+import "./index.css";
 
-function Main() {
+function DojoApp() {
+  const { currentNetworkConfig } = useDynamicConnector();
+  const [sdk, setSdk] = useState(null);
+
+  useEffect(() => {
+    async function initializeSdk() {
+      try {
+        const initializedSdk = await init({
+          client: {
+            toriiUrl: currentNetworkConfig.toriiUrl,
+            worldAddress: currentNetworkConfig.manifest.world.address,
+          },
+          domain: {
+            name: "Dark Shuffle",
+            version: "1.0",
+            chainId: currentNetworkConfig.chainId,
+            revision: "1",
+          },
+        });
+        setSdk(initializedSdk);
+      } catch (error) {
+        console.error("Failed to initialize SDK:", error);
+      }
+    }
+
+    if (currentNetworkConfig) {
+      initializeSdk();
+    }
+  }, [currentNetworkConfig]);
 
   return (
-    <BrowserRouter>
-      <Box className='bgImage'>
-        <Box className='background'>
-          <StyledEngineProvider injectFirst>
-
-            <ThemeProvider theme={mainTheme}>
-              <SnackbarProvider anchorOrigin={{ vertical: 'top', horizontal: 'center' }} preventDuplicate autoHideDuration={3000}>
-                <AnimationHandler>
-
-                  <StarknetProvider>
-                    <DojoProvider>
-                      <TournamentProvider>
-                        <GameProvider>
-                          <DraftProvider>
-                            <BattleProvider>
-                              <ReplayProvider>
-
-                                <Box className='main'>
-                                  <ReplayOverlay />
-                                  {isBrowser && <Header />}
-                                  {isMobile && <MobileHeader />}
-
-                                  <AnimatePresence mode="wait">
-
-                                    <Routes>
-                                      {routes.map((route, index) => {
-                                        return <Route key={index} path={route.path} element={route.content} />
-                                      })}
-                                    </Routes>
-
-                                  </AnimatePresence>
-                                </Box>
-
-                              </ReplayProvider>
-                            </BattleProvider>
-                          </DraftProvider>
-                        </GameProvider>
-                      </TournamentProvider>
-                    </DojoProvider>
-                  </StarknetProvider>
-
-                </AnimationHandler>
-              </SnackbarProvider>
-            </ThemeProvider>
-
-          </StyledEngineProvider>
-        </Box>
-      </Box>
-    </BrowserRouter >
+    <DojoSdkProvider
+      sdk={sdk}
+      dojoConfig={createDojoConfig(currentNetworkConfig)}
+      clientFn={() => { }}
+    >
+      <MetagameProvider>
+        <App />
+      </MetagameProvider>
+    </DojoSdkProvider>
   );
 }
 
-export default Main
+async function main() {
+  createRoot(document.getElementById("root")).render(
+    <DynamicConnectorProvider>
+      <DojoApp />
+    </DynamicConnectorProvider>
+  );
+}
+
+main().catch((error) => {
+  console.error("Failed to initialize the application:", error);
+});

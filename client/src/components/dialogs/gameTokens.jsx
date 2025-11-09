@@ -4,20 +4,19 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import WatchIcon from '@mui/icons-material/Watch';
 import { Box, Button, CircularProgress, Dialog, Typography } from '@mui/material';
 import { motion } from "framer-motion";
+import { useGameTokens } from "metagame-sdk/sql";
 import React, { useContext, useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
-import { getGameTokens, getSettingsMetadata, populateGameTokens } from '../../api/indexer';
-import { fetchQuestTarget } from '../../api/starknet';
+import { useIndexer } from '../../api/indexer';
 import logo from '../../assets/images/logo.svg';
 import { GameContext } from '../../contexts/gameContext';
-import { useTournament } from '../../contexts/tournamentContext';
 import { fadeVariant } from "../../helpers/variants";
 import GameSettings from './gameSettings';
 
 function GameTokens(props) {
   const gameContext = useContext(GameContext)
-  const { tournaments } = useTournament()
   const { open, close, address } = props
+  const { getSettingsMetadata, populateGameTokens } = useIndexer()
 
   const [games, setGames] = useState([])
   const [selectedGame, setSelectedGame] = useState()
@@ -26,19 +25,21 @@ function GameTokens(props) {
   const [loading, setLoading] = useState(true)
   const [gameSettings, openGameSettings] = useState(false)
 
+  const { games: gamesData, loading: gamesLoading } = useGameTokens({
+    owner: address,
+    limit: 1000,
+  });
+
   useEffect(() => {
     async function fetchGames() {
       setLoading(true)
 
-      const gameTokenIds = await getGameTokens(address)
-      let games = await populateGameTokens(gameTokenIds)
+      let games = await populateGameTokens(gamesData)
       let settingsMetadata = await getSettingsMetadata(games.map(game => game.settingsId))
 
       games = await Promise.all(games.map(async (game) => ({
         ...game,
         settingsMetadata: settingsMetadata.find(metadata => metadata.settings_id === game.settingsId),
-        tournament: tournaments?.find(tournament => tournament.id === game.tournament_id),
-        targetScore: game.eternumQuest ? (await fetchQuestTarget(game.tokenId)) : null,
       })))
 
       setSelectedGame()
@@ -46,8 +47,10 @@ function GameTokens(props) {
       setLoading(false)
     }
 
-    fetchGames()
-  }, [address, active])
+    if (gamesData) {
+      fetchGames()
+    }
+  }, [gamesData, address, active])
 
   const handleResumeGame = () => {
     gameContext.actions.loadGameDetails(selectedGame)

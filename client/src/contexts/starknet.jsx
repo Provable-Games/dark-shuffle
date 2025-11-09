@@ -1,7 +1,7 @@
 import {
   getNetworkConfig
-} from "@/utils/networkConfig";
-import { stringToFelt } from "@/utils/utils";
+} from "../helpers/networkConfig";
+import { stringToFelt } from "../helpers/utilities";
 import ControllerConnector from "@cartridge/connector/controller";
 import { mainnet, sepolia } from "@starknet-react/chains";
 import { argent, braavos, jsonRpcProvider, StarknetConfig, useInjectedConnectors, voyager } from "@starknet-react/core";
@@ -27,7 +27,7 @@ const cartridgeController =
       chains: controllerConfig.chains,
       defaultChainId: stringToFelt(controllerConfig.chainId).toString(),
       tokens: {
-        erc20: controllerConfig.tokens.erc20.map(token => token.address),
+        erc20: []
       },
     })
     : null;

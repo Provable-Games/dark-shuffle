@@ -1,13 +1,12 @@
 import { useSnackbar } from "notistack";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getCardDetails, getRecommendedSettings, getSettings } from "../api/indexer";
+import { useIndexer } from "../api/indexer";
 import { generateMapNodes } from "../helpers/map";
 import { DojoContext } from "./dojoContext";
-import { fetchQuestTarget } from "../api/starknet";
 import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
 import { CallData } from "starknet";
 import { getContractByName } from "@dojoengine/core";
-import { dojoConfig } from "../../dojo.config";
+import { useDynamicConnector } from "./starknet";
 
 export const GameContext = createContext()
 
@@ -25,8 +24,10 @@ const GAME_VALUES = {
 }
 
 export const GameProvider = ({ children }) => {
+  const { currentNetworkConfig } = useDynamicConnector();
   const dojo = useContext(DojoContext)
   const { enqueueSnackbar } = useSnackbar()
+  const { getSettings, getCardDetails, getRecommendedSettings } = useIndexer()
 
   const [loading, setLoading] = useState(true)
   const [loadingProgress, setLoadingProgress] = useState(0)
@@ -59,17 +60,6 @@ export const GameProvider = ({ children }) => {
       setLoading(false);
     }
   }, [values.gameId])
-
-  useEffect(() => {
-    const getQuestTarget = async () => {
-      const questTarget = await fetchQuestTarget(values.gameId)
-      setValues(prev => ({ ...prev, questTarget }))
-    }
-
-    if (values.gameId && tokenData.eternumQuest) {
-      getQuestTarget()
-    }
-  }, [tokenData.eternumQuest, values.gameId])
 
   useEffect(() => {
     if (values.gameId && GG_questMode) {
@@ -125,7 +115,7 @@ export const GameProvider = ({ children }) => {
   const startBattleDirectly = async (gameId) => {
     setLoadingProgress(55)
 
-    let game_address = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
+    let game_address = getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, "game_systems")?.address
     let requestRandom = {
       contractAddress: VRF_PROVIDER_ADDRESS,
       entrypoint: 'request_random',

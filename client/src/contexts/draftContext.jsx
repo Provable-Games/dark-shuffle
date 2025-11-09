@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getDraft } from "../api/indexer";
+import { useIndexer } from "../api/indexer";
 import { delay } from "../helpers/utilities";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
@@ -13,6 +13,7 @@ export const DraftProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
   const { gameSettings, gameCards, tokenData } = game.getState
+  const { getDraft } = useIndexer();
 
   const [pendingCard, setPendingCard] = useState()
 

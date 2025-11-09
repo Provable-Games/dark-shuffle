@@ -1,35 +1,71 @@
-import { Box } from '@mui/material';
-import { lazy, Suspense, useState } from 'react';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import background from "./assets/images/background.png";
-import BlockRevealAnimation from './components/animations/blockRevealAnimation.jsx';
+import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
+import { AnimatePresence } from "framer-motion";
+import { isBrowser, isMobile } from 'react-device-detect';
+import { BrowserRouter, Route, Routes, } from "react-router-dom";
 
-const Main = lazy(() => import('./Main.jsx'));
+import Box from '@mui/material/Box';
+import { SnackbarProvider } from 'notistack';
+import Header from "./components/header";
+import { BattleProvider } from "./contexts/battleContext";
+import { DojoProvider } from "./contexts/dojoContext";
+import { DraftProvider } from "./contexts/draftContext";
+import { GameProvider } from "./contexts/gameContext";
+import { routes } from './helpers/routes';
+import { mainTheme } from './helpers/themes';
 
-function Loading() {
-  return <Box className='bgImage' sx={{ width: '100vw', height: '100vh' }}>
-    <Box sx={{ paddingTop: '40vh' }}>
-      <BlockRevealAnimation hideText icon />
-    </Box>
-  </Box>
-}
+import MobileHeader from './components/mobileHeader';
+import ReplayOverlay from './components/replayOverlay';
+import { AnimationHandler } from "./contexts/animationHandler";
+import { ReplayProvider } from './contexts/replayContext';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  return (
+    <BrowserRouter>
+      <Box className='bgImage'>
+        <Box className='background'>
+          <StyledEngineProvider injectFirst>
 
-  if (isLoading) {
-    return <LazyLoadImage
-      alt={""}
-      height={0}
-      src={background}
-      width={0}
-      onLoad={() => setIsLoading(false)}
-    />
-  }
+            <ThemeProvider theme={mainTheme}>
+              <SnackbarProvider anchorOrigin={{ vertical: 'top', horizontal: 'center' }} preventDuplicate autoHideDuration={3000}>
+                <AnimationHandler>
 
-  return <Suspense fallback={<Loading />}>
-    <Main />
-  </Suspense>
+                  <DojoProvider>
+                    <GameProvider>
+                      <DraftProvider>
+                        <BattleProvider>
+                          <ReplayProvider>
+
+                            <Box className='main'>
+                              <ReplayOverlay />
+                              {isBrowser && <Header />}
+                              {isMobile && <MobileHeader />}
+
+                              <AnimatePresence mode="wait">
+
+                                <Routes>
+                                  {routes.map((route, index) => {
+                                    return <Route key={index} path={route.path} element={route.content} />
+                                  })}
+                                </Routes>
+
+                              </AnimatePresence>
+                            </Box>
+
+                          </ReplayProvider>
+                        </BattleProvider>
+                      </DraftProvider>
+                    </GameProvider>
+                  </DojoProvider>
+
+                </AnimationHandler>
+              </SnackbarProvider>
+            </ThemeProvider>
+
+          </StyledEngineProvider>
+        </Box>
+      </Box>
+    </BrowserRouter >
+  );
 }
 
 export default App

@@ -1,47 +1,101 @@
-import { CallData } from "starknet";
-import { dojoConfig } from "../../dojo.config";
-import { getContractByName } from "@dojoengine/core";
+import { useDynamicConnector } from "@/contexts/starknet";
+import { NETWORKS } from "@/utils/networkConfig";
+import { parseBalances } from "@/utils/utils";
+import { hexToAscii } from "@dojoengine/utils";
+import { useAccount } from "@starknet-react/core";
+import { num } from "starknet";
 
-const GAME_ADDRESS = getContractByName(dojoConfig.manifest, dojoConfig.namespace, "game_systems")?.address
+export const useStarknetApi = () => {
+  const { currentNetworkConfig } = useDynamicConnector();
+  const { address } = useAccount();
 
-export const fetchBalances = async (account, lordsContract) => {
-  const lordsBalanceResult = await lordsContract?.call(
-    "balance_of",
-    CallData.compile({ account })
-  );
+  const getTokenBalances = async (tokens) => {
+    const calls = tokens.map((token, i) => ({
+      id: i + 1,
+      jsonrpc: "2.0",
+      method: "starknet_call",
+      params: [
+        {
+          contract_address: token.address,
+          entry_point_selector: "0x2e4263afad30923c891518314c3c95dbe830a16874e8abc5777a9a20b54c76e",
+          calldata: [address]
+        },
+        "latest"
+      ]
+    }));
 
-  return {
-    lords: lordsBalanceResult ?? BigInt(0),
-  };
-};
-
-export const fetchQuestTarget = async (questId) => {
-  try {
-    const response = await fetch(dojoConfig.rpcUrl, {
+    const response = await fetch(NETWORKS[import.meta.env.VITE_PUBLIC_CHAIN].rpcUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "starknet_call",
-        params: [
-          {
-            contract_address: dojoConfig.eternumQuestAddress,
-            entry_point_selector: "0xb6164a78459165f0920db46e2adcae170df7e54c223fe9c265345b5dc36149",
-            calldata: [questId.toString(16), GAME_ADDRESS],
-          },
-          "pending",
-        ],
-        id: 0,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(calls),
     });
 
     const data = await response.json();
-    return parseInt(data?.result[0], 16);
-  } catch (error) {
-    console.log('error', error)
+
+    return parseBalances(data || [], tokens);
   }
 
-  return null;
+  const getTokenMetadata = async (tokenId) => {
+    try {
+      const response = await fetch(currentNetworkConfig.rpcUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([
+          {
+            jsonrpc: "2.0",
+            method: "starknet_call",
+            params: [
+              {
+                contract_address: currentNetworkConfig.denshokan,
+                entry_point_selector: "0x20d82cc6889093dce20d92fc9daeda4498c9b99ae798fc2a6f4757e38fb1729",
+                calldata: [num.toHex(tokenId)],
+              },
+              "latest",
+            ],
+            id: 0,
+          },
+          {
+            jsonrpc: "2.0",
+            method: "starknet_call",
+            params: [
+              {
+                contract_address: currentNetworkConfig.denshokan,
+                entry_point_selector: "0x170ac5a9fd747db6517bea85af33fcc77a61d4442c966b646a41fdf9ecca233",
+                calldata: [num.toHex(tokenId)],
+              },
+              "latest",
+            ],
+            id: 1,
+          }
+        ]),
+      });
+
+      const data = await response.json();
+      if (!data[0]?.result) return null;
+
+      let tokenMetadata = {
+        id: tokenId,
+        tokenId,
+        playerName: hexToAscii(data[1].result[0]),
+        mintedAt: parseInt(data[0].result[1], 16) * 1000,
+        settingsId: parseInt(data[0].result[2]),
+        expires_at: parseInt(data[0].result[3], 16) * 1000,
+        available_at: parseInt(data[0].result[4], 16) * 1000,
+        minted_by: data[0].result[5],
+      }
+
+      return tokenMetadata;
+    } catch (error) {
+      console.log('error', error)
+    }
+
+    return null;
+  }
+
+  return {
+    getTokenBalances,
+    getTokenMetadata,
+  };
 };

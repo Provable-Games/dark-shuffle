@@ -1,4 +1,5 @@
 
+import { shortString } from "starknet";
 import { differenceInMinutes, differenceInHours, differenceInDays } from 'date-fns';
 
 export function delay(time) {
@@ -78,3 +79,5 @@ export function formatTimeUntil(timestamp) {
   return `${days}d ${hours}h ${minutes}m`;
 }
 
+export const stringToFelt = (v) =>
+  v ? shortString.encodeShortString(v) : "0x0";

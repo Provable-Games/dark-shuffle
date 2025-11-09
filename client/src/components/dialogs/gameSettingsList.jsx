@@ -4,7 +4,7 @@ import { useAccount, useConnect } from '@starknet-react/core';
 import { motion } from "framer-motion";
 import React, { useContext, useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
-import { getRecommendedSettings, getSettingsList } from '../../api/indexer';
+import { useIndexer } from '../../api/indexer';
 import { GameContext } from '../../contexts/gameContext';
 import { fadeVariant } from "../../helpers/variants";
 import GameSettings from './gameSettings';
@@ -15,6 +15,7 @@ function GameSettingsList(props) {
   const gameContext = useContext(GameContext)
   const { account, address } = useAccount()
   const { connect, connectors } = useConnect();
+  const { getSettingsList, getRecommendedSettings } = useIndexer()
 
   const [selectedSettings, setselectedSettings] = useState()
 

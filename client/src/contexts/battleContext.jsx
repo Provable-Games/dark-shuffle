@@ -1,7 +1,7 @@
 import { useSnackbar } from "notistack";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { isMobile } from 'react-device-detect';
-import { getBattleState } from "../api/indexer";
+import { useIndexer } from "../api/indexer";
 import { applyCardEffect, requirementMet } from "../battle/cardUtils";
 import { endOfTurnMonsterEffect } from "../battle/monsterAbility";
 import { GET_MONSTER } from "../battle/monsterUtils";
@@ -18,8 +18,9 @@ export const BattleContext = createContext()
 export const BattleProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
+  const { getBattleState } = useIndexer()
+  
   const { gameEffects } = game.getState
-
   const animationHandler = useContext(AnimationContext)
 
   const { enqueueSnackbar } = useSnackbar()

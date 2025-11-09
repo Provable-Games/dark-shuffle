@@ -9,7 +9,7 @@ import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import { byteArray } from "starknet";
-import { getSettings } from '../../api/indexer';
+import { useIndexer } from '../../api/indexer';
 import sword from '../../assets/images/sword.png';
 import { DojoContext } from '../../contexts/dojoContext';
 import { tierColors } from '../../helpers/cards';
@@ -57,7 +57,8 @@ function GameSettings(props) {
   const gameContext = useContext(GameContext)
   const { account } = useAccount()
   const { connect, connectors } = useConnect()
-
+  const { getSettings } = useIndexer()
+  
   const [gameSettings, setGameSettings] = useState(DEFAULT_SETTINGS)
   const [loading, setLoading] = useState(view)
   const [creating, setCreating] = useState(false)
