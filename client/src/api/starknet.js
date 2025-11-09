@@ -1,6 +1,6 @@
 import { useDynamicConnector } from "@/contexts/starknet";
-import { NETWORKS } from "@/utils/networkConfig";
-import { parseBalances } from "@/utils/utils";
+import { NETWORKS } from "@/helpers/networkConfig";
+import { parseBalances } from "@/helpers/utilities";
 import { hexToAscii } from "@dojoengine/utils";
 import { useAccount } from "@starknet-react/core";
 import { num } from "starknet";

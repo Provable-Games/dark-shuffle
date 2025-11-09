@@ -4,7 +4,8 @@ import { motion } from 'framer-motion'
 import { useSnackbar } from 'notistack'
 import React, { useContext, useEffect, useReducer } from 'react'
 import { Scrollbars } from 'react-custom-scrollbars'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { useIndexer } from '../api/indexer'
 import { useStarknetApi } from '../api/starknet'
 import DeathDialog from '../components/battle/death'
 import BattleContainer from '../container/BattleContainer'
@@ -15,7 +16,6 @@ import MapContainer from '../container/MapContainer'
 import { GameContext } from '../contexts/gameContext'
 import { useReplay } from '../contexts/replayContext'
 import { fadeVariant } from '../helpers/variants'
-import { useIndexer } from '../api/indexer'
 
 function ArenaPage() {
   const gameContext = useContext(GameContext)
@@ -31,14 +31,6 @@ function ArenaPage() {
   const [update, forceUpdate] = useReducer(x => x + 1, 0);
 
   const { watchGameId, gameId, newGameSettingsId } = useParams()
-  const [searchParams] = useSearchParams();
-  const referenceId = searchParams.get('ref');
-
-  useEffect(() => {
-    if (referenceId === 'ggquest') {
-      gameContext.utils.setQuestMode(true)
-    }
-  }, [referenceId])
 
   useEffect(() => {
     if (!watchGameId && !gameId && !newGameSettingsId) {

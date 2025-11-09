@@ -81,3 +81,35 @@ export function formatTimeUntil(timestamp) {
 
 export const stringToFelt = (v) =>
   v ? shortString.encodeShortString(v) : "0x0";
+
+export function parseBalances(
+  results,
+  tokens,
+) {
+  function toBigIntSmart(v) {
+    const s = String(v);
+    return s.startsWith("0x") ? BigInt(s) : BigInt(s);
+  }
+
+  function uint256ToBigInt([low, high]) {
+    return (toBigIntSmart(high) << 128n) + toBigIntSmart(low);
+  }
+
+  function formatBalance(raw, tokenDecimals = 18, showDecimals = 4) {
+    const base = 10n ** BigInt(tokenDecimals);
+    const intPart = raw / base;
+    const fracPart = raw % base;
+    const frac = fracPart.toString().padStart(tokenDecimals, "0").slice(0, showDecimals);
+    return `${intPart}${showDecimals > 0 ? "." + frac : ""}`;
+  }
+
+  const out = {};
+  for (let i = 0; i < results.length; i++) {
+    const token = tokens[i];
+    const raw = uint256ToBigInt(results[i].result);
+    const tokenDecimals = token.decimals ?? 18;
+    const shownDecimals = token.displayDecimals;
+    out[token.name] = formatBalance(raw, tokenDecimals, shownDecimals);
+  }
+  return out;
+}
