@@ -1,9 +1,9 @@
 {
   "world": {
-    "class_hash": "0x75fc75bcd1a7f8b4bf64b74978b0f89c8cee44bb755c1dae6f82284756451ec",
-    "address": "0x5c6d0020a9927edca9ddc984b97305439c0b32a1ec8d3f0eaf6291074cc9799",
+    "class_hash": "0x685ed02eefa98fe7e208aa295042e9bbad8029b0d3d6f0ba2b32546efe0a1f9",
+    "address": "0x2ef591697f0fd9adc0ba9dbe0ca04dabad80cf95f08ba02e435d9cb6698a28a",
     "seed": "DNC",
-    "name": "Realms World",
+    "name": "Provable Games",
     "entrypoints": [
       "uuid",
       "set_metadata",
@@ -693,6 +693,22 @@
           },
           {
             "type": "function",
+            "name": "owners_count",
+            "inputs": [
+              {
+                "name": "resource",
+                "type": "core::felt252"
+              }
+            ],
+            "outputs": [
+              {
+                "type": "core::integer::u64"
+              }
+            ],
+            "state_mutability": "view"
+          },
+          {
+            "type": "function",
             "name": "is_writer",
             "inputs": [
               {
@@ -1312,8 +1328,8 @@
   },
   "contracts": [
     {
-      "address": "0x3befa9c969bf82bbfa0a96374da9f7aab172101298c0ff2611ec8c2fd02692",
-      "class_hash": "0x22073fe6b9135a60238557ef16d97b14249d57a3d95016dbec357d09fb3cecb",
+      "address": "0x6e338bd8408dcd9d9ba3a116b5dd1737bcf566bdce2d823039368efcd66ca70",
+      "class_hash": "0x3fd0b1b5ff273c9c9562d2799ec19ec32c0cf466f9c302d681889854532a37f",
       "abi": [
         {
           "type": "impl",
@@ -1532,16 +1548,16 @@
         }
       ],
       "init_calldata": [],
-      "tag": "ds_v1_2_0-battle_systems",
-      "selector": "0x76b546602bfd66e91f744f1b841949ecc5df451537918678873b327d2aa7255",
+      "tag": "ds_v1_2_1-battle_systems",
+      "selector": "0x42a85703ddf85a4decfdaacf8500f521480e38a4b6e251207665aaa25632442",
       "systems": [
         "battle_actions",
         "upgrade"
       ]
     },
     {
-      "address": "0x66744a5847c4459e019511f390ba8a8da53c5d25de8cd4e24e5f3e450c5d038",
-      "class_hash": "0x3ada36b4d21242b0fbce32d78d168729e26822fe51eee570583f1984a578749",
+      "address": "0x31e84f293086dfe2f62ac3f825434c8fa1851d128d6cc2273008cbb804bf0a",
+      "class_hash": "0x26c976bef8190d92eb0fe7f347088bf5e38e832b345f6e5265ba468b9322b5b",
       "abi": [
         {
           "type": "impl",
@@ -1598,7 +1614,117 @@
           "name": "dojo_init",
           "inputs": [],
           "outputs": [],
-          "state_mutability": "view"
+          "state_mutability": "external"
+        },
+        {
+          "type": "impl",
+          "name": "GameSettingsImpl",
+          "interface_name": "game_components_minigame::extensions::settings::interface::IMinigameSettings"
+        },
+        {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "game_components_minigame::extensions::settings::interface::IMinigameSettings",
+          "items": [
+            {
+              "type": "function",
+              "name": "settings_exist",
+              "inputs": [
+                {
+                  "name": "settings_id",
+                  "type": "core::integer::u32"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "GameSettingsDetailsImpl",
+          "interface_name": "game_components_minigame::extensions::settings::interface::IMinigameSettingsDetails"
+        },
+        {
+          "type": "struct",
+          "name": "game_components_minigame::extensions::settings::structs::GameSetting",
+          "members": [
+            {
+              "name": "name",
+              "type": "core::byte_array::ByteArray"
+            },
+            {
+              "name": "value",
+              "type": "core::byte_array::ByteArray"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "core::array::Span::<game_components_minigame::extensions::settings::structs::GameSetting>",
+          "members": [
+            {
+              "name": "snapshot",
+              "type": "@core::array::Array::<game_components_minigame::extensions::settings::structs::GameSetting>"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "game_components_minigame::extensions::settings::structs::GameSettingDetails",
+          "members": [
+            {
+              "name": "name",
+              "type": "core::byte_array::ByteArray"
+            },
+            {
+              "name": "description",
+              "type": "core::byte_array::ByteArray"
+            },
+            {
+              "name": "settings",
+              "type": "core::array::Span::<game_components_minigame::extensions::settings::structs::GameSetting>"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "game_components_minigame::extensions::settings::interface::IMinigameSettingsDetails",
+          "items": [
+            {
+              "type": "function",
+              "name": "settings_details",
+              "inputs": [
+                {
+                  "name": "settings_id",
+                  "type": "core::integer::u32"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "game_components_minigame::extensions::settings::structs::GameSettingDetails"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
         },
         {
           "type": "impl",
@@ -1638,20 +1764,6 @@
             {
               "name": "legendary",
               "type": "core::integer::u8"
-            }
-          ]
-        },
-        {
-          "type": "enum",
-          "name": "core::bool",
-          "variants": [
-            {
-              "name": "False",
-              "type": "()"
-            },
-            {
-              "name": "True",
-              "type": "()"
             }
           ]
         },
@@ -2026,22 +2138,6 @@
             },
             {
               "type": "function",
-              "name": "settings_exists",
-              "inputs": [
-                {
-                  "name": "settings_id",
-                  "type": "core::integer::u32"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::bool"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
               "name": "game_settings",
               "inputs": [
                 {
@@ -2114,6 +2210,33 @@
           ]
         },
         {
+          "type": "impl",
+          "name": "SRC5Impl",
+          "interface_name": "openzeppelin_introspection::interface::ISRC5"
+        },
+        {
+          "type": "interface",
+          "name": "openzeppelin_introspection::interface::ISRC5",
+          "items": [
+            {
+              "type": "function",
+              "name": "supports_interface",
+              "inputs": [
+                {
+                  "name": "interface_id",
+                  "type": "core::felt252"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
           "type": "constructor",
           "name": "constructor",
           "inputs": []
@@ -2150,7 +2273,13 @@
         },
         {
           "type": "event",
-          "name": "achievement::components::achievable::AchievableComponent::Event",
+          "name": "game_components_minigame::extensions::settings::settings::SettingsComponent::Event",
+          "kind": "enum",
+          "variants": []
+        },
+        {
+          "type": "event",
+          "name": "openzeppelin_introspection::src5::SRC5Component::Event",
           "kind": "enum",
           "variants": []
         },
@@ -2170,17 +2299,23 @@
               "kind": "nested"
             },
             {
-              "name": "AchievableEvent",
-              "type": "achievement::components::achievable::AchievableComponent::Event",
+              "name": "SettingsEvent",
+              "type": "game_components_minigame::extensions::settings::settings::SettingsComponent::Event",
+              "kind": "flat"
+            },
+            {
+              "name": "SRC5Event",
+              "type": "openzeppelin_introspection::src5::SRC5Component::Event",
               "kind": "flat"
             }
           ]
         }
       ],
       "init_calldata": [],
-      "tag": "ds_v1_2_0-config_systems",
-      "selector": "0x39c10fec712357fc9947f12b4b3ec88e2a69623267c0558898940bcd980d7f3",
+      "tag": "ds_v1_2_1-config_systems",
+      "selector": "0x4f7903c414f3861a4dbe6e2f8252a6ca07f119dcd16be833aeead5e547caf72",
       "systems": [
+        "dojo_init",
         "add_settings",
         "add_random_settings",
         "add_creature_card",
@@ -2189,8 +2324,8 @@
       ]
     },
     {
-      "address": "0x1e1c477f2ef896fd638b50caa31e3aa8f504d5c6cb3c09c99cd0b72523f07f7",
-      "class_hash": "0x536b4f8d5d142ce54a1254679357465f5ad7419b69747cbcc1b5f065d2a09bd",
+      "address": "0x3451230bc1bbec7bb1f337f22c9f6699d238429638ac357dba53af193674c70",
+      "class_hash": "0x6e98642ae912de64eb32e110ae4398b97440d78dc9b20a424b9cfd3104e7996",
       "abi": [
         {
           "type": "impl",
@@ -2243,12 +2378,34 @@
           ]
         },
         {
+          "type": "enum",
+          "name": "core::option::Option::<core::starknet::contract_address::ContractAddress>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
           "type": "function",
           "name": "dojo_init",
           "inputs": [
             {
               "name": "creator_address",
               "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+              "name": "denshokan_address",
+              "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+              "name": "renderer_address",
+              "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
             }
           ],
           "outputs": [],
@@ -2256,8 +2413,8 @@
         },
         {
           "type": "impl",
-          "name": "SettingsImpl",
-          "interface_name": "tournaments::components::interfaces::ISettings"
+          "name": "GameTokenDataImpl",
+          "interface_name": "game_components_minigame::interface::IMinigameTokenData"
         },
         {
           "type": "enum",
@@ -2275,47 +2432,36 @@
         },
         {
           "type": "interface",
-          "name": "tournaments::components::interfaces::ISettings",
-          "items": [
-            {
-              "type": "function",
-              "name": "setting_exists",
-              "inputs": [
-                {
-                  "name": "settings_id",
-                  "type": "core::integer::u32"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::bool"
-                }
-              ],
-              "state_mutability": "view"
-            }
-          ]
-        },
-        {
-          "type": "impl",
-          "name": "GameDetailsImpl",
-          "interface_name": "tournaments::components::interfaces::IGameDetails"
-        },
-        {
-          "type": "interface",
-          "name": "tournaments::components::interfaces::IGameDetails",
+          "name": "game_components_minigame::interface::IMinigameTokenData",
           "items": [
             {
               "type": "function",
               "name": "score",
               "inputs": [
                 {
-                  "name": "game_id",
+                  "name": "token_id",
                   "type": "core::integer::u64"
                 }
               ],
               "outputs": [
                 {
                   "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "game_over",
+              "inputs": [
+                {
+                  "name": "token_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
                 }
               ],
               "state_mutability": "view"
@@ -2583,69 +2729,6 @@
         },
         {
           "type": "impl",
-          "name": "ERC721Metadata",
-          "interface_name": "openzeppelin_token::erc721::interface::IERC721Metadata"
-        },
-        {
-          "type": "struct",
-          "name": "core::integer::u256",
-          "members": [
-            {
-              "name": "low",
-              "type": "core::integer::u128"
-            },
-            {
-              "name": "high",
-              "type": "core::integer::u128"
-            }
-          ]
-        },
-        {
-          "type": "interface",
-          "name": "openzeppelin_token::erc721::interface::IERC721Metadata",
-          "items": [
-            {
-              "type": "function",
-              "name": "name",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "core::byte_array::ByteArray"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "symbol",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "core::byte_array::ByteArray"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "token_uri",
-              "inputs": [
-                {
-                  "name": "token_id",
-                  "type": "core::integer::u256"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::byte_array::ByteArray"
-                }
-              ],
-              "state_mutability": "view"
-            }
-          ]
-        },
-        {
-          "type": "impl",
           "name": "WorldProviderImpl",
           "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
         },
@@ -2701,8 +2784,36 @@
         },
         {
           "type": "impl",
-          "name": "GameImpl",
-          "interface_name": "tournaments::components::interfaces::IGameToken"
+          "name": "MinigameImpl",
+          "interface_name": "game_components_minigame::interface::IMinigame"
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::felt252>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::felt252"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::integer::u32>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::integer::u32"
+            },
+            {
+              "name": "None",
+              "type": "()"
+            }
+          ]
         },
         {
           "type": "enum",
@@ -2720,101 +2831,150 @@
         },
         {
           "type": "struct",
-          "name": "tournaments::components::models::game::GameMetadata",
+          "name": "core::array::Span::<core::integer::u32>",
           "members": [
             {
-              "name": "contract_address",
-              "type": "core::starknet::contract_address::ContractAddress"
+              "name": "snapshot",
+              "type": "@core::array::Array::<core::integer::u32>"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::array::Span::<core::integer::u32>>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "core::array::Span::<core::integer::u32>"
             },
             {
-              "name": "creator_address",
-              "type": "core::starknet::contract_address::ContractAddress"
-            },
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "game_components_metagame::extensions::context::structs::GameContext",
+          "members": [
             {
               "name": "name",
-              "type": "core::felt252"
+              "type": "core::byte_array::ByteArray"
+            },
+            {
+              "name": "value",
+              "type": "core::byte_array::ByteArray"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "core::array::Span::<game_components_metagame::extensions::context::structs::GameContext>",
+          "members": [
+            {
+              "name": "snapshot",
+              "type": "@core::array::Array::<game_components_metagame::extensions::context::structs::GameContext>"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "game_components_metagame::extensions::context::structs::GameContextDetails",
+          "members": [
+            {
+              "name": "name",
+              "type": "core::byte_array::ByteArray"
             },
             {
               "name": "description",
               "type": "core::byte_array::ByteArray"
             },
             {
-              "name": "developer",
-              "type": "core::felt252"
+              "name": "id",
+              "type": "core::option::Option::<core::integer::u32>"
             },
             {
-              "name": "publisher",
-              "type": "core::felt252"
+              "name": "context",
+              "type": "core::array::Span::<game_components_metagame::extensions::context::structs::GameContext>"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<game_components_metagame::extensions::context::structs::GameContextDetails>",
+          "variants": [
+            {
+              "name": "Some",
+              "type": "game_components_metagame::extensions::context::structs::GameContextDetails"
             },
             {
-              "name": "genre",
-              "type": "core::felt252"
-            },
+              "name": "None",
+              "type": "()"
+            }
+          ]
+        },
+        {
+          "type": "enum",
+          "name": "core::option::Option::<core::byte_array::ByteArray>",
+          "variants": [
             {
-              "name": "image",
+              "name": "Some",
               "type": "core::byte_array::ByteArray"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "tournaments::components::models::lifecycle::Lifecycle",
-          "members": [
-            {
-              "name": "mint",
-              "type": "core::integer::u64"
             },
             {
-              "name": "start",
-              "type": "core::option::Option::<core::integer::u64>"
-            },
-            {
-              "name": "end",
-              "type": "core::option::Option::<core::integer::u64>"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "tournaments::components::models::game::TokenMetadata",
-          "members": [
-            {
-              "name": "token_id",
-              "type": "core::integer::u64"
-            },
-            {
-              "name": "minted_by",
-              "type": "core::starknet::contract_address::ContractAddress"
-            },
-            {
-              "name": "player_name",
-              "type": "core::felt252"
-            },
-            {
-              "name": "settings_id",
-              "type": "core::integer::u32"
-            },
-            {
-              "name": "lifecycle",
-              "type": "tournaments::components::models::lifecycle::Lifecycle"
+              "name": "None",
+              "type": "()"
             }
           ]
         },
         {
           "type": "interface",
-          "name": "tournaments::components::interfaces::IGameToken",
+          "name": "game_components_minigame::interface::IMinigame",
           "items": [
             {
               "type": "function",
-              "name": "mint",
+              "name": "token_address",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "settings_address",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "objectives_address",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "mint_game",
               "inputs": [
                 {
                   "name": "player_name",
-                  "type": "core::felt252"
+                  "type": "core::option::Option::<core::felt252>"
                 },
                 {
                   "name": "settings_id",
-                  "type": "core::integer::u32"
+                  "type": "core::option::Option::<core::integer::u32>"
                 },
                 {
                   "name": "start",
@@ -2825,401 +2985,33 @@
                   "type": "core::option::Option::<core::integer::u64>"
                 },
                 {
+                  "name": "objective_ids",
+                  "type": "core::option::Option::<core::array::Span::<core::integer::u32>>"
+                },
+                {
+                  "name": "context",
+                  "type": "core::option::Option::<game_components_metagame::extensions::context::structs::GameContextDetails>"
+                },
+                {
+                  "name": "client_url",
+                  "type": "core::option::Option::<core::byte_array::ByteArray>"
+                },
+                {
+                  "name": "renderer_address",
+                  "type": "core::option::Option::<core::starknet::contract_address::ContractAddress>"
+                },
+                {
                   "name": "to",
                   "type": "core::starknet::contract_address::ContractAddress"
+                },
+                {
+                  "name": "soulbound",
+                  "type": "core::bool"
                 }
               ],
               "outputs": [
                 {
                   "type": "core::integer::u64"
-                }
-              ],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "emit_metadata_update",
-              "inputs": [
-                {
-                  "name": "game_id",
-                  "type": "core::integer::u64"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "game_metadata",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "tournaments::components::models::game::GameMetadata"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "token_metadata",
-              "inputs": [
-                {
-                  "name": "token_id",
-                  "type": "core::integer::u64"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "tournaments::components::models::game::TokenMetadata"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "game_count",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "core::integer::u64"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "namespace",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "core::byte_array::ByteArray"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "score_model",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "core::byte_array::ByteArray"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "score_attribute",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "core::byte_array::ByteArray"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "settings_model",
-              "inputs": [],
-              "outputs": [
-                {
-                  "type": "core::byte_array::ByteArray"
-                }
-              ],
-              "state_mutability": "view"
-            }
-          ]
-        },
-        {
-          "type": "impl",
-          "name": "ERC721Impl",
-          "interface_name": "openzeppelin_token::erc721::interface::IERC721"
-        },
-        {
-          "type": "interface",
-          "name": "openzeppelin_token::erc721::interface::IERC721",
-          "items": [
-            {
-              "type": "function",
-              "name": "balance_of",
-              "inputs": [
-                {
-                  "name": "account",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::integer::u256"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "owner_of",
-              "inputs": [
-                {
-                  "name": "token_id",
-                  "type": "core::integer::u256"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::starknet::contract_address::ContractAddress"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "safe_transfer_from",
-              "inputs": [
-                {
-                  "name": "from",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "to",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "token_id",
-                  "type": "core::integer::u256"
-                },
-                {
-                  "name": "data",
-                  "type": "core::array::Span::<core::felt252>"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "transfer_from",
-              "inputs": [
-                {
-                  "name": "from",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "to",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "token_id",
-                  "type": "core::integer::u256"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "approve",
-              "inputs": [
-                {
-                  "name": "to",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "token_id",
-                  "type": "core::integer::u256"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "set_approval_for_all",
-              "inputs": [
-                {
-                  "name": "operator",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "approved",
-                  "type": "core::bool"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "get_approved",
-              "inputs": [
-                {
-                  "name": "token_id",
-                  "type": "core::integer::u256"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::starknet::contract_address::ContractAddress"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "is_approved_for_all",
-              "inputs": [
-                {
-                  "name": "owner",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "operator",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::bool"
-                }
-              ],
-              "state_mutability": "view"
-            }
-          ]
-        },
-        {
-          "type": "impl",
-          "name": "ERC721CamelOnlyImpl",
-          "interface_name": "openzeppelin_token::erc721::interface::IERC721CamelOnly"
-        },
-        {
-          "type": "interface",
-          "name": "openzeppelin_token::erc721::interface::IERC721CamelOnly",
-          "items": [
-            {
-              "type": "function",
-              "name": "balanceOf",
-              "inputs": [
-                {
-                  "name": "account",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::integer::u256"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "ownerOf",
-              "inputs": [
-                {
-                  "name": "tokenId",
-                  "type": "core::integer::u256"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::starknet::contract_address::ContractAddress"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "safeTransferFrom",
-              "inputs": [
-                {
-                  "name": "from",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "to",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "tokenId",
-                  "type": "core::integer::u256"
-                },
-                {
-                  "name": "data",
-                  "type": "core::array::Span::<core::felt252>"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "transferFrom",
-              "inputs": [
-                {
-                  "name": "from",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "to",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "tokenId",
-                  "type": "core::integer::u256"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "setApprovalForAll",
-              "inputs": [
-                {
-                  "name": "operator",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "approved",
-                  "type": "core::bool"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "external"
-            },
-            {
-              "type": "function",
-              "name": "getApproved",
-              "inputs": [
-                {
-                  "name": "tokenId",
-                  "type": "core::integer::u256"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::starknet::contract_address::ContractAddress"
-                }
-              ],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "isApprovedForAll",
-              "inputs": [
-                {
-                  "name": "owner",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "operator",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "core::bool"
                 }
               ],
               "state_mutability": "view"
@@ -3290,115 +3082,9 @@
         },
         {
           "type": "event",
-          "name": "tournaments::components::game::game_component::MetadataUpdateEvent",
-          "kind": "struct",
-          "members": [
-            {
-              "name": "token_id",
-              "type": "core::integer::u256",
-              "kind": "key"
-            }
-          ]
-        },
-        {
-          "type": "event",
-          "name": "tournaments::components::game::game_component::Event",
+          "name": "game_components_minigame::minigame::MinigameComponent::Event",
           "kind": "enum",
-          "variants": [
-            {
-              "name": "MetadataUpdate",
-              "type": "tournaments::components::game::game_component::MetadataUpdateEvent",
-              "kind": "nested"
-            }
-          ]
-        },
-        {
-          "type": "event",
-          "name": "openzeppelin_token::erc721::erc721::ERC721Component::Transfer",
-          "kind": "struct",
-          "members": [
-            {
-              "name": "from",
-              "type": "core::starknet::contract_address::ContractAddress",
-              "kind": "key"
-            },
-            {
-              "name": "to",
-              "type": "core::starknet::contract_address::ContractAddress",
-              "kind": "key"
-            },
-            {
-              "name": "token_id",
-              "type": "core::integer::u256",
-              "kind": "key"
-            }
-          ]
-        },
-        {
-          "type": "event",
-          "name": "openzeppelin_token::erc721::erc721::ERC721Component::Approval",
-          "kind": "struct",
-          "members": [
-            {
-              "name": "owner",
-              "type": "core::starknet::contract_address::ContractAddress",
-              "kind": "key"
-            },
-            {
-              "name": "approved",
-              "type": "core::starknet::contract_address::ContractAddress",
-              "kind": "key"
-            },
-            {
-              "name": "token_id",
-              "type": "core::integer::u256",
-              "kind": "key"
-            }
-          ]
-        },
-        {
-          "type": "event",
-          "name": "openzeppelin_token::erc721::erc721::ERC721Component::ApprovalForAll",
-          "kind": "struct",
-          "members": [
-            {
-              "name": "owner",
-              "type": "core::starknet::contract_address::ContractAddress",
-              "kind": "key"
-            },
-            {
-              "name": "operator",
-              "type": "core::starknet::contract_address::ContractAddress",
-              "kind": "key"
-            },
-            {
-              "name": "approved",
-              "type": "core::bool",
-              "kind": "data"
-            }
-          ]
-        },
-        {
-          "type": "event",
-          "name": "openzeppelin_token::erc721::erc721::ERC721Component::Event",
-          "kind": "enum",
-          "variants": [
-            {
-              "name": "Transfer",
-              "type": "openzeppelin_token::erc721::erc721::ERC721Component::Transfer",
-              "kind": "nested"
-            },
-            {
-              "name": "Approval",
-              "type": "openzeppelin_token::erc721::erc721::ERC721Component::Approval",
-              "kind": "nested"
-            },
-            {
-              "name": "ApprovalForAll",
-              "type": "openzeppelin_token::erc721::erc721::ERC721Component::ApprovalForAll",
-              "kind": "nested"
-            }
-          ]
+          "variants": []
         },
         {
           "type": "event",
@@ -3422,13 +3108,8 @@
               "kind": "nested"
             },
             {
-              "name": "GameEvent",
-              "type": "tournaments::components::game::game_component::Event",
-              "kind": "flat"
-            },
-            {
-              "name": "ERC721Event",
-              "type": "openzeppelin_token::erc721::erc721::ERC721Component::Event",
+              "name": "MinigameEvent",
+              "type": "game_components_minigame::minigame::MinigameComponent::Event",
               "kind": "flat"
             },
             {
@@ -3440,26 +3121,364 @@
         }
       ],
       "init_calldata": [
-        "0x000B39b235b44c53a2E9F0c5D35939D9C8E8dAFDd0a2ba2E695b501Fc1e9fd2f"
+        "0x0248f76e72088853c3fE96CAd8F7f075c9e514B862A6e9a3D5957EA5522eBb6D",
+        "0x036017E69D21D6D8c13E266EaBB73ef1f1D02722D86BDcAbe5f168f8e549d3cD",
+        "1"
       ],
-      "tag": "ds_v1_2_0-game_systems",
-      "selector": "0x35bcd7b3c47338b5483ebad7aedd81f697cbbc89c0ade18e06668b90174d709",
+      "tag": "ds_v1_2_1-game_systems",
+      "selector": "0x3dde3697b776639a66119365cbb756bb59b1571a5f484068315d9c740e489f1",
       "systems": [
         "dojo_init",
         "start_game",
         "pick_card",
         "generate_tree",
         "select_node",
-        "upgrade",
-        "mint",
-        "emit_metadata_update",
-        "safe_transfer_from",
-        "transfer_from",
-        "approve",
-        "set_approval_for_all",
-        "safeTransferFrom",
-        "transferFrom",
-        "setApprovalForAll"
+        "upgrade"
+      ]
+    },
+    {
+      "address": "0x1d1e9fb8159151e7d77bcb2d866a44f296562ed605527fddf9e003e6de510c",
+      "class_hash": "0x36efcc6e755e304fc8ff44121d4465fb794f887f9f1b46d8fad984de3735a9a",
+      "abi": [
+        {
+          "type": "impl",
+          "name": "renderer_systems__ContractImpl",
+          "interface_name": "dojo::contract::interface::IContract"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::interface::IContract",
+          "items": []
+        },
+        {
+          "type": "impl",
+          "name": "renderer_systems__DeployedContractImpl",
+          "interface_name": "dojo::meta::interface::IDeployedResource"
+        },
+        {
+          "type": "struct",
+          "name": "core::byte_array::ByteArray",
+          "members": [
+            {
+              "name": "data",
+              "type": "core::array::Array::<core::bytes_31::bytes31>"
+            },
+            {
+              "name": "pending_word",
+              "type": "core::felt252"
+            },
+            {
+              "name": "pending_word_len",
+              "type": "core::integer::u32"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::meta::interface::IDeployedResource",
+          "items": [
+            {
+              "type": "function",
+              "name": "dojo_name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "GameDetailsImpl",
+          "interface_name": "game_components_minigame::interface::IMinigameDetails"
+        },
+        {
+          "type": "struct",
+          "name": "game_components_minigame::structs::GameDetail",
+          "members": [
+            {
+              "name": "name",
+              "type": "core::byte_array::ByteArray"
+            },
+            {
+              "name": "value",
+              "type": "core::byte_array::ByteArray"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "core::array::Span::<game_components_minigame::structs::GameDetail>",
+          "members": [
+            {
+              "name": "snapshot",
+              "type": "@core::array::Array::<game_components_minigame::structs::GameDetail>"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "game_components_minigame::interface::IMinigameDetails",
+          "items": [
+            {
+              "type": "function",
+              "name": "token_name",
+              "inputs": [
+                {
+                  "name": "token_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "token_description",
+              "inputs": [
+                {
+                  "name": "token_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "game_details",
+              "inputs": [
+                {
+                  "name": "token_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::array::Span::<game_components_minigame::structs::GameDetail>"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "GameDetailsSVGImpl",
+          "interface_name": "game_components_minigame::interface::IMinigameDetailsSVG"
+        },
+        {
+          "type": "interface",
+          "name": "game_components_minigame::interface::IMinigameDetailsSVG",
+          "items": [
+            {
+              "type": "function",
+              "name": "game_details_svg",
+              "inputs": [
+                {
+                  "name": "token_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "RendererSystemsImpl",
+          "interface_name": "darkshuffle::systems::renderer::contracts::IRendererSystems"
+        },
+        {
+          "type": "interface",
+          "name": "darkshuffle::systems::renderer::contracts::IRendererSystems",
+          "items": [
+            {
+              "type": "function",
+              "name": "create_metadata",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "generate_svg",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "generate_details",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u64"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::array::Span::<game_components_minigame::structs::GameDetail>"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "dojo_init",
+          "inputs": [],
+          "outputs": [],
+          "state_mutability": "view"
+        },
+        {
+          "type": "impl",
+          "name": "WorldProviderImpl",
+          "interface_name": "dojo::contract::components::world_provider::IWorldProvider"
+        },
+        {
+          "type": "struct",
+          "name": "dojo::world::iworld::IWorldDispatcher",
+          "members": [
+            {
+              "name": "contract_address",
+              "type": "core::starknet::contract_address::ContractAddress"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::world_provider::IWorldProvider",
+          "items": [
+            {
+              "type": "function",
+              "name": "world_dispatcher",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::world::iworld::IWorldDispatcher"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "UpgradeableImpl",
+          "interface_name": "dojo::contract::components::upgradeable::IUpgradeable"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::contract::components::upgradeable::IUpgradeable",
+          "items": [
+            {
+              "type": "function",
+              "name": "upgrade",
+              "inputs": [
+                {
+                  "name": "new_class_hash",
+                  "type": "core::starknet::class_hash::ClassHash"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "constructor",
+          "name": "constructor",
+          "inputs": []
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+          "kind": "struct",
+          "members": [
+            {
+              "name": "class_hash",
+              "type": "core::starknet::class_hash::ClassHash",
+              "kind": "data"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "Upgraded",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Upgraded",
+              "kind": "nested"
+            }
+          ]
+        },
+        {
+          "type": "event",
+          "name": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+          "kind": "enum",
+          "variants": []
+        },
+        {
+          "type": "event",
+          "name": "darkshuffle::systems::renderer::contracts::renderer_systems::Event",
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "UpgradeableEvent",
+              "type": "dojo::contract::components::upgradeable::upgradeable_cpt::Event",
+              "kind": "nested"
+            },
+            {
+              "name": "WorldProviderEvent",
+              "type": "dojo::contract::components::world_provider::world_provider_cpt::Event",
+              "kind": "nested"
+            }
+          ]
+        }
+      ],
+      "init_calldata": [],
+      "tag": "ds_v1_2_1-renderer_systems",
+      "selector": "0x7fc1a4d8e3ca21870abe89421a32eb11ed8586373b83c3c3d0fb0bcef3556a9",
+      "systems": [
+        "upgrade"
       ]
     }
   ],
@@ -3467,137 +3486,89 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x59b0c8d986b06e8d848b1b527d1104314065f6beb79c5dfaef735e4cf3379ff",
-      "tag": "ds_v1_2_0-Battle",
-      "selector": "0x291c625aa877649d6e00fe736031bd96a98ca41337c91cd828eca2176b3c72e"
+      "class_hash": "0x769d2f3fc2a4fe16ce980e315812ec9549a6995c81bd0129d955fd0f656a93d",
+      "tag": "ds_v1_2_1-Battle",
+      "selector": "0x7fedaad2759f0e3a459028e670edb9ad00ab047eedfca3dae2e5ebd23e9dfba"
     },
     {
       "members": [],
-      "class_hash": "0x72b6cd41fb4cd54849ce04278d6ab24468145f4c5b65ea3c87aa04fc9c0c024",
-      "tag": "ds_v1_2_0-BattleResources",
-      "selector": "0x62eabd0b2825cba91cbe1e9ae4df89049b33d2a8766615326a1eaafc670c244"
+      "class_hash": "0x2f6a9f709069f94833c48bec6750e79a4029c39996214d9774151f145d33e5a",
+      "tag": "ds_v1_2_1-BattleResources",
+      "selector": "0x31868e7958b9a0c211eeff99d9badc87df51ee03e5e2169f08d2119f18aea8e"
     },
     {
       "members": [],
-      "class_hash": "0x681cbb66370f3980d0fbcb0e233053277d4f229dd5c8dbc584b17d1d9d7dd01",
-      "tag": "ds_v1_2_0-Card",
-      "selector": "0x3563b64c9849ebf240d13129a73401f121733afe85f32d2eb7ded1c192240a7"
+      "class_hash": "0x48f60f37d4e4e23eac16df0358ff4211d6ce435923f0816d8d0bcc88aabe4d9",
+      "tag": "ds_v1_2_1-Card",
+      "selector": "0x53b351c83ad20e802e2975e6ba96a008560d95d6e04140291aef36fc3d5c5b5"
     },
     {
       "members": [],
-      "class_hash": "0x3b148e016adec7160043c471937c17c9dc3bdd39b9f8717f9b505930ecb1c9e",
-      "tag": "ds_v1_2_0-CardsCounter",
-      "selector": "0x3bb6ee0b48f7f07baa9bf9a47efdc32722366b9579e98cfb36a12605a0ddc7"
+      "class_hash": "0x4624f0adaa151b7f1e218799d9e6ffb45c12aeb9b8637f519033b2de5dbcbc4",
+      "tag": "ds_v1_2_1-CardsCounter",
+      "selector": "0x393505cd4eb50080dbac7f663e86bfa15ccb0e140b790a5b20fbdd6c0d990c0"
     },
     {
       "members": [],
-      "class_hash": "0xd4f640a50756169259a15daf7a36a8f45298c2aef16dd374cb51221e7bdf1c",
-      "tag": "ds_v1_2_0-CreatureCard",
-      "selector": "0x1f6960b539a2d74a0e8d07261aea0e2bff6f89cd47a26243df33497582fbb9d"
+      "class_hash": "0x648c5eedeabdb6a8b671c1e98cf182d2b3c676f6095bd4a77a9dac2540336ed",
+      "tag": "ds_v1_2_1-CreatureCard",
+      "selector": "0x1c83a72c066d2b8cb1d7d97c171668952b6b918036680343954e8296477ebb3"
     },
     {
       "members": [],
-      "class_hash": "0x3803be3eadf86c4d229269c64e162097e061535fb3482b00672f2077f2069b2",
-      "tag": "ds_v1_2_0-Draft",
-      "selector": "0x24ddbb3b98b29eaf34a5ce80e669fe197cfda5b1b834fe55a374d891ef8b704"
+      "class_hash": "0x5a2d909931bc6485b49205251efd274dfde4b4a0d128c0ad74bbcd76ac16877",
+      "tag": "ds_v1_2_1-Draft",
+      "selector": "0x66eb8e52bd55e0b04374be63e47332de4c2cc077aff61329f3e67de17817c85"
     },
     {
       "members": [],
-      "class_hash": "0x4b723939b9a3963d79a6ac5567f69375b75a8390d20bf63f6152c05475b3016",
-      "tag": "ds_v1_2_0-Game",
-      "selector": "0x5204599c7da123e9a99a67c195ce63807a9f65ac046b3c9e398aade9f25b034"
+      "class_hash": "0x5012fba635849218f1d76cb9b9c4b904924e35052d8f82859c490435892258c",
+      "tag": "ds_v1_2_1-Game",
+      "selector": "0x715f7bff491ece3df7f48f3c8f3fc4d215fb899181c5ad6e1eb2a6c2ed574e7"
     },
     {
       "members": [],
-      "class_hash": "0xdc2e5bb9a031c39c331e7452da6001f874a496eedab97472fa7f5c911a8ec2",
-      "tag": "ds_v1_2_0-GameCounter",
-      "selector": "0x5818a2af252a8723457437e02adf79d8988ca2ff5998bc12db94da226632674"
+      "class_hash": "0x5df9a68a17e56bb99d9147269c64c62c5d95e918d50c4203174e85b3dd4a43a",
+      "tag": "ds_v1_2_1-GameEffects",
+      "selector": "0x1c693daf8f5cdc3ac4e73a5426b6e60e14fb9e799c7d919b2489061b11d2119"
     },
     {
       "members": [],
-      "class_hash": "0x35d37c838aec0d1456a75508561f744ae2fff299af4734b53b35b6bb122b0c9",
-      "tag": "ds_v1_2_0-GameEffects",
-      "selector": "0x21ab79e9ecdaed6b16ff5c92763c14eb3bdd38916e67752662e376695a3156d"
+      "class_hash": "0x346b9546b05717d2ea0d0e225574f1da4dc67e342339f53c9d048874bb287f9",
+      "tag": "ds_v1_2_1-GameSettings",
+      "selector": "0x55525dc22705af4f4a2397007dad12dcabea3c54d1cb2d1cef50df0d4590f86"
     },
     {
       "members": [],
-      "class_hash": "0x32268509eabc1bd319688f1fca9d8151159dbb09b9cf26734dc23e0afffafe4",
-      "tag": "ds_v1_2_0-GameMetadata",
-      "selector": "0x15f4fdc5b14db949ce35e985c4224b83e7d0e479720cd4b197bf27b3380156e"
+      "class_hash": "0x5f79c8324177a01fa263a94713aec96c00f72656a189bead97e79def016c491",
+      "tag": "ds_v1_2_1-GameSettingsMetadata",
+      "selector": "0x571461f56c1b17b1a8bf37c6dcc9cc587f3d7d00c2e01169112508ae93654dc"
     },
     {
       "members": [],
-      "class_hash": "0x640aa8745685ebcae9755aca97bf7e42da3dc0432aeb20b2eca00e84df9a5ad",
-      "tag": "ds_v1_2_0-GameSettings",
-      "selector": "0x40f76893af52af25c2dda8662449d83f52ad15151e90c7645bed03144f7b154"
+      "class_hash": "0xd0f5c7a5040f1f68fc675b53e7ca5591598e3665aad48f90fa080633b959ef",
+      "tag": "ds_v1_2_1-Map",
+      "selector": "0x4ab65845d84f61d6761118f4f5435e0771679cbfd6ec64649941560fa48a38c"
     },
     {
       "members": [],
-      "class_hash": "0x1256bcd0259b1d09e4edb0cf9fe8c1a2ae188c4d9c42620dfdecb0550b8b375",
-      "tag": "ds_v1_2_0-GameSettingsMetadata",
-      "selector": "0x3c1e4c37dd780e19648d4999be5897db259efd01a1a75112ecf7a1d76f7e627"
+      "class_hash": "0x1602dd970a4203622e3ceb0f89b16e8af2bacc7b555d518dcd7e88aa00a4685",
+      "tag": "ds_v1_2_1-SettingsCounter",
+      "selector": "0x50a941fc4c40565ae08395239716be09d2706f562c36b5bbbd3da34cf6454e8"
     },
     {
       "members": [],
-      "class_hash": "0x4246a8f9d608c989bdb3d09cb49b7f91aa91a20a374377ff57e0a16707ccf19",
-      "tag": "ds_v1_2_0-Map",
-      "selector": "0x1960d24475531c7a7b2e9821ec6093352216d8d772f9d0b358a941fd3293a34"
-    },
-    {
-      "members": [],
-      "class_hash": "0x18fc1c720db350bed92a902bee4a63a7df92b49569eabfcf5d46fc6bb73628a",
-      "tag": "ds_v1_2_0-Score",
-      "selector": "0x764867485c827fd7fb0a1ef25f0ce0f735739497ce8cd91824e068332adefbc"
-    },
-    {
-      "members": [],
-      "class_hash": "0xfe76028a63cb7cb179e39108da14dfc7a2a0b86ee2d32363dd9cf796d81fe7",
-      "tag": "ds_v1_2_0-Settings",
-      "selector": "0x40fe855844a37570fcd8b6125d48396bee123249a0068053436474bb503e46e"
-    },
-    {
-      "members": [],
-      "class_hash": "0x1540d593f7b6d0ec355e68e7d066ad39cbb99c32c96a46d572c758c70f40c02",
-      "tag": "ds_v1_2_0-SettingsCounter",
-      "selector": "0x5b23c4031b676804c0cc3474dfb6f3f18794efde96149b5ecda2307222c7dac"
-    },
-    {
-      "members": [],
-      "class_hash": "0x7289d1d56a6e92ff99925fdfac1f70d7829a991211281fdda7e6f4bb15b4453",
-      "tag": "ds_v1_2_0-SettingsDetails",
-      "selector": "0x127c1783c9a292361dc99114c80a3ee2df645829dd6f3ac9f9575ad3abd8ac2"
-    },
-    {
-      "members": [],
-      "class_hash": "0x1108c66facaec53cd93ae2c20ae10a22ae681a26a5423f51772c1cf29cb5fc0",
-      "tag": "ds_v1_2_0-SpellCard",
-      "selector": "0x185b767087fffd938907d9790de909248fd7ced185ad1f02347968c0f94d696"
-    },
-    {
-      "members": [],
-      "class_hash": "0x33d1fab3b617046a970045ee9e236a70a7585a8938b9c54eddd2b1ef9979b9a",
-      "tag": "ds_v1_2_0-TokenMetadata",
-      "selector": "0x57d581ad570550f0a6cc3c14d220021eb69741f2aaaeaab21e3a7d7a80dd85a"
+      "class_hash": "0x628721de16dfc60383ef0273382532ab23c40d975168275baaf4bd1f6788cf5",
+      "tag": "ds_v1_2_1-SpellCard",
+      "selector": "0x890eb5cf23d25530fbe907df24b6c6374f1dd25ad5e048408f39de68554aea"
     }
   ],
   "events": [
     {
       "members": [],
-      "class_hash": "0x69b6b21085d523bb6e7751453ac064b88947b4cf929386c65f82660001f0e1a",
-      "tag": "ds_v1_2_0-GameActionEvent",
-      "selector": "0x46cbaf9ca08bbe09c6040d3bd8d3690ebbeb9b8782fab1ada0c1617fc7716c0"
-    },
-    {
-      "members": [],
-      "class_hash": "0x5139e06eeffddd491a7563f9e4c10799f98fddfd6f26047e94413e374a19fcf",
-      "tag": "ds_v1_2_0-TrophyCreation",
-      "selector": "0x737933c4161511c7809ddc147c6278cb88d696d4e2f64d942528e0b1e2d54f"
-    },
-    {
-      "members": [],
-      "class_hash": "0x95f31367acd360680f16e74f712470bd3faf98aede3393644dad7d6d9c12cb",
-      "tag": "ds_v1_2_0-TrophyProgression",
-      "selector": "0x620cf10a34caaf302accd82358cb9b55b9efa1345f8e09a6afbc7feb4a9a9b0"
+      "class_hash": "0x72ceac0b5d76ae76c81a0e2a669d942e9403523cc18350380c6789b81190151",
+      "tag": "ds_v1_2_1-GameActionEvent",
+      "selector": "0x78607588f8b9529f9a68a5d43c4c590e2a1ba8b382da9cc5b9d825967ff1e5e"
     }
   ],
   "external_contracts": []

@@ -23,9 +23,8 @@ pub trait IGameSystems<T> {
 pub mod game_systems {
     use darkshuffle::constants::DEFAULT_NS;
     use darkshuffle::models::{
-        card::{Card}, config::{GameSettings},
-        draft::{Draft, DraftOwnerTrait}, game::{Game, GameActionEvent, GameOwnerTrait, GameState},
-        map::{Map, MonsterNode},
+        card::{Card}, config::{GameSettings}, draft::{Draft, DraftOwnerTrait},
+        game::{Game, GameActionEvent, GameOwnerTrait, GameState}, map::{Map, MonsterNode},
     };
 
     use darkshuffle::utils::{
@@ -35,13 +34,13 @@ pub mod game_systems {
     use dojo::event::EventStorage;
     use dojo::model::ModelStorage;
     use dojo::world::{WorldStorage, WorldStorageTrait};
-
-    use game_components_minigame::minigame::MinigameComponent;
-    use game_components_minigame::interface::{IMinigameTokenData, IMinigameDispatcher, IMinigameDispatcherTrait};
+    use game_components_minigame::interface::{IMinigameDispatcher, IMinigameDispatcherTrait, IMinigameTokenData};
     use game_components_minigame::libs::{assert_token_ownership, post_action, pre_action};
 
-    use starknet::{ContractAddress};
+    use game_components_minigame::minigame::MinigameComponent;
     use openzeppelin_introspection::src5::SRC5Component;
+
+    use starknet::{ContractAddress};
 
     // Components
     component!(path: MinigameComponent, storage: minigame, event: MinigameEvent);
@@ -354,12 +353,11 @@ pub mod game_systems {
             let game: Game = self.world(@DEFAULT_NS()).read_model(game_id);
             assert!(game.hero_xp == 0, "Dark Shuffle: Game {} has already started", game_id);
         }
-
     }
 
     fn _get_token_address(world: WorldStorage) -> ContractAddress {
-        let (game_token_systems_address, _) = world.dns(@"game_token_systems").unwrap();
-        let minigame_dispatcher = IMinigameDispatcher { contract_address: game_token_systems_address };
+        let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
+        let minigame_dispatcher = IMinigameDispatcher { contract_address: game_systems_address };
         minigame_dispatcher.token_address()
     }
 }

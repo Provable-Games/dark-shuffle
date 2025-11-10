@@ -1,10 +1,14 @@
+import { getContractByName } from '@dojoengine/core';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, CircularProgress, Dialog, Input, TextField, Typography } from '@mui/material';
+import { useAccount, useConnect } from '@starknet-react/core';
 import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -12,12 +16,10 @@ import { byteArray } from "starknet";
 import { useIndexer } from '../../api/indexer';
 import sword from '../../assets/images/sword.png';
 import { DojoContext } from '../../contexts/dojoContext';
+import { GameContext } from '../../contexts/gameContext';
+import { useDynamicConnector } from '../../contexts/starknet';
 import { tierColors } from '../../helpers/cards';
 import DeckBuilder from './deckBuilder';
-import { GameContext } from '../../contexts/gameContext';
-import { useAccount, useConnect } from '@starknet-react/core';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import EditIcon from '@mui/icons-material/Edit';
 
 const DEFAULT_SETTINGS = {
   name: '',
@@ -52,13 +54,14 @@ const DEFAULT_SETTINGS = {
 function GameSettings(props) {
   const { view, settingsId, closeList, inGame } = props
 
+  const { currentNetworkConfig } = useDynamicConnector();
   const dojo = useContext(DojoContext)
   const { enqueueSnackbar } = useSnackbar()
   const gameContext = useContext(GameContext)
   const { account } = useAccount()
   const { connect, connectors } = useConnect()
   const { getSettings } = useIndexer()
-  
+
   const [gameSettings, setGameSettings] = useState(DEFAULT_SETTINGS)
   const [loading, setLoading] = useState(view)
   const [creating, setCreating] = useState(false)
@@ -103,7 +106,7 @@ function GameSettings(props) {
 
     try {
       const res = await dojo.executeTx([{
-        contractName: "config_systems",
+        contractAddress: getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, "config_systems")?.address,
         entrypoint: "add_settings",
         calldata: [
           name,

@@ -1,5 +1,5 @@
-use core::traits::DivRem;
 use core::num::traits::Bounded;
+use core::traits::DivRem;
 use darkshuffle::constants::U64_MAX_NZ;
 
 #[inline(always)]

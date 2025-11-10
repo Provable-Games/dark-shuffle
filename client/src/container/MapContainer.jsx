@@ -8,18 +8,20 @@ import { BrowserView, MobileView, isMobile } from 'react-device-detect';
 import BlockRevealAnimation from '../components/animations/blockRevealAnimation';
 import HeroStats from '../components/draft/heroStats';
 import Overview from '../components/draft/overview';
-import Structure from '../components/map/structure';
 import QuestComplete from '../components/map/questComplete';
+import Structure from '../components/map/structure';
 import { BattleContext } from '../contexts/battleContext';
 import { DojoContext } from '../contexts/dojoContext';
 import { GameContext } from '../contexts/gameContext';
+import { useDynamicConnector } from '../contexts/starknet';
 import { fadeVariant } from "../helpers/variants";
+import { getContractByName } from '@dojoengine/core';
 
 function MapContainer() {
+  const { currentNetworkConfig } = useDynamicConnector();
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
   const battle = useContext(BattleContext)
-
   const [cardOverview, setCardOverview] = useState(false)
   const [selectingNode, setSelectingNode] = useState(false)
 
@@ -47,7 +49,11 @@ function MapContainer() {
     }
 
     setSelectingNode(true)
-    const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "select_node", calldata: [game.values.gameId, nodeId] }], true)
+    const res = await dojo.executeTx([{
+      contractAddress: getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, "game_systems")?.address,
+      entrypoint: "select_node",
+      calldata: [game.values.gameId, nodeId]
+    }], true)
 
     if (res) {
       const gameValues = res.find(e => e.componentName === 'Game')

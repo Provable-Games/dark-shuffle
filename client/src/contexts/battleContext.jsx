@@ -12,14 +12,17 @@ import { delay } from "../helpers/utilities";
 import { AnimationContext } from "./animationHandler";
 import { DojoContext } from "./dojoContext";
 import { GameContext } from "./gameContext";
+import { useDynamicConnector } from "./starknet";
+import { getContractByName } from "@dojoengine/core";
 
 export const BattleContext = createContext()
 
 export const BattleProvider = ({ children }) => {
+  const { currentNetworkConfig } = useDynamicConnector();
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
   const { getBattleState } = useIndexer()
-  
+
   const { gameEffects } = game.getState
   const animationHandler = useContext(AnimationContext)
 
@@ -133,7 +136,11 @@ export const BattleProvider = ({ children }) => {
 
     setPendingTx(true)
 
-    const res = await dojo.executeTx([{ contractName: "battle_systems", entrypoint: "battle_actions", calldata: [game.values.gameId, values.battleId, [...actions, [1]]] }], true)
+    const res = await dojo.executeTx([{
+      contractAddress: getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, "battle_systems")?.address,
+      entrypoint: "battle_actions",
+      calldata: [game.values.gameId, values.battleId, [...actions, [1]]]
+    }], true)
 
     if (!res) {
       return;

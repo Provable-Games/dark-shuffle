@@ -4,15 +4,15 @@ description = "PG Sepolia World"
 seed = "pg_sepolia_await_10"
 
 [namespace]
-default = "ds_v1_2_0"
+default = "ds_v1_2_1"
 
 [writers]
-"ds_v1_2_0" = [
-    "ds_v1_2_0-game_systems",
-    "ds_v1_2_0-battle_systems",
-    "ds_v1_2_0-draft_systems",
-    "ds_v1_2_0-map_systems",
-    "ds_v1_2_0-config_systems",
+"ds_v1_2_1" = [
+    "ds_v1_2_1-game_systems",
+    "ds_v1_2_1-battle_systems",
+    "ds_v1_2_1-draft_systems",
+    "ds_v1_2_1-map_systems",
+    "ds_v1_2_1-config_systems",
 ]
 
 [env]
@@ -23,6 +23,6 @@ private_key = "0x33003003001800009900180300d206308b0070db00121318d17b5e6262150b"
 world_address = "0x04254b770ec69289dae26a6b488cc75689b3765171423cae8d648323ae4de44a"
 
 [init_call_args]
-"ds_v1_2_0-game_systems" = [
+"ds_v1_2_1-game_systems" = [
     "0x0238df9Efd27Aba2ccB0bdC97a4cf440caA403e9ed3f1883294Ab6CDBA6C5282",
 ]

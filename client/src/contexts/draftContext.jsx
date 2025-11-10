@@ -6,10 +6,13 @@ import { GameContext } from "./gameContext";
 import { Button, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close'
 import { useSnackbar } from "notistack";
+import { useDynamicConnector } from "./starknet";
+import { getContractByName } from "@dojoengine/core";
 
 export const DraftContext = createContext()
 
 export const DraftProvider = ({ children }) => {
+  const { currentNetworkConfig } = useDynamicConnector();
   const dojo = useContext(DojoContext)
   const game = useContext(GameContext)
   const { gameSettings, gameCards, tokenData } = game.getState
@@ -21,18 +24,9 @@ export const DraftProvider = ({ children }) => {
   const [cards, setCards] = useState([])
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
-  const startQuestGame = async () => {
-    await game.actions.startBattleDirectly(tokenData.tokenId)
-    game.setTokenData(prev => ({ ...prev, gameStarted: true, id: tokenData.tokenId }))
-  }
-
   useEffect(() => {
     if (!tokenData.gameStarted && gameSettings?.starting_health && gameCards?.length > 0) {
-      if (game.getState.GG_questMode) {
-        startQuestGame()
-      } else {
-        startDraft()
-      }
+      startDraft()
     }
   }, [tokenData, gameSettings, gameCards])
 
@@ -47,13 +41,13 @@ export const DraftProvider = ({ children }) => {
 
     const txs = []
     txs.push({
-      contractName: "game_systems",
+      contractAddress: getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, "game_systems")?.address,
       entrypoint: "start_game",
       calldata: [tokenData.tokenId]
     })
 
     game.setLoadingProgress(99)
-    const res = await dojo.executeTx(txs, true)
+    const res = await dojo.executeTx(txs, false)
 
     if (res) {
       const gameValues = res.find(e => e.componentName === 'Game')
@@ -95,11 +89,11 @@ export const DraftProvider = ({ children }) => {
 
     setPendingCard(optionId)
 
-    if (game.values.isDemo) {
-      await delay(500)
-    }
-
-    const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "pick_card", calldata: [game.values.gameId, optionId] }], cards.length < gameSettings.draft_size - 1)
+    const res = await dojo.executeTx([{
+      contractAddress: getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, "game_systems")?.address,
+      entrypoint: "pick_card",
+      calldata: [game.values.gameId, optionId]
+    }], cards.length < gameSettings.draft_size - 1)
 
     if (res) {
       const gameValues = res.find(e => e.componentName === 'Game')

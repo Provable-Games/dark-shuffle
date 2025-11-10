@@ -26,6 +26,7 @@ function GameTokens(props) {
   const [gameSettings, openGameSettings] = useState(false)
 
   const { games: gamesData, loading: gamesLoading } = useGameTokens({
+    gameAddresses: ["0x3451230bc1bbec7bb1f337f22c9f6699d238429638ac357dba53af193674c70"],
     owner: address,
     limit: 1000,
   });
@@ -37,10 +38,14 @@ function GameTokens(props) {
       let games = await populateGameTokens(gamesData)
       let settingsMetadata = await getSettingsMetadata(games.map(game => game.settingsId))
 
-      games = await Promise.all(games.map(async (game) => ({
+      if (!active) {
+        games = games.filter(game => !game.active)
+      }
+
+      games = games.map((game) => ({
         ...game,
         settingsMetadata: settingsMetadata.find(metadata => metadata.settings_id === game.settingsId),
-      })))
+      }))
 
       setSelectedGame()
       setGames(games ?? [])
@@ -50,7 +55,7 @@ function GameTokens(props) {
     if (gamesData) {
       fetchGames()
     }
-  }, [gamesData, address, active])
+  }, [gamesData, address])
 
   const handleResumeGame = () => {
     gameContext.actions.loadGameDetails(selectedGame)
@@ -122,7 +127,7 @@ function GameTokens(props) {
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-        {active && game.available_at !== 0 && <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+        {active && (game.available_at > 0 || game.expires_at > 0) && <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           {game.available_at < Date.now() ? <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <AccessTimeIcon color='primary' sx={{ fontSize: '16px', mr: '3px' }} />
             {renderTimeRemaining(game.expires_at)}

@@ -60,8 +60,8 @@ pub mod config_systems {
     };
     use darkshuffle::utils::config::ConfigUtilsImpl;
     use darkshuffle::utils::random;
-    use darkshuffle::utils::settings::generate_settings_array;
     use darkshuffle::utils::renderer::encoding::U256BytesUsedTraitImpl;
+    use darkshuffle::utils::settings::generate_settings_array;
 
     use dojo::model::ModelStorage;
     use dojo::world::{WorldStorage, WorldStorageTrait};
@@ -99,8 +99,10 @@ pub mod config_systems {
         SRC5Event: SRC5Component::Event,
     }
 
-    fn dojo_init(self: @ContractState) {
+    fn dojo_init(ref self: ContractState) {
         let mut world: WorldStorage = self.world(@DEFAULT_NS());
+        self.settings.initializer();
+
         // initialize game with default settings
         let default_settings: GameSettings = GET_DEFAULT_SETTINGS();
         world.write_model(@default_settings);
@@ -296,8 +298,8 @@ pub mod config_systems {
 
         fn game_settings(self: @ContractState, game_id: u64) -> GameSettings {
             let world: WorldStorage = self.world(@DEFAULT_NS());
-            let (game_token_systems_address, _) = world.dns(@"game_token_systems").unwrap();
-            let minigame_dispatcher = IMinigameDispatcher { contract_address: game_token_systems_address };
+            let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
+            let minigame_dispatcher = IMinigameDispatcher { contract_address: game_systems_address };
             let minigame_token_address = minigame_dispatcher.token_address();
             let settings_id = self.settings.get_settings_id(game_id, minigame_token_address);
             let game_settings: GameSettings = world.read_model(settings_id);

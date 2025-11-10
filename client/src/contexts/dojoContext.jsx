@@ -35,14 +35,14 @@ export const DojoProvider = ({ children }) => {
     controllerName()
   }, [connector])
 
-  const executeTx = async (txs, includeVRF) => {
+  const executeTx = async (txs, includeVRF, raw) => {
     if (!account) {
       connect({ connector: cartridge })
       return
     }
 
     if (includeVRF) {
-      let contractAddress = getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, txs[txs.length - 1].contractName)?.address
+      let contractAddress = txs[txs.length - 1].contractAddress
 
       txs.unshift({
         contractAddress: VRF_PROVIDER_ADDRESS,
@@ -64,8 +64,11 @@ export const DojoProvider = ({ children }) => {
         return
       }
 
+      if (raw) {
+        return receipt
+      }
+
       const translatedEvents = receipt.events.map(event => translateEvent(event, currentNetworkConfig.manifest))
-      console.log('translatedEvents', translatedEvents)
       return translatedEvents.filter(Boolean)
     } catch (ex) {
       if (ex) {

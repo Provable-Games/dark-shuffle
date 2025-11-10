@@ -5,7 +5,6 @@ pub trait IBattleSystems<T> {
 
 #[dojo::contract]
 pub mod battle_systems {
-    use starknet::ContractAddress;
     use darkshuffle::constants::DEFAULT_NS;
     use darkshuffle::models::battle::{
         Battle, BattleOwnerTrait, BattleResources, BoardStats, CreatureDetails, RoundStats,
@@ -29,6 +28,7 @@ pub mod battle_systems {
     use dojo::world::{WorldStorage, WorldStorageTrait};
     use game_components_minigame::interface::{IMinigameDispatcher, IMinigameDispatcherTrait};
     use game_components_minigame::libs::{assert_token_ownership, post_action, pre_action};
+    use starknet::ContractAddress;
 
     #[abi(embed_v0)]
     impl BattleSystemsImpl of super::IBattleSystems<ContractState> {
@@ -172,8 +172,8 @@ pub mod battle_systems {
     }
 
     fn _get_token_address(world: WorldStorage) -> ContractAddress {
-        let (game_token_systems_address, _) = world.dns(@"game_token_systems").unwrap();
-        let minigame_dispatcher = IMinigameDispatcher { contract_address: game_token_systems_address };
+        let (game_systems_address, _) = world.dns(@"game_systems").unwrap();
+        let minigame_dispatcher = IMinigameDispatcher { contract_address: game_systems_address };
         minigame_dispatcher.token_address()
     }
 }

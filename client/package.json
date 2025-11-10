@@ -10,12 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cartridge/connector": "^0.10.1",
-    "@cartridge/controller": "^0.10.1",
+    "@cartridge/connector": "^0.10.7",
+    "@cartridge/controller": "^0.10.7",
     "@dojoengine/core": "^1.7.6",
     "@dojoengine/sdk": "^1.7.6",
-    "@dojoengine/utils": "^1.7.6",
     "@dojoengine/torii-client": "^1.7.6",
+    "@dojoengine/utils": "^1.7.6",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@fontsource/roboto": "^4.5.8",

@@ -12,8 +12,8 @@ pub mod map;
 pub mod monsters;
 pub mod random;
 pub mod renderer;
+pub mod settings;
 pub mod spell;
 pub mod summon;
-pub mod settings;
 #[cfg(test)]
 pub mod testing;

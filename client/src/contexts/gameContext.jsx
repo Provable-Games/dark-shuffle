@@ -4,9 +4,10 @@ import { useIndexer } from "../api/indexer";
 import { generateMapNodes } from "../helpers/map";
 import { DojoContext } from "./dojoContext";
 import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
-import { CallData } from "starknet";
+import { CairoOption, CairoOptionVariant, CallData } from "starknet";
 import { getContractByName } from "@dojoengine/core";
 import { useDynamicConnector } from "./starknet";
+import { stringToFelt } from "../helpers/utilities";
 
 export const GameContext = createContext()
 
@@ -87,30 +88,52 @@ export const GameProvider = ({ children }) => {
     setScore()
   }
 
+  /**
+   * Mints a new game token.
+   * @param account The Starknet account
+   * @param name The name of the game
+   * @param settingsId The settings ID for the game
+   */
   const mintFreeGame = async (settingsId = 0) => {
-    setLoading(true)
-    setLoadingProgress(45)
-
     try {
-      const res = await dojo.executeTx([{
-        contractName: "game_systems", entrypoint: "mint", calldata: [
-          '0x' + dojo.playerName.split('').map(char => char.charCodeAt(0).toString(16)).join(''),
-          settingsId,
-          1,
-          1,
-          dojo.address
-        ]
-      }])
+      let receipt = await dojo.executeTx(
+        [
+          {
+            contractAddress: getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, "game_systems")?.address,
+            entrypoint: "mint_game",
+            calldata: CallData.compile([
+              new CairoOption(CairoOptionVariant.Some, stringToFelt(dojo.playerName)),
+              new CairoOption(CairoOptionVariant.Some, settingsId),
+              1, // start
+              1, // end
+              1, // objective_ids
+              1, // context
+              1, // client_url
+              1, // renderer_address
+              dojo.address,
+              false, // soulbound
+            ]),
+          },
+        ],
+        false,
+        true
+      );
 
-      const tokenMetadata = res.find(e => e.componentName === 'TokenMetadata')
-      await loadGameDetails(tokenMetadata)
+      const tokenMetadataEvent = receipt.events.find(
+        (event) => event.data.length === 14
+      );
 
-      return tokenMetadata
-    } catch (ex) {
-      console.log(ex)
+      let gameId = parseInt(tokenMetadataEvent.data[1], 16)
+      let tokenMetaData = await getTokenMetadata(gameId)
+
+      await loadGameDetails(tokenMetaData)
+
+      return gameId
+    } catch (error) {
+      console.log(error)
       handleError()
     }
-  }
+  };
 
   const startBattleDirectly = async (gameId) => {
     setLoadingProgress(55)
@@ -127,11 +150,11 @@ export const GameProvider = ({ children }) => {
 
     const txs = [
       requestRandom,
-      { contractName: "game_systems", entrypoint: "start_game", calldata: [gameId] },
+      { contractAddress: game_address, entrypoint: "start_game", calldata: [gameId] },
       requestRandom,
-      { contractName: "game_systems", entrypoint: "generate_tree", calldata: [gameId] },
+      { contractAddress: game_address, entrypoint: "generate_tree", calldata: [gameId] },
       requestRandom,
-      { contractName: "game_systems", entrypoint: "select_node", calldata: [gameId, 1] }
+      { contractAddress: game_address, entrypoint: "select_node", calldata: [gameId, 1] }
     ]
 
     await dojo.executeTx(txs, false)
@@ -178,7 +201,11 @@ export const GameProvider = ({ children }) => {
       return
     }
 
-    const res = await dojo.executeTx([{ contractName: "game_systems", entrypoint: "generate_tree", calldata: [values.gameId] }], true);
+    const res = await dojo.executeTx([{
+      contractAddress: getContractByName(currentNetworkConfig.manifest, currentNetworkConfig.namespace, "game_systems")?.address,
+      entrypoint: "generate_tree",
+      calldata: [values.gameId]
+    }], true);
 
     if (res) {
       const mapValues = res.find(e => e.componentName === 'Map')

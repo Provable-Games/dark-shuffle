@@ -1,26 +1,35 @@
 [world]
-name = "Realms World"
-website = "https://realms.world/"
+name = "Provable Games"
 description = "DNC"
 seed = "DNC"
 
 [env]
-chain_id = "SN_MAINNET"
-rpc_url = "https://api.cartridge.gg/x/starknet/mainnet"
-world_address = "0x5c6d0020a9927edca9ddc984b97305439c0b32a1ec8d3f0eaf6291074cc9799"
-world_block = 1385481
+rpc_url = "https://api.cartridge.gg/x/starknet/mainnet/rpc/v0_8"
+world_address = "0x02ef591697f0fd9adc0ba9dbe0ca04dabad80cf95f08ba02e435d9cb6698a28a"
+world_block = 2125240
+max_block_range = 20000
 
 [namespace]
-default = "ds_v1_2_0"
+default = "ds_v1_2_1"
 
 [writers]
-"ds_v1_2_0" = [
-    "ds_v1_2_0-game_systems",
-    "ds_v1_2_0-battle_systems",
-    "ds_v1_2_0-config_systems",
+"ds_v1_2_1" = [
+    "ds_v1_2_1-game_systems",
+    "ds_v1_2_1-battle_systems",
+    "ds_v1_2_1-config_systems",
+]
+
+[migration]
+order_inits = [
+    "ds_v1_2_1-renderer_systems",
+    "ds_v1_2_1-game_systems",
+    "ds_v1_2_1-battle_systems",
+    "ds_v1_2_1-config_systems",
 ]
 
 [init_call_args]
-"ds_v1_2_0-game_systems" = [
-    "0x000B39b235b44c53a2E9F0c5D35939D9C8E8dAFDd0a2ba2E695b501Fc1e9fd2f",
+"ds_v1_2_1-game_systems" = [
+    "0x0248f76e72088853c3fE96CAd8F7f075c9e514B862A6e9a3D5957EA5522eBb6D", # account address
+    "0x036017E69D21D6D8c13E266EaBB73ef1f1D02722D86BDcAbe5f168f8e549d3cD", # denshokan address
+    "1" # Option::None for renderer address
 ]
