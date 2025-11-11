@@ -8,6 +8,7 @@ import { CairoOption, CairoOptionVariant, CallData } from "starknet";
 import { getContractByName } from "@dojoengine/core";
 import { useDynamicConnector } from "./starknet";
 import { stringToFelt } from "../helpers/utilities";
+import { useStarknetApi } from "../api/starknet";
 
 export const GameContext = createContext()
 
@@ -29,6 +30,7 @@ export const GameProvider = ({ children }) => {
   const dojo = useContext(DojoContext)
   const { enqueueSnackbar } = useSnackbar()
   const { getSettings, getCardDetails, getRecommendedSettings } = useIndexer()
+  const { getTokenMetadata } = useStarknetApi()
 
   const [loading, setLoading] = useState(true)
   const [loadingProgress, setLoadingProgress] = useState(0)
