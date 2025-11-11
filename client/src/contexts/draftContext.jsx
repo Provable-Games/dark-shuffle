@@ -47,7 +47,7 @@ export const DraftProvider = ({ children }) => {
     })
 
     game.setLoadingProgress(99)
-    const res = await dojo.executeTx(txs, true)
+    const res = await dojo.executeTx(txs, false)
 
     if (res) {
       const gameValues = res.find(e => e.componentName === 'Game')

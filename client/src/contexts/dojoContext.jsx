@@ -6,6 +6,7 @@ import { CallData, RpcProvider } from 'starknet';
 import { VRF_PROVIDER_ADDRESS } from "../helpers/constants";
 import { translateEvent } from "../helpers/events";
 import { useDynamicConnector } from "./starknet";
+import { delay } from "../helpers/utilities";
 
 export const DojoContext = createContext()
 
@@ -43,7 +44,6 @@ export const DojoProvider = ({ children }) => {
 
     if (includeVRF) {
       let contractAddress = txs[txs.length - 1].contractAddress
-
       txs.unshift({
         contractAddress: VRF_PROVIDER_ADDRESS,
         entrypoint: 'request_random',
@@ -56,8 +56,8 @@ export const DojoProvider = ({ children }) => {
 
     try {
       const tx = await account.execute(txs);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const receipt = await account.waitForTransaction(tx.transaction_hash, { retryInterval: 500 })
+      await delay(1000);
+      const receipt = await waitForTransaction(tx.transaction_hash, 0)
 
       if (receipt.execution_status === "REVERTED") {
         console.log('contract error', receipt)
@@ -75,6 +75,25 @@ export const DojoProvider = ({ children }) => {
         console.log(ex)
         enqueueSnackbar(ex.issues ? ex.issues[0].message : 'Something went wrong', { variant: 'error', anchorOrigin: { vertical: 'bottom', horizontal: 'right' } })
       }
+    }
+  }
+
+  const waitForTransaction = async (txHash, retries) => {
+    if (retries > 9) {
+      throw new Error("Transaction failed");
+    }
+
+    try {
+      const receipt = await account.waitForTransaction(
+        txHash,
+        { retryInterval: 500 }
+      );
+
+      return receipt;
+    } catch (error) {
+      console.error("Error waiting for transaction :", error);
+      await delay(500);
+      return waitForTransaction(txHash, retries + 1);
     }
   }
 

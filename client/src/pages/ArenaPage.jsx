@@ -44,7 +44,6 @@ function ArenaPage() {
       gameContext.setLoadingProgress(10)
 
       let game = await getTokenMetadata(watchGameId)
-
       if (game) {
         replay.startReplay(game)
       } else {

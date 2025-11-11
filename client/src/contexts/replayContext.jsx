@@ -60,7 +60,6 @@ export const ReplayProvider = ({ children }) => {
 
   const startReplay = async (_game) => {
     setLoadingReplay(true)
-    navigate('/watch/' + _game.id)
 
     let txs = await getGameTxs(_game.id)
     await game.actions.loadGameDetails(_game)

@@ -130,7 +130,7 @@ function LoadingContainer() {
       }
 
       gameContext.setGame({
-        gameId: data.game_id,
+        gameId: tokenData.id,
         state: data.state,
 
         playerName: tokenData.playerName,

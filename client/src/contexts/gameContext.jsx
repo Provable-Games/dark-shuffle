@@ -59,14 +59,9 @@ export const GameProvider = ({ children }) => {
   useEffect(() => {
     if (values.gameId) {
       setLoading(false);
+      window.history.replaceState(null, '', `/play/${values.gameId}`)
     }
   }, [values.gameId])
-
-  useEffect(() => {
-    if (values.gameId && GG_questMode) {
-      setValues(prev => ({ ...prev, questTarget: GG_questTargetScore }))
-    }
-  }, [GG_questMode, values.gameId, GG_questTargetScore])
 
   const setGame = (values) => {
     if (!isNaN(values.state || 0)) {

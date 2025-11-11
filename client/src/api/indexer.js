@@ -292,7 +292,7 @@ export const useIndexer = () => {
       let games = gamesData.map((game) => {
         let gameData = gameEvents.find(
           (event) =>
-            parseInt(event.game_id, 16) === game.game_id
+            parseInt(event.game_id, 16) === game.token_id
         );
 
         let tokenId = game.token_id;
