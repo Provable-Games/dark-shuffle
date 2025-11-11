@@ -25,7 +25,7 @@ export function getNetworkConfig(networkKey) {
     manifest: network.manifest,
     slot: network.slot,
     preset: "dark-shuffle",
-    policies: policies,
+    policies,
     rpcUrl: network.rpcUrl,
     toriiUrl: network.torii,
     chains: [{ rpcUrl: network.rpcUrl }],
