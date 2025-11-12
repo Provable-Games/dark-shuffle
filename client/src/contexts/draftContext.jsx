@@ -46,10 +46,12 @@ export const DraftProvider = ({ children }) => {
       calldata: [tokenData.tokenId]
     })
 
-    game.setLoadingProgress(99)
-    const res = await dojo.executeTx(txs, false)
-
+    game.setLoadingProgress(80)
+    const res = await dojo.executeTx(txs, true)
+    
     if (res) {
+      game.setLoadingProgress(99)
+      await delay(3000)
       const gameValues = res.find(e => e.componentName === 'Game')
       const draftValues = res.find(e => e.componentName === 'Draft')
 
@@ -57,26 +59,26 @@ export const DraftProvider = ({ children }) => {
       setOptions(draftValues.options.map(option => game.utils.getCard(option)))
       setCards(draftValues.cards.map(card => game.utils.getCard(card)))
 
-      enqueueSnackbar('Share Your Game!', {
-        variant: 'info',
-        anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
-        autoHideDuration: 15000,
-        hideIconVariant: true,
-        action: snackbarId => (
-          <>
-            <Button variant='outlined' size='small' sx={{ width: '90px', mr: 1 }}
-              component='a' href={'https://x.com/intent/tweet?text=' + `I'm about to face the beasts of Dark Shuffle — come watch me play and see how far I can go! darkshuffle.io/watch/${tokenData.tokenId} 🕷️⚔️ @provablegames @darkshuffle_gg`}
-              target='_blank'>
-              Tweet
-            </Button>
-            <IconButton size='small' onClick={() => {
-              closeSnackbar(snackbarId)
-            }}>
-              <CloseIcon color='secondary' fontSize='small' />
-            </IconButton>
-          </>
-        )
-      })
+      // enqueueSnackbar('Share Your Game!', {
+      //   variant: 'info',
+      //   anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+      //   autoHideDuration: 15000,
+      //   hideIconVariant: true,
+      //   action: snackbarId => (
+      //     <>
+      //       <Button variant='outlined' size='small' sx={{ width: '90px', mr: 1 }}
+      //         component='a' href={'https://x.com/intent/tweet?text=' + `I'm about to face the beasts of Dark Shuffle — come watch me play and see how far I can go! darkshuffle.io/watch/${tokenData.tokenId} 🕷️⚔️ @provablegames @darkshuffle_gg`}
+      //         target='_blank'>
+      //         Tweet
+      //       </Button>
+      //       <IconButton size='small' onClick={() => {
+      //         closeSnackbar(snackbarId)
+      //       }}>
+      //         <CloseIcon color='secondary' fontSize='small' />
+      //       </IconButton>
+      //     </>
+      //   )
+      // })
     } else if (!game.values.gameId) {
       game.utils.handleError();
     }

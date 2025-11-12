@@ -191,55 +191,52 @@ export const useIndexer = () => {
   }
 
   const getBattleState = async (battle_id, game_id) => {
-    const document = gql`
-      {
-        entity (id:"${getEntityIdFromKeys([BigInt(battle_id), BigInt(game_id)])}") {
-          models {
-            ... on ${NS}_Battle {
-              battle_id
-              game_id
-              round
+    const hexId = `0x${game_id.toString(16).padStart(16, '0')}`
 
-              hero {
-                health
-                energy
-              }
+    let url = `${currentNetworkConfig.toriiUrl}/sql?query=
+      SELECT *
+      FROM "ds_v1_2_1-Battle" b
+      JOIN "ds_v1_2_1-BattleResources" br on br.battle_id = b.battle_id AND br.game_id = b.game_id
+      WHERE b.game_id = "${hexId}" AND b.battle_id = ${battle_id}`;
 
-              monster {
-                monster_id
-                attack
-                health
-              }
-              
-              battle_effects { 
-                enemy_marks
-                hero_dmg_reduction
-                next_hunter_attack_bonus
-                next_hunter_health_bonus
-                next_brute_attack_bonus
-                next_brute_health_bonus
-                next_magical_attack_bonus
-                next_magical_health_bonus
-              }
-            }
-            ... on ${NS}_BattleResources {
-              hand
-              deck
-              board {
-                card_index
-                attack
-                health
-              }
-            }
-          }
-        }
-      }`
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-    const res = await request(GQL_ENDPOINT, document);
-
+    let data = await response.json();
+    data = data[0];
+    
     const result = {
-      battle: res?.entity.models.find(model => model.hero),
-      battleResources: res?.entity.models.find(model => model.hand)
+      battle: {
+        round: data.round,
+        hero: {
+          health: data["hero.health"],
+          energy: data["hero.energy"],
+        },
+        monster: {
+          monster_id: data["monster.monster_id"],
+          attack: data["monster.attack"],
+          health: data["monster.health"],
+        },
+        battle_effects: {
+          enemy_marks: data["battle_effects.enemy_marks"],
+          hero_dmg_reduction: data["battle_effects.hero_dmg_reduction"],
+          next_hunter_attack_bonus: data["battle_effects.next_hunter_attack_bonus"],
+          next_hunter_health_bonus: data["battle_effects.next_hunter_health_bonus"],
+          next_brute_attack_bonus: data["battle_effects.next_brute_attack_bonus"],
+          next_brute_health_bonus: data["battle_effects.next_brute_health_bonus"],
+          next_magical_attack_bonus: data["battle_effects.next_magical_attack_bonus"],
+          next_magical_health_bonus: data["battle_effects.next_magical_health_bonus"],
+        },
+      },
+      battleResources: {
+        hand: JSON.parse(data.hand),
+        deck: JSON.parse(data.deck),
+        board: JSON.parse(data.board),
+      }
     };
 
     return result;
